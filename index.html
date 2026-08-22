@@ -1,62 +1,600 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FaceEvol</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>FaceEvol — AI Face Transformation</title>
+  <meta
+    name="description"
+    content="Transform faces across ages, create video face swaps, and bring your ideas to life with FaceEvol."
+  />
+
   <style>
-    body {
+    * {
+      box-sizing: border-box;
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0b0b0f;
-      color: white;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top, #1a2140 0%, #0b1020 38%, #050812 100%);
+      color: #ffffff;
       min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
     }
 
     .container {
-      padding: 30px 20px;
-      max-width: 700px;
+      width: min(1120px, 92%);
+      margin: 0 auto;
     }
 
-    h1 {
-      font-size: 64px;
-      margin: 0 0 15px;
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(14px);
+      background: rgba(5, 8, 18, 0.75);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     }
 
-    p {
-      font-size: 22px;
-      line-height: 1.6;
-      color: #d4d4d8;
+    .nav {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
     }
 
-    .button {
-      display: inline-block;
-      margin-top: 25px;
-      padding: 15px 30px;
-      background: white;
-      color: black;
+    .logo {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .gradient-text {
+      background: linear-gradient(90deg, #8b5cf6, #38bdf8);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      color: #c6cee0;
+      font-size: 15px;
+    }
+
+    .nav-links a:hover {
+      color: #ffffff;
+    }
+
+    .nav-button {
+      padding: 11px 18px;
+      border-radius: 10px;
+      background: linear-gradient(90deg, #7c3aed, #0ea5e9);
+      color: #ffffff !important;
+      font-weight: 700;
+    }
+
+    .hero {
+      padding: 110px 0 85px;
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 13px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.05);
+      color: #cfd7ea;
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+
+    .hero h1 {
+      max-width: 900px;
+      margin: 0 auto;
+      font-size: clamp(44px, 8vw, 82px);
+      line-height: 1.02;
+      letter-spacing: -3px;
+    }
+
+    .hero p {
+      max-width: 720px;
+      margin: 26px auto 0;
+      color: #aeb9cf;
+      font-size: clamp(18px, 2.5vw, 22px);
+      line-height: 1.7;
+    }
+
+    .hero-actions {
+      margin-top: 36px;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .primary-button,
+    .secondary-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 52px;
+      padding: 0 26px;
       border-radius: 12px;
-      font-weight: bold;
-      text-decoration: none;
-      font-size: 18px;
+      font-size: 16px;
+      font-weight: 700;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    .primary-button {
+      background: linear-gradient(90deg, #7c3aed, #0ea5e9);
+      color: #ffffff;
+      box-shadow: 0 14px 38px rgba(45, 120, 255, 0.22);
+    }
+
+    .secondary-button {
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.04);
+      color: #e8edf8;
+    }
+
+    .primary-button:hover,
+    .secondary-button:hover {
+      transform: translateY(-2px);
+    }
+
+    .preview-wrap {
+      margin-top: 64px;
+    }
+
+    .preview {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 18px;
+      border-radius: 26px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.045);
+      box-shadow: 0 30px 90px rgba(0, 0, 0, 0.35);
+    }
+
+    .preview-inner {
+      min-height: 360px;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      background:
+        linear-gradient(135deg, rgba(124, 58, 237, 0.25), rgba(14, 165, 233, 0.18)),
+        #11182b;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .preview-glow {
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      position: absolute;
+      filter: blur(40px);
+      opacity: 0.35;
+      background: linear-gradient(135deg, #7c3aed, #38bdf8);
+    }
+
+    .preview-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+    }
+
+    .preview-icon {
+      font-size: 68px;
+      margin-bottom: 18px;
+    }
+
+    .preview-content h2 {
+      font-size: 30px;
+      margin-bottom: 10px;
+    }
+
+    .preview-content p {
+      color: #b7c2d8;
+      line-height: 1.6;
+    }
+
+    section {
+      padding: 85px 0;
+    }
+
+    .section-heading {
+      text-align: center;
+      margin-bottom: 46px;
+    }
+
+    .section-heading span {
+      display: inline-block;
+      margin-bottom: 10px;
+      color: #7dd3fc;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .section-heading h2 {
+      font-size: clamp(34px, 5vw, 52px);
+      letter-spacing: -1.5px;
+      margin-bottom: 14px;
+    }
+
+    .section-heading p {
+      max-width: 650px;
+      margin: 0 auto;
+      color: #98a6c0;
+      line-height: 1.7;
+      font-size: 17px;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .feature-card {
+      padding: 30px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .feature-icon {
+      width: 52px;
+      height: 52px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      margin-bottom: 20px;
+      font-size: 26px;
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.26), rgba(14, 165, 233, 0.24));
+    }
+
+    .feature-card h3 {
+      font-size: 21px;
+      margin-bottom: 10px;
+    }
+
+    .feature-card p {
+      color: #9da9bf;
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .step-card {
+      padding: 28px;
+      border-radius: 20px;
+      background: #0d1323;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+    }
+
+    .step-number {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      margin-bottom: 18px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #7c3aed, #0ea5e9);
+    }
+
+    .step-card h3 {
+      margin-bottom: 9px;
+    }
+
+    .step-card p {
+      color: #98a6c0;
+      line-height: 1.6;
+      font-size: 15px;
+    }
+
+    .cta {
+      padding-bottom: 100px;
+    }
+
+    .cta-box {
+      text-align: center;
+      padding: 64px 24px;
+      border-radius: 26px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background:
+        linear-gradient(135deg, rgba(124, 58, 237, 0.18), rgba(14, 165, 233, 0.12)),
+        rgba(255, 255, 255, 0.035);
+    }
+
+    .cta-box h2 {
+      font-size: clamp(34px, 5vw, 50px);
+      margin-bottom: 14px;
+    }
+
+    .cta-box p {
+      max-width: 600px;
+      margin: 0 auto 28px;
+      color: #aab5ca;
+      line-height: 1.7;
+      font-size: 17px;
+    }
+
+    footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 30px 0;
+      color: #7f8ba3;
+      font-size: 14px;
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 850px) {
+      .features,
+      .steps {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-links a:not(.nav-button) {
+        display: none;
+      }
+
+      .preview-inner {
+        min-height: 300px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .hero {
+        padding-top: 80px;
+      }
+
+      .hero h1 {
+        letter-spacing: -2px;
+      }
+
+      .hero-actions {
+        flex-direction: column;
+      }
+
+      .primary-button,
+      .secondary-button {
+        width: 100%;
+      }
+
+      section {
+        padding: 65px 0;
+      }
+
+      .feature-card,
+      .step-card {
+        padding: 24px;
+      }
+
+      .footer-inner {
+        justify-content: center;
+        text-align: center;
+      }
     }
   </style>
 </head>
 
 <body>
-  <div class="container">
-    <h1>FaceEvol</h1>
-    <p>
-      Transform face to any age.<br>
-      Swap face to any video.<br>
-      Bring your dreams to life. ❤️
-    </p>
 
-    <a class="button" href="#">Get Started</a>
-  </div>
+  <header>
+    <div class="container nav">
+      <a href="#" class="logo">
+        <span class="gradient-text">FaceEvol</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="#start" class="nav-button">Get Started</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <section class="hero">
+      <div class="container">
+
+        <div class="badge">
+          ✨ AI-powered face transformation
+        </div>
+
+        <h1>
+          Transform Your Face.
+          <br />
+          <span class="gradient-text">Bring Your Dreams to Life.</span>
+        </h1>
+
+        <p>
+          Transform a face to any age, swap faces into videos, and create
+          stunning AI-powered transformations in seconds.
+        </p>
+
+        <div class="hero-actions">
+          <a href="#start" class="primary-button">Start Creating</a>
+          <a href="#features" class="secondary-button">Explore Features</a>
+        </div>
+
+        <div class="preview-wrap">
+          <div class="preview">
+            <div class="preview-inner">
+              <div class="preview-glow"></div>
+
+              <div class="preview-content">
+                <div class="preview-icon">✨</div>
+                <h2>Your AI transformation studio</h2>
+                <p>
+                  Upload a photo, choose a transformation, and create something
+                  unforgettable.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="features">
+      <div class="container">
+
+        <div class="section-heading">
+          <span>Features</span>
+          <h2>Everything you need to transform</h2>
+          <p>
+            Simple tools designed to help you create realistic and imaginative
+            face transformations.
+          </p>
+        </div>
+
+        <div class="features">
+
+          <div class="feature-card">
+            <div class="feature-icon">🕒</div>
+            <h3>Age Transformation</h3>
+            <p>
+              See how a face could look younger or older with AI-powered age
+              transformation.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">🎬</div>
+            <h3>Video Face Swap</h3>
+            <p>
+              Bring photos to life by placing faces into videos and creative
+              scenes.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">💎</div>
+            <h3>HD Quality</h3>
+            <p>
+              Create polished results designed for sharp, high-quality viewing
+              and sharing.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section id="how-it-works">
+      <div class="container">
+
+        <div class="section-heading">
+          <span>How It Works</span>
+          <h2>Create in three simple steps</h2>
+          <p>
+            FaceEvol is designed to make AI face transformation easy from start
+            to finish.
+          </p>
+        </div>
+
+        <div class="steps">
+
+          <div class="step-card">
+            <div class="step-number">1</div>
+            <h3>Upload</h3>
+            <p>
+              Choose the photo you want to transform.
+            </p>
+          </div>
+
+          <div class="step-card">
+            <div class="step-number">2</div>
+            <h3>Choose</h3>
+            <p>
+              Select an age transformation, face swap, or other creative effect.
+            </p>
+          </div>
+
+          <div class="step-card">
+            <div class="step-number">3</div>
+            <h3>Create</h3>
+            <p>
+              Generate your result and get it ready to view or share.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="cta" id="start">
+      <div class="container">
+
+        <div class="cta-box">
+          <h2>Ready to create with FaceEvol?</h2>
+
+          <p>
+            Turn a simple photo into something new, imaginative, and memorable.
+          </p>
+
+          <a href="#" class="primary-button">
+            Start Creating
+          </a>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <div>
+        <strong class="gradient-text">FaceEvol</strong>
+      </div>
+
+      <div>
+        © 2026 FaceEvol. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
 </body>
 </html>
+
+
