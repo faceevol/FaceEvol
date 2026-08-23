@@ -1,4 +1,5 @@
 import { get } from "@vercel/blob";
+import { Readable } from "node:stream";
 import {
   createHmac,
   timingSafeEqual
@@ -12,60 +13,45 @@ function createSignature(pathname, expires, secret) {
 
 function signaturesMatch(received, expected) {
   if (
-    !received ||
+    typeof received !== "string" ||
     received.length !== expected.length
   ) {
     return false;
   }
 
   return timingSafeEqual(
-    Buffer.from(received),
-    Buffer.from(expected)
+    Buffer.from(received, "utf8"),
+    Buffer.from(expected, "utf8")
   );
 }
 
-export default async function handler(request) {
+export default async function handler(request, response) {
   if (request.method !== "GET") {
-    return new Response(
-      JSON.stringify({
-        error: "Method not allowed"
-      }),
-      {
-        status: 405,
-        headers: {
-          "Content-Type": "application/json"
-        }
-      }
-    );
+    return response.status(405).json({
+      error: "Method not allowed"
+    });
   }
 
   try {
-    const secret =
-      process.env.REPLICATE_API_TOKEN;
+    const secret = process.env.REPLICATE_API_TOKEN;
 
     if (!secret) {
-      return new Response(
-        "Server configuration error",
-        { status: 500 }
-      );
+      return response
+        .status(500)
+        .send("Server configuration error");
     }
 
-    const url = new URL(request.url);
+    const { pathname, expires, signature } =
+      request.query || {};
 
-    const pathname =
-      url.searchParams.get("pathname");
-
-    const expires =
-      url.searchParams.get("expires");
-
-    const signature =
-      url.searchParams.get("signature");
-
-    if (!pathname || !expires || !signature) {
-      return new Response(
-        "Missing authorization",
-        { status: 400 }
-      );
+    if (
+      typeof pathname !== "string" ||
+      typeof expires !== "string" ||
+      typeof signature !== "string"
+    ) {
+      return response
+        .status(400)
+        .send("Missing authorization");
     }
 
     const expiresNumber = Number(expires);
@@ -74,18 +60,16 @@ export default async function handler(request) {
       !Number.isFinite(expiresNumber) ||
       Date.now() > expiresNumber
     ) {
-      return new Response(
-        "Link expired",
-        { status: 403 }
-      );
+      return response
+        .status(403)
+        .send("Link expired");
     }
 
-    const expectedSignature =
-      createSignature(
-        pathname,
-        expires,
-        secret
-      );
+    const expectedSignature = createSignature(
+      pathname,
+      expires,
+      secret
+    );
 
     if (
       !signaturesMatch(
@@ -93,62 +77,44 @@ export default async function handler(request) {
         expectedSignature
       )
     ) {
-      return new Response(
-        "Unauthorized",
-        { status: 403 }
-      );
+      return response
+        .status(403)
+        .send("Unauthorized");
     }
 
-    const result = await get(
-      pathname,
-      {
-        access: "private"
-      }
-    );
+    const result = await get(pathname, {
+      access: "private"
+    });
 
-    if (
-      !result ||
-      result.statusCode !== 200 ||
-      !result.stream
-    ) {
-      return new Response(
-        "Video not found",
-        { status: 404 }
-      );
+    if (!result || result.statusCode !== 200) {
+      return response
+        .status(404)
+        .send("Video not found");
     }
 
-    const headers = new Headers();
-
-    headers.set(
+    response.setHeader(
       "Content-Type",
-      result.blob.contentType ||
-        "video/mp4"
+      result.blob.contentType || "video/mp4"
     );
 
-    headers.set(
-      "Cache-Control",
-      "private, no-store"
-    );
-
-    headers.set(
+    response.setHeader(
       "X-Content-Type-Options",
       "nosniff"
     );
 
+    response.setHeader(
+      "Cache-Control",
+      "private, no-store"
+    );
+
     if (result.blob.size) {
-      headers.set(
+      response.setHeader(
         "Content-Length",
         String(result.blob.size)
       );
     }
 
-    return new Response(
-      result.stream,
-      {
-        status: 200,
-        headers
-      }
-    );
+    Readable.fromWeb(result.stream).pipe(response);
 
   } catch (error) {
     console.error(
@@ -156,9 +122,12 @@ export default async function handler(request) {
       error
     );
 
-    return new Response(
-      "Video unavailable",
-      { status: 500 }
-    );
+    if (!response.headersSent) {
+      return response
+        .status(500)
+        .send("Video unavailable");
+    }
+
+    response.end();
   }
 }
