@@ -1,5 +1,5 @@
 export default async function handler(req, res) {
-  if (!["GET", "POST"].includes(req.method)) {
+  if (req.method !== "POST") {
     return res.status(405).json({
       error: "Method not allowed"
     });
@@ -13,30 +13,53 @@ export default async function handler(req, res) {
     });
   }
 
+  const { image, target_age } = req.body || {};
+
+  if (!image) {
+    return res.status(400).json({
+      error: "Image is required"
+    });
+  }
+
+  if (target_age === undefined || target_age === null) {
+    return res.status(400).json({
+      error: "Target age is required"
+    });
+  }
+
   try {
     const response = await fetch(
-      "https://api.replicate.com/v1/models",
+      "https://api.replicate.com/v1/predictions",
       {
-        method: "GET",
+        method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
-        }
+          "Content-Type": "application/json",
+          Prefer: "wait"
+        },
+        body: JSON.stringify({
+          version:
+            "9222a21c181b707209ef12b5e0d7e94c994b58f01c7b2fec075d2e892362f13c",
+          input: {
+            image: image,
+            target_age: String(target_age)
+          }
+        })
       }
     );
 
-    if (!response.ok) {
-      const errorText = await response.text();
+    const prediction = await response.json();
 
+    if (!response.ok) {
       return res.status(response.status).json({
-        error: "Could not connect to Replicate",
-        details: errorText
+        error: "Replicate request failed",
+        details: prediction
       });
     }
 
     return res.status(200).json({
       success: true,
-      message: "FaceEvol is securely connected to Replicate."
+      prediction
     });
 
   } catch (error) {
