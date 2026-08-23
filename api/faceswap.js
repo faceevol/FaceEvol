@@ -74,7 +74,7 @@ export default async function handler(req, res) {
 
     const proxyUrl =
       new URL(
-        "/api/video",
+        "/api/video.mp4",
         "https://www.faceevol.com"
       );
 
