@@ -14,7 +14,35 @@ export default async function handler(req, res) {
   }
 
   const { image, target_age } = req.body || {};
+const age = Number(target_age);
 
+if (
+  !image ||
+  typeof image !== "string" ||
+  !image.startsWith("data:image/")
+) {
+  return res.status(400).json({
+    error: "A valid image is required"
+  });
+}
+
+if (
+  !Number.isFinite(age) ||
+  age < 0 ||
+  age > 100
+) {
+  return res.status(400).json({
+    error: "Target age must be between 0 and 100"
+  });
+}
+
+// Prevent very large uploads from consuming unnecessary resources.
+// Roughly limits the original image to about 8 MB.
+if (image.length > 11_000_000) {
+  return res.status(413).json({
+    error: "Image is too large. Please use an image under 8 MB."
+  });
+}
   if (!image) {
     return res.status(400).json({
       error: "Image is required"
