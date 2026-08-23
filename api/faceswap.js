@@ -1,7 +1,10 @@
-import {
-  issueSignedToken,
-  presignUrl
-} from "@vercel/blob";
+import { createHmac } from "node:crypto";
+
+function createSignature(pathname, expires, secret) {
+  return createHmac("sha256", secret)
+    .update(`${pathname}:${expires}`)
+    .digest("hex");
+}
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -21,7 +24,6 @@ export default async function handler(req, res) {
 
   const { face, video } = req.body || {};
 
-  // Face is still sent as a small image data URL.
   if (
     !face ||
     typeof face !== "string" ||
@@ -32,7 +34,6 @@ export default async function handler(req, res) {
     });
   }
 
-  // Video is now a Vercel Blob HTTPS URL.
   if (
     !video ||
     typeof video !== "string" ||
@@ -47,25 +48,48 @@ export default async function handler(req, res) {
     const blobUrl = new URL(video);
 
     const pathname =
-      decodeURIComponent(blobUrl.pathname.slice(1));
+      decodeURIComponent(
+        blobUrl.pathname.slice(1)
+      );
 
-    // Give Replicate temporary permission to read
-    // this single private Blob object.
-    const signedToken = await issueSignedToken({
-      pathname,
-      operations: ["get"],
-      validUntil: Date.now() + 30 * 60 * 1000
-    });
+    if (!pathname) {
+      return res.status(400).json({
+        error: "Invalid video pathname"
+      });
+    }
 
-    const { presignedUrl } = await presignUrl(
-      signedToken,
-      {
+    const expires =
+      String(
+        Date.now() +
+        30 * 60 * 1000
+      );
+
+    const signature =
+      createSignature(
         pathname,
-        operation: "get",
-        access: "private",
-        validUntil:
-          Date.now() + 30 * 60 * 1000
-      }
+        expires,
+        replicateToken
+      );
+
+    const proxyUrl =
+      new URL(
+        "/api/video",
+        "https://www.faceevol.com"
+      );
+
+    proxyUrl.searchParams.set(
+      "pathname",
+      pathname
+    );
+
+    proxyUrl.searchParams.set(
+      "expires",
+      expires
+    );
+
+    proxyUrl.searchParams.set(
+      "signature",
+      signature
     );
 
     const response = await fetch(
@@ -76,8 +100,10 @@ export default async function handler(req, res) {
         headers: {
           Authorization:
             `Bearer ${replicateToken}`,
+
           "Content-Type":
             "application/json",
+
           Prefer: "wait"
         },
 
@@ -86,8 +112,11 @@ export default async function handler(req, res) {
             "104b4a39315349db50880757bc8c1c996c5309e3aa11286b0a3c84dab81fd440",
 
           input: {
-            source: presignedUrl,
-            target: face
+            source:
+              proxyUrl.toString(),
+
+            target:
+              face
           }
         })
       }
@@ -97,11 +126,15 @@ export default async function handler(req, res) {
       await response.json();
 
     if (!response.ok) {
-      return res.status(response.status).json({
-        error:
-          "Replicate face swap request failed",
-        details: prediction
-      });
+      return res
+        .status(response.status)
+        .json({
+          error:
+            "Replicate face swap request failed",
+
+          details:
+            prediction
+        });
     }
 
     return res.status(200).json({
