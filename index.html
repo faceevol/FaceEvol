@@ -1624,7 +1624,7 @@
                 </div>
 
 
-                <div class="tool-option">
+                <div class="tool-option" id="faceSwapOption">
 
                   <div class="tool-icon">
                     🎬
@@ -2938,6 +2938,141 @@
 
     }
   );
-      </script>
+     const faceSwapOption = document.getElementById("faceSwapOption");
+const ageOption = document.querySelector(".tool-option.active");
+
+let faceSwapMode = false;
+
+const faceSwapControls = document.createElement("div");
+faceSwapControls.className = "age-controls";
+
+faceSwapControls.innerHTML = `
+  <div style="text-align:center;">
+    <div style="font-size:32px; margin-bottom:12px;">🎬</div>
+
+    <h3 style="margin-bottom:8px;">
+      Video Face Swap
+    </h3>
+
+    <p style="
+      color:#96a3ba;
+      font-size:14px;
+      line-height:1.6;
+      margin-bottom:18px;
+    ">
+      Your source face is ready. Next, you'll upload the video
+      where you want FaceEvol to place this face.
+    </p>
+
+    <button
+      type="button"
+      class="transform-button"
+      id="chooseSwapVideo"
+    >
+      🎥 Choose Video
+    </button>
+
+    <input
+      type="file"
+      id="swapVideoUpload"
+      accept="video/*"
+      hidden
+    >
+
+    <div
+      class="processing-message"
+      id="swapVideoStatus"
+    ></div>
+  </div>
+`;
+
+studioMain.appendChild(faceSwapControls);
+
+
+faceSwapOption.addEventListener("click", function () {
+
+  faceSwapMode = true;
+
+  document.querySelectorAll(".tool-option")
+    .forEach(option => option.classList.remove("active"));
+
+  faceSwapOption.classList.add("active");
+
+  ageControls.classList.remove("show");
+  faceSwapControls.classList.add("show");
+
+  document.querySelector(".upload-title").textContent =
+    "Start with your face";
+
+  document.querySelector(".upload-description").textContent =
+    "Upload a clear face photo, then choose the video you want to transform.";
+
+});
+
+
+ageOption.addEventListener("click", function () {
+
+  faceSwapMode = false;
+
+  document.querySelectorAll(".tool-option")
+    .forEach(option => option.classList.remove("active"));
+
+  ageOption.classList.add("active");
+
+  faceSwapControls.classList.remove("show");
+
+  if (selectedPhoto) {
+    ageControls.classList.add("show");
+  }
+
+  document.querySelector(".upload-title").textContent =
+    "Start with your photo";
+
+  document.querySelector(".upload-description").textContent =
+    "Upload a clear photo and choose how you want FaceEvol to transform it.";
+
+});
+
+
+existingUpload.addEventListener("change", function () {
+
+  if (faceSwapMode && this.files && this.files.length) {
+    ageControls.classList.remove("show");
+    faceSwapControls.classList.add("show");
+  }
+
+});
+
+
+const chooseSwapVideo =
+  document.getElementById("chooseSwapVideo");
+
+const swapVideoUpload =
+  document.getElementById("swapVideoUpload");
+
+const swapVideoStatus =
+  document.getElementById("swapVideoStatus");
+
+
+chooseSwapVideo.addEventListener("click", function () {
+  swapVideoUpload.click();
+});
+
+
+swapVideoUpload.addEventListener("change", function () {
+
+  if (!this.files || !this.files.length) {
+    return;
+  }
+
+  const video = this.files[0];
+
+  swapVideoStatus.textContent =
+    `Video selected: ${video.name}`;
+
+  chooseSwapVideo.textContent =
+    "✓ Video Ready";
+
+}); </script>
 </body>
 </html>
