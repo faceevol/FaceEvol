@@ -3183,35 +3183,80 @@ const videoData = blob.url;
       );
     }
 
-    const prediction = data.prediction;
+    
 
-    if (!prediction) {
-      throw new Error(
-        "No face swap prediction was returned."
-      );
-    }
+let prediction = data.prediction;
 
-    if (
-      prediction.status === "failed" ||
-      prediction.error
-    ) {
-      throw new Error(
-        prediction.error || "Face swap failed."
-      );
-    }
+if (!prediction || !prediction.id) {
+  throw new Error(
+    "No face swap prediction was returned."
+  );
+}
 
-    let output = prediction.output;
+let attempts = 0;
+const maxAttempts = 60;
 
-    if (Array.isArray(output)) {
-      output = output[0];
-    }
+while (
+  prediction.status !== "succeeded" &&
+  prediction.status !== "failed" &&
+  prediction.status !== "canceled" &&
+  attempts < maxAttempts
+) {
+  swapVideoStatus.textContent =
+    "AI face swap is processing...";
 
-    if (!output) {
-      throw new Error(
-        "The face swap is still processing or returned no video."
-      );
-    }
+  await new Promise((resolve) =>
+    setTimeout(resolve, 3000)
+  );
 
+  const statusResponse = await fetch(
+    `/api/prediction?id=${encodeURIComponent(
+      prediction.id
+    )}`
+  );
+
+  const statusData =
+    await statusResponse.json();
+
+  if (!statusResponse.ok) {
+    throw new Error(
+      statusData.error ||
+      "Could not check face swap status."
+    );
+  }
+
+  prediction = statusData;
+  attempts++;
+}
+
+if (
+  prediction.status === "failed" ||
+  prediction.status === "canceled" ||
+  prediction.error
+) {
+  throw new Error(
+    prediction.error || "Face swap failed."
+  );
+}
+
+if (prediction.status !== "succeeded") {
+  throw new Error(
+    "Face swap took too long. Please try again."
+  );
+}
+
+let output = prediction.output;
+
+if (Array.isArray(output)) {
+  output = output[0];
+}
+
+if (!output) {
+  throw new Error(
+    "Face swap completed but returned no video."
+  );
+}
+    
     faceSwapResultVideo.src = output;
     faceSwapResult.style.display = "block";
 
