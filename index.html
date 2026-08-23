@@ -2566,6 +2566,378 @@
     );
 
   </script>
+<script>
+  const ageStyle = document.createElement("style");
 
+  ageStyle.textContent = `
+    .age-controls {
+      margin-top: 22px;
+      padding: 22px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.025);
+      display: none;
+    }
+
+    .age-controls.show {
+      display: block;
+    }
+
+    .age-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 14px;
+      color: #dce5f3;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .age-value {
+      color: #7dd3fc;
+      font-size: 18px;
+      font-weight: 850;
+    }
+
+    .age-slider {
+      width: 100%;
+      accent-color: #7c3aed;
+      cursor: pointer;
+    }
+
+    .transform-button {
+      width: 100%;
+      min-height: 52px;
+      margin-top: 18px;
+      border: 0;
+      border-radius: 14px;
+      cursor: pointer;
+      color: white;
+      font-weight: 800;
+      font-size: 15px;
+      background: linear-gradient(90deg,#7c3aed,#0ea5e9);
+      box-shadow: 0 14px 35px rgba(70,90,220,.24);
+    }
+
+    .transform-button:disabled {
+      opacity: .55;
+      cursor: wait;
+    }
+
+    .age-result {
+      margin-top: 22px;
+      display: none;
+    }
+
+    .age-result.show {
+      display: block;
+    }
+
+    .age-result img {
+      width: 100%;
+      max-height: 520px;
+      object-fit: contain;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: #050914;
+    }
+
+    .processing-message {
+      margin-top: 14px;
+      color: #7dd3fc;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .error-message {
+      margin-top: 14px;
+      color: #fda4af;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+  `;
+
+  document.head.appendChild(ageStyle);
+
+
+  const studioMain = document.querySelector(".studio-main");
+  const existingUpload = document.getElementById("photoUpload");
+
+
+  const ageControls = document.createElement("div");
+
+  ageControls.className = "age-controls";
+
+  ageControls.innerHTML = `
+    <div class="age-label">
+      <span>Choose target age</span>
+      <span class="age-value" id="ageValue">30 years</span>
+    </div>
+
+    <input
+      class="age-slider"
+      id="ageSlider"
+      type="range"
+      min="0"
+      max="100"
+      value="30"
+      step="1"
+    >
+
+    <button
+      class="transform-button"
+      id="transformButton"
+      type="button"
+    >
+      ✨ Transform to Age 30
+    </button>
+
+    <div
+      class="processing-message"
+      id="processingMessage"
+    ></div>
+
+    <div
+      class="error-message"
+      id="ageError"
+    ></div>
+
+    <div
+      class="age-result"
+      id="ageResult"
+    >
+      <img
+        id="resultImage"
+        alt="FaceEvol age transformation result"
+      >
+    </div>
+  `;
+
+  studioMain.appendChild(ageControls);
+
+
+  const ageSlider =
+    document.getElementById("ageSlider");
+
+  const ageValue =
+    document.getElementById("ageValue");
+
+  const transformButton =
+    document.getElementById("transformButton");
+
+  const processingMessage =
+    document.getElementById("processingMessage");
+
+  const ageError =
+    document.getElementById("ageError");
+
+  const ageResult =
+    document.getElementById("ageResult");
+
+  const resultImage =
+    document.getElementById("resultImage");
+
+
+  let selectedPhoto = null;
+
+
+  existingUpload.addEventListener("change", function () {
+
+    if (!this.files || !this.files.length) {
+      return;
+    }
+
+    selectedPhoto = this.files[0];
+
+    ageControls.classList.add("show");
+
+    processingMessage.textContent =
+      "Photo ready. Choose an age and transform.";
+
+    ageError.textContent = "";
+
+    ageResult.classList.remove("show");
+
+  });
+
+
+  ageSlider.addEventListener("input", function () {
+
+    const age = this.value;
+
+    ageValue.textContent =
+      `${age} years`;
+
+    transformButton.textContent =
+      `✨ Transform to Age ${age}`;
+
+  });
+
+
+  function fileToDataURL(file) {
+
+    return new Promise((resolve, reject) => {
+
+      const reader =
+        new FileReader();
+
+      reader.onload = () =>
+        resolve(reader.result);
+
+      reader.onerror = reject;
+
+      reader.readAsDataURL(file);
+
+    });
+
+  }
+
+
+  transformButton.addEventListener(
+    "click",
+    async function () {
+
+      if (!selectedPhoto) {
+
+        ageError.textContent =
+          "Please choose a photo first.";
+
+        return;
+
+      }
+
+
+      transformButton.disabled = true;
+
+      transformButton.textContent =
+        "Transforming...";
+
+      processingMessage.textContent =
+        "FaceEvol AI is creating your transformation. This may take a little while.";
+
+      ageError.textContent = "";
+
+      ageResult.classList.remove("show");
+
+
+      try {
+
+        const imageData =
+          await fileToDataURL(selectedPhoto);
+
+
+        const response =
+          await fetch("/api/predict", {
+
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
+
+            body: JSON.stringify({
+
+              image:
+                imageData,
+
+              target_age:
+                Number(ageSlider.value)
+
+            })
+
+          });
+
+
+        const data =
+          await response.json();
+
+
+        if (!response.ok) {
+
+          throw new Error(
+            data.error ||
+            "Transformation failed."
+          );
+
+        }
+
+
+        const prediction =
+          data.prediction;
+
+
+        if (!prediction) {
+
+          throw new Error(
+            "No prediction was returned."
+          );
+
+        }
+
+
+        if (
+          prediction.status === "failed" ||
+          prediction.error
+        ) {
+
+          throw new Error(
+            prediction.error ||
+            "The AI transformation failed."
+          );
+
+        }
+
+
+        let output =
+          prediction.output;
+
+
+        if (Array.isArray(output)) {
+          output = output[0];
+        }
+
+
+        if (!output) {
+
+          throw new Error(
+            "The AI is still processing or returned no image. Please try again."
+          );
+
+        }
+
+
+        resultImage.src =
+          output;
+
+        ageResult.classList.add("show");
+
+        processingMessage.textContent =
+          `Transformation complete — age ${ageSlider.value}.`;
+
+      }
+
+      catch (error) {
+
+        processingMessage.textContent = "";
+
+        ageError.textContent =
+          error.message;
+
+      }
+
+      finally {
+
+        transformButton.disabled = false;
+
+        transformButton.textContent =
+          `✨ Transform to Age ${ageSlider.value}`;
+
+      }
+
+    }
+  );
+      </script>
 </body>
 </html>
