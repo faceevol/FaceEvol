@@ -62,6 +62,7 @@ export default async function handler(req, res) {
       {
         pathname,
         operation: "get",
+        access: "private",
         validUntil:
           Date.now() + 30 * 60 * 1000
       }
