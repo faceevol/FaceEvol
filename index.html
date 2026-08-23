@@ -3148,8 +3148,19 @@ startFaceSwapButton.addEventListener("click", async function () {
     const faceData =
       await fileToDataURL(selectedPhoto);
 
-    const videoData =
-      await fileToDataURL(selectedSwapVideo);
+    const { upload } =
+  await import("https://esm.sh/@vercel/blob@latest/client");
+
+const blob = await upload(
+  `faceevol-${Date.now()}-${selectedSwapVideo.name}`,
+  selectedSwapVideo,
+  {
+    access: "private",
+    handleUploadUrl: "/api/upload"
+  }
+);
+
+const videoData = blob.url;
 
     const response = await fetch("/api/faceswap", {
       method: "POST",
