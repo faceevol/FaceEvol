@@ -3073,6 +3073,153 @@ swapVideoUpload.addEventListener("change", function () {
   chooseSwapVideo.textContent =
     "✓ Video Ready";
 
-}); </script>
+}); let selectedSwapVideo = null;
+
+const startFaceSwapButton = document.createElement("button");
+startFaceSwapButton.type = "button";
+startFaceSwapButton.className = "transform-button";
+startFaceSwapButton.textContent = "🎬 Start Face Swap";
+startFaceSwapButton.style.display = "none";
+
+faceSwapControls.querySelector("div").appendChild(startFaceSwapButton);
+
+const faceSwapResult = document.createElement("div");
+faceSwapResult.style.marginTop = "20px";
+faceSwapResult.style.display = "none";
+
+faceSwapResult.innerHTML = `
+  <video
+    id="faceSwapResultVideo"
+    controls
+    playsinline
+    style="
+      width:100%;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.08);
+      background:#050914;
+    "
+  ></video>
+`;
+
+faceSwapControls.querySelector("div").appendChild(faceSwapResult);
+
+const faceSwapResultVideo =
+  document.getElementById("faceSwapResultVideo");
+
+
+swapVideoUpload.addEventListener("change", function () {
+
+  if (!this.files || !this.files.length) {
+    return;
+  }
+
+  selectedSwapVideo = this.files[0];
+
+  startFaceSwapButton.style.display = "block";
+  startFaceSwapButton.textContent = "🎬 Start Face Swap";
+
+});
+
+
+startFaceSwapButton.addEventListener("click", async function () {
+
+  if (!selectedPhoto) {
+    swapVideoStatus.textContent =
+      "Please select a face photo first.";
+    return;
+  }
+
+  if (!selectedSwapVideo) {
+    swapVideoStatus.textContent =
+      "Please select a video first.";
+    return;
+  }
+
+  startFaceSwapButton.disabled = true;
+  startFaceSwapButton.textContent = "Face swapping...";
+
+  swapVideoStatus.textContent =
+    "FaceEvol AI is processing your video. Please wait.";
+
+  faceSwapResult.style.display = "none";
+
+  try {
+
+    const faceData =
+      await fileToDataURL(selectedPhoto);
+
+    const videoData =
+      await fileToDataURL(selectedSwapVideo);
+
+    const response = await fetch("/api/faceswap", {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json"
+      },
+
+      body: JSON.stringify({
+        face: faceData,
+        video: videoData
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.error || "Face swap failed."
+      );
+    }
+
+    const prediction = data.prediction;
+
+    if (!prediction) {
+      throw new Error(
+        "No face swap prediction was returned."
+      );
+    }
+
+    if (
+      prediction.status === "failed" ||
+      prediction.error
+    ) {
+      throw new Error(
+        prediction.error || "Face swap failed."
+      );
+    }
+
+    let output = prediction.output;
+
+    if (Array.isArray(output)) {
+      output = output[0];
+    }
+
+    if (!output) {
+      throw new Error(
+        "The face swap is still processing or returned no video."
+      );
+    }
+
+    faceSwapResultVideo.src = output;
+    faceSwapResult.style.display = "block";
+
+    swapVideoStatus.textContent =
+      "✓ Face swap complete.";
+
+  } catch (error) {
+
+    swapVideoStatus.textContent =
+      error.message;
+
+  } finally {
+
+    startFaceSwapButton.disabled = false;
+    startFaceSwapButton.textContent =
+      "🎬 Start Face Swap";
+
+  }
+
+});</script>
 </body>
 </html>
