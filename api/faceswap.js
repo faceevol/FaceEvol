@@ -1,3 +1,4 @@
+// Trigger Vercel deployment
 import { createHmac } from "node:crypto";
 
 function createSignature(pathname, expires, secret) {
