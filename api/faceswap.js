@@ -25,6 +25,7 @@ export default async function handler(req, res) {
 
   const { face, video } = req.body || {};
 
+  // Validate face image
   if (
     !face ||
     typeof face !== "string" ||
@@ -35,6 +36,17 @@ export default async function handler(req, res) {
     });
   }
 
+  // Extra protection.
+  // The browser should already compress the image,
+  // but reject unexpectedly huge data if something goes wrong.
+  if (face.length > 3_000_000) {
+    return res.status(413).json({
+      error:
+        "The face image is still too large after optimization. Please try another image."
+    });
+  }
+
+  // Validate uploaded video URL
   if (
     !video ||
     typeof video !== "string" ||
@@ -48,6 +60,17 @@ export default async function handler(req, res) {
   try {
     const blobUrl = new URL(video);
 
+    // Only allow Vercel Blob URLs
+    if (
+      !blobUrl.hostname.endsWith(
+        ".blob.vercel-storage.com"
+      )
+    ) {
+      return res.status(400).json({
+        error: "Invalid video storage URL"
+      });
+    }
+
     const pathname =
       decodeURIComponent(
         blobUrl.pathname.slice(1)
@@ -59,6 +82,8 @@ export default async function handler(req, res) {
       });
     }
 
+    // Give Replicate 30 minutes to access
+    // the private source video.
     const expires =
       String(
         Date.now() +
@@ -103,9 +128,7 @@ export default async function handler(req, res) {
             `Bearer ${replicateToken}`,
 
           "Content-Type":
-            "application/json",
-
-          Prefer: "wait"
+            "application/json"
         },
 
         body: JSON.stringify({
@@ -123,19 +146,44 @@ export default async function handler(req, res) {
       }
     );
 
-    const prediction =
-      await response.json();
+    let prediction;
+
+    try {
+      prediction =
+        await response.json();
+    } catch {
+      prediction = null;
+    }
 
     if (!response.ok) {
+      console.error(
+        "Replicate face swap error:",
+        prediction
+      );
+
       return res
         .status(response.status)
         .json({
           error:
+            prediction?.detail ||
+            prediction?.error ||
             "Replicate face swap request failed",
 
           details:
             prediction
         });
+    }
+
+    if (!prediction?.id) {
+      console.error(
+        "Replicate returned no prediction ID:",
+        prediction
+      );
+
+      return res.status(502).json({
+        error:
+          "Face swap service returned an invalid response."
+      });
     }
 
     return res.status(200).json({
@@ -151,7 +199,10 @@ export default async function handler(req, res) {
 
     return res.status(500).json({
       error: "Server error",
-      details: error.message
+      details:
+        error instanceof Error
+          ? error.message
+          : String(error)
     });
   }
 }
