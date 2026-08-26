@@ -18,11 +18,9 @@
       --bg: #060914;
       --card: rgba(255,255,255,.05);
       --line: rgba(255,255,255,.08);
-
       --text: #ffffff;
       --soft: #a8b3c9;
       --muted: #7f8ca5;
-
       --purple: #a78bfa;
       --blue: #38bdf8;
       --cyan: #22d3ee;
@@ -104,6 +102,8 @@
       color: transparent;
     }
 
+    /* HEADER */
+
     header {
       position: sticky;
       top: 0;
@@ -158,6 +158,8 @@
       font-weight: 750;
       box-shadow: 0 10px 30px rgba(70,70,220,.22);
     }
+
+    /* HERO */
 
     .hero {
       padding: 86px 0 48px;
@@ -222,6 +224,7 @@
       border-radius: 14px;
       font-size: 15px;
       font-weight: 750;
+
       transition:
         transform .2s ease,
         background .2s ease,
@@ -254,6 +257,8 @@
       color: #8592aa;
       font-size: 13px;
     }
+
+    /* STUDIO */
 
     .studio-wrap {
       margin-top: 50px;
@@ -307,6 +312,7 @@
     .tool-option.active {
       color: white;
       border: 1px solid rgba(124,58,237,.35);
+
       background:
         linear-gradient(
           90deg,
@@ -362,6 +368,7 @@
       border: 1px dashed rgba(148,163,184,.25);
       background: rgba(255,255,255,.018);
       cursor: pointer;
+
       transition:
         border-color .2s ease,
         background .2s ease;
@@ -380,6 +387,7 @@
       place-items: center;
       border-radius: 18px;
       font-size: 28px;
+
       background:
         linear-gradient(
           145deg,
@@ -405,6 +413,98 @@
       font-weight: 700;
     }
 
+    /* DYNAMIC CONTROLS */
+
+    .age-controls {
+      margin-top: 22px;
+      padding: 22px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.025);
+      display: none;
+    }
+
+    .age-controls.show {
+      display: block;
+    }
+
+    .age-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 14px;
+      color: #dce5f3;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .age-value {
+      color: #7dd3fc;
+      font-size: 18px;
+      font-weight: 850;
+    }
+
+    .age-slider {
+      width: 100%;
+      accent-color: #7c3aed;
+      cursor: pointer;
+    }
+
+    .transform-button {
+      width: 100%;
+      min-height: 52px;
+      margin-top: 18px;
+      border: 0;
+      border-radius: 14px;
+      cursor: pointer;
+      color: white;
+      font-weight: 800;
+      font-size: 15px;
+      background: linear-gradient(90deg,#7c3aed,#0ea5e9);
+      box-shadow: 0 14px 35px rgba(70,90,220,.24);
+    }
+
+    .transform-button:disabled {
+      opacity: .55;
+      cursor: wait;
+    }
+
+    .age-result {
+      margin-top: 22px;
+      display: none;
+    }
+
+    .age-result.show {
+      display: block;
+    }
+
+    .age-result img {
+      width: 100%;
+      max-height: 520px;
+      object-fit: contain;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: #050914;
+    }
+
+    .processing-message {
+      margin-top: 14px;
+      color: #7dd3fc;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.5;
+    }
+
+    .error-message {
+      margin-top: 14px;
+      color: #fda4af;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    /* PROOF */
+
     .proof {
       padding: 26px 0 12px;
       text-align: center;
@@ -429,6 +529,8 @@
       font-size: 13px;
       font-weight: 650;
     }
+
+    /* SECTIONS */
 
     section {
       padding: 72px 0;
@@ -463,6 +565,8 @@
       line-height: 1.7;
     }
 
+    /* FEATURES */
+
     .feature-grid {
       display: grid;
       grid-template-columns: repeat(12,1fr);
@@ -475,6 +579,7 @@
       border-radius: 20px;
       background: rgba(255,255,255,.025);
       border: 1px solid rgba(255,255,255,.065);
+
       transition:
         transform .22s ease,
         border-color .22s ease;
@@ -501,6 +606,7 @@
       place-items: center;
       border-radius: 14px;
       font-size: 23px;
+
       background:
         linear-gradient(
           145deg,
@@ -527,6 +633,8 @@
       font-size: 11px;
       font-weight: 750;
     }
+
+    /* STEPS */
 
     .steps {
       display: grid;
@@ -563,6 +671,8 @@
       font-size: 14px;
     }
 
+    /* QUALITY */
+
     .quality-box {
       padding: 48px;
       display: grid;
@@ -570,12 +680,14 @@
       gap: 50px;
       align-items: center;
       border-radius: 26px;
+
       background:
         linear-gradient(
           145deg,
           rgba(124,58,237,.07),
           rgba(14,165,233,.035)
         );
+
       border: 1px solid rgba(255,255,255,.07);
     }
 
@@ -656,10 +768,27 @@
       font-weight: 700;
     }
 
-    .chip-1 { left: 10%; top: 17%; }
-    .chip-2 { right: 10%; top: 26%; }
-    .chip-3 { left: 15%; bottom: 17%; }
-    .chip-4 { right: 10%; bottom: 13%; }
+    .chip-1 {
+      left: 10%;
+      top: 17%;
+    }
+
+    .chip-2 {
+      right: 10%;
+      top: 26%;
+    }
+
+    .chip-3 {
+      left: 15%;
+      bottom: 17%;
+    }
+
+    .chip-4 {
+      right: 10%;
+      bottom: 13%;
+    }
+
+    /* PRIVACY */
 
     .privacy-grid {
       display: grid;
@@ -686,6 +815,8 @@
       font-size: 13px;
     }
 
+    /* PRICING */
+
     .pricing-grid {
       max-width: 930px;
       margin: 0 auto;
@@ -704,6 +835,7 @@
 
     .price-card.featured {
       border-color: rgba(124,58,237,.36);
+
       background:
         linear-gradient(
           145deg,
@@ -763,6 +895,8 @@
       font-size: 13px;
     }
 
+    /* FAQ */
+
     .faq-list {
       max-width: 800px;
       margin: 0 auto;
@@ -808,6 +942,8 @@
       line-height: 1.65;
     }
 
+    /* CTA */
+
     .cta {
       padding-top: 40px;
       padding-bottom: 70px;
@@ -842,6 +978,8 @@
       line-height: 1.65;
       font-size: 15px;
     }
+
+    /* FOOTER */
 
     footer {
       padding: 42px 0 28px;
@@ -881,92 +1019,7 @@
       font-size: 12px;
     }
 
-    .age-controls {
-      margin-top: 22px;
-      padding: 22px;
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.025);
-      display: none;
-    }
-
-    .age-controls.show {
-      display: block;
-    }
-
-    .age-label {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 15px;
-      margin-bottom: 14px;
-      color: #dce5f3;
-      font-weight: 700;
-      font-size: 14px;
-    }
-
-    .age-value {
-      color: #7dd3fc;
-      font-size: 18px;
-      font-weight: 850;
-    }
-
-    .age-slider {
-      width: 100%;
-      accent-color: #7c3aed;
-      cursor: pointer;
-    }
-
-    .transform-button {
-      width: 100%;
-      min-height: 52px;
-      margin-top: 18px;
-      border: 0;
-      border-radius: 14px;
-      cursor: pointer;
-      color: white;
-      font-weight: 800;
-      font-size: 15px;
-      background: linear-gradient(90deg,#7c3aed,#0ea5e9);
-      box-shadow: 0 14px 35px rgba(70,90,220,.24);
-    }
-
-    .transform-button:disabled {
-      opacity: .55;
-      cursor: wait;
-    }
-
-    .age-result {
-      margin-top: 22px;
-      display: none;
-    }
-
-    .age-result.show {
-      display: block;
-    }
-
-    .age-result img {
-      width: 100%;
-      max-height: 520px;
-      object-fit: contain;
-      border-radius: 18px;
-      border: 1px solid rgba(255,255,255,.08);
-      background: #050914;
-    }
-
-    .processing-message {
-      margin-top: 14px;
-      color: #7dd3fc;
-      font-size: 13px;
-      font-weight: 700;
-    }
-
-    .error-message {
-      margin-top: 14px;
-      color: #fda4af;
-      font-size: 13px;
-      line-height: 1.5;
-    }
+    /* TABLET */
 
     @media (max-width: 1000px) {
       .feature-card.large,
@@ -983,6 +1036,8 @@
         max-width: 560px;
       }
     }
+
+    /* MOBILE */
 
     @media (max-width: 850px) {
       .nav-links a:not(.nav-button) {
@@ -1197,7 +1252,10 @@
         <a href="#pricing">Pricing</a>
         <a href="#faq">FAQ</a>
 
-        <a href="#start" class="nav-button">
+        <a
+          href="#start"
+          class="nav-button"
+        >
           Start Free
         </a>
       </nav>
@@ -1207,6 +1265,8 @@
 
 
   <main>
+
+    <!-- HERO -->
 
     <section class="hero">
 
@@ -1220,6 +1280,7 @@
         <h1>
           Imagine Your Face.
           <br>
+
           <span class="gradient-text">
             Transform Your Story.
           </span>
@@ -1231,17 +1292,25 @@
           with powerful AI — all in one simple creative studio.
         </p>
 
+
         <div class="hero-actions">
 
-          <a href="#start" class="button button-primary">
+          <a
+            href="#start"
+            class="button button-primary"
+          >
             ✨ Start Creating Free
           </a>
 
-          <a href="#features" class="button button-secondary">
+          <a
+            href="#features"
+            class="button button-secondary"
+          >
             Explore FaceEvol →
           </a>
 
         </div>
+
 
         <div class="hero-trust">
           <span>✓ Easy to use</span>
@@ -1251,11 +1320,14 @@
         </div>
 
 
+        <!-- STUDIO -->
+
         <div class="studio-wrap">
 
           <div class="studio">
 
             <div class="studio-inner">
+
 
               <div class="studio-sidebar">
 
@@ -1263,10 +1335,12 @@
                   Create
                 </div>
 
+
                 <div
                   class="tool-option active"
                   id="ageOption"
                 >
+
                   <div class="tool-icon">
                     🕒
                   </div>
@@ -1274,6 +1348,7 @@
                   <div class="tool-name">
                     Age
                   </div>
+
                 </div>
 
 
@@ -1281,6 +1356,7 @@
                   class="tool-option"
                   id="faceSwapOption"
                 >
+
                   <div class="tool-icon">
                     🎬
                   </div>
@@ -1288,6 +1364,7 @@
                   <div class="tool-name">
                     Face Swap
                   </div>
+
                 </div>
 
 
@@ -1369,6 +1446,8 @@
     </section>
 
 
+    <!-- TRUST BAR -->
+
     <div class="proof">
 
       <div class="container">
@@ -1388,6 +1467,8 @@
 
     </div>
 
+
+    <!-- FEATURES -->
 
     <section id="features">
 
@@ -1541,6 +1622,8 @@
     </section>
 
 
+    <!-- HOW IT WORKS -->
+
     <section id="how-it-works">
 
       <div class="container">
@@ -1627,11 +1710,14 @@
     </section>
 
 
+    <!-- QUALITY -->
+
     <section id="quality">
 
       <div class="container">
 
         <div class="quality-box">
+
 
           <div class="quality-content">
 
@@ -1710,6 +1796,8 @@
 
     </section>
 
+
+    <!-- PRIVACY -->
 
     <section>
 
@@ -1799,6 +1887,8 @@
     </section>
 
 
+    <!-- PRICING -->
+
     <section id="pricing">
 
       <div class="container">
@@ -1847,7 +1937,10 @@
               <li>✓ Easy web access</li>
             </ul>
 
-            <a href="#start" class="button button-secondary">
+            <a
+              href="#start"
+              class="button button-secondary"
+            >
               Start Free
             </a>
 
@@ -1880,7 +1973,10 @@
               <li>✓ Faster processing</li>
             </ul>
 
-            <a href="#start" class="button button-primary">
+            <a
+              href="#start"
+              class="button button-primary"
+            >
               Start Free
             </a>
 
@@ -1909,7 +2005,10 @@
               <li>✓ Advanced enhancement</li>
             </ul>
 
-            <a href="#start" class="button button-secondary">
+            <a
+              href="#start"
+              class="button button-secondary"
+            >
               Start Free
             </a>
 
@@ -1921,6 +2020,8 @@
 
     </section>
 
+
+    <!-- FAQ -->
 
     <section id="faq">
 
@@ -2023,7 +2124,12 @@
     </section>
 
 
-    <section class="cta" id="start">
+    <!-- CTA -->
+
+    <section
+      class="cta"
+      id="start"
+    >
 
       <div class="container">
 
@@ -2070,23 +2176,51 @@
   </main>
 
 
+  <!-- FOOTER -->
+
   <footer>
 
     <div class="container">
 
       <div class="footer-main">
 
-        <a href="#" class="footer-logo">
-          <img src="a.png" alt="FaceEvol">
+        <a
+          href="#"
+          class="footer-logo"
+        >
+          <img
+            src="a.png"
+            alt="FaceEvol"
+          >
         </a>
 
+
         <div class="footer-links">
-          <a href="#features">Features</a>
-          <a href="#pricing">Pricing</a>
-          <a href="#faq">FAQ</a>
-          <a href="#">Privacy</a>
-          <a href="#">Terms</a>
-          <a href="#">Contact</a>
+
+          <a href="#features">
+            Features
+          </a>
+
+          <a href="#pricing">
+            Pricing
+          </a>
+
+          <a href="#faq">
+            FAQ
+          </a>
+
+          <a href="#">
+            Privacy
+          </a>
+
+          <a href="#">
+            Terms
+          </a>
+
+          <a href="#">
+            Contact
+          </a>
+
         </div>
 
       </div>
@@ -2112,51 +2246,81 @@
   <script>
 
     const photoUpload =
-      document.getElementById("photoUpload");
+      document.getElementById(
+        "photoUpload"
+      );
 
     const uploadBox =
-      document.getElementById("uploadBox");
+      document.getElementById(
+        "uploadBox"
+      );
 
     const uploadStatus =
-      document.getElementById("uploadStatus");
+      document.getElementById(
+        "uploadStatus"
+      );
 
     const studioMain =
-      document.querySelector(".studio-main");
-
-    const ageOption =
-      document.getElementById("ageOption");
+      document.querySelector(
+        ".studio-main"
+      );
 
     const faceSwapOption =
-      document.getElementById("faceSwapOption");
+      document.getElementById(
+        "faceSwapOption"
+      );
+
+    const ageOption =
+      document.getElementById(
+        "ageOption"
+      );
 
 
-    let selectedPhoto = null;
-    let selectedSwapVideo = null;
-    let faceSwapMode = false;
+    let selectedPhoto =
+      null;
+
+    let selectedSwapVideo =
+      null;
+
+    let faceSwapMode =
+      false;
 
 
     /*
-      Convert a normal file to Base64.
-    */
-    function fileToDataURL(file) {
+     * Canvas -> JPEG Blob.
+     */
+
+    function canvasToBlob(
+      canvas,
+      type,
+      quality
+    ) {
 
       return new Promise(
         (resolve, reject) => {
 
-          const reader =
-            new FileReader();
+          canvas.toBlob(
+            blob => {
 
-          reader.onload = () =>
-            resolve(reader.result);
+              if (blob) {
 
-          reader.onerror = () =>
-            reject(
-              new Error(
-                "The selected photo could not be read."
-              )
-            );
+                resolve(blob);
 
-          reader.readAsDataURL(file);
+              } else {
+
+                reject(
+                  new Error(
+                    "FaceEvol could not prepare this photo."
+                  )
+                );
+
+              }
+
+            },
+
+            type,
+            quality
+          );
 
         }
       );
@@ -2165,47 +2329,80 @@
 
 
     /*
-      Automatically optimize large photos.
+     * Blob -> Base64.
+     *
+     * Only the Age feature still
+     * needs Base64.
+     *
+     * Video Face Swap does NOT.
+     */
 
-      IMPORTANT:
-      - No cropping.
-      - Full photo remains.
-      - Aspect ratio remains.
-      - Small photos stay unchanged.
-      - Large photos are resized/compressed.
-    */
-    async function optimizeImage(file) {
+    function blobToDataURL(
+      blob
+    ) {
 
-      const ORIGINAL_FILE_LIMIT =
-        1400000;
+      return new Promise(
+        (resolve, reject) => {
 
-      const MAX_DIMENSION =
+          const reader =
+            new FileReader();
+
+
+          reader.onload =
+            () =>
+              resolve(
+                reader.result
+              );
+
+
+          reader.onerror =
+            () =>
+              reject(
+                new Error(
+                  "The optimized photo could not be read."
+                )
+              );
+
+
+          reader.readAsDataURL(
+            blob
+          );
+
+        }
+      );
+
+    }
+
+
+    /*
+     * FaceEvol image optimization.
+     *
+     * IMPORTANT:
+     *
+     * - The entire picture is preserved.
+     * - Nothing is cropped.
+     * - Aspect ratio stays the same.
+     * - Smaller images are never enlarged.
+     */
+
+    async function optimizeImageToBlob(
+      file,
+      options = {}
+    ) {
+
+      const maxDimension =
+        options.maxDimension ||
         2048;
 
-      const TARGET_DATA_URL_LENGTH =
-        2200000;
+
+      const maxBytes =
+        options.maxBytes ||
+        5 * 1024 * 1024;
 
 
-      const safeOriginalTypes = [
-        "image/jpeg",
-        "image/jpg",
-        "image/png",
-        "image/webp"
-      ];
-
-
-      if (
-        file.size <= ORIGINAL_FILE_LIMIT &&
-        safeOriginalTypes.includes(
-          file.type.toLowerCase()
-        )
-      ) {
-
-        return await fileToDataURL(
-          file
-        );
-
-      }
+      let quality =
+        options.quality ||
+        0.94;
 
 
       const imageUrl =
@@ -2218,22 +2415,29 @@
 
         const image =
           await new Promise(
-            (resolve, reject) => {
+            (
+              resolve,
+              reject
+            ) => {
 
               const img =
                 new Image();
 
 
-              img.onload = () =>
-                resolve(img);
+              img.onload =
+                () =>
+                  resolve(
+                    img
+                  );
 
 
-              img.onerror = () =>
-                reject(
-                  new Error(
-                    "FaceEvol could not read this photo format. Please try JPG, PNG or WebP."
-                  )
-                );
+              img.onerror =
+                () =>
+                  reject(
+                    new Error(
+                      "FaceEvol could not read this image. Please use JPG, PNG or WebP."
+                    )
+                  );
 
 
               img.src =
@@ -2245,6 +2449,7 @@
 
         let width =
           image.naturalWidth;
+
 
         let height =
           image.naturalHeight;
@@ -2262,10 +2467,18 @@
         }
 
 
+        /*
+         * Calculate proportional resize.
+         *
+         * Math.min(1, ...)
+         * means we never enlarge.
+         */
+
         const scale =
           Math.min(
             1,
-            MAX_DIMENSION /
+
+            maxDimension /
               Math.max(
                 width,
                 height
@@ -2276,6 +2489,7 @@
         width =
           Math.max(
             1,
+
             Math.round(
               width * scale
             )
@@ -2285,14 +2499,11 @@
         height =
           Math.max(
             1,
+
             Math.round(
               height * scale
             )
           );
-
-
-        let quality =
-          0.94;
 
 
         for (
@@ -2309,6 +2520,7 @@
 
           canvas.width =
             width;
+
 
           canvas.height =
             height;
@@ -2328,6 +2540,12 @@
 
           }
 
+
+          /*
+           * Transparent images need
+           * a background when converted
+           * to JPEG.
+           */
 
           context.fillStyle =
             "#ffffff";
@@ -2350,9 +2568,11 @@
 
 
           /*
-            Draw full picture.
-            Nothing is cropped.
-          */
+           * Draw the FULL image.
+           *
+           * NO CROP.
+           */
+
           context.drawImage(
             image,
             0,
@@ -2362,37 +2582,52 @@
           );
 
 
-          const dataUrl =
-            canvas.toDataURL(
+          const blob =
+            await canvasToBlob(
+              canvas,
               "image/jpeg",
               quality
             );
 
 
           if (
-            dataUrl.length <=
-            TARGET_DATA_URL_LENGTH
+            blob.size <=
+            maxBytes
           ) {
 
-            return dataUrl;
+            return blob;
 
           }
 
 
+          /*
+           * First reduce JPEG
+           * compression gently.
+           */
+
           if (
-            quality > 0.80
+            quality >
+            0.82
           ) {
 
             quality -=
-              0.04;
+              0.03;
 
           } else {
+
+            /*
+             * If still unusually
+             * large, reduce dimensions
+             * slightly while preserving
+             * aspect ratio.
+             */
 
             width =
               Math.max(
                 1,
+
                 Math.round(
-                  width * 0.90
+                  width * 0.9
                 )
               );
 
@@ -2400,8 +2635,9 @@
             height =
               Math.max(
                 1,
+
                 Math.round(
-                  height * 0.90
+                  height * 0.9
                 )
               );
 
@@ -2411,7 +2647,7 @@
 
 
         throw new Error(
-          "This photo could not be optimized enough for upload. Please try another image."
+          "FaceEvol could not optimize this photo."
         );
 
       } finally {
@@ -2426,10 +2662,32 @@
 
 
     /*
-      Safely read API responses,
-      including 413 responses that
-      might not return valid JSON.
-    */
+     * Safe Blob filename.
+     */
+
+    function safeFileName(
+      name
+    ) {
+
+      return String(
+        name ||
+        "video"
+      )
+        .replace(
+          /[^a-zA-Z0-9._-]+/g,
+          "-"
+        )
+        .slice(
+          -100
+        );
+
+    }
+
+
+    /*
+     * Safe API response reader.
+     */
+
     async function readJsonResponse(
       response
     ) {
@@ -2439,7 +2697,9 @@
 
 
       if (!text) {
+
         return {};
+
       }
 
 
@@ -2452,10 +2712,15 @@
       } catch {
 
         return {
+
           error:
-            response.status === 413
+            response.status ===
+            413
+
               ? "The request was too large."
+
               : "The server returned an unexpected response."
+
         };
 
       }
@@ -2464,19 +2729,19 @@
 
 
     /*
-      Strong Replicate output finder.
+     * Find a video URL from
+     * different possible Replicate
+     * response formats.
+     */
 
-      Searches:
-      - strings
-      - arrays
-      - nested objects
-      - all common video URL fields
-      - every other nested field as fallback
-    */
-    function findVideoUrl(value) {
+    function findVideoUrl(
+      value
+    ) {
 
       if (!value) {
+
         return null;
+
       }
 
 
@@ -2515,7 +2780,8 @@
       ) {
 
         for (
-          const item of value
+          const item of
+          value
         ) {
 
           const found =
@@ -2525,7 +2791,9 @@
 
 
           if (found) {
+
             return found;
+
           }
 
         }
@@ -2542,6 +2810,7 @@
       ) {
 
         const preferredKeys = [
+
           "video",
           "video_url",
           "videoUrl",
@@ -2551,11 +2820,13 @@
           "href",
           "download",
           "result"
+
         ];
 
 
         for (
-          const key of preferredKeys
+          const key of
+          preferredKeys
         ) {
 
           if (
@@ -2570,7 +2841,9 @@
 
 
             if (found) {
+
               return found;
+
             }
 
           }
@@ -2579,12 +2852,15 @@
 
 
         /*
-          Search every other nested
-          property as fallback.
-        */
+         * Fallback:
+         * search every property.
+         */
+
         for (
           const nestedValue of
-          Object.values(value)
+          Object.values(
+            value
+          )
         ) {
 
           const found =
@@ -2594,7 +2870,9 @@
 
 
           if (found) {
+
             return found;
+
           }
 
         }
@@ -2608,8 +2886,9 @@
 
 
     /*
-      PHOTO UPLOAD
-    */
+     * PHOTO SELECTION
+     */
+
     photoUpload.addEventListener(
       "change",
       function () {
@@ -2618,7 +2897,9 @@
           !this.files ||
           !this.files.length
         ) {
+
           return;
+
         }
 
 
@@ -2649,20 +2930,26 @@
           faceSwapMode
         ) {
 
-          ageControls.classList.remove(
-            "show"
-          );
+          ageControls
+            .classList
+            .remove(
+              "show"
+            );
 
 
-          faceSwapControls.classList.add(
-            "show"
-          );
+          faceSwapControls
+            .classList
+            .add(
+              "show"
+            );
 
         } else {
 
-          ageControls.classList.add(
-            "show"
-          );
+          ageControls
+            .classList
+            .add(
+              "show"
+            );
 
         }
 
@@ -2671,8 +2958,9 @@
 
 
     /*
-      AGE TRANSFORMATION
-    */
+     * AGE TRANSFORMATION
+     */
+
     const ageControls =
       document.createElement(
         "div"
@@ -2684,6 +2972,7 @@
 
 
     ageControls.innerHTML = `
+
       <div class="age-label">
 
         <span>
@@ -2743,6 +3032,7 @@
         >
 
       </div>
+
     `;
 
 
@@ -2756,30 +3046,36 @@
         "ageSlider"
       );
 
+
     const ageValue =
       document.getElementById(
         "ageValue"
       );
+
 
     const transformButton =
       document.getElementById(
         "transformButton"
       );
 
+
     const processingMessage =
       document.getElementById(
         "processingMessage"
       );
+
 
     const ageError =
       document.getElementById(
         "ageError"
       );
 
+
     const ageResult =
       document.getElementById(
         "ageResult"
       );
+
 
     const resultImage =
       document.getElementById(
@@ -2791,16 +3087,12 @@
       "input",
       function () {
 
-        const age =
-          this.value;
-
-
         ageValue.textContent =
-          `${age} years`;
+          `${this.value} years`;
 
 
         transformButton.textContent =
-          `✨ Transform to Age ${age}`;
+          `✨ Transform to Age ${this.value}`;
 
       }
     );
@@ -2838,16 +3130,41 @@
           "";
 
 
-        ageResult.classList.remove(
-          "show"
-        );
+        ageResult
+          .classList
+          .remove(
+            "show"
+          );
 
 
         try {
 
+          /*
+           * Age still uses Base64,
+           * so keep this one small.
+           */
+
+          const optimizedBlob =
+            await optimizeImageToBlob(
+              selectedPhoto,
+              {
+
+                maxDimension:
+                  1600,
+
+                maxBytes:
+                  700 * 1024,
+
+                quality:
+                  0.92
+
+              }
+            );
+
+
           const imageData =
-            await optimizeImage(
-              selectedPhoto
+            await blobToDataURL(
+              optimizedBlob
             );
 
 
@@ -2859,16 +3176,20 @@
             await fetch(
               "/api/predict",
               {
+
                 method:
                   "POST",
 
                 headers: {
+
                   "Content-Type":
                     "application/json"
+
                 },
 
                 body:
                   JSON.stringify({
+
                     image:
                       imageData,
 
@@ -2876,7 +3197,9 @@
                       Number(
                         ageSlider.value
                       )
+
                   })
+
               }
             );
 
@@ -2949,7 +3272,7 @@
           ) {
 
             throw new Error(
-              "The AI is still processing or returned no image. Please try again."
+              "The AI returned no image. Please try again."
             );
 
           }
@@ -2959,9 +3282,11 @@
             output;
 
 
-          ageResult.classList.add(
-            "show"
-          );
+          ageResult
+            .classList
+            .add(
+              "show"
+            );
 
 
           processingMessage.textContent =
@@ -2975,8 +3300,12 @@
 
           ageError.textContent =
             error instanceof Error
+
               ? error.message
-              : String(error);
+
+              : String(
+                  error
+                );
 
         } finally {
 
@@ -2994,8 +3323,9 @@
 
 
     /*
-      VIDEO FACE SWAP
-    */
+     * FACE SWAP UI
+     */
+
     const faceSwapControls =
       document.createElement(
         "div"
@@ -3007,6 +3337,7 @@
 
 
     faceSwapControls.innerHTML = `
+
       <div style="text-align:center;">
 
         <div
@@ -3065,6 +3396,7 @@
         ></div>
 
       </div>
+
     `;
 
 
@@ -3078,10 +3410,12 @@
         "chooseSwapVideo"
       );
 
+
     const swapVideoUpload =
       document.getElementById(
         "swapVideoUpload"
       );
+
 
     const swapVideoStatus =
       document.getElementById(
@@ -3112,7 +3446,9 @@
 
 
     faceSwapControls
-      .querySelector("div")
+      .querySelector(
+        "div"
+      )
       .appendChild(
         startFaceSwapButton
       );
@@ -3133,11 +3469,13 @@
 
 
     faceSwapResult.innerHTML = `
+
       <video
         id="faceSwapResultVideo"
         controls
         playsinline
         preload="metadata"
+
         style="
           width:100%;
           border-radius:18px;
@@ -3145,11 +3483,14 @@
           background:#050914;
         "
       ></video>
+
     `;
 
 
     faceSwapControls
-      .querySelector("div")
+      .querySelector(
+        "div"
+      )
       .appendChild(
         faceSwapResult
       );
@@ -3160,6 +3501,10 @@
         "faceSwapResultVideo"
       );
 
+
+    /*
+     * FACE SWAP TAB
+     */
 
     faceSwapOption.addEventListener(
       "click",
@@ -3175,25 +3520,33 @@
           )
           .forEach(
             option =>
-              option.classList.remove(
-                "active"
-              )
+              option
+                .classList
+                .remove(
+                  "active"
+                )
           );
 
 
-        faceSwapOption.classList.add(
-          "active"
-        );
+        faceSwapOption
+          .classList
+          .add(
+            "active"
+          );
 
 
-        ageControls.classList.remove(
-          "show"
-        );
+        ageControls
+          .classList
+          .remove(
+            "show"
+          );
 
 
-        faceSwapControls.classList.add(
-          "show"
-        );
+        faceSwapControls
+          .classList
+          .add(
+            "show"
+          );
 
 
         document
@@ -3215,6 +3568,10 @@
     );
 
 
+    /*
+     * AGE TAB
+     */
+
     ageOption.addEventListener(
       "click",
       function () {
@@ -3229,29 +3586,37 @@
           )
           .forEach(
             option =>
-              option.classList.remove(
-                "active"
-              )
+              option
+                .classList
+                .remove(
+                  "active"
+                )
           );
 
 
-        ageOption.classList.add(
-          "active"
-        );
+        ageOption
+          .classList
+          .add(
+            "active"
+          );
 
 
-        faceSwapControls.classList.remove(
-          "show"
-        );
+        faceSwapControls
+          .classList
+          .remove(
+            "show"
+          );
 
 
         if (
           selectedPhoto
         ) {
 
-          ageControls.classList.add(
-            "show"
-          );
+          ageControls
+            .classList
+            .add(
+              "show"
+            );
 
         }
 
@@ -3275,6 +3640,10 @@
     );
 
 
+    /*
+     * SELECT VIDEO
+     */
+
     chooseSwapVideo.addEventListener(
       "click",
       function () {
@@ -3293,7 +3662,9 @@
           !this.files ||
           !this.files.length
         ) {
+
           return;
+
         }
 
 
@@ -3319,6 +3690,10 @@
       }
     );
 
+
+    /*
+     * START FACE SWAP
+     */
 
     startFaceSwapButton.addEventListener(
       "click",
@@ -3356,10 +3731,6 @@
           "Face swapping...";
 
 
-        swapVideoStatus.textContent =
-          "Preparing your face photo...";
-
-
         faceSwapResult.style.display =
           "none";
 
@@ -3378,41 +3749,124 @@
         try {
 
           /*
-            Automatic face photo optimization.
-          */
-          const faceData =
-            await optimizeImage(
-              selectedPhoto
+           * STEP 1
+           *
+           * Optimize the face locally.
+           *
+           * Entire photo preserved.
+           * No crop.
+           */
+
+          swapVideoStatus.textContent =
+            "Preparing your face photo...";
+
+
+          const optimizedFace =
+            await optimizeImageToBlob(
+              selectedPhoto,
+              {
+
+                maxDimension:
+                  2048,
+
+                maxBytes:
+                  5 * 1024 * 1024,
+
+                quality:
+                  0.94
+
+              }
             );
 
+
+          /*
+           * Load the Vercel Blob
+           * browser upload client.
+           */
+
+          const {
+            upload
+          } =
+            await import(
+              "https://esm.sh/@vercel/blob@2.6.1/client"
+            );
+
+
+          /*
+           * STEP 2
+           *
+           * Upload source video
+           * privately.
+           */
 
           swapVideoStatus.textContent =
             "Uploading your video...";
 
 
-          const { upload } =
-            await import(
-              "https://esm.sh/@vercel/blob@latest/client"
-            );
-
-
-          const blob =
+          const videoBlob =
             await upload(
-              `faceevol-${Date.now()}-${selectedSwapVideo.name}`,
+
+              `faceevol-video-${Date.now()}-${safeFileName(
+                selectedSwapVideo.name
+              )}`,
+
               selectedSwapVideo,
+
               {
+
                 access:
                   "private",
 
                 handleUploadUrl:
                   "/api/upload"
+
               }
+
             );
 
 
-          const videoData =
-            blob.url;
+          /*
+           * STEP 3
+           *
+           * Upload optimized face
+           * privately.
+           *
+           * No Base64 is sent
+           * to /api/faceswap.
+           */
 
+          swapVideoStatus.textContent =
+            "Uploading your optimized face photo...";
+
+
+          const faceBlob =
+            await upload(
+
+              `faceevol-face-${Date.now()}.jpg`,
+
+              optimizedFace,
+
+              {
+
+                access:
+                  "private",
+
+                handleUploadUrl:
+                  "/api/upload"
+
+              }
+
+            );
+
+
+          /*
+           * STEP 4
+           *
+           * Start Replicate.
+           *
+           * Only two short Blob URLs
+           * are sent in this request.
+           */
 
           swapVideoStatus.textContent =
             "Starting FaceEvol AI face swap...";
@@ -3422,22 +3876,28 @@
             await fetch(
               "/api/faceswap",
               {
+
                 method:
                   "POST",
 
                 headers: {
+
                   "Content-Type":
                     "application/json"
+
                 },
 
                 body:
                   JSON.stringify({
+
                     face:
-                      faceData,
+                      faceBlob.url,
 
                     video:
-                      videoData
+                      videoBlob.url
+
                   })
+
               }
             );
 
@@ -3452,21 +3912,25 @@
             !response.ok
           ) {
 
+            let message =
+              data.error ||
+              "Face swap failed.";
+
+
             if (
-              response.status ===
-              413
+              data.details &&
+              typeof data.details ===
+                "string"
             ) {
 
-              throw new Error(
-                "The face photo request is still too large."
-              );
+              message +=
+                ` ${data.details}`;
 
             }
 
 
             throw new Error(
-              data.error ||
-              "Face swap failed."
+              message
             );
 
           }
@@ -3487,6 +3951,12 @@
 
           }
 
+
+          /*
+           * STEP 5
+           *
+           * Poll Replicate status.
+           */
 
           let attempts =
             0;
@@ -3522,9 +3992,16 @@
 
             const statusResponse =
               await fetch(
+
                 `/api/prediction?id=${encodeURIComponent(
                   prediction.id
-                )}`
+                )}`,
+
+                {
+                  cache:
+                    "no-store"
+                }
+
               );
 
 
@@ -3546,13 +4023,6 @@
             }
 
 
-            /*
-              Supports either:
-              { prediction: {...} }
-
-              or the current:
-              { id, status, output, error }
-            */
             prediction =
               statusData.prediction ||
               statusData;
@@ -3562,6 +4032,12 @@
 
           }
 
+
+          /*
+           * STEP 6
+           *
+           * Handle prediction failure.
+           */
 
           if (
             prediction.status ===
@@ -3592,8 +4068,11 @@
 
 
           /*
-            NEW stronger output detection.
-          */
+           * STEP 7
+           *
+           * Find finished MP4.
+           */
+
           const output =
             findVideoUrl(
               prediction.output
@@ -3604,13 +4083,13 @@
 
 
           console.log(
-            "FaceEvol finished prediction:",
+            "FaceEvol completed prediction:",
             prediction
           );
 
 
           console.log(
-            "FaceEvol detected result video:",
+            "FaceEvol detected output:",
             output
           );
 
@@ -3619,18 +4098,18 @@
             !output
           ) {
 
-            console.error(
-              "FaceEvol prediction succeeded but no usable video URL was found:",
-              prediction
-            );
-
-
             throw new Error(
-              "Face swap finished, but the video could not be loaded. Please try again."
+              "AI processing finished but generated no output video."
             );
 
           }
 
+
+          /*
+           * STEP 8
+           *
+           * Display finished video.
+           */
 
           faceSwapResultVideo.src =
             output;
@@ -3646,6 +4125,32 @@
           swapVideoStatus.textContent =
             "✓ Face swap complete.";
 
+
+          /*
+           * Try to begin loading
+           * the first frame immediately.
+           */
+
+          faceSwapResultVideo
+            .play()
+            .then(
+              () => {
+
+                faceSwapResultVideo.pause();
+
+              }
+            )
+            .catch(
+              () => {
+
+                /*
+                 * Autoplay restrictions
+                 * are normal.
+                 */
+
+              }
+            );
+
         } catch (error) {
 
           console.error(
@@ -3656,8 +4161,12 @@
 
           swapVideoStatus.textContent =
             error instanceof Error
+
               ? error.message
-              : String(error);
+
+              : String(
+                  error
+                );
 
         } finally {
 
