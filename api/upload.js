@@ -13,38 +13,68 @@ export default async function handler(req, res) {
       request: req,
 
       onBeforeGenerateToken: async (pathname) => {
-
-        // Only allow files created by the FaceEvol
-        // video-upload flow.
         if (
-          typeof pathname !== "string" ||
-          !pathname.startsWith("faceevol-")
+          typeof pathname !== "string"
         ) {
           throw new Error(
-            "Invalid FaceEvol upload pathname"
+            "Invalid upload pathname"
           );
         }
 
-        return {
-          allowedContentTypes: [
-            "video/mp4",
-            "video/quicktime",
-            "video/webm"
-          ],
+        /*
+         * Optimized temporary face photo
+         */
+        if (
+          pathname.startsWith(
+            "faceevol-face-"
+          )
+        ) {
+          return {
+            allowedContentTypes: [
+              "image/jpeg"
+            ],
 
-          maximumSizeInBytes:
-            200 * 1024 * 1024,
+            maximumSizeInBytes:
+              8 * 1024 * 1024,
 
-          addRandomSuffix: true
-        };
+            addRandomSuffix: true
+          };
+        }
+
+        /*
+         * Temporary source video
+         */
+        if (
+          pathname.startsWith(
+            "faceevol-video-"
+          )
+        ) {
+          return {
+            allowedContentTypes: [
+              "video/mp4",
+              "video/quicktime",
+              "video/webm"
+            ],
+
+            maximumSizeInBytes:
+              200 * 1024 * 1024,
+
+            addRandomSuffix: true
+          };
+        }
+
+        throw new Error(
+          "Invalid FaceEvol upload type"
+        );
       },
 
-      onUploadCompleted: async ({ blob }) => {
-        console.log(
-          "FaceEvol temporary video uploaded:",
-          blob.pathname
-        );
-      }
+      onUploadCompleted:
+        async ({ blob }) => {
+          console.log(
+            "FaceEvol temporary upload completed:",
+            blob.pathname
+          );
+        }
     });
 
     return res
@@ -59,7 +89,12 @@ export default async function handler(req, res) {
 
     return res.status(500).json({
       error:
-        "Could not prepare video upload"
+        "Could not prepare upload",
+
+      details:
+        error instanceof Error
+          ? error.message
+          : String(error)
     });
   }
 }
