@@ -1,152 +1,320 @@
-// Trigger Vercel deployment
-import { createHmac } from "node:crypto";
+import {
+  createHmac
+} from "node:crypto";
 
-function createSignature(pathname, expires, secret) {
-  return createHmac("sha256", secret)
-    .update(`${pathname}:${expires}`)
+import {
+  del
+} from "@vercel/blob";
+
+
+function createSignature(
+  pathname,
+  expires,
+  secret
+) {
+  return createHmac(
+    "sha256",
+    secret
+  )
+    .update(
+      `${pathname}:${expires}`
+    )
     .digest("hex");
 }
 
-export default async function handler(req, res) {
-  if (req.method !== "POST") {
+
+function getBlobPathname(
+  blobUrlString,
+  requiredPrefix
+) {
+  const blobUrl =
+    new URL(
+      blobUrlString
+    );
+
+
+  /*
+   * Require Vercel Blob storage.
+   */
+  if (
+    !blobUrl.hostname.endsWith(
+      ".blob.vercel-storage.com"
+    )
+  ) {
+    throw new Error(
+      "Invalid Blob storage URL"
+    );
+  }
+
+
+  const pathname =
+    decodeURIComponent(
+      blobUrl.pathname.slice(1)
+    );
+
+
+  if (
+    !pathname ||
+    !pathname.startsWith(
+      requiredPrefix
+    )
+  ) {
+    throw new Error(
+      "Invalid Blob pathname"
+    );
+  }
+
+
+  return pathname;
+}
+
+
+function buildSignedProxyUrl(
+  route,
+  pathname,
+  expires,
+  secret
+) {
+  const signature =
+    createSignature(
+      pathname,
+      expires,
+      secret
+    );
+
+
+  const url =
+    new URL(
+      route,
+      "https://www.faceevol.com"
+    );
+
+
+  url.searchParams.set(
+    "pathname",
+    pathname
+  );
+
+
+  url.searchParams.set(
+    "expires",
+    expires
+  );
+
+
+  url.searchParams.set(
+    "signature",
+    signature
+  );
+
+
+  return url.toString();
+}
+
+
+async function cleanupInputs(
+  pathnames
+) {
+  const safe =
+    pathnames.filter(Boolean);
+
+
+  if (!safe.length) {
+    return;
+  }
+
+
+  try {
+    await del(safe);
+
+    console.log(
+      "Cleaned temporary FaceEvol inputs:",
+      safe
+    );
+
+  } catch (error) {
+    console.warn(
+      "Temporary input cleanup failed:",
+      error instanceof Error
+        ? error.message
+        : String(error)
+    );
+  }
+}
+
+
+export default async function handler(
+  req,
+  res
+) {
+  if (
+    req.method !== "POST"
+  ) {
     return res.status(405).json({
-      error: "Method not allowed"
+      error:
+        "Method not allowed"
     });
   }
 
+
   const replicateToken =
-    process.env.REPLICATE_API_TOKEN;
+    process.env
+      .REPLICATE_API_TOKEN;
+
 
   if (!replicateToken) {
     return res.status(500).json({
-      error: "REPLICATE_API_TOKEN is not configured"
-    });
-  }
-
-  const { face, video } = req.body || {};
-
-  // Validate face image
-  if (
-    !face ||
-    typeof face !== "string" ||
-    !face.startsWith("data:image/")
-  ) {
-    return res.status(400).json({
-      error: "A valid face image is required"
-    });
-  }
-
-  // Extra protection.
-  // The browser should already compress the image,
-  // but reject unexpectedly huge data if something goes wrong.
-  if (face.length > 3_000_000) {
-    return res.status(413).json({
       error:
-        "The face image is still too large after optimization. Please try another image."
+        "REPLICATE_API_TOKEN is not configured"
     });
   }
 
-  // Validate uploaded video URL
+
+  /*
+   * face and video are now PRIVATE
+   * Vercel Blob URLs.
+   *
+   * The face is NOT Base64 anymore.
+   */
+  const {
+    face,
+    video
+  } =
+    req.body || {};
+
+
   if (
-    !video ||
-    typeof video !== "string" ||
-    !video.startsWith("https://")
+    typeof face !== "string" ||
+    !face.startsWith(
+      "https://"
+    )
   ) {
     return res.status(400).json({
-      error: "A valid video URL is required"
+      error:
+        "A valid face image URL is required"
     });
   }
+
+
+  if (
+    typeof video !== "string" ||
+    !video.startsWith(
+      "https://"
+    )
+  ) {
+    return res.status(400).json({
+      error:
+        "A valid video URL is required"
+    });
+  }
+
+
+  let facePathname = null;
+  let videoPathname = null;
+
 
   try {
-    const blobUrl = new URL(video);
-
-    // Only allow Vercel Blob URLs
-    if (
-      !blobUrl.hostname.endsWith(
-        ".blob.vercel-storage.com"
-      )
-    ) {
-      return res.status(400).json({
-        error: "Invalid video storage URL"
-      });
-    }
-
-    const pathname =
-      decodeURIComponent(
-        blobUrl.pathname.slice(1)
+    facePathname =
+      getBlobPathname(
+        face,
+        "faceevol-face-"
       );
 
-    if (!pathname) {
-      return res.status(400).json({
-        error: "Invalid video pathname"
-      });
-    }
 
-    // Give Replicate 30 minutes to access
-    // the private source video.
+    videoPathname =
+      getBlobPathname(
+        video,
+        "faceevol-video-"
+      );
+
+
+    /*
+     * Replicate gets 30 minutes
+     * to retrieve the temporary files.
+     */
     const expires =
       String(
         Date.now() +
         30 * 60 * 1000
       );
 
-    const signature =
-      createSignature(
-        pathname,
+
+    const imageProxyUrl =
+      buildSignedProxyUrl(
+        "/api/image.jpg",
+        facePathname,
         expires,
         replicateToken
       );
 
-    const proxyUrl =
-      new URL(
+
+    const videoProxyUrl =
+      buildSignedProxyUrl(
         "/api/video.mp4",
-        "https://www.faceevol.com"
+        videoPathname,
+        expires,
+        replicateToken
       );
 
-    proxyUrl.searchParams.set(
-      "pathname",
-      pathname
+
+    console.log(
+      "Starting FaceEvol prediction"
     );
 
-    proxyUrl.searchParams.set(
-      "expires",
-      expires
+
+    console.log(
+      "Face input proxy:",
+      imageProxyUrl
+        .replace(
+          /signature=[^&]+/,
+          "signature=HIDDEN"
+        )
     );
 
-    proxyUrl.searchParams.set(
-      "signature",
-      signature
+
+    console.log(
+      "Video input proxy:",
+      videoProxyUrl
+        .replace(
+          /signature=[^&]+/,
+          "signature=HIDDEN"
+        )
     );
 
-    const response = await fetch(
-      "https://api.replicate.com/v1/predictions",
-      {
-        method: "POST",
 
-        headers: {
-          Authorization:
-            `Bearer ${replicateToken}`,
+    const response =
+      await fetch(
+        "https://api.replicate.com/v1/predictions",
+        {
+          method: "POST",
 
-          "Content-Type":
-            "application/json"
-        },
+          headers: {
+            Authorization:
+              `Bearer ${replicateToken}`,
 
-        body: JSON.stringify({
-          version:
-            "104b4a39315349db50880757bc8c1c996c5309e3aa11286b0a3c84dab81fd440",
+            "Content-Type":
+              "application/json"
+          },
 
-          input: {
-            source:
-              proxyUrl.toString(),
+          body:
+            JSON.stringify({
+              version:
+                "104b4a39315349db50880757bc8c1c996c5309e3aa11286b0a3c84dab81fd440",
 
-            target:
-              face
-          }
-        })
-      }
-    );
+              input: {
+                source:
+                  videoProxyUrl,
+
+                target:
+                  imageProxyUrl
+              }
+            })
+        }
+      );
+
 
     let prediction;
+
 
     try {
       prediction =
@@ -155,14 +323,29 @@ export default async function handler(req, res) {
       prediction = null;
     }
 
+
     if (!response.ok) {
       console.error(
-        "Replicate face swap error:",
+        "Replicate face swap request failed:",
         prediction
       );
 
+
+      /*
+       * Replicate never successfully
+       * started, so it does not need
+       * these files anymore.
+       */
+      await cleanupInputs([
+        facePathname,
+        videoPathname
+      ]);
+
+
       return res
-        .status(response.status)
+        .status(
+          response.status
+        )
         .json({
           error:
             prediction?.detail ||
@@ -174,22 +357,43 @@ export default async function handler(req, res) {
         });
     }
 
-    if (!prediction?.id) {
+
+    if (
+      !prediction?.id
+    ) {
       console.error(
         "Replicate returned no prediction ID:",
         prediction
       );
 
-      return res.status(502).json({
-        error:
-          "Face swap service returned an invalid response."
-      });
+
+      await cleanupInputs([
+        facePathname,
+        videoPathname
+      ]);
+
+
+      return res
+        .status(502)
+        .json({
+          error:
+            "Face swap service returned an invalid response."
+        });
     }
 
-    return res.status(200).json({
-      success: true,
-      prediction
-    });
+
+    console.log(
+      "FaceEvol prediction created:",
+      prediction.id
+    );
+
+
+    return res
+      .status(200)
+      .json({
+        success: true,
+        prediction
+      });
 
   } catch (error) {
     console.error(
@@ -197,12 +401,28 @@ export default async function handler(req, res) {
       error
     );
 
-    return res.status(500).json({
-      error: "Server error",
-      details:
-        error instanceof Error
-          ? error.message
-          : String(error)
-    });
+
+    /*
+     * If we already know which
+     * temporary files belong to
+     * this request, remove them.
+     */
+    await cleanupInputs([
+      facePathname,
+      videoPathname
+    ]);
+
+
+    return res
+      .status(500)
+      .json({
+        error:
+          "Server error",
+
+        details:
+          error instanceof Error
+            ? error.message
+            : String(error)
+      });
   }
 }
