@@ -10,10 +10,21 @@ export default async function handler(req, res) {
   try {
     const jsonResponse = await handleUpload({
       body: req.body,
-
       request: req,
 
       onBeforeGenerateToken: async (pathname) => {
+
+        // Only allow files created by the FaceEvol
+        // video-upload flow.
+        if (
+          typeof pathname !== "string" ||
+          !pathname.startsWith("faceevol-")
+        ) {
+          throw new Error(
+            "Invalid FaceEvol upload pathname"
+          );
+        }
+
         return {
           allowedContentTypes: [
             "video/mp4",
@@ -30,19 +41,25 @@ export default async function handler(req, res) {
 
       onUploadCompleted: async ({ blob }) => {
         console.log(
-          "FaceEvol video uploaded:",
+          "FaceEvol temporary video uploaded:",
           blob.pathname
         );
       }
     });
 
-    return res.status(200).json(jsonResponse);
+    return res
+      .status(200)
+      .json(jsonResponse);
 
   } catch (error) {
-    console.error("Blob upload error:", error);
+    console.error(
+      "Blob upload error:",
+      error
+    );
 
     return res.status(500).json({
-      error: "Could not prepare video upload"
+      error:
+        "Could not prepare video upload"
     });
   }
 }
