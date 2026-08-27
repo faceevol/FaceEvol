@@ -1127,7 +1127,7 @@
     }
 
     if(message.includes("too long") || message.includes("timed out")){
-      return "The AI is taking longer than expected. Please try again in a moment.";
+      return "FaceEvol temporarily lost the status connection. Your AI job may still be processing, so please try checking again.";
     }
 
     if(message.includes("face swap failed") || message.includes("prediction") || message.includes("no output video")){
@@ -1374,36 +1374,59 @@
       /*
        * STEP 5 — poll your existing prediction endpoint.
        */
-      let attempts=0;
-      const maxAttempts=60;
+      /*
+       * STEP 5 — keep polling until Replicate returns a real terminal state.
+       * Do not turn a normal long-running prediction into a false timeout error.
+       */
+      const pollingStartedAt=Date.now();
+      let consecutiveStatusErrors=0;
 
       while(
         prediction.status!=="succeeded" &&
         prediction.status!=="failed" &&
-        prediction.status!=="canceled" &&
-        attempts<maxAttempts
+        prediction.status!=="canceled"
       ){
-        swapVideoStatus.textContent="6/6 FaceEvol AI is processing your video. This can take a little while...";
+        const elapsedSeconds=Math.floor((Date.now()-pollingStartedAt)/1000);
+
+        if(elapsedSeconds<120){
+          swapVideoStatus.textContent="6/6 FaceEvol AI is processing your video. This can take a little while...";
+        }else if(elapsedSeconds<300){
+          swapVideoStatus.textContent="6/6 Still working — the AI needs a little more time. Keep this page open.";
+        }else{
+          swapVideoStatus.textContent="6/6 Still working — some videos take several minutes. Your face swap is still processing.";
+        }
+
         await new Promise(resolve=>setTimeout(resolve,3000));
 
-        const statusResponse=await fetch(
-          `/api/prediction?id=${encodeURIComponent(prediction.id)}`,
-          {cache:"no-store"}
-        );
+        try{
+          const statusResponse=await fetch(
+            `/api/prediction?id=${encodeURIComponent(prediction.id)}`,
+            {cache:"no-store"}
+          );
 
-        const statusData=await readJsonResponse(statusResponse);
-        if(!statusResponse.ok) throw new Error(statusData.error||"Could not check face swap status.");
+          const statusData=await readJsonResponse(statusResponse);
 
-        prediction=statusData.prediction||statusData;
-        attempts++;
+          if(!statusResponse.ok){
+            throw new Error(statusData.error||"Could not check face swap status.");
+          }
+
+          prediction=statusData.prediction||statusData;
+          consecutiveStatusErrors=0;
+        }catch(statusError){
+          consecutiveStatusErrors++;
+          console.warn("Temporary FaceEvol status check error:",statusError);
+
+          if(consecutiveStatusErrors>=5){
+            throw statusError;
+          }
+
+          swapVideoStatus.textContent="6/6 FaceEvol is still working. Reconnecting to the status check...";
+          await new Promise(resolve=>setTimeout(resolve,3000));
+        }
       }
 
       if(prediction.status==="failed"||prediction.status==="canceled"||prediction.error){
         throw new Error(prediction.error||"Face swap failed.");
-      }
-
-      if(prediction.status!=="succeeded"){
-        throw new Error("Face swap took too long. Please try again.");
       }
 
       const output=findVideoUrl(prediction.output)||findVideoUrl(prediction);
