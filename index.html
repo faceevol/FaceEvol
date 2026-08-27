@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- FaceEvol · simplified hero + real male/female age demo portraits · 2026-08-27 -->
+<!-- FaceEvol · AI Age Transformation + Video Face Swap · resilient age prediction flow · 2026-08-27 -->
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FaceEvol — AI Face Swap & Age Transformation</title>
-  <meta name="description" content="Transform your age to any age or swap your face into video with FaceEvol. A simple connected AI workflow, with HD and 4K enhancement coming soon." />
+  <title>FaceEvol — AI Age Transformation & Video Face Swap</title>
+  <meta name="description" content="Transform your face to any age and use it in an AI video face swap with FaceEvol — or go straight to video face swap. Simple, private and easy to use." />
   <meta name="theme-color" content="#070b17" />
 
   <!-- Browser-side video trimming. Loaded only by the page; your API routes stay unchanged. -->
@@ -134,8 +134,8 @@
     .age-preset-card{padding:0;overflow:hidden;border-radius:13px;border:1px solid rgba(255,255,255,.075);background:#090f1e;cursor:pointer;text-align:left;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
     .age-preset-card:hover{transform:translateY(-2px);border-color:rgba(125,211,252,.3)}
     .age-preset-card.active{border-color:rgba(125,211,252,.62);box-shadow:0 0 0 2px rgba(56,189,248,.09),0 12px 24px rgba(0,0,0,.2)}
-    .age-preset-media{position:relative;aspect-ratio:2/3;overflow:hidden;background:linear-gradient(145deg,#121a2d,#0a1020)}
-    .age-preset-image{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;z-index:2}.age-preset-fallback{z-index:1}
+    .age-preset-media{position:relative;aspect-ratio:4/5;overflow:hidden;background:linear-gradient(145deg,#121a2d,#0a1020);padding:7px}
+    .age-preset-image{position:absolute;inset:7px;width:calc(100% - 14px);height:calc(100% - 14px);object-fit:contain;object-position:center center;display:block;z-index:2;border-radius:9px;background:#090f1e}.age-preset-fallback{z-index:1}
     .age-preset-fallback{position:absolute;inset:0;display:grid;place-items:center;overflow:hidden;background:
       radial-gradient(circle at 50% 34%,rgba(255,255,255,.14),transparent 20%),
       radial-gradient(circle at 50% 70%,rgba(56,189,248,.10),transparent 38%),
@@ -388,8 +388,8 @@
   <section class="hero">
     <div class="container">
       <div class="badge"><span class="badge-dot"></span>FaceEvol Beta</div>
-      <h1>AI Face Swap &amp; <span class="gradient-text">Age Transformation</span></h1>
-      <p class="hero-description">Transform your age to any age, or swap your face into video — all in one simple flow.</p>
+      <h1>AI Age Transformation <span class="gradient-text">&amp; Video Face Swap</span></h1>
+      <p class="hero-description">Transform your face to any age, then use that result in a video face swap — or go straight to Video Face Swap.</p>
       <div class="hero-actions">
         <a href="#studio" class="button button-primary" id="heroAgeButton">✨ Start Creating</a>
         <a href="#studio" class="button button-secondary" id="heroFaceSwapButton">🎬 Video Face Swap</a>
@@ -434,7 +434,7 @@
 
   <div class="proof">
     <div class="container">
-      <div class="proof-label">One connected FaceEvol creation flow</div>
+      <div class="proof-label">AI Age Transformation &amp; Video Face Swap in one connected flow</div>
       <div class="proof-items"><span>🕒 Age Transformation</span><span>🎬 Use Result in Face Swap</span><span>🔒 Private Uploads</span><span>✨ HD &amp; 4K Enhancement Coming Soon</span></div>
     </div>
   </div>
@@ -565,7 +565,7 @@
   <section class="cta" id="start">
     <div class="container">
       <div class="cta-box">
-        <div class="badge">✨ One face. Two connected AI tools.</div>
+        <div class="badge">✨ AI Age Transformation &amp; Video Face Swap</div>
         <h2>Transform your age.<br><span class="gradient-text">Then bring that face into video.</span></h2>
         <p>Explore the five age presets, create your transformation, and continue directly into Video Face Swap when you are ready.</p>
         <a href="#studio" class="button button-primary" id="ctaStartButton">Start Creating →</a>
@@ -727,6 +727,125 @@
     return null;
   }
 
+  function findImageUrl(value){
+    if(!value) return null;
+    if(typeof value==="string"){
+      const t=value.trim();
+      if(t.startsWith("data:image/")) return t;
+      if(t.startsWith("https://")||t.startsWith("http://")) return t;
+      return null;
+    }
+    if(Array.isArray(value)){
+      for(const item of value){const found=findImageUrl(item);if(found)return found;}
+      return null;
+    }
+    if(typeof value==="object"){
+      const keys=["image","image_url","imageUrl","url","output","file","href","result"];
+      for(const key of keys){
+        if(value[key]!==undefined){
+          const found=findImageUrl(value[key]);
+          if(found) return found;
+        }
+      }
+      for(const nested of Object.values(value)){
+        const found=findImageUrl(nested);
+        if(found) return found;
+      }
+    }
+    return null;
+  }
+
+  function wait(ms){
+    return new Promise(resolve=>setTimeout(resolve,ms));
+  }
+
+  function isTerminalPredictionStatus(status){
+    return ["succeeded","failed","canceled"].includes(String(status||"").toLowerCase());
+  }
+
+  function isRetryableAgeError(error){
+    const message=String(error&&error.message?error.message:error||"").toLowerCase();
+    return message.includes("no image") ||
+      message.includes("network") ||
+      message.includes("failed to fetch") ||
+      message.includes("timeout") ||
+      message.includes("timed out") ||
+      message.includes("temporar") ||
+      message.includes("unexpected response") ||
+      message.includes("too many requests") ||
+      message.includes("429") || message.includes("502") || message.includes("503") || message.includes("504");
+  }
+
+  async function pollAgePrediction(initialPrediction){
+    let prediction=initialPrediction;
+    if(!prediction || !prediction.id || isTerminalPredictionStatus(prediction.status)) return prediction;
+
+    const maxPolls=45;
+    for(let poll=0;poll<maxPolls;poll++){
+      const seconds=Math.round((poll*2500)/1000);
+      processingMessage.textContent=seconds<8
+        ?"FaceEvol AI is creating your age transformation..."
+        :`FaceEvol AI is still working on your transformation${seconds?` · about ${seconds}s`:""}. Please keep this page open.`;
+
+      await wait(2500);
+      const statusResponse=await fetch(`/api/prediction?id=${encodeURIComponent(prediction.id)}`,{cache:"no-store"});
+      const statusData=await readJsonResponse(statusResponse);
+      if(!statusResponse.ok) throw new Error(statusData.error||"Could not check the age transformation status.");
+
+      prediction=statusData.prediction||statusData;
+      if(!prediction) throw new Error("No prediction status was returned.");
+      if(isTerminalPredictionStatus(prediction.status)) return prediction;
+    }
+
+    throw new Error("The age transformation timed out. Please try again.");
+  }
+
+  async function runAgePrediction(imageData,targetAge,attempt){
+    processingMessage.textContent=attempt>1
+      ?"The first AI result was incomplete, so FaceEvol is retrying automatically..."
+      :"FaceEvol AI is creating your age transformation. This may take a little while.";
+
+    const response=await fetch("/api/predict",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({image:imageData,target_age:Number(targetAge)})
+    });
+
+    const data=await readJsonResponse(response);
+    if(!response.ok) throw new Error(data.error||`Transformation request failed (${response.status}).`);
+
+    let prediction=data.prediction||data;
+    if(!prediction) throw new Error("No prediction was returned.");
+
+    if(prediction.id && !isTerminalPredictionStatus(prediction.status)){
+      prediction=await pollAgePrediction(prediction);
+    }
+
+    if(prediction.status==="failed"||prediction.status==="canceled"||prediction.error){
+      throw new Error(prediction.error||"The AI transformation failed.");
+    }
+
+    let output=findImageUrl(prediction.output);
+
+    // Replicate can occasionally report success a moment before the output URL is visible.
+    // Re-check the same prediction before treating that as a real failure.
+    if(!output && prediction.id){
+      for(let extra=0;extra<3 && !output;extra++){
+        processingMessage.textContent="Finishing your image...";
+        await wait(1500);
+        const statusResponse=await fetch(`/api/prediction?id=${encodeURIComponent(prediction.id)}`,{cache:"no-store"});
+        const statusData=await readJsonResponse(statusResponse);
+        if(statusResponse.ok){
+          prediction=statusData.prediction||statusData||prediction;
+          output=findImageUrl(prediction&&prediction.output);
+        }
+      }
+    }
+
+    if(!output) throw new Error("The AI returned no usable image.");
+    return {prediction,output};
+  }
+
   function formatTime(seconds){
     if(!Number.isFinite(seconds)||seconds<0) seconds=0;
     const minutes=Math.floor(seconds/60);
@@ -856,6 +975,12 @@
   const useAgeResultForSwap=document.getElementById("useAgeResultForSwap");
   const genderButtons=[...ageControls.querySelectorAll(".gender-button")];
 
+  resultImage.addEventListener("error",()=>{
+    ageResult.classList.remove("show");
+    processingMessage.textContent="";
+    ageError.textContent="The transformation completed, but the image could not be displayed. Please tap Transform again.";
+  });
+
   function renderAgePresets(){
     agePresets.innerHTML=AGE_PRESETS.map(preset=>`
       <button type="button" class="age-preset-card ${Number(ageSlider.value)===preset.age?"active":""}" data-age="${preset.age}">
@@ -913,35 +1038,48 @@
     ageResult.classList.remove("show");
 
     try{
+      const targetAge=Number(ageSlider.value);
       const optimizedBlob=await optimizeImageToBlob(selectedPhoto,{maxDimension:1600,maxBytes:700*1024,quality:.92});
       const imageData=await blobToDataURL(optimizedBlob);
-      processingMessage.textContent="FaceEvol AI is creating your age transformation. This may take a little while.";
 
-      const response=await fetch("/api/predict",{
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({image:imageData,target_age:Number(ageSlider.value)})
-      });
+      let result=null;
+      let lastError=null;
+      const maxAttempts=2;
 
-      const data=await readJsonResponse(response);
-      if(!response.ok) throw new Error(data.error||"Transformation failed.");
+      for(let attempt=1;attempt<=maxAttempts;attempt++){
+        try{
+          result=await runAgePrediction(imageData,targetAge,attempt);
+          break;
+        }catch(error){
+          lastError=error;
+          console.warn(`FaceEvol age transformation attempt ${attempt} failed:`,error);
+          if(attempt<maxAttempts && isRetryableAgeError(error)){
+            processingMessage.textContent="The AI result was incomplete. Retrying automatically once...";
+            await wait(1800);
+            continue;
+          }
+          throw error;
+        }
+      }
 
-      const prediction=data.prediction;
-      if(!prediction) throw new Error("No prediction was returned.");
-      if(prediction.status==="failed"||prediction.error) throw new Error(prediction.error||"The AI transformation failed.");
+      if(!result||!result.output) throw lastError||new Error("The AI returned no usable image.");
 
-      let output=prediction.output;
-      if(Array.isArray(output)) output=output[0];
-      if(!output) throw new Error("The AI returned no image. Please try again.");
-
-      latestAgeTransformOutput=output;
-      latestAgeTransformAge=Number(ageSlider.value);
-      resultImage.src=output;
+      latestAgeTransformOutput=result.output;
+      latestAgeTransformAge=targetAge;
+      resultImage.src=result.output;
       ageResult.classList.add("show");
-      processingMessage.textContent=`✓ Transformation complete — age ${ageSlider.value}. You can now use this face directly in Video Face Swap.`;
+      processingMessage.textContent=`✓ Transformation complete — age ${targetAge}. You can now use this face directly in Video Face Swap.`;
     }catch(error){
+      console.error("FaceEvol age transformation error:",error);
       processingMessage.textContent="";
-      ageError.textContent=error instanceof Error?error.message:String(error);
+      const rawMessage=error instanceof Error?error.message:String(error);
+      if(/no usable image|no image/i.test(rawMessage)){
+        ageError.textContent="The AI finished without a usable image even after an automatic retry. Please try again with a clear, front-facing photo in good lighting.";
+      }else if(/timed out|timeout/i.test(rawMessage)){
+        ageError.textContent="The transformation took longer than expected. Please try again — your photo is still okay.";
+      }else{
+        ageError.textContent=rawMessage||"The age transformation could not be completed. Please try again.";
+      }
     }finally{
       transformButton.disabled=false;
       transformButton.textContent=`✨ Transform to Age ${ageSlider.value}`;
