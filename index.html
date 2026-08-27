@@ -1238,7 +1238,7 @@
        * STEP 5 — poll your existing prediction endpoint.
        */
       let attempts=0;
-      const maxAttempts=60;
+      const maxAttempts=200;
 
       while(
         prediction.status!=="succeeded" &&
