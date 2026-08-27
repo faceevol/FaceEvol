@@ -676,8 +676,8 @@
     `;
 
     uploadStatus.textContent=faceSwapMode
-      ?"Face photo ready. For best results, use a clear, front-facing face with good lighting."
-      :"Photo ready — FaceEvol will automatically optimize it if needed.";
+      ?"✓ Face photo ready. Tip for best results: use a clear, front-facing photo with good lighting. Avoid sunglasses, heavy shadows, blur, and strong side angles."
+      :"✓ Photo ready — FaceEvol will automatically optimize it if needed.";
 
     if(faceSwapMode){
       ageControls.classList.remove("show");
@@ -766,11 +766,6 @@
       <p style="color:#96a3ba;font-size:14px;line-height:1.6;margin-bottom:18px;">
         Upload the video where you want FaceEvol to place your selected face.
       </p>
-
-      <div class="face-guidance">
-        <strong style="color:#ccecff;">Tip for best results:</strong>
-        Use a clear, front-facing face photo with good lighting and minimal obstruction around the eyes, nose and mouth.
-      </div>
 
       <button type="button" class="transform-button" id="chooseSwapVideo">🎥 Choose MP4 Video</button>
       <input type="file" id="swapVideoUpload" accept="video/mp4,.mp4" hidden>
@@ -964,7 +959,7 @@
       return file;
     }
 
-    swapVideoStatus.textContent="Preparing the 20-second video trimmer on your device...";
+    swapVideoStatus.textContent="1/6 Preparing your selected clip...";
     const ffmpeg=await ensureFFmpeg();
 
     const stamp=Date.now();
@@ -972,7 +967,7 @@
     const outputName=`faceevol-trim-${stamp}.mp4`;
 
     try{
-      swapVideoStatus.textContent=`Cutting your selected ${(duration).toFixed(1)}-second clip...`;
+      swapVideoStatus.textContent=`1/6 Trimming your selected ${(duration).toFixed(1)}-second clip...`;
 
       ffmpeg.FS("writeFile",inputName,await ffmpegFetchFile(file));
 
@@ -1006,6 +1001,37 @@
     }
   }
 
+  function friendlyFaceSwapError(error){
+    const raw=error instanceof Error?error.message:String(error||"");
+    const message=raw.toLowerCase();
+
+    if(message.includes("failed to fetch") || message.includes("network") || message.includes("internet")){
+      return "We couldn’t connect to FaceEvol. Please check your internet connection and try again.";
+    }
+
+    if(message.includes("300 mb") || message.includes("too large") || message.includes("request was too large")){
+      return "This video is too large. Please choose an MP4 smaller than 300 MB.";
+    }
+
+    if(message.includes("mp4") || message.includes("video duration") || message.includes("could not read the video")){
+      return "We couldn’t read this video. Please try another MP4 file.";
+    }
+
+    if(message.includes("trimmer") || message.includes("ffmpeg") || message.includes("selected clip could not be created")){
+      return "We couldn’t prepare the selected clip. Please refresh the page and try again, or choose a different MP4.";
+    }
+
+    if(message.includes("too long") || message.includes("timed out")){
+      return "The AI is taking longer than expected. Please try again in a moment.";
+    }
+
+    if(message.includes("face swap failed") || message.includes("prediction") || message.includes("no output video")){
+      return "FaceEvol couldn’t complete this face swap. Please try again with a clear face photo or a different video.";
+    }
+
+    return "Something went wrong while creating your face swap. Please try again. If it happens again, try a different MP4 or a clearer face photo.";
+  }
+
   faceSwapOption.addEventListener("click",function(){
     faceSwapMode=true;
     document.querySelectorAll(".tool-option").forEach(o=>o.classList.remove("active"));
@@ -1017,7 +1043,7 @@
     document.querySelector(".upload-description").textContent="Upload a clear face photo. You’ll see a preview here so you can confirm you selected the right person.";
 
     if(selectedPhoto){
-      uploadStatus.textContent="Face photo ready. For best results, use a clear, front-facing face with good lighting.";
+      uploadStatus.textContent="✓ Face photo ready. Tip for best results: use a clear, front-facing photo with good lighting. Avoid sunglasses, heavy shadows, blur, and strong side angles.";
     }
   });
 
@@ -1031,7 +1057,7 @@
     document.querySelector(".upload-title").textContent="Start with your photo";
     document.querySelector(".upload-description").textContent="Upload a clear photo and choose how you want FaceEvol to transform it.";
 
-    if(selectedPhoto) uploadStatus.textContent="Photo ready — FaceEvol will automatically optimize it if needed.";
+    if(selectedPhoto) uploadStatus.textContent="✓ Photo ready — FaceEvol will automatically optimize it if needed.";
   });
 
   chooseSwapVideo.addEventListener("click",()=>swapVideoUpload.click());
@@ -1047,7 +1073,7 @@
       videoEditor.classList.remove("show");
       startFaceSwapButton.style.display="none";
       chooseSwapVideo.textContent="🎥 Choose MP4 Video";
-      swapVideoStatus.textContent="For the beta, please choose an MP4 video.";
+      swapVideoStatus.textContent="Please choose an MP4 video.";
       return;
     }
 
@@ -1072,7 +1098,7 @@
     swapVideoPreview.load();
 
     chooseSwapVideo.textContent="✓ Video Ready";
-    swapVideoStatus.textContent="Reading video length...";
+    swapVideoStatus.textContent="Checking your video...";
     startFaceSwapButton.style.display="none";
     videoEditor.classList.add("show");
     sourceVideoInfo.textContent=file.name;
@@ -1102,16 +1128,16 @@
       startFaceSwapButton.textContent="🎬 Start Face Swap";
 
       if(sourceVideoDuration>MAX_TRIM_SECONDS){
-        swapVideoStatus.textContent=`Video ready. Choose any section up to ${MAX_TRIM_SECONDS} seconds.`;
+        swapVideoStatus.textContent=`✓ Video ready. Choose any section up to ${MAX_TRIM_SECONDS} seconds.`;
       }else{
-        swapVideoStatus.textContent=`Video ready — ${sourceVideoDuration.toFixed(1)} seconds. You can trim it shorter if you want.`;
+        swapVideoStatus.textContent=`✓ Video ready — ${sourceVideoDuration.toFixed(1)} seconds. You can trim it shorter if you want.`;
       }
     };
   });
 
   downloadFaceSwapButton.addEventListener("click",async function(){
     if(!latestFaceSwapOutput){
-      swapVideoStatus.textContent="No finished video is available to download yet.";
+      swapVideoStatus.textContent="Your finished video isn’t ready yet. Complete the face swap first.";
       return;
     }
 
@@ -1131,7 +1157,7 @@
       link.click();
       link.remove();
       setTimeout(()=>URL.revokeObjectURL(downloadUrl),5000);
-      swapVideoStatus.textContent="✓ Video ready and download started.";
+      swapVideoStatus.textContent="✓ Download started. Your FaceEvol video is ready.";
     }catch{
       const fallbackLink=document.createElement("a");
       fallbackLink.href=latestFaceSwapOutput;
@@ -1141,7 +1167,7 @@
       document.body.appendChild(fallbackLink);
       fallbackLink.click();
       fallbackLink.remove();
-      swapVideoStatus.textContent="The finished video has been opened. Use your browser's download/save option if needed.";
+      swapVideoStatus.textContent="Your finished video is open. Use your browser’s Save or Download option if needed.";
     }finally{
       downloadFaceSwapButton.disabled=false;
       downloadFaceSwapButton.textContent="⬇ Download Video";
@@ -1149,12 +1175,12 @@
   });
 
   startFaceSwapButton.addEventListener("click",async function(){
-    if(!selectedPhoto){swapVideoStatus.textContent="Please select a face photo first.";return;}
-    if(!selectedSwapVideo){swapVideoStatus.textContent="Please select an MP4 video first.";return;}
+    if(!selectedPhoto){swapVideoStatus.textContent="Please add a face photo first.";return;}
+    if(!selectedSwapVideo){swapVideoStatus.textContent="Please choose an MP4 video first.";return;}
 
     const selectedDuration=trimEnd-trimStart;
     if(selectedDuration<=0){
-      swapVideoStatus.textContent="Please choose a valid part of the video.";
+      swapVideoStatus.textContent="Please choose a valid section of the video.";
       return;
     }
     if(selectedDuration>MAX_TRIM_SECONDS+.05){
@@ -1179,7 +1205,7 @@
        */
       const videoForUpload=await trimVideoToMp4(selectedSwapVideo,trimStart,trimEnd);
 
-      swapVideoStatus.textContent="Preparing your face photo...";
+      swapVideoStatus.textContent="2/6 Preparing your face photo...";
       startFaceSwapButton.textContent="Face swapping...";
 
       const optimizedFace=await optimizeImageToBlob(selectedPhoto,{
@@ -1193,7 +1219,7 @@
       /*
        * STEP 2 — upload ONLY the trimmed clip.
        */
-      swapVideoStatus.textContent=`Uploading ${(trimEnd-trimStart).toFixed(1)}-second trimmed video...`;
+      swapVideoStatus.textContent=`3/6 Uploading your ${(trimEnd-trimStart).toFixed(1)}-second clip...`;
 
       const videoBlob=await upload(
         `faceevol-video-${Date.now()}-${safeFileName(videoForUpload.name)}`,
@@ -1204,7 +1230,7 @@
       /*
        * STEP 3 — upload optimized face.
        */
-      swapVideoStatus.textContent="Uploading your optimized face photo...";
+      swapVideoStatus.textContent="4/6 Uploading your face photo...";
 
       const faceBlob=await upload(
         `faceevol-face-${Date.now()}.jpg`,
@@ -1215,7 +1241,7 @@
       /*
        * STEP 4 — your existing face-swap endpoint remains unchanged.
        */
-      swapVideoStatus.textContent="Starting FaceEvol AI face swap...";
+      swapVideoStatus.textContent="5/6 Starting FaceEvol AI...";
 
       const response=await fetch("/api/faceswap",{
         method:"POST",
@@ -1238,7 +1264,7 @@
        * STEP 5 — poll your existing prediction endpoint.
        */
       let attempts=0;
-      const maxAttempts=200;
+      const maxAttempts=60;
 
       while(
         prediction.status!=="succeeded" &&
@@ -1246,7 +1272,7 @@
         prediction.status!=="canceled" &&
         attempts<maxAttempts
       ){
-        swapVideoStatus.textContent="AI face swap is processing...";
+        swapVideoStatus.textContent="6/6 FaceEvol AI is processing your video. This can take a little while...";
         await new Promise(resolve=>setTimeout(resolve,3000));
 
         const statusResponse=await fetch(
@@ -1283,12 +1309,12 @@
       faceSwapResultVideo.load();
       faceSwapResult.style.display="block";
       downloadFaceSwapButton.style.display="inline-flex";
-      swapVideoStatus.textContent="✓ Face swap complete. Your trimmed video is ready.";
+      swapVideoStatus.textContent="✓ Face swap complete — your video is ready to preview or download.";
 
       faceSwapResultVideo.play().then(()=>faceSwapResultVideo.pause()).catch(()=>{});
     }catch(error){
       console.error("FaceEvol face swap / trim error:",error);
-      swapVideoStatus.textContent=error instanceof Error?error.message:String(error);
+      swapVideoStatus.textContent=friendlyFaceSwapError(error);
     }finally{
       startFaceSwapButton.disabled=false;
       chooseSwapVideo.disabled=false;
