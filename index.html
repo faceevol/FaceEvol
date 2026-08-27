@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FaceEvol — Transform Faces. Bring Dreams to Life.</title>
-  <meta name="description" content="Transform faces to any age, swap faces into videos, enhance video quality and bring your ideas to life with FaceEvol." />
+  <title>FaceEvol — AI Video Face Swap Online</title>
+  <meta name="description" content="Swap a face into video with FaceEvol. Upload a clear face photo and MP4 video, choose a clip up to 20 seconds, and create your AI face swap online." />
   <meta name="theme-color" content="#070b17" />
 
   <!-- Browser-side video trimming. Loaded only by the page; your API routes stay unchanged. -->
@@ -14,7 +14,7 @@
     :root{
       --bg:#060914;--card:rgba(255,255,255,.05);--line:rgba(255,255,255,.08);
       --text:#fff;--soft:#a8b3c9;--muted:#7f8ca5;--purple:#a78bfa;--blue:#38bdf8;--cyan:#22d3ee;
-      --gradient:linear-gradient(90deg,#c4b5fd 0%,#a78bfa 22%,#7dd3fc 64%,#22d3ee 100%);
+      --green:#4adeb0;--gradient:linear-gradient(90deg,#c4b5fd 0%,#a78bfa 22%,#7dd3fc 64%,#22d3ee 100%);
       --shadow:0 30px 80px rgba(0,0,0,.38);
     }
     *{box-sizing:border-box;margin:0;padding:0}
@@ -30,6 +30,7 @@
     a{color:inherit;text-decoration:none}
     img{max-width:100%}
     button,input{font:inherit}
+    button{color:inherit}
     .container{width:min(1180px,92%);margin:0 auto}
     .gradient-text{background:var(--gradient);-webkit-background-clip:text;background-clip:text;color:transparent}
 
@@ -67,7 +68,7 @@
     .button:hover{transform:translateY(-2px)}
     .hero-trust{margin-top:21px;display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:16px;color:#8592aa;font-size:13px}
 
-    .studio-wrap{margin-top:50px;position:relative}
+    .studio-wrap{margin-top:50px;position:relative;scroll-margin-top:92px}
     .studio{
       max-width:1020px;margin:0 auto;padding:8px;border-radius:28px;border:1px solid rgba(255,255,255,.09);
       background:rgba(255,255,255,.025);box-shadow:var(--shadow);
@@ -78,16 +79,18 @@
     }
     .studio-sidebar{padding:28px;border-right:1px solid rgba(255,255,255,.06)}
     .studio-label{margin-bottom:17px;color:#75839b;font-size:11px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase}
-    .tool-option{margin-bottom:9px;padding:14px;display:flex;align-items:center;gap:12px;border-radius:13px;color:#98a5bb;cursor:pointer}
+    .tool-option{margin-bottom:9px;padding:14px;display:flex;align-items:center;gap:12px;border-radius:13px;color:#98a5bb;cursor:pointer;border:1px solid transparent}
     .tool-option.active{
-      color:white;border:1px solid rgba(124,58,237,.35);
+      color:white;border-color:rgba(124,58,237,.35);
       background:linear-gradient(90deg,rgba(124,58,237,.14),rgba(14,165,233,.06));
     }
+    .tool-option.disabled{cursor:default;opacity:.58}
     .tool-icon{width:38px;height:38px;display:grid;place-items:center;border-radius:10px;background:rgba(255,255,255,.045)}
     .tool-name{font-weight:700;font-size:14px}
+    .tool-sub{display:block;margin-top:2px;color:#738198;font-size:10px;font-weight:700}
     .studio-main{padding:34px;display:flex;flex-direction:column;justify-content:center;text-align:center}
     .upload-title{margin-bottom:8px;font-size:clamp(25px,3vw,33px);letter-spacing:-.7px}
-    .upload-description{max-width:470px;margin:0 auto 22px;color:#96a3ba;line-height:1.6;font-size:14px}
+    .upload-description{max-width:500px;margin:0 auto 22px;color:#96a3ba;line-height:1.6;font-size:14px}
     .upload-box{
       min-height:215px;padding:28px;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:18px;
       border:1px dashed rgba(148,163,184,.25);background:rgba(255,255,255,.018);cursor:pointer;
@@ -111,9 +114,65 @@
       background:rgba(255,255,255,.025);display:none;
     }
     .age-controls.show{display:block}
-    .age-label{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:14px;color:#dce5f3;font-weight:700;font-size:14px}
+    .panel-top{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;text-align:left}
+    .panel-kicker{display:block;margin-bottom:5px;color:#7dd3fc;font-size:10px;font-weight:850;letter-spacing:1.15px;text-transform:uppercase}
+    .panel-title{font-size:20px;letter-spacing:-.35px}
+    .panel-copy{margin-top:7px;color:#8fa0b8;font-size:12px;line-height:1.55}
+    .beta-pill,.soon-pill,.live-pill{
+      flex:0 0 auto;padding:6px 9px;border-radius:999px;font-size:9px;font-weight:900;letter-spacing:.7px;text-transform:uppercase;
+    }
+    .beta-pill{color:#dff7ff;background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.18)}
+    .soon-pill{color:#d9d1ff;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.18)}
+    .live-pill{color:#c9ffec;background:rgba(74,222,176,.07);border:1px solid rgba(74,222,176,.17)}
+
+    .gender-toggle{margin-top:17px;padding:4px;display:grid;grid-template-columns:1fr 1fr;gap:4px;border-radius:12px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.06)}
+    .gender-button{min-height:38px;border:0;border-radius:9px;background:transparent;color:#8290a7;font-size:12px;font-weight:800;cursor:pointer}
+    .gender-button.active{color:white;background:linear-gradient(90deg,rgba(124,58,237,.25),rgba(14,165,233,.14));box-shadow:0 8px 18px rgba(0,0,0,.15)}
+
+    .age-presets{margin-top:16px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}
+    .age-preset-card{padding:0;overflow:hidden;border-radius:13px;border:1px solid rgba(255,255,255,.075);background:#090f1e;cursor:pointer;text-align:left;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+    .age-preset-card:hover{transform:translateY(-2px);border-color:rgba(125,211,252,.3)}
+    .age-preset-card.active{border-color:rgba(125,211,252,.62);box-shadow:0 0 0 2px rgba(56,189,248,.09),0 12px 24px rgba(0,0,0,.2)}
+    .age-preset-media{position:relative;aspect-ratio:4/5;overflow:hidden;background:linear-gradient(145deg,#121a2d,#0a1020)}
+    .age-preset-image{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+    .age-preset-fallback{position:absolute;inset:0;display:grid;place-items:center;overflow:hidden;background:
+      radial-gradient(circle at 50% 34%,rgba(255,255,255,.14),transparent 20%),
+      radial-gradient(circle at 50% 70%,rgba(56,189,248,.10),transparent 38%),
+      linear-gradient(145deg,#161d31,#0a0f1d)}
+    .age-preset-fallback::before{content:"";width:52%;aspect-ratio:1;border-radius:48% 48% 44% 44%;background:linear-gradient(145deg,#f0c5a6,#c98f74);box-shadow:0 -10px 0 3px rgba(28,22,32,.76)}
+    .age-preset-fallback.female::before{border-radius:48% 48% 46% 46%;box-shadow:0 -11px 0 5px rgba(42,26,41,.9),-9px 2px 0 -1px rgba(42,26,41,.72),9px 2px 0 -1px rgba(42,26,41,.72)}
+    .age-preset-fallback.child::before{width:46%}
+    .age-preset-fallback.teen::before{width:49%}
+    .age-preset-fallback.mature::after,.age-preset-fallback.senior::after{content:"";position:absolute;width:34%;height:2px;top:45%;left:33%;border-radius:999px;background:rgba(92,58,55,.18);box-shadow:0 12px 0 rgba(92,58,55,.14)}
+    .age-preset-fallback.senior::before{filter:saturate(.7) brightness(1.03);box-shadow:0 -10px 0 3px rgba(210,215,225,.55)}
+    .age-preset-fallback.female.senior::before{box-shadow:0 -11px 0 5px rgba(214,216,224,.7),-9px 2px 0 -1px rgba(214,216,224,.5),9px 2px 0 -1px rgba(214,216,224,.5)}
+    .age-preset-body{padding:9px 9px 10px}
+    .age-preset-number{display:block;color:#f5f8ff;font-size:13px;font-weight:850}
+    .age-preset-name{display:block;margin-top:2px;color:#7f8da4;font-size:9px;font-weight:750}
+    .example-note{margin-top:11px;color:#6f7e95;font-size:10px;line-height:1.5;text-align:left}
+
+    .custom-age-panel{margin-top:17px;padding:15px;border-radius:13px;background:rgba(255,255,255,.022);border:1px solid rgba(255,255,255,.06)}
+    .age-label{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:14px;color:#dce5f3;font-weight:700;font-size:13px;text-align:left}
     .age-value{color:#7dd3fc;font-size:18px;font-weight:850}
     .age-slider{width:100%;accent-color:#7c3aed;cursor:pointer}
+
+    .quality-selector{margin-top:15px;text-align:left}
+    .quality-selector-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:9px}
+    .quality-selector-head strong{font-size:12px;color:#dbe7f6}
+    .quality-selector-head span{color:#6f7e95;font-size:10px}
+    .quality-options-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+    .quality-option{
+      min-height:48px;padding:8px;border-radius:11px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.025);
+      color:#8d9ab0;text-align:center;cursor:pointer;
+    }
+    .quality-option strong{display:block;font-size:13px}
+    .quality-option small{display:block;margin-top:2px;font-size:8px;color:#68778e;font-weight:800;text-transform:uppercase;letter-spacing:.55px}
+    .quality-option.active{border-color:rgba(125,211,252,.35);background:linear-gradient(90deg,rgba(124,58,237,.12),rgba(14,165,233,.09));color:#eefbff}
+    .quality-option:disabled{cursor:not-allowed;opacity:.52}
+
+    .age-summary{margin-top:15px;padding:12px 13px;border-radius:11px;background:linear-gradient(90deg,rgba(124,58,237,.08),rgba(14,165,233,.06));border:1px solid rgba(125,211,252,.12);color:#c9d7e9;font-size:12px;line-height:1.5;text-align:left}
+    .age-summary strong{color:#7dd3fc}
+
     .transform-button{
       width:100%;min-height:52px;margin-top:18px;border:0;border-radius:14px;cursor:pointer;color:white;font-weight:800;font-size:15px;
       background:linear-gradient(90deg,#7c3aed,#0ea5e9);box-shadow:0 14px 35px rgba(70,90,220,.24);
@@ -157,22 +216,14 @@
       color:#dce8f8;font-size:13px;font-weight:800;
     }
     .trim-duration{color:#7dd3fc}
-    .trim-ruler-labels{
-      margin-top:12px;display:flex;justify-content:space-between;color:#72819a;font-size:10px;
-    }
+    .trim-ruler-labels{margin-top:12px;display:flex;justify-content:space-between;color:#72819a;font-size:10px}
     .trim-timeline{position:relative;height:36px;margin-top:2px}
-    .trim-base{
-      position:absolute;left:0;right:0;top:15px;height:6px;border-radius:999px;background:rgba(255,255,255,.09);
-    }
+    .trim-base{position:absolute;left:0;right:0;top:15px;height:6px;border-radius:999px;background:rgba(255,255,255,.09)}
     .trim-selected{
       position:absolute;top:15px;height:6px;border-radius:999px;
-      background:linear-gradient(90deg,#8b5cf6,#22d3ee);
-      box-shadow:0 0 14px rgba(56,189,248,.16);
+      background:linear-gradient(90deg,#8b5cf6,#22d3ee);box-shadow:0 0 14px rgba(56,189,248,.16);
     }
-    .trim-range{
-      position:absolute;left:0;top:0;width:100%;height:36px;margin:0;appearance:none;-webkit-appearance:none;
-      background:transparent;pointer-events:none;
-    }
+    .trim-range{position:absolute;left:0;top:0;width:100%;height:36px;margin:0;appearance:none;-webkit-appearance:none;background:transparent;pointer-events:none}
     .trim-range::-webkit-slider-runnable-track{height:6px;background:transparent}
     .trim-range::-webkit-slider-thumb{
       -webkit-appearance:none;appearance:none;width:22px;height:22px;margin-top:-8px;border-radius:50%;
@@ -183,12 +234,8 @@
       width:18px;height:18px;border-radius:50%;border:3px solid #0b1223;background:#e6f8ff;
       box-shadow:0 0 0 2px #38bdf8;pointer-events:auto;cursor:grab;
     }
-    .trim-readout{
-      display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px;
-    }
-    .trim-time-box{
-      padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);
-    }
+    .trim-readout{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+    .trim-time-box{padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07)}
     .trim-time-box span{display:block;color:#74839a;font-size:10px;text-transform:uppercase;letter-spacing:.7px;font-weight:800}
     .trim-time-box strong{display:block;margin-top:4px;color:#e8f5ff;font-size:14px}
     .preview-selection-button{
@@ -214,20 +261,14 @@
     .feature-card:hover{transform:translateY(-4px);border-color:rgba(125,211,252,.2)}
     .feature-card.large{grid-column:span 6}
     .feature-card.small{grid-column:span 3}
-    .feature-icon{
-      width:50px;height:50px;margin-bottom:20px;display:grid;place-items:center;border-radius:14px;font-size:23px;
-      background:linear-gradient(145deg,rgba(124,58,237,.21),rgba(14,165,233,.12));
-    }
+    .feature-icon{width:50px;height:50px;margin-bottom:20px;display:grid;place-items:center;border-radius:14px;font-size:23px;background:linear-gradient(145deg,rgba(124,58,237,.21),rgba(14,165,233,.12))}
     .feature-card h3{margin-bottom:10px;font-size:20px}
     .feature-card p{color:#96a3ba;font-size:14px;line-height:1.65}
-    .feature-tag{margin-top:18px;display:inline-block;color:#8391a8;font-size:11px;font-weight:750}
+    .feature-tag{margin-top:18px;display:inline-flex;align-items:center;gap:6px;color:#8391a8;font-size:11px;font-weight:750}
 
     .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
     .step-card{padding:27px;border-radius:20px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.065)}
-    .step-number{
-      width:42px;height:42px;margin-bottom:20px;display:grid;place-items:center;border-radius:12px;
-      background:linear-gradient(135deg,#5b21b6,#0369a1);font-weight:850;
-    }
+    .step-number{width:42px;height:42px;margin-bottom:20px;display:grid;place-items:center;border-radius:12px;background:linear-gradient(135deg,#5b21b6,#0369a1);font-weight:850}
     .step-card h3{margin-bottom:9px;font-size:20px}
     .step-card p{color:#96a3ba;line-height:1.65;font-size:14px}
 
@@ -242,8 +283,7 @@
     .check{color:#4ade9c;font-weight:900}
     .quality-visual{
       min-height:300px;position:relative;display:grid;place-items:center;overflow:hidden;border-radius:21px;
-      background:radial-gradient(circle at 70% 30%,rgba(56,189,248,.16),transparent 38%),
-                 radial-gradient(circle at 30% 70%,rgba(124,58,237,.21),transparent 38%),#0a1020;
+      background:radial-gradient(circle at 70% 30%,rgba(56,189,248,.16),transparent 38%),radial-gradient(circle at 30% 70%,rgba(124,58,237,.21),transparent 38%),#0a1020;
       border:1px solid rgba(255,255,255,.065);
     }
     .quality-circle{width:165px;height:165px;display:grid;place-items:center;border-radius:50%;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);font-size:43px}
@@ -275,10 +315,7 @@
     details p{margin-top:13px;color:#92a0b8;font-size:14px;line-height:1.65}
 
     .cta{padding-top:40px;padding-bottom:70px}
-    .cta-box{
-      padding:65px 24px;text-align:center;border-radius:26px;
-      background:linear-gradient(135deg,rgba(124,58,237,.14),rgba(14,165,233,.07));border:1px solid rgba(255,255,255,.08);
-    }
+    .cta-box{padding:65px 24px;text-align:center;border-radius:26px;background:linear-gradient(135deg,rgba(124,58,237,.14),rgba(14,165,233,.07));border:1px solid rgba(255,255,255,.08)}
     .cta-box h2{margin-bottom:15px;font-size:clamp(36px,5vw,54px);line-height:1.08;letter-spacing:-1.8px}
     .cta-box p{max-width:590px;margin:0 auto 27px;color:#a3aec1;line-height:1.65;font-size:15px}
 
@@ -296,13 +333,10 @@
     @media(max-width:850px){
       .nav-links a:not(.nav-button){display:none}
       .studio-inner{grid-template-columns:1fr}
-      .studio-sidebar{
-        border-right:none;border-bottom:1px solid rgba(255,255,255,.06);display:grid;
-        grid-template-columns:repeat(3,1fr);gap:8px;padding:16px;
-      }
+      .studio-sidebar{border-right:none;border-bottom:1px solid rgba(255,255,255,.06);display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:16px}
       .studio-label{display:none}
       .tool-option{margin:0;flex-direction:column;text-align:center;padding:11px 6px}
-      .tool-name{font-size:11px}
+      .tool-name{font-size:11px}.tool-sub{font-size:8px}
       .steps,.privacy-grid{grid-template-columns:1fr}
     }
     @media(max-width:650px){
@@ -313,14 +347,16 @@
       .hero-description{margin-top:20px;font-size:15px}.hero-actions{margin-top:26px;flex-direction:column}.button{width:100%}
       .hero-trust{margin-top:18px;gap:8px 13px;font-size:11px}.studio-wrap{margin-top:38px}.studio-main{padding:25px 17px}
       .upload-box{min-height:190px;padding:22px}.selected-photo-preview{width:112px;height:112px}
+      .panel-top{align-items:flex-start}.panel-title{font-size:18px}.age-controls{padding:16px}
+      .age-presets{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+      .age-preset-body{padding:8px}.quality-options-row{gap:6px}.quality-option{min-height:45px;padding:6px}
       .proof{padding-top:18px}.proof-items{gap:12px 20px;font-size:11px}
       section{padding:56px 0}.section-heading{margin-bottom:30px}.section-heading h2{font-size:clamp(32px,9vw,44px);letter-spacing:-1.2px}.section-heading p{font-size:14px}
       .feature-card.large,.feature-card.small{grid-column:span 12}.feature-card{min-height:0;padding:23px}
       .feature-grid,.steps,.privacy-grid,.pricing-grid{gap:14px}.step-card{padding:23px}
       .quality-box{padding:28px 20px;gap:30px}.quality-content h2{font-size:34px}.quality-visual{min-height:255px}.quality-circle{width:145px;height:145px}
       .privacy-card{padding:22px}.price-card{padding:25px}.cta{padding-top:25px;padding-bottom:55px}.cta-box{padding:48px 20px}
-      .footer-main,.footer-bottom{justify-content:center;text-align:center}
-      .swap-preview{max-height:220px}
+      .footer-main,.footer-bottom{justify-content:center;text-align:center}.swap-preview{max-height:220px}
     }
   </style>
 </head>
@@ -335,7 +371,7 @@
       <a href="#quality">Quality</a>
       <a href="#pricing">Pricing</a>
       <a href="#faq">FAQ</a>
-      <a href="#start" class="nav-button">Start Free</a>
+      <a href="#studio" class="nav-button">Start Face Swap</a>
     </nav>
   </div>
 </header>
@@ -343,35 +379,44 @@
 <main>
   <section class="hero">
     <div class="container">
-      <div class="badge"><span class="badge-dot"></span>AI-powered face transformation</div>
-      <h1>Imagine Your Face.<br><span class="gradient-text">Transform Your Story.</span></h1>
-      <p class="hero-description">Transform a face to any age, swap faces into videos, enhance your results and bring your imagination to life with powerful AI — all in one simple creative studio.</p>
+      <div class="badge"><span class="badge-dot"></span>FaceEvol Beta · Video Face Swap is live</div>
+      <h1>AI Video Face Swap.<br><span class="gradient-text">Simple, private, and made for you.</span></h1>
+      <p class="hero-description">Upload your face photo and MP4 video, choose the moment you want to transform, and let FaceEvol create your face swap online. Age transformation previews are also available to explore.</p>
       <div class="hero-actions">
-        <a href="#start" class="button button-primary">✨ Start Creating Free</a>
-        <a href="#features" class="button button-secondary">Explore FaceEvol →</a>
+        <a href="#studio" class="button button-primary">🎬 Start Face Swap</a>
+        <a href="#how-it-works" class="button button-secondary">See How It Works →</a>
       </div>
       <div class="hero-trust">
-        <span>✓ Easy to use</span><span>✓ High-quality results</span><span>✓ Privacy focused</span><span>✓ No creative experience required</span>
+        <span>✓ Face swap live</span><span>✓ Up to 20-sec selected clips</span><span>✓ Private uploads</span><span>✓ Mobile friendly</span>
       </div>
 
-      <div class="studio-wrap">
+      <div class="studio-wrap" id="studio">
         <div class="studio">
           <div class="studio-inner">
             <div class="studio-sidebar">
               <div class="studio-label">Create</div>
-              <div class="tool-option active" id="ageOption"><div class="tool-icon">🕒</div><div class="tool-name">Age</div></div>
-              <div class="tool-option" id="faceSwapOption"><div class="tool-icon">🎬</div><div class="tool-name">Face Swap</div></div>
-              <div class="tool-option"><div class="tool-icon">✨</div><div class="tool-name">Enhance</div></div>
+              <div class="tool-option" id="ageOption">
+                <div class="tool-icon">🕒</div>
+                <div><div class="tool-name">Age Preview</div><span class="tool-sub">Presets + custom age</span></div>
+              </div>
+              <div class="tool-option active" id="faceSwapOption">
+                <div class="tool-icon">🎬</div>
+                <div><div class="tool-name">Face Swap</div><span class="tool-sub">Live beta</span></div>
+              </div>
+              <div class="tool-option disabled" aria-disabled="true">
+                <div class="tool-icon">✨</div>
+                <div><div class="tool-name">Enhance</div><span class="tool-sub">Coming soon</span></div>
+              </div>
             </div>
 
             <div class="studio-main">
-              <h2 class="upload-title">Start with your photo</h2>
-              <p class="upload-description">Upload a clear photo and choose how you want FaceEvol to transform it.</p>
+              <h2 class="upload-title">Upload your face photo</h2>
+              <p class="upload-description">Choose a clear, front-facing photo first. Then add your MP4 video and select the clip you want to face swap.</p>
 
               <div class="upload-box" id="uploadBox" onclick="document.getElementById('photoUpload').click()">
                 <div class="upload-icon">↑</div>
-                <strong>Drop your photo here</strong>
-                <small>or tap to choose a file</small>
+                <strong>Drop your face photo here</strong>
+                <small>or tap to choose a JPG, PNG or WebP</small>
               </div>
               <input type="file" id="photoUpload" accept="image/*" hidden>
               <div class="upload-status" id="uploadStatus"></div>
@@ -384,25 +429,33 @@
 
   <div class="proof">
     <div class="container">
-      <div class="proof-label">Built for simple, powerful AI creation</div>
-      <div class="proof-items"><span>⚡ Fast Processing</span><span>🔒 Private Uploads</span><span>💎 HD Quality</span><span>📱 Mobile Friendly</span></div>
+      <div class="proof-label">Built around a focused face-swap experience</div>
+      <div class="proof-items"><span>⚡ AI Processing</span><span>🔒 Private Uploads</span><span>🎬 20-sec Clip Selector</span><span>📱 Mobile Friendly</span></div>
     </div>
   </div>
 
   <section id="features">
     <div class="container">
       <div class="section-heading">
-        <span class="section-eyebrow">Powerful AI Tools</span>
-        <h2>One face. <span class="gradient-text">Endless possibilities.</span></h2>
-        <p>FaceEvol combines age transformation, video face swapping and intelligent enhancement into one simple experience designed for creativity.</p>
+        <span class="section-eyebrow">FaceEvol Today</span>
+        <h2>Start with video face swap. <span class="gradient-text">Grow into more.</span></h2>
+        <p>FaceEvol is focused first on making video face swap simple and reliable. Age transformation, higher quality output, multiple faces, longer videos and enhancement build on top of that experience.</p>
       </div>
       <div class="feature-grid">
-        <div class="feature-card large"><div class="feature-icon">🕒</div><h3>Age Transformation</h3><p>Explore different moments of life. Transform a face younger or older and visualize different ages using AI-powered facial transformation.</p><span class="feature-tag">AGE 0 → 100</span></div>
-        <div class="feature-card large"><div class="feature-icon">🎬</div><h3>Video Face Swap</h3><p>Place a face naturally into videos and creative scenes while preserving movement and visual consistency.</p><span class="feature-tag">VIDEO AI</span></div>
-        <div class="feature-card small"><div class="feature-icon">💎</div><h3>HD & 4K</h3><p>Produce sharper, cleaner results for modern high-resolution displays.</p></div>
-        <div class="feature-card small"><div class="feature-icon">👥</div><h3>Multiple Faces</h3><p>Built to expand toward multiple people in the same video.</p></div>
-        <div class="feature-card small"><div class="feature-icon">✨</div><h3>AI Enhancement</h3><p>Improve clarity, detail and overall visual quality.</p></div>
-        <div class="feature-card small"><div class="feature-icon">🚀</div><h3>Longer Videos</h3><p>Designed for increasingly longer AI-powered video creation.</p></div>
+        <div class="feature-card large">
+          <div class="feature-icon">🎬</div><h3>Video Face Swap</h3>
+          <p>Upload your face photo and an MP4 video, choose a section up to 20 seconds, and create a face-swapped result you can preview and download.</p>
+          <span class="feature-tag"><span class="live-pill">Live Beta</span> CORE FEATURE</span>
+        </div>
+        <div class="feature-card large">
+          <div class="feature-icon">🕒</div><h3>Age Transformation Preview</h3>
+          <p>Explore visual age presets such as child, teen, adult, mature and senior, or choose a custom target age with the slider.</p>
+          <span class="feature-tag"><span class="beta-pill">Preview</span> AGE 0 → 100</span>
+        </div>
+        <div class="feature-card small"><div class="feature-icon">💎</div><h3>2K & 4K</h3><p>Higher-resolution output options are planned after the core workflow is stable.</p><span class="feature-tag"><span class="soon-pill">Coming Soon</span></span></div>
+        <div class="feature-card small"><div class="feature-icon">👥</div><h3>Multiple Faces</h3><p>Swap more than one person in the same video with dedicated face selection.</p><span class="feature-tag"><span class="soon-pill">Coming Soon</span></span></div>
+        <div class="feature-card small"><div class="feature-icon">✨</div><h3>AI Enhancement</h3><p>Improve clarity, detail and overall presentation after transformation.</p><span class="feature-tag"><span class="soon-pill">Coming Soon</span></span></div>
+        <div class="feature-card small"><div class="feature-icon">🚀</div><h3>Longer Videos</h3><p>Support for longer clips will expand as processing and costs are optimized.</p><span class="feature-tag"><span class="soon-pill">Coming Soon</span></span></div>
       </div>
     </div>
   </section>
@@ -411,13 +464,13 @@
     <div class="container">
       <div class="section-heading">
         <span class="section-eyebrow">Simple By Design</span>
-        <h2>Create something extraordinary <span class="gradient-text">in three steps.</span></h2>
-        <p>Powerful AI doesn't need to feel complicated. FaceEvol is designed so anyone can start creating.</p>
+        <h2>Your face swap in <span class="gradient-text">three clear steps.</span></h2>
+        <p>No complicated editor. Just choose your face, choose your video, and let FaceEvol handle the AI processing.</p>
       </div>
       <div class="steps">
-        <div class="step-card"><div class="step-number">1</div><h3>Upload</h3><p>Choose the photo or video you want to transform.</p></div>
-        <div class="step-card"><div class="step-number">2</div><h3>Choose</h3><p>Select age transformation, face swap, enhancement or another option.</p></div>
-        <div class="step-card"><div class="step-number">3</div><h3>Create</h3><p>Let FaceEvol generate your transformation and prepare your finished result.</p></div>
+        <div class="step-card"><div class="step-number">1</div><h3>Upload your face</h3><p>Choose a clear, front-facing face photo with good lighting.</p></div>
+        <div class="step-card"><div class="step-number">2</div><h3>Add your video</h3><p>Choose an MP4 up to 300 MB and select a clip up to 20 seconds.</p></div>
+        <div class="step-card"><div class="step-number">3</div><h3>Create & download</h3><p>FaceEvol processes the swap, shows your finished video, and gives you a download button.</p></div>
       </div>
     </div>
   </section>
@@ -426,19 +479,19 @@
     <div class="container">
       <div class="quality-box">
         <div class="quality-content">
-          <span class="section-eyebrow">Quality Matters</span>
-          <h2>Built to make every transformation <span class="gradient-text">look its best.</span></h2>
-          <p>FaceEvol is being built around quality as much as creativity, with tools designed to improve clarity, realism and final video presentation.</p>
+          <span class="section-eyebrow">Output Quality</span>
+          <h2>Start reliable. <span class="gradient-text">Scale quality next.</span></h2>
+          <p>The beta currently prioritizes a reliable standard-quality workflow. Higher-resolution 2K and 4K options will be introduced after the core experience is ready for them.</p>
           <div class="quality-list">
-            <div class="quality-item"><span class="check">✓</span>HD and future 4K output options</div>
-            <div class="quality-item"><span class="check">✓</span>AI-powered facial enhancement</div>
-            <div class="quality-item"><span class="check">✓</span>Video upscaling capabilities</div>
-            <div class="quality-item"><span class="check">✓</span>Designed for longer videos</div>
+            <div class="quality-item"><span class="check">✓</span>1K / standard output in the current age preview selector</div>
+            <div class="quality-item"><span class="check">✓</span>2K output planned</div>
+            <div class="quality-item"><span class="check">✓</span>4K output planned</div>
+            <div class="quality-item"><span class="check">✓</span>Future enhancement and upscaling tools</div>
           </div>
         </div>
         <div class="quality-visual">
-          <div class="quality-chip chip-1">✨ Enhance</div><div class="quality-chip chip-2">4K Ready</div>
-          <div class="quality-chip chip-3">HD</div><div class="quality-chip chip-4">AI Powered</div>
+          <div class="quality-chip chip-1">1K · Beta</div><div class="quality-chip chip-2">4K · Soon</div>
+          <div class="quality-chip chip-3">2K · Soon</div><div class="quality-chip chip-4">AI Powered</div>
           <div class="quality-circle">💎</div>
         </div>
       </div>
@@ -450,12 +503,12 @@
       <div class="section-heading">
         <span class="section-eyebrow">Trust & Privacy</span>
         <h2>Your creations should feel <span class="gradient-text">personal and protected.</span></h2>
-        <p>FaceEvol is designed with user trust, responsible creation and privacy as important parts of the experience.</p>
+        <p>FaceEvol is designed with user trust, responsible creation and privacy-conscious processing as important parts of the experience.</p>
       </div>
       <div class="privacy-grid">
-        <div class="privacy-card"><div>🔒</div><strong>Privacy Focused</strong><p>Uploads and generated content are designed to be handled with privacy-conscious processing.</p></div>
+        <div class="privacy-card"><div>🔒</div><strong>Privacy Focused</strong><p>Uploads and generated content are handled through private storage and controlled access in the FaceEvol workflow.</p></div>
         <div class="privacy-card"><div>🛡️</div><strong>Responsible Creation</strong><p>Designed for legitimate, creative and consensual use.</p></div>
-        <div class="privacy-card"><div>❤️</div><strong>Made for People</strong><p>Technology should feel simple, friendly and empowering.</p></div>
+        <div class="privacy-card"><div>❤️</div><strong>Made for People</strong><p>Technology should feel simple, friendly and empowering rather than complicated.</p></div>
       </div>
     </div>
   </section>
@@ -463,28 +516,28 @@
   <section id="pricing">
     <div class="container">
       <div class="section-heading">
-        <span class="section-eyebrow">Simple Pricing</span>
-        <h2>Start free. <span class="gradient-text">Create more when you're ready.</span></h2>
-        <p>Start exploring FaceEvol for free. Premium options will unlock more power, quality and processing capacity.</p>
+        <span class="section-eyebrow">Beta Access</span>
+        <h2>Start with the core. <span class="gradient-text">More options are coming.</span></h2>
+        <p>FaceEvol is still in beta. The current priority is making the core experience dependable before expanding plans and paid features.</p>
       </div>
       <div class="pricing-grid">
-        <div class="price-card">
-          <div class="price-name">Free</div><div class="price">€0</div>
-          <p class="price-description">Explore FaceEvol and try your first transformations.</p>
-          <ul class="price-features"><li>✓ Basic transformations</li><li>✓ Standard quality</li><li>✓ Easy web access</li></ul>
-          <a href="#start" class="button button-secondary">Start Free</a>
-        </div>
         <div class="price-card featured">
-          <div class="popular-label">Popular</div><div class="price-name">Creator</div><div class="coming-soon">Coming Soon</div>
-          <p class="price-description">More power and higher quality for frequent creators.</p>
-          <ul class="price-features"><li>✓ More transformations</li><li>✓ HD quality</li><li>✓ Video face swap</li><li>✓ Faster processing</li></ul>
-          <a href="#start" class="button button-primary">Start Free</a>
+          <div class="popular-label">Beta</div><div class="price-name">Free Beta</div><div class="price">€0</div>
+          <p class="price-description">Try the current FaceEvol experience while the product is being refined.</p>
+          <ul class="price-features"><li>✓ Video face swap beta</li><li>✓ Up to 20-second selected clips</li><li>✓ MP4 source files up to 300 MB</li><li>✓ Preview and download result</li></ul>
+          <a href="#studio" class="button button-primary">Start Face Swap</a>
+        </div>
+        <div class="price-card">
+          <div class="price-name">Creator</div><div class="coming-soon">Coming Soon</div>
+          <p class="price-description">More processing capacity and higher-quality options for frequent creators.</p>
+          <ul class="price-features"><li>✓ More creations</li><li>✓ Higher-resolution options</li><li>✓ Faster processing options</li><li>✓ Expanded video limits</li></ul>
+          <a href="#studio" class="button button-secondary">Try Beta</a>
         </div>
         <div class="price-card">
           <div class="price-name">Pro</div><div class="coming-soon">Coming Soon</div>
-          <p class="price-description">Advanced quality and higher usage for serious creators.</p>
+          <p class="price-description">Advanced quality and expanded tools for power users.</p>
           <ul class="price-features"><li>✓ Higher usage limits</li><li>✓ Future 4K output</li><li>✓ Longer videos</li><li>✓ Advanced enhancement</li></ul>
-          <a href="#start" class="button button-secondary">Start Free</a>
+          <a href="#studio" class="button button-secondary">Try Beta</a>
         </div>
       </div>
     </div>
@@ -494,11 +547,11 @@
     <div class="container">
       <div class="section-heading"><span class="section-eyebrow">FAQ</span><h2>Questions? <span class="gradient-text">We've got answers.</span></h2></div>
       <div class="faq-list">
-        <details><summary>What is FaceEvol?</summary><p>FaceEvol is an AI-powered creative platform for face age transformation, video face swapping, enhancement and related visual tools.</p></details>
-        <details><summary>Can I transform a face to different ages?</summary><p>Yes. Age transformation is one of FaceEvol's core planned features.</p></details>
-        <details><summary>Will FaceEvol support video face swapping?</summary><p>Yes. Video face swapping is a core part of FaceEvol's product direction.</p></details>
-        <details><summary>Will HD and 4K be available?</summary><p>HD quality is planned first, with higher-resolution options such as 4K as the platform develops.</p></details>
-        <details><summary>Is FaceEvol free?</summary><p>FaceEvol is planned to include a free way to start, with premium options for higher usage and advanced processing.</p></details>
+        <details><summary>What works on FaceEvol right now?</summary><p>The current beta focuses on video face swap: upload a face photo and MP4 video, select a clip up to 20 seconds, process it with AI, preview the result and download the finished video.</p></details>
+        <details><summary>Can I explore different ages?</summary><p>Yes. The Age Preview section includes visual presets for ages 5, 15, 30, 50 and 75, plus the existing custom age slider from 0 to 100.</p></details>
+        <details><summary>What video can I upload?</summary><p>For the beta, use an MP4 source file smaller than 300 MB. You can then select any section up to 20 seconds for processing.</p></details>
+        <details><summary>Will 2K and 4K be available?</summary><p>Higher-resolution output is planned. The current beta prioritizes reliability first, with 2K, 4K and enhancement features coming later.</p></details>
+        <details><summary>Is FaceEvol free?</summary><p>FaceEvol currently offers beta access while the core experience is being developed. Future paid plans may add higher limits, quality and processing options.</p></details>
       </div>
     </div>
   </section>
@@ -506,10 +559,10 @@
   <section class="cta" id="start">
     <div class="container">
       <div class="cta-box">
-        <div class="badge">✨ Your imagination starts here</div>
-        <h2>See yourself differently.<br><span class="gradient-text">Bring your dreams to life.</span></h2>
-        <p>Upload a photo and begin exploring what FaceEvol can help you create.</p>
-        <a href="#" class="button button-primary" onclick="document.getElementById('photoUpload').click();return false;">Start Creating →</a>
+        <div class="badge">🎬 Face swap beta is ready</div>
+        <h2>Upload your face photo and video.<br><span class="gradient-text">Create your first FaceEvol swap.</span></h2>
+        <p>Choose a clear face photo, add an MP4 video, select up to 20 seconds, and let FaceEvol create the result.</p>
+        <a href="#studio" class="button button-primary" id="ctaStartButton">Start Face Swap →</a>
       </div>
     </div>
   </section>
@@ -521,7 +574,7 @@
       <a href="#" class="footer-logo"><img src="a.png" alt="FaceEvol"></a>
       <div class="footer-links"><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Contact</a></div>
     </div>
-    <div class="footer-bottom"><div>© 2026 FaceEvol. All rights reserved.</div><div>Transform. Imagine. Create. ❤️</div></div>
+    <div class="footer-bottom"><div>© 2026 FaceEvol. All rights reserved.</div><div>Video face swap first. More ways to transform are coming. ❤️</div></div>
   </div>
 </footer>
 
@@ -532,10 +585,11 @@
   const studioMain = document.querySelector(".studio-main");
   const faceSwapOption = document.getElementById("faceSwapOption");
   const ageOption = document.getElementById("ageOption");
+  const ctaStartButton = document.getElementById("ctaStartButton");
 
   let selectedPhoto = null;
   let selectedSwapVideo = null;
-  let faceSwapMode = false;
+  let faceSwapMode = true;
   let selectedPhotoPreviewUrl = null;
   let selectedSwapVideoPreviewUrl = null;
   let faceSwapResultObjectUrl = null;
@@ -543,9 +597,30 @@
   let sourcePreviewRecoveryAttempts = 0;
   let resultPlaybackRecoveryRunning = false;
   let resultPlaybackRecoveryAttempted = false;
+  let selectedAgeExampleGender = "male";
+  let selectedAgeQuality = "1K";
 
   const MAX_TRIM_SECONDS = 20;
   const MAX_VIDEO_BYTES = 300 * 1024 * 1024;
+  const AGE_PRESETS = [
+    {age:5,label:"Child",className:"child"},
+    {age:15,label:"Teen",className:"teen"},
+    {age:30,label:"Adult",className:"adult"},
+    {age:50,label:"Mature",className:"mature"},
+    {age:75,label:"Senior",className:"senior"}
+  ];
+
+  /*
+   * Optional polished AI example images.
+   * The page works without them because each card has a built-in fallback.
+   * Later, upload your AI-generated examples to the project root using these exact filenames:
+   * age-male-5.webp, age-male-15.webp, age-male-30.webp, age-male-50.webp, age-male-75.webp
+   * age-female-5.webp, age-female-15.webp, age-female-30.webp, age-female-50.webp, age-female-75.webp
+   */
+  const AGE_PRESET_IMAGES = {
+    male:{5:"age-male-5.webp",15:"age-male-15.webp",30:"age-male-30.webp",50:"age-male-50.webp",75:"age-male-75.webp"},
+    female:{5:"age-female-5.webp",15:"age-female-15.webp",30:"age-female-30.webp",50:"age-female-50.webp",75:"age-female-75.webp"}
+  };
 
   let trimStart = 0;
   let trimEnd = 0;
@@ -630,9 +705,7 @@
     const text=await response.text();
     if(!text) return {};
     try{return JSON.parse(text);}
-    catch{
-      return {error:response.status===413?"The request was too large.":"The server returned an unexpected response."};
-    }
+    catch{return {error:response.status===413?"The request was too large.":"The server returned an unexpected response."};}
   }
 
   function findVideoUrl(value){
@@ -647,9 +720,7 @@
     }
     if(typeof value==="object"){
       const keys=["video","video_url","videoUrl","url","output","file","href","download","result"];
-      for(const key of keys){
-        if(value[key]!==undefined){const found=findVideoUrl(value[key]);if(found)return found;}
-      }
+      for(const key of keys){if(value[key]!==undefined){const found=findVideoUrl(value[key]);if(found)return found;}}
       for(const nested of Object.values(value)){const found=findVideoUrl(nested);if(found)return found;}
     }
     return null;
@@ -669,12 +740,7 @@
   function rebuildSourcePreview(){
     if(!selectedSwapVideo) return;
 
-    try{
-      if(selectedSwapVideoPreviewUrl){
-        URL.revokeObjectURL(selectedSwapVideoPreviewUrl);
-      }
-    }catch{}
-
+    try{if(selectedSwapVideoPreviewUrl){URL.revokeObjectURL(selectedSwapVideoPreviewUrl);}}catch{}
     selectedSwapVideoPreviewUrl=URL.createObjectURL(selectedSwapVideo);
     swapVideoPreview.src=selectedSwapVideoPreviewUrl;
     swapVideoPreview.load();
@@ -686,40 +752,21 @@
       faceSwapResultObjectUrl=null;
     }
 
-    /*
-     * Make a local browser Blob copy of the finished MP4.
-     * This avoids playback problems caused by temporary remote URLs.
-     */
     try{
       swapVideoStatus.textContent="Preparing your finished video for playback...";
-
       const resultResponse=await fetch(outputUrl,{cache:"no-store"});
-
-      if(!resultResponse.ok){
-        throw new Error("Could not prepare the finished video for playback.");
-      }
-
+      if(!resultResponse.ok) throw new Error("Could not prepare the finished video for playback.");
       const resultBlob=await resultResponse.blob();
-
-      if(!resultBlob || !resultBlob.size){
-        throw new Error("The finished video file was empty.");
-      }
+      if(!resultBlob || !resultBlob.size) throw new Error("The finished video file was empty.");
 
       faceSwapResultObjectUrl=URL.createObjectURL(resultBlob);
       faceSwapResultVideo.src=faceSwapResultObjectUrl;
       faceSwapResultVideo.load();
-
       return true;
-
     }catch(error){
       console.warn("Stable result playback fallback:",error);
-
-      /*
-       * Fallback to the original Replicate URL.
-       */
       faceSwapResultVideo.src=outputUrl;
       faceSwapResultVideo.load();
-
       return false;
     }
   }
@@ -733,18 +780,19 @@
 
     uploadBox.innerHTML=`
       <img class="selected-photo-preview" src="${selectedPhotoPreviewUrl}" alt="Selected face photo">
-      <strong>Photo selected ✓</strong>
+      <strong>Face photo selected ✓</strong>
       <small>${selectedPhoto.name}</small>
     `;
 
     uploadStatus.textContent=faceSwapMode
       ?"✓ Face photo ready. Tip for best results: use a clear, front-facing photo with good lighting. Avoid sunglasses, heavy shadows, blur, and strong side angles."
-      :"✓ Photo ready — FaceEvol will automatically optimize it if needed.";
+      :"✓ Photo ready. Choose an age preset below or set your own target age.";
 
     if(faceSwapMode){
       ageControls.classList.remove("show");
       faceSwapControls.classList.add("show");
     }else{
+      faceSwapControls.classList.remove("show");
       ageControls.classList.add("show");
     }
   });
@@ -753,8 +801,38 @@
   const ageControls=document.createElement("div");
   ageControls.className="age-controls";
   ageControls.innerHTML=`
-    <div class="age-label"><span>Choose target age</span><span class="age-value" id="ageValue">30 years</span></div>
-    <input class="age-slider" id="ageSlider" type="range" min="0" max="100" value="30" step="1">
+    <div class="panel-top">
+      <div>
+        <span class="panel-kicker">Age Transformation Preview</span>
+        <h3 class="panel-title">Pick an age preset</h3>
+        <p class="panel-copy">Use the example faces to quickly understand each age range, then choose a preset or set any custom age from 0 to 100.</p>
+      </div>
+      <span class="beta-pill">Preview</span>
+    </div>
+
+    <div class="gender-toggle" aria-label="Example face gender">
+      <button type="button" class="gender-button active" data-gender="male">♂ Male examples</button>
+      <button type="button" class="gender-button" data-gender="female">♀ Female examples</button>
+    </div>
+
+    <div class="age-presets" id="agePresets"></div>
+    <div class="example-note">Example faces are for visual guidance only. The male/female toggle changes the example set; it does not change the gender of your uploaded face.</div>
+
+    <div class="custom-age-panel">
+      <div class="age-label"><span>Or choose any target age</span><span class="age-value" id="ageValue">30 years</span></div>
+      <input class="age-slider" id="ageSlider" type="range" min="0" max="100" value="30" step="1">
+    </div>
+
+    <div class="quality-selector">
+      <div class="quality-selector-head"><strong>Output quality</strong><span>Higher quality is coming later</span></div>
+      <div class="quality-options-row">
+        <button type="button" class="quality-option active" data-quality="1K"><strong>1K</strong><small>Beta</small></button>
+        <button type="button" class="quality-option" data-quality="2K" disabled><strong>2K</strong><small>Coming soon</small></button>
+        <button type="button" class="quality-option" data-quality="4K" disabled><strong>4K</strong><small>Coming soon</small></button>
+      </div>
+    </div>
+
+    <div class="age-summary" id="ageSummary">✨ Transform my uploaded face to <strong>age 30</strong> · 1K output</div>
     <button class="transform-button" id="transformButton" type="button">✨ Transform to Age 30</button>
     <div class="processing-message" id="processingMessage"></div>
     <div class="error-message" id="ageError"></div>
@@ -762,18 +840,55 @@
   `;
   studioMain.appendChild(ageControls);
 
+  const agePresets=document.getElementById("agePresets");
   const ageSlider=document.getElementById("ageSlider");
   const ageValue=document.getElementById("ageValue");
+  const ageSummary=document.getElementById("ageSummary");
   const transformButton=document.getElementById("transformButton");
   const processingMessage=document.getElementById("processingMessage");
   const ageError=document.getElementById("ageError");
   const ageResult=document.getElementById("ageResult");
   const resultImage=document.getElementById("resultImage");
+  const genderButtons=[...ageControls.querySelectorAll(".gender-button")];
 
-  ageSlider.addEventListener("input",function(){
-    ageValue.textContent=`${this.value} years`;
-    transformButton.textContent=`✨ Transform to Age ${this.value}`;
+  function renderAgePresets(){
+    agePresets.innerHTML=AGE_PRESETS.map(preset=>`
+      <button type="button" class="age-preset-card ${Number(ageSlider.value)===preset.age?"active":""}" data-age="${preset.age}">
+        <div class="age-preset-media">
+          <img class="age-preset-image" src="${AGE_PRESET_IMAGES[selectedAgeExampleGender][preset.age]}" alt="${selectedAgeExampleGender} age ${preset.age} example" onerror="this.style.display='none'">
+          <div class="age-preset-fallback ${selectedAgeExampleGender} ${preset.className}"></div>
+        </div>
+        <div class="age-preset-body"><span class="age-preset-number">Age ${preset.age}</span><span class="age-preset-name">${preset.label}</span></div>
+      </button>
+    `).join("");
+
+    [...agePresets.querySelectorAll(".age-preset-card")].forEach(card=>{
+      card.addEventListener("click",()=>{
+        ageSlider.value=card.dataset.age;
+        updateAgeSelection();
+      });
+    });
+  }
+
+  function updateAgeSelection(){
+    const age=Number(ageSlider.value);
+    ageValue.textContent=`${age} years`;
+    transformButton.textContent=`✨ Transform to Age ${age}`;
+    ageSummary.innerHTML=`✨ Transform my uploaded face to <strong>age ${age}</strong> · ${selectedAgeQuality} output`;
+    renderAgePresets();
+  }
+
+  genderButtons.forEach(button=>{
+    button.addEventListener("click",()=>{
+      selectedAgeExampleGender=button.dataset.gender;
+      genderButtons.forEach(item=>item.classList.toggle("active",item===button));
+      renderAgePresets();
+    });
   });
+
+  ageSlider.addEventListener("input",updateAgeSelection);
+  renderAgePresets();
+  updateAgeSelection();
 
   transformButton.addEventListener("click",async function(){
     if(!selectedPhoto){ageError.textContent="Please choose a photo first.";return;}
@@ -787,7 +902,7 @@
     try{
       const optimizedBlob=await optimizeImageToBlob(selectedPhoto,{maxDimension:1600,maxBytes:700*1024,quality:.92});
       const imageData=await blobToDataURL(optimizedBlob);
-      processingMessage.textContent="FaceEvol AI is creating your transformation. This may take a little while.";
+      processingMessage.textContent="FaceEvol AI is creating your age transformation. This may take a little while.";
 
       const response=await fetch("/api/predict",{
         method:"POST",
@@ -808,7 +923,7 @@
 
       resultImage.src=output;
       ageResult.classList.add("show");
-      processingMessage.textContent=`Transformation complete — age ${ageSlider.value}.`;
+      processingMessage.textContent=`✓ Transformation complete — age ${ageSlider.value}.`;
     }catch(error){
       processingMessage.textContent="";
       ageError.textContent=error instanceof Error?error.message:String(error);
@@ -823,11 +938,14 @@
   faceSwapControls.className="age-controls";
   faceSwapControls.innerHTML=`
     <div style="text-align:center;">
-      <div style="font-size:32px;margin-bottom:12px;">🎬</div>
-      <h3 style="margin-bottom:8px;">Video Face Swap</h3>
-      <p style="color:#96a3ba;font-size:14px;line-height:1.6;margin-bottom:18px;">
-        Upload the video where you want FaceEvol to place your selected face.
-      </p>
+      <div class="panel-top" style="margin-bottom:6px;">
+        <div>
+          <span class="panel-kicker">Core Feature</span>
+          <h3 class="panel-title">Video Face Swap</h3>
+          <p class="panel-copy">Upload the MP4 video where you want FaceEvol to place your selected face. You can choose any section up to 20 seconds.</p>
+        </div>
+        <span class="live-pill">Live Beta</span>
+      </div>
 
       <button type="button" class="transform-button" id="chooseSwapVideo">🎥 Choose MP4 Video</button>
       <input type="file" id="swapVideoUpload" accept="video/mp4,.mp4" hidden>
@@ -916,17 +1034,9 @@
     resultPlaybackRecoveryRunning=true;
 
     try{
-      /*
-       * If playback fails, rebuild a local copy once
-       * from the original finished-video URL.
-       */
       const recovered=await loadStableResultVideo(latestFaceSwapOutput);
-
-      if(recovered){
-        swapVideoStatus.textContent="✓ Video playback restored.";
-      }else{
-        swapVideoStatus.textContent="The video is ready, but this browser could not play it here. Please use Download Video.";
-      }
+      if(recovered){swapVideoStatus.textContent="✓ Video playback restored.";}
+      else{swapVideoStatus.textContent="The video is ready, but this browser could not play it here. Please use Download Video.";}
     }finally{
       resultPlaybackRecoveryRunning=false;
     }
@@ -952,7 +1062,6 @@
 
     trimStart=start;
     trimEnd=end;
-
     trimStartRange.value=String(trimStart);
     trimEndRange.value=String(trimEnd);
 
@@ -1002,21 +1111,15 @@
     if(!selectedSwapVideo)return;
     swapVideoPreview.pause();
     swapVideoPreview.currentTime=trimStart;
-    try{await swapVideoPreview.play();}
-    catch{}
+    try{await swapVideoPreview.play();}catch{}
   });
 
   swapVideoPreview.addEventListener("play",function(){
-    if(this.currentTime<trimStart-.15 || this.currentTime>=trimEnd){
-      this.currentTime=trimStart;
-    }
+    if(this.currentTime<trimStart-.15 || this.currentTime>=trimEnd){this.currentTime=trimStart;}
   });
 
   swapVideoPreview.addEventListener("timeupdate",function(){
-    if(this.currentTime>=trimEnd){
-      this.pause();
-      this.currentTime=trimStart;
-    }
+    if(this.currentTime>=trimEnd){this.pause();this.currentTime=trimStart;}
   });
 
   swapVideoPreview.addEventListener("error",function(){
@@ -1028,10 +1131,7 @@
     }
 
     sourcePreviewRecoveryAttempts++;
-
-    setTimeout(()=>{
-      rebuildSourcePreview();
-    },250);
+    setTimeout(()=>{rebuildSourcePreview();},250);
   });
 
   async function ensureFFmpeg(){
@@ -1059,7 +1159,6 @@
     if(duration<=0) throw new Error("Please choose a valid video section.");
     if(duration>MAX_TRIM_SECONDS+.05) throw new Error("Please keep the selected clip at 20 seconds or less.");
 
-    /* If the full file is already selected and <=20s, avoid unnecessary processing. */
     if(start<.05 && sourceVideoDuration<=MAX_TRIM_SECONDS+.05 && Math.abs(end-sourceVideoDuration)<.15){
       return file;
     }
@@ -1072,14 +1171,9 @@
     const outputName=`faceevol-trim-${stamp}.mp4`;
 
     try{
-      swapVideoStatus.textContent=`1/6 Trimming your selected ${(duration).toFixed(1)}-second clip...`;
-
+      swapVideoStatus.textContent=`1/6 Trimming your selected ${duration.toFixed(1)}-second clip...`;
       ffmpeg.FS("writeFile",inputName,await ffmpegFetchFile(file));
 
-      /*
-       * Stream-copy keeps original video/audio quality and is much faster
-       * than re-encoding on a phone. The resulting file is a real MP4 clip.
-       */
       await ffmpeg.run(
         "-ss",start.toFixed(3),
         "-i",inputName,
@@ -1095,11 +1189,7 @@
       const data=ffmpeg.FS("readFile",outputName);
       if(!data || !data.length) throw new Error("The selected clip could not be created.");
 
-      return new File(
-        [data.buffer],
-        `faceevol-trim-${stamp}.mp4`,
-        {type:"video/mp4",lastModified:Date.now()}
-      );
+      return new File([data.buffer],`faceevol-trim-${stamp}.mp4`,{type:"video/mp4",lastModified:Date.now()});
     }finally{
       try{ffmpeg.FS("unlink",inputName);}catch{}
       try{ffmpeg.FS("unlink",outputName);}catch{}
@@ -1113,23 +1203,18 @@
     if(message.includes("failed to fetch") || message.includes("network") || message.includes("internet")){
       return "We couldn’t connect to FaceEvol. Please check your internet connection and try again.";
     }
-
     if(message.includes("300 mb") || message.includes("too large") || message.includes("request was too large")){
       return "This video is too large. Please choose an MP4 smaller than 300 MB.";
     }
-
     if(message.includes("mp4") || message.includes("video duration") || message.includes("could not read the video")){
       return "We couldn’t read this video. Please try another MP4 file.";
     }
-
     if(message.includes("trimmer") || message.includes("ffmpeg") || message.includes("selected clip could not be created")){
       return "We couldn’t prepare the selected clip. Please refresh the page and try again, or choose a different MP4.";
     }
-
     if(message.includes("too long") || message.includes("timed out")){
       return "FaceEvol temporarily lost the status connection. Your AI job may still be processing, so please try checking again.";
     }
-
     if(message.includes("face swap failed") || message.includes("prediction") || message.includes("no output video")){
       return "FaceEvol couldn’t complete this face swap. Please try again with a clear face photo or a different video.";
     }
@@ -1137,32 +1222,41 @@
     return "Something went wrong while creating your face swap. Please try again. If it happens again, try a different MP4 or a clearer face photo.";
   }
 
-  faceSwapOption.addEventListener("click",function(){
+  function activateFaceSwapMode(){
     faceSwapMode=true;
     document.querySelectorAll(".tool-option").forEach(o=>o.classList.remove("active"));
     faceSwapOption.classList.add("active");
     ageControls.classList.remove("show");
     faceSwapControls.classList.add("show");
 
-    document.querySelector(".upload-title").textContent="Start with your face";
-    document.querySelector(".upload-description").textContent="Upload a clear face photo. You’ll see a preview here so you can confirm you selected the right person.";
+    document.querySelector(".upload-title").textContent="Upload your face photo";
+    document.querySelector(".upload-description").textContent="Choose a clear, front-facing photo first. Then add your MP4 video and select the clip you want to face swap.";
 
     if(selectedPhoto){
       uploadStatus.textContent="✓ Face photo ready. Tip for best results: use a clear, front-facing photo with good lighting. Avoid sunglasses, heavy shadows, blur, and strong side angles.";
     }
-  });
+  }
 
-  ageOption.addEventListener("click",function(){
+  function activateAgeMode(){
     faceSwapMode=false;
     document.querySelectorAll(".tool-option").forEach(o=>o.classList.remove("active"));
     ageOption.classList.add("active");
     faceSwapControls.classList.remove("show");
     if(selectedPhoto) ageControls.classList.add("show");
 
-    document.querySelector(".upload-title").textContent="Start with your photo";
-    document.querySelector(".upload-description").textContent="Upload a clear photo and choose how you want FaceEvol to transform it.";
+    document.querySelector(".upload-title").textContent="Upload a photo for Age Preview";
+    document.querySelector(".upload-description").textContent="Upload a clear face photo, then pick an age preset or choose any target age from 0 to 100.";
 
-    if(selectedPhoto) uploadStatus.textContent="✓ Photo ready — FaceEvol will automatically optimize it if needed.";
+    if(selectedPhoto){
+      uploadStatus.textContent="✓ Photo ready. Choose an age preset below or set your own target age.";
+    }
+  }
+
+  faceSwapOption.addEventListener("click",activateFaceSwapMode);
+  ageOption.addEventListener("click",activateAgeMode);
+
+  ctaStartButton.addEventListener("click",function(){
+    activateFaceSwapMode();
   });
 
   chooseSwapVideo.addEventListener("click",()=>swapVideoUpload.click());
@@ -1282,14 +1376,8 @@
     if(!selectedSwapVideo){swapVideoStatus.textContent="Please choose an MP4 video first.";return;}
 
     const selectedDuration=trimEnd-trimStart;
-    if(selectedDuration<=0){
-      swapVideoStatus.textContent="Please choose a valid section of the video.";
-      return;
-    }
-    if(selectedDuration>MAX_TRIM_SECONDS+.05){
-      swapVideoStatus.textContent="Please keep the selected clip at 20 seconds or less.";
-      return;
-    }
+    if(selectedDuration<=0){swapVideoStatus.textContent="Please choose a valid section of the video.";return;}
+    if(selectedDuration>MAX_TRIM_SECONDS+.05){swapVideoStatus.textContent="Please keep the selected clip at 20 seconds or less.";return;}
 
     startFaceSwapButton.disabled=true;
     chooseSwapVideo.disabled=true;
@@ -1310,50 +1398,29 @@
     faceSwapResultVideo.load();
 
     try{
-      /*
-       * STEP 1 — create the actual selected MP4 clip locally.
-       * Only this clip is uploaded to Vercel Blob.
-       */
       const videoForUpload=await trimVideoToMp4(selectedSwapVideo,trimStart,trimEnd);
 
       swapVideoStatus.textContent="2/6 Preparing your face photo...";
       startFaceSwapButton.textContent="Face swapping...";
 
-      const optimizedFace=await optimizeImageToBlob(selectedPhoto,{
-        maxDimension:2048,
-        maxBytes:5*1024*1024,
-        quality:.94
-      });
-
+      const optimizedFace=await optimizeImageToBlob(selectedPhoto,{maxDimension:2048,maxBytes:5*1024*1024,quality:.94});
       const {upload}=await import("https://esm.sh/@vercel/blob@2.6.1/client");
 
-      /*
-       * STEP 2 — upload ONLY the trimmed clip.
-       */
       swapVideoStatus.textContent=`3/6 Uploading your ${(trimEnd-trimStart).toFixed(1)}-second clip...`;
-
       const videoBlob=await upload(
         `faceevol-video-${Date.now()}-${safeFileName(videoForUpload.name)}`,
         videoForUpload,
         {access:"private",handleUploadUrl:"/api/upload"}
       );
 
-      /*
-       * STEP 3 — upload optimized face.
-       */
       swapVideoStatus.textContent="4/6 Uploading your face photo...";
-
       const faceBlob=await upload(
         `faceevol-face-${Date.now()}.jpg`,
         optimizedFace,
         {access:"private",handleUploadUrl:"/api/upload"}
       );
 
-      /*
-       * STEP 4 — your existing face-swap endpoint remains unchanged.
-       */
       swapVideoStatus.textContent="5/6 Starting FaceEvol AI...";
-
       const response=await fetch("/api/faceswap",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
@@ -1361,7 +1428,6 @@
       });
 
       const data=await readJsonResponse(response);
-
       if(!response.ok){
         let message=data.error||"Face swap failed.";
         if(data.details&&typeof data.details==="string") message+=` ${data.details}`;
@@ -1371,21 +1437,10 @@
       let prediction=data.prediction;
       if(!prediction||!prediction.id) throw new Error("No face swap prediction was returned.");
 
-      /*
-       * STEP 5 — poll your existing prediction endpoint.
-       */
-      /*
-       * STEP 5 — keep polling until Replicate returns a real terminal state.
-       * Do not turn a normal long-running prediction into a false timeout error.
-       */
       const pollingStartedAt=Date.now();
       let consecutiveStatusErrors=0;
 
-      while(
-        prediction.status!=="succeeded" &&
-        prediction.status!=="failed" &&
-        prediction.status!=="canceled"
-      ){
+      while(prediction.status!=="succeeded" && prediction.status!=="failed" && prediction.status!=="canceled"){
         const elapsedSeconds=Math.floor((Date.now()-pollingStartedAt)/1000);
 
         if(elapsedSeconds<120){
@@ -1399,16 +1454,9 @@
         await new Promise(resolve=>setTimeout(resolve,3000));
 
         try{
-          const statusResponse=await fetch(
-            `/api/prediction?id=${encodeURIComponent(prediction.id)}`,
-            {cache:"no-store"}
-          );
-
+          const statusResponse=await fetch(`/api/prediction?id=${encodeURIComponent(prediction.id)}`,{cache:"no-store"});
           const statusData=await readJsonResponse(statusResponse);
-
-          if(!statusResponse.ok){
-            throw new Error(statusData.error||"Could not check face swap status.");
-          }
+          if(!statusResponse.ok) throw new Error(statusData.error||"Could not check face swap status.");
 
           prediction=statusData.prediction||statusData;
           consecutiveStatusErrors=0;
@@ -1416,9 +1464,7 @@
           consecutiveStatusErrors++;
           console.warn("Temporary FaceEvol status check error:",statusError);
 
-          if(consecutiveStatusErrors>=5){
-            throw statusError;
-          }
+          if(consecutiveStatusErrors>=5) throw statusError;
 
           swapVideoStatus.textContent="6/6 FaceEvol is still working. Reconnecting to the status check...";
           await new Promise(resolve=>setTimeout(resolve,3000));
@@ -1439,14 +1485,12 @@
       }
 
       latestFaceSwapOutput=output;
-
       faceSwapResult.style.display="block";
       downloadFaceSwapButton.style.display="inline-flex";
 
       await loadStableResultVideo(output);
 
       swapVideoStatus.textContent="✓ Face swap complete — your video is ready to preview or download.";
-
       faceSwapResultVideo.play().then(()=>faceSwapResultVideo.pause()).catch(()=>{});
     }catch(error){
       console.error("FaceEvol face swap / trim error:",error);
@@ -1457,6 +1501,9 @@
       startFaceSwapButton.textContent="🎬 Start Face Swap";
     }
   });
+
+  /* Start the page in the real MVP mode: Video Face Swap. */
+  activateFaceSwapMode();
 </script>
 </body>
-</html>
+  </html>
