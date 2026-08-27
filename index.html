@@ -538,7 +538,11 @@
   let faceSwapMode = false;
   let selectedPhotoPreviewUrl = null;
   let selectedSwapVideoPreviewUrl = null;
+  let faceSwapResultObjectUrl = null;
   let latestFaceSwapOutput = null;
+  let sourcePreviewRecoveryAttempts = 0;
+  let resultPlaybackRecoveryRunning = false;
+  let resultPlaybackRecoveryAttempted = false;
 
   const MAX_TRIM_SECONDS = 20;
   const MAX_VIDEO_BYTES = 300 * 1024 * 1024;
@@ -660,6 +664,64 @@
 
   function isMp4(file){
     return file && (file.type==="video/mp4" || /\.mp4$/i.test(file.name||""));
+  }
+
+  function rebuildSourcePreview(){
+    if(!selectedSwapVideo) return;
+
+    try{
+      if(selectedSwapVideoPreviewUrl){
+        URL.revokeObjectURL(selectedSwapVideoPreviewUrl);
+      }
+    }catch{}
+
+    selectedSwapVideoPreviewUrl=URL.createObjectURL(selectedSwapVideo);
+    swapVideoPreview.src=selectedSwapVideoPreviewUrl;
+    swapVideoPreview.load();
+  }
+
+  async function loadStableResultVideo(outputUrl){
+    if(faceSwapResultObjectUrl){
+      try{URL.revokeObjectURL(faceSwapResultObjectUrl);}catch{}
+      faceSwapResultObjectUrl=null;
+    }
+
+    /*
+     * Make a local browser Blob copy of the finished MP4.
+     * This avoids playback problems caused by temporary remote URLs.
+     */
+    try{
+      swapVideoStatus.textContent="Preparing your finished video for playback...";
+
+      const resultResponse=await fetch(outputUrl,{cache:"no-store"});
+
+      if(!resultResponse.ok){
+        throw new Error("Could not prepare the finished video for playback.");
+      }
+
+      const resultBlob=await resultResponse.blob();
+
+      if(!resultBlob || !resultBlob.size){
+        throw new Error("The finished video file was empty.");
+      }
+
+      faceSwapResultObjectUrl=URL.createObjectURL(resultBlob);
+      faceSwapResultVideo.src=faceSwapResultObjectUrl;
+      faceSwapResultVideo.load();
+
+      return true;
+
+    }catch(error){
+      console.warn("Stable result playback fallback:",error);
+
+      /*
+       * Fallback to the original Replicate URL.
+       */
+      faceSwapResultVideo.src=outputUrl;
+      faceSwapResultVideo.load();
+
+      return false;
+    }
   }
 
   photoUpload.addEventListener("change",function(){
@@ -842,6 +904,34 @@
   faceSwapRoot.appendChild(faceSwapResult);
   const faceSwapResultVideo=document.getElementById("faceSwapResultVideo");
 
+  faceSwapResultVideo.addEventListener("error",async function(){
+    if(!latestFaceSwapOutput || resultPlaybackRecoveryRunning) return;
+
+    if(resultPlaybackRecoveryAttempted){
+      swapVideoStatus.textContent="The video is ready, but this browser could not play it here. Please use Download Video.";
+      return;
+    }
+
+    resultPlaybackRecoveryAttempted=true;
+    resultPlaybackRecoveryRunning=true;
+
+    try{
+      /*
+       * If playback fails, rebuild a local copy once
+       * from the original finished-video URL.
+       */
+      const recovered=await loadStableResultVideo(latestFaceSwapOutput);
+
+      if(recovered){
+        swapVideoStatus.textContent="✓ Video playback restored.";
+      }else{
+        swapVideoStatus.textContent="The video is ready, but this browser could not play it here. Please use Download Video.";
+      }
+    }finally{
+      resultPlaybackRecoveryRunning=false;
+    }
+  });
+
   const downloadFaceSwapButton=document.createElement("button");
   downloadFaceSwapButton.type="button";
   downloadFaceSwapButton.className="download-button";
@@ -927,6 +1017,21 @@
       this.pause();
       this.currentTime=trimStart;
     }
+  });
+
+  swapVideoPreview.addEventListener("error",function(){
+    if(!selectedSwapVideo) return;
+
+    if(sourcePreviewRecoveryAttempts>=2){
+      swapVideoStatus.textContent="The preview is unavailable in this browser, but you can still choose the trim range and continue.";
+      return;
+    }
+
+    sourcePreviewRecoveryAttempts++;
+
+    setTimeout(()=>{
+      rebuildSourcePreview();
+    },250);
   });
 
   async function ensureFFmpeg(){
@@ -1088,14 +1193,12 @@
     }
 
     selectedSwapVideo=file;
+    sourcePreviewRecoveryAttempts=0;
     latestFaceSwapOutput=null;
     downloadFaceSwapButton.style.display="none";
     faceSwapResult.style.display="none";
 
-    if(selectedSwapVideoPreviewUrl) URL.revokeObjectURL(selectedSwapVideoPreviewUrl);
-    selectedSwapVideoPreviewUrl=URL.createObjectURL(file);
-    swapVideoPreview.src=selectedSwapVideoPreviewUrl;
-    swapVideoPreview.load();
+    rebuildSourcePreview();
 
     chooseSwapVideo.textContent="✓ Video Ready";
     swapVideoStatus.textContent="Checking your video...";
@@ -1192,6 +1295,14 @@
     chooseSwapVideo.disabled=true;
     startFaceSwapButton.textContent="Preparing clip...";
     latestFaceSwapOutput=null;
+    resultPlaybackRecoveryAttempted=false;
+    resultPlaybackRecoveryRunning=false;
+
+    if(faceSwapResultObjectUrl){
+      try{URL.revokeObjectURL(faceSwapResultObjectUrl);}catch{}
+      faceSwapResultObjectUrl=null;
+    }
+
     downloadFaceSwapButton.style.display="none";
     faceSwapResult.style.display="none";
     faceSwapResultVideo.pause();
@@ -1305,10 +1416,12 @@
       }
 
       latestFaceSwapOutput=output;
-      faceSwapResultVideo.src=output;
-      faceSwapResultVideo.load();
+
       faceSwapResult.style.display="block";
       downloadFaceSwapButton.style.display="inline-flex";
+
+      await loadStableResultVideo(output);
+
       swapVideoStatus.textContent="✓ Face swap complete — your video is ready to preview or download.";
 
       faceSwapResultVideo.play().then(()=>faceSwapResultVideo.pause()).catch(()=>{});
