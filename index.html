@@ -135,7 +135,7 @@
     .age-preset-card:hover{transform:translateY(-2px);border-color:rgba(125,211,252,.3)}
     .age-preset-card.active{border-color:rgba(125,211,252,.62);box-shadow:0 0 0 2px rgba(56,189,248,.09),0 12px 24px rgba(0,0,0,.2)}
     .age-preset-media{position:relative;aspect-ratio:2/3;overflow:hidden;background:linear-gradient(145deg,#121a2d,#0a1020)}
-    .age-preset-image{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+    .age-preset-image{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;z-index:2}.age-preset-fallback{z-index:1}
     .age-preset-fallback{position:absolute;inset:0;display:grid;place-items:center;overflow:hidden;background:
       radial-gradient(circle at 50% 34%,rgba(255,255,255,.14),transparent 20%),
       radial-gradient(circle at 50% 70%,rgba(56,189,248,.10),transparent 38%),
@@ -860,7 +860,7 @@
     agePresets.innerHTML=AGE_PRESETS.map(preset=>`
       <button type="button" class="age-preset-card ${Number(ageSlider.value)===preset.age?"active":""}" data-age="${preset.age}">
         <div class="age-preset-media">
-          <img class="age-preset-image" src="${AGE_PRESET_IMAGES[selectedAgeExampleGender][preset.age]}" alt="${selectedAgeExampleGender} age ${preset.age} example" onerror="this.style.display='none'">
+          <img class="age-preset-image" src="${AGE_PRESET_IMAGES[selectedAgeExampleGender][preset.age]}" alt="${selectedAgeExampleGender} age ${preset.age} example" onload="if(this.nextElementSibling)this.nextElementSibling.style.display='none'" onerror="this.style.display='none'">
           <div class="age-preset-fallback ${selectedAgeExampleGender} ${preset.className}"></div>
         </div>
         <div class="age-preset-body"><span class="age-preset-number">Age ${preset.age}</span></div>
