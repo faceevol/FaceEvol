@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+<!-- FaceEvol connected Age Transformation + Video Face Swap update · 2026-08-27 -->
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FaceEvol — AI Video Face Swap Online</title>
-  <meta name="description" content="Swap a face into video with FaceEvol. Upload a clear face photo and MP4 video, choose a clip up to 20 seconds, and create your AI face swap online." />
+  <title>FaceEvol — AI Face Swap & Age Transformation</title>
+  <meta name="description" content="Transform your face to a new age, then use that result directly in AI video face swap with FaceEvol. Age presets, custom ages, private uploads, and HD/4K video enhancement coming soon." />
   <meta name="theme-color" content="#070b17" />
 
   <!-- Browser-side video trimming. Loaded only by the page; your API routes stay unchanged. -->
@@ -194,6 +195,13 @@
     .age-result img{
       width:100%;max-height:520px;object-fit:contain;border-radius:18px;border:1px solid rgba(255,255,255,.08);background:#050914;
     }
+    .handoff-button{
+      width:100%;min-height:54px;margin-top:13px;border:0;border-radius:14px;cursor:pointer;color:white;font-weight:850;font-size:14px;
+      background:linear-gradient(90deg,#6d28d9,#0284c7);box-shadow:0 14px 34px rgba(49,85,200,.23);
+    }
+    .handoff-button:hover{filter:brightness(1.05)}
+    .handoff-button:disabled{opacity:.58;cursor:wait}
+    .handoff-note{margin-top:8px;color:#7f8da4;font-size:10px;line-height:1.45;text-align:center}
     .processing-message{margin-top:14px;color:#7dd3fc;font-size:13px;font-weight:700;line-height:1.5}
     .error-message{margin-top:14px;color:#fda4af;font-size:13px;line-height:1.5}
 
@@ -371,7 +379,7 @@
       <a href="#quality">Quality</a>
       <a href="#pricing">Pricing</a>
       <a href="#faq">FAQ</a>
-      <a href="#studio" class="nav-button">Start Face Swap</a>
+      <a href="#studio" class="nav-button">Open Studio</a>
     </nav>
   </div>
 </header>
@@ -379,15 +387,15 @@
 <main>
   <section class="hero">
     <div class="container">
-      <div class="badge"><span class="badge-dot"></span>FaceEvol Beta · Video Face Swap is live</div>
-      <h1>AI Video Face Swap.<br><span class="gradient-text">Simple, private, and made for you.</span></h1>
-      <p class="hero-description">Upload your face photo and MP4 video, choose the moment you want to transform, and let FaceEvol create your face swap online. Age transformation previews are also available to explore.</p>
+      <div class="badge"><span class="badge-dot"></span>FaceEvol Beta · Age Transformation + Video Face Swap</div>
+      <h1>AI Face Swap &amp; Age Transformation.<br><span class="gradient-text">Transform your age. Bring it into video.</span></h1>
+      <p class="hero-description">See your face at age 5, 15, 30, 50 or 75 — or choose any age with the slider. When your transformation is ready, send it straight into Video Face Swap without downloading and uploading again. HD &amp; 4K video enhancement is coming soon.</p>
       <div class="hero-actions">
-        <a href="#studio" class="button button-primary">🎬 Start Face Swap</a>
-        <a href="#how-it-works" class="button button-secondary">See How It Works →</a>
+        <a href="#studio" class="button button-primary" id="heroAgeButton">✨ Start Creating</a>
+        <a href="#studio" class="button button-secondary" id="heroFaceSwapButton">🎬 Go to Video Face Swap</a>
       </div>
       <div class="hero-trust">
-        <span>✓ Face swap live</span><span>✓ Up to 20-sec selected clips</span><span>✓ Private uploads</span><span>✓ Mobile friendly</span>
+        <span>✓ Age transformation</span><span>✓ Video face swap</span><span>✓ Connected workflow</span><span>✓ Private uploads</span><span>✓ 20-sec video clips</span>
       </div>
 
       <div class="studio-wrap" id="studio">
@@ -395,23 +403,23 @@
           <div class="studio-inner">
             <div class="studio-sidebar">
               <div class="studio-label">Create</div>
-              <div class="tool-option" id="ageOption">
+              <div class="tool-option active" id="ageOption">
                 <div class="tool-icon">🕒</div>
-                <div><div class="tool-name">Age Preview</div><span class="tool-sub">Presets + custom age</span></div>
+                <div><div class="tool-name">Age Transformation</div><span class="tool-sub">5 presets + custom age</span></div>
               </div>
-              <div class="tool-option active" id="faceSwapOption">
+              <div class="tool-option" id="faceSwapOption">
                 <div class="tool-icon">🎬</div>
-                <div><div class="tool-name">Face Swap</div><span class="tool-sub">Live beta</span></div>
+                <div><div class="tool-name">Video Face Swap</div><span class="tool-sub">Live beta</span></div>
               </div>
               <div class="tool-option disabled" aria-disabled="true">
                 <div class="tool-icon">✨</div>
-                <div><div class="tool-name">Enhance</div><span class="tool-sub">Coming soon</span></div>
+                <div><div class="tool-name">Video Enhance</div><span class="tool-sub">HD &amp; 4K · Coming soon</span></div>
               </div>
             </div>
 
             <div class="studio-main">
-              <h2 class="upload-title">Upload your face photo</h2>
-              <p class="upload-description">Choose a clear, front-facing photo first. Then add your MP4 video and select the clip you want to face swap.</p>
+              <h2 class="upload-title">Upload a photo for Age Transformation</h2>
+              <p class="upload-description">Explore the age examples below before you upload. When you are ready, choose a clear face photo and transform it to your selected age.</p>
 
               <div class="upload-box" id="uploadBox" onclick="document.getElementById('photoUpload').click()">
                 <div class="upload-icon">↑</div>
@@ -429,33 +437,33 @@
 
   <div class="proof">
     <div class="container">
-      <div class="proof-label">Built around a focused face-swap experience</div>
-      <div class="proof-items"><span>⚡ AI Processing</span><span>🔒 Private Uploads</span><span>🎬 20-sec Clip Selector</span><span>📱 Mobile Friendly</span></div>
+      <div class="proof-label">One connected FaceEvol creation flow</div>
+      <div class="proof-items"><span>🕒 Age Transformation</span><span>🎬 Use Result in Face Swap</span><span>🔒 Private Uploads</span><span>✨ HD &amp; 4K Enhancement Coming Soon</span></div>
     </div>
   </div>
 
   <section id="features">
     <div class="container">
       <div class="section-heading">
-        <span class="section-eyebrow">FaceEvol Today</span>
-        <h2>Start with video face swap. <span class="gradient-text">Grow into more.</span></h2>
-        <p>FaceEvol is focused first on making video face swap simple and reliable. Age transformation, higher quality output, multiple faces, longer videos and enhancement build on top of that experience.</p>
+        <span class="section-eyebrow">Two Tools. One Flow.</span>
+        <h2>Transform a face. <span class="gradient-text">Then take it into video.</span></h2>
+        <p>FaceEvol connects age transformation and video face swap so the result from one tool can become the starting point for the next.</p>
       </div>
       <div class="feature-grid">
         <div class="feature-card large">
-          <div class="feature-icon">🎬</div><h3>Video Face Swap</h3>
-          <p>Upload your face photo and an MP4 video, choose a section up to 20 seconds, and create a face-swapped result you can preview and download.</p>
-          <span class="feature-tag"><span class="live-pill">Live Beta</span> CORE FEATURE</span>
+          <div class="feature-icon">🕒</div><h3>Age Transformation</h3>
+          <p>Choose age 5, 15, 30, 50 or 75, or use the 0–100 slider. The preset examples stay visible before upload so you can explore the idea first.</p>
+          <span class="feature-tag"><span class="beta-pill">Beta</span> AGE 0 → 100</span>
         </div>
         <div class="feature-card large">
-          <div class="feature-icon">🕒</div><h3>Age Transformation Preview</h3>
-          <p>Explore visual age presets such as child, teen, adult, mature and senior, or choose a custom target age with the slider.</p>
-          <span class="feature-tag"><span class="beta-pill">Preview</span> AGE 0 → 100</span>
+          <div class="feature-icon">🎬</div><h3>Video Face Swap</h3>
+          <p>Use your original photo or your new age-transformed result, add an MP4 video, select up to 20 seconds, and create your face swap.</p>
+          <span class="feature-tag"><span class="live-pill">Live Beta</span> VIDEO</span>
         </div>
-        <div class="feature-card small"><div class="feature-icon">💎</div><h3>2K & 4K</h3><p>Higher-resolution output options are planned after the core workflow is stable.</p><span class="feature-tag"><span class="soon-pill">Coming Soon</span></span></div>
+        <div class="feature-card small"><div class="feature-icon">🔗</div><h3>Connected Workflow</h3><p>After an age transformation, continue directly into Video Face Swap without downloading and uploading the image again.</p><span class="feature-tag"><span class="beta-pill">Built In</span></span></div>
+        <div class="feature-card small"><div class="feature-icon">✨</div><h3>HD &amp; 4K Video Enhancement</h3><p>Upgrade clarity and resolution with HD and 4K enhancement options as the quality pipeline expands.</p><span class="feature-tag"><span class="soon-pill">Coming Soon</span></span></div>
         <div class="feature-card small"><div class="feature-icon">👥</div><h3>Multiple Faces</h3><p>Swap more than one person in the same video with dedicated face selection.</p><span class="feature-tag"><span class="soon-pill">Coming Soon</span></span></div>
-        <div class="feature-card small"><div class="feature-icon">✨</div><h3>AI Enhancement</h3><p>Improve clarity, detail and overall presentation after transformation.</p><span class="feature-tag"><span class="soon-pill">Coming Soon</span></span></div>
-        <div class="feature-card small"><div class="feature-icon">🚀</div><h3>Longer Videos</h3><p>Support for longer clips will expand as processing and costs are optimized.</p><span class="feature-tag"><span class="soon-pill">Coming Soon</span></span></div>
+        <div class="feature-card small"><div class="feature-icon">🚀</div><h3>Longer Videos</h3><p>Support for longer clips will expand as processing speed and cost are optimized.</p><span class="feature-tag"><span class="soon-pill">Coming Soon</span></span></div>
       </div>
     </div>
   </section>
@@ -463,14 +471,14 @@
   <section id="how-it-works">
     <div class="container">
       <div class="section-heading">
-        <span class="section-eyebrow">Simple By Design</span>
-        <h2>Your face swap in <span class="gradient-text">three clear steps.</span></h2>
-        <p>No complicated editor. Just choose your face, choose your video, and let FaceEvol handle the AI processing.</p>
+        <span class="section-eyebrow">One Connected Journey</span>
+        <h2>From one photo to <span class="gradient-text">a completely new video.</span></h2>
+        <p>Age transformation is optional. Use your original face anytime, or transform it first and carry the result directly into the video workflow.</p>
       </div>
       <div class="steps">
-        <div class="step-card"><div class="step-number">1</div><h3>Upload your face</h3><p>Choose a clear, front-facing face photo with good lighting.</p></div>
-        <div class="step-card"><div class="step-number">2</div><h3>Add your video</h3><p>Choose an MP4 up to 300 MB and select a clip up to 20 seconds.</p></div>
-        <div class="step-card"><div class="step-number">3</div><h3>Create & download</h3><p>FaceEvol processes the swap, shows your finished video, and gives you a download button.</p></div>
+        <div class="step-card"><div class="step-number">1</div><h3>Choose your face</h3><p>Upload a clear, front-facing photo. You can already browse all five age examples before uploading.</p></div>
+        <div class="step-card"><div class="step-number">2</div><h3>Transform the age</h3><p>Pick 5, 15, 30, 50 or 75, or choose any age from 0–100. When the result is ready, tap “Use this face in Video Face Swap.”</p></div>
+        <div class="step-card"><div class="step-number">3</div><h3>Bring it into video</h3><p>Add an MP4 up to 300 MB, select a clip up to 20 seconds, and create the face swap with your original or transformed face.</p></div>
       </div>
     </div>
   </section>
@@ -479,19 +487,19 @@
     <div class="container">
       <div class="quality-box">
         <div class="quality-content">
-          <span class="section-eyebrow">Output Quality</span>
-          <h2>Start reliable. <span class="gradient-text">Scale quality next.</span></h2>
-          <p>The beta currently prioritizes a reliable standard-quality workflow. Higher-resolution 2K and 4K options will be introduced after the core experience is ready for them.</p>
+          <span class="section-eyebrow">Video Enhancement Roadmap</span>
+          <h2>Create first. <span class="gradient-text">Enhance to HD &amp; 4K next.</span></h2>
+          <p>The current beta prioritizes a reliable creation workflow. FaceEvol is designed to add video enhancement as the next quality layer, including HD and 4K output options.</p>
           <div class="quality-list">
-            <div class="quality-item"><span class="check">✓</span>1K / standard output in the current age preview selector</div>
-            <div class="quality-item"><span class="check">✓</span>2K output planned</div>
-            <div class="quality-item"><span class="check">✓</span>4K output planned</div>
-            <div class="quality-item"><span class="check">✓</span>Future enhancement and upscaling tools</div>
+            <div class="quality-item"><span class="check">✓</span>Reliable standard-quality beta workflow today</div>
+            <div class="quality-item"><span class="check">✓</span>HD video enhancement planned</div>
+            <div class="quality-item"><span class="check">✓</span>4K video enhancement planned</div>
+            <div class="quality-item"><span class="check">✓</span>Future upscaling and clarity improvements</div>
           </div>
         </div>
         <div class="quality-visual">
-          <div class="quality-chip chip-1">1K · Beta</div><div class="quality-chip chip-2">4K · Soon</div>
-          <div class="quality-chip chip-3">2K · Soon</div><div class="quality-chip chip-4">AI Powered</div>
+          <div class="quality-chip chip-1">Standard · Beta</div><div class="quality-chip chip-2">4K · Soon</div>
+          <div class="quality-chip chip-3">HD · Soon</div><div class="quality-chip chip-4">AI Enhance</div>
           <div class="quality-circle">💎</div>
         </div>
       </div>
@@ -517,26 +525,26 @@
     <div class="container">
       <div class="section-heading">
         <span class="section-eyebrow">Beta Access</span>
-        <h2>Start with the core. <span class="gradient-text">More options are coming.</span></h2>
-        <p>FaceEvol is still in beta. The current priority is making the core experience dependable before expanding plans and paid features.</p>
+        <h2>Create with the core. <span class="gradient-text">Grow into higher quality.</span></h2>
+        <p>FaceEvol is still in beta. Age transformation and video face swap form the connected creation experience, with HD/4K enhancement and expanded video tools planned next.</p>
       </div>
       <div class="pricing-grid">
         <div class="price-card featured">
           <div class="popular-label">Beta</div><div class="price-name">Free Beta</div><div class="price">€0</div>
           <p class="price-description">Try the current FaceEvol experience while the product is being refined.</p>
-          <ul class="price-features"><li>✓ Video face swap beta</li><li>✓ Up to 20-second selected clips</li><li>✓ MP4 source files up to 300 MB</li><li>✓ Preview and download result</li></ul>
-          <a href="#studio" class="button button-primary">Start Face Swap</a>
+          <ul class="price-features"><li>✓ Age transformation workflow</li><li>✓ Video face swap beta</li><li>✓ Up to 20-second selected clips</li><li>✓ Direct age-result → face-swap handoff</li></ul>
+          <a href="#studio" class="button button-primary">Start Creating</a>
         </div>
         <div class="price-card">
           <div class="price-name">Creator</div><div class="coming-soon">Coming Soon</div>
           <p class="price-description">More processing capacity and higher-quality options for frequent creators.</p>
-          <ul class="price-features"><li>✓ More creations</li><li>✓ Higher-resolution options</li><li>✓ Faster processing options</li><li>✓ Expanded video limits</li></ul>
+          <ul class="price-features"><li>✓ More creations</li><li>✓ HD enhancement options</li><li>✓ Faster processing options</li><li>✓ Expanded video limits</li></ul>
           <a href="#studio" class="button button-secondary">Try Beta</a>
         </div>
         <div class="price-card">
           <div class="price-name">Pro</div><div class="coming-soon">Coming Soon</div>
           <p class="price-description">Advanced quality and expanded tools for power users.</p>
-          <ul class="price-features"><li>✓ Higher usage limits</li><li>✓ Future 4K output</li><li>✓ Longer videos</li><li>✓ Advanced enhancement</li></ul>
+          <ul class="price-features"><li>✓ Higher usage limits</li><li>✓ 4K enhancement options</li><li>✓ Longer videos</li><li>✓ Advanced enhancement</li></ul>
           <a href="#studio" class="button button-secondary">Try Beta</a>
         </div>
       </div>
@@ -547,11 +555,12 @@
     <div class="container">
       <div class="section-heading"><span class="section-eyebrow">FAQ</span><h2>Questions? <span class="gradient-text">We've got answers.</span></h2></div>
       <div class="faq-list">
-        <details><summary>What works on FaceEvol right now?</summary><p>The current beta focuses on video face swap: upload a face photo and MP4 video, select a clip up to 20 seconds, process it with AI, preview the result and download the finished video.</p></details>
-        <details><summary>Can I explore different ages?</summary><p>Yes. The Age Preview section includes visual presets for ages 5, 15, 30, 50 and 75, plus the existing custom age slider from 0 to 100.</p></details>
+        <details><summary>What can I create with FaceEvol?</summary><p>FaceEvol combines Age Transformation and Video Face Swap in one workflow. You can use your original face for a swap, or transform the face first and continue directly into the video tool.</p></details>
+        <details><summary>Which ages can I choose?</summary><p>The five visual presets are ages 5, 15, 30, 50 and 75. You can also use the custom slider to choose any target age from 0 to 100.</p></details>
+        <details><summary>Can I use an age-transformed face directly in Video Face Swap?</summary><p>Yes. When an age transformation finishes, use the “Use this face in Video Face Swap” button to continue without manually downloading and uploading the result again.</p></details>
         <details><summary>What video can I upload?</summary><p>For the beta, use an MP4 source file smaller than 300 MB. You can then select any section up to 20 seconds for processing.</p></details>
-        <details><summary>Will 2K and 4K be available?</summary><p>Higher-resolution output is planned. The current beta prioritizes reliability first, with 2K, 4K and enhancement features coming later.</p></details>
-        <details><summary>Is FaceEvol free?</summary><p>FaceEvol currently offers beta access while the core experience is being developed. Future paid plans may add higher limits, quality and processing options.</p></details>
+        <details><summary>Will HD and 4K video enhancement be available?</summary><p>Yes, that is on the FaceEvol roadmap. The current beta prioritizes the connected creation workflow first, with HD and 4K enhancement planned as upcoming quality options.</p></details>
+        <details><summary>Is FaceEvol free?</summary><p>FaceEvol currently offers beta access while the core experience is being refined. Future paid plans may add higher limits, quality and processing options.</p></details>
       </div>
     </div>
   </section>
@@ -559,10 +568,10 @@
   <section class="cta" id="start">
     <div class="container">
       <div class="cta-box">
-        <div class="badge">🎬 Face swap beta is ready</div>
-        <h2>Upload your face photo and video.<br><span class="gradient-text">Create your first FaceEvol swap.</span></h2>
-        <p>Choose a clear face photo, add an MP4 video, select up to 20 seconds, and let FaceEvol create the result.</p>
-        <a href="#studio" class="button button-primary" id="ctaStartButton">Start Face Swap →</a>
+        <div class="badge">✨ One face. Two connected AI tools.</div>
+        <h2>Transform your age.<br><span class="gradient-text">Then bring that face into video.</span></h2>
+        <p>Explore the five age presets, create your transformation, and continue directly into Video Face Swap when you are ready.</p>
+        <a href="#studio" class="button button-primary" id="ctaStartButton">Start Creating →</a>
       </div>
     </div>
   </section>
@@ -574,7 +583,7 @@
       <a href="#" class="footer-logo"><img src="a.png" alt="FaceEvol"></a>
       <div class="footer-links"><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Contact</a></div>
     </div>
-    <div class="footer-bottom"><div>© 2026 FaceEvol. All rights reserved.</div><div>Video face swap first. More ways to transform are coming. ❤️</div></div>
+    <div class="footer-bottom"><div>© 2026 FaceEvol. All rights reserved.</div><div>Age transformation + video face swap, connected in one creative flow. ❤️</div></div>
   </div>
 </footer>
 
@@ -586,6 +595,8 @@
   const faceSwapOption = document.getElementById("faceSwapOption");
   const ageOption = document.getElementById("ageOption");
   const ctaStartButton = document.getElementById("ctaStartButton");
+  const heroAgeButton = document.getElementById("heroAgeButton");
+  const heroFaceSwapButton = document.getElementById("heroFaceSwapButton");
 
   let selectedPhoto = null;
   let selectedSwapVideo = null;
@@ -598,7 +609,9 @@
   let resultPlaybackRecoveryRunning = false;
   let resultPlaybackRecoveryAttempted = false;
   let selectedAgeExampleGender = "male";
-  let selectedAgeQuality = "1K";
+  let selectedAgeQuality = "Standard";
+  let latestAgeTransformOutput = null;
+  let latestAgeTransformAge = null;
 
   const MAX_TRIM_SECONDS = 20;
   const MAX_VIDEO_BYTES = 300 * 1024 * 1024;
@@ -611,16 +624,72 @@
   ];
 
   /*
-   * Optional polished AI example images.
-   * The page works without them because each card has a built-in fallback.
-   * Later, upload your AI-generated examples to the project root using these exact filenames:
-   * age-male-5.webp, age-male-15.webp, age-male-30.webp, age-male-50.webp, age-male-75.webp
-   * age-female-5.webp, age-female-15.webp, age-female-30.webp, age-female-50.webp, age-female-75.webp
+   * Self-contained AI-style demo portraits.
+   * No extra image files are required, so the preset faces appear immediately after deployment.
+   * Each gender uses one consistent illustrative identity across the five ages.
    */
-  const AGE_PRESET_IMAGES = {
-    male:{5:"age-male-5.webp",15:"age-male-15.webp",30:"age-male-30.webp",50:"age-male-50.webp",75:"age-male-75.webp"},
-    female:{5:"age-female-5.webp",15:"age-female-15.webp",30:"age-female-30.webp",50:"age-female-50.webp",75:"age-female-75.webp"}
-  };
+  function makeAgeDemoPortrait(gender,age){
+    const female=gender==="female";
+    const child=age<=5;
+    const teen=age>5&&age<=15;
+    const mature=age>=50;
+    const senior=age>=75;
+    const skin=child?"#f3c3a3":teen?"#efbd9d":age<50?"#e9b28f":senior?"#ddb091":"#e4ae8d";
+    const skin2=child?"#dda07f":teen?"#d99778":age<50?"#cf8c6c":senior?"#c78f74":"#cc8c6d";
+    const hair=senior?(female?"#e9e3e8":"#dfe5ea"):(female?"#35213b":"#211d22");
+    const hairHi=senior?(female?"#f7f3f7":"#f3f6f8"):(female?"#5a3264":"#3b3139");
+    const bg1=female?"#29164c":"#0b3154";
+    const bg2=female?"#7c3aed":"#0ea5e9";
+    const shirt=female?"#5b21b6":"#075985";
+    const faceRx=child?112:teen?108:age<50?103:senior?100:102;
+    const faceRy=child?130:teen?136:144;
+    const faceCy=child?232:teen?226:222;
+    const eyeY=child?218:teen?216:214;
+    const eyeGap=child?39:42;
+    const eyeR=child?7:teen?6.5:6;
+    const mouthY=child?270:teen?272:276;
+    const lineOpacity=senior?.34:mature?.19:0;
+    const hairPath=female
+      ? `<path d="M95 235C82 111 137 61 210 65c86 5 130 67 117 190-13-34-25-66-51-90-37-35-95-41-140-7-22 17-32 47-41 77Z" fill="${hair}"/><path d="M99 191c-18 73-13 163 34 220l30-16c-30-53-32-111-16-166Z" fill="${hair}"/><path d="M320 190c19 75 14 166-32 222l-31-16c30-52 32-111 16-168Z" fill="${hair}"/>`
+      : `<path d="M105 176c8-80 59-118 112-118 66 0 112 44 116 118-24-23-44-44-83-53-48-12-96 4-145 53Z" fill="${hair}"/><path d="M118 139c43-53 122-62 179-13-50-18-119-12-179 13Z" fill="${hairHi}" opacity=".72"/>`;
+    const ageLines=mature?`<g fill="none" stroke="#7d5148" stroke-linecap="round" opacity="${lineOpacity}"><path d="M145 240c14-7 27-7 39 0"/><path d="M238 240c14-7 27-7 39 0"/><path d="M183 307c23 8 45 8 67 0"/><path d="M158 286c-5 12-7 25-5 38"/><path d="M269 286c5 12 7 25 5 38"/>${senior?'<path d="M166 199c13-7 27-9 42-6"/><path d="M233 193c15-2 29 0 42 7"/><path d="M188 329c18 7 37 7 56 0"/>':''}</g>`:"";
+    const childCheeks=child?'<circle cx="157" cy="253" r="17" fill="#ef8f91" opacity=".14"/><circle cx="269" cy="253" r="17" fill="#ef8f91" opacity=".14"/>':'';
+    const earrings=female&&!child?'<circle cx="111" cy="252" r="5" fill="#d8c3ff"/><circle cx="313" cy="252" r="5" fill="#d8c3ff"/>':'';
+    const silverGlow=senior?'<path d="M132 124c44-29 111-31 162 1" fill="none" stroke="#fff" stroke-width="5" opacity=".22" stroke-linecap="round"/>':'';
+    const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 525">
+      <defs>
+        <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1"><stop stop-color="${bg1}"/><stop offset="1" stop-color="${bg2}"/></linearGradient>
+        <linearGradient id="skin" x1="0" x2="1" y1="0" y2="1"><stop stop-color="${skin}"/><stop offset="1" stop-color="${skin2}"/></linearGradient>
+        <radialGradient id="glow"><stop stop-color="#fff" stop-opacity=".28"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+      </defs>
+      <rect width="420" height="525" rx="34" fill="url(#bg)"/>
+      <circle cx="326" cy="92" r="148" fill="url(#glow)"/>
+      <circle cx="91" cy="445" r="138" fill="#7c3aed" opacity=".13"/>
+      <path d="M62 525c15-101 67-145 148-145s134 43 149 145Z" fill="${shirt}"/>
+      <path d="M178 350h66v73h-66z" fill="url(#skin)"/>
+      ${hairPath}
+      ${silverGlow}
+      <ellipse cx="210" cy="${faceCy}" rx="${faceRx}" ry="${faceRy}" fill="url(#skin)"/>
+      <ellipse cx="${210-eyeGap}" cy="${eyeY}" rx="17" ry="10" fill="#fff" opacity=".92"/>
+      <ellipse cx="${210+eyeGap}" cy="${eyeY}" rx="17" ry="10" fill="#fff" opacity=".92"/>
+      <circle cx="${210-eyeGap}" cy="${eyeY}" r="${eyeR}" fill="#365269"/><circle cx="${210+eyeGap}" cy="${eyeY}" r="${eyeR}" fill="#365269"/>
+      <circle cx="${210-eyeGap+2}" cy="${eyeY-2}" r="2" fill="#fff"/><circle cx="${210+eyeGap+2}" cy="${eyeY-2}" r="2" fill="#fff"/>
+      <path d="M202 228c-6 29-7 47 9 51 8 2 15-1 21-5" fill="none" stroke="#a96f59" stroke-width="4" stroke-linecap="round" opacity=".62"/>
+      <path d="M170 ${mouthY}c24 24 57 25 82 0" fill="none" stroke="#9b4f57" stroke-width="6" stroke-linecap="round"/>
+      <path d="M177 ${mouthY+2}c20 10 46 11 68 0" fill="none" stroke="#f6d8d0" stroke-width="2.8" stroke-linecap="round" opacity=".8"/>
+      ${childCheeks}${earrings}${ageLines}
+      <path d="M124 175c18-31 49-51 86-54 39-3 74 12 98 43" fill="none" stroke="${hairHi}" stroke-width="9" stroke-linecap="round" opacity="${senior?.55:.7}"/>
+      <text x="24" y="493" fill="#fff" opacity=".82" font-family="Arial, sans-serif" font-size="16" font-weight="700">AI DEMO · AGE ${age}</text>
+    </svg>`;
+    return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+  }
+
+  const AGE_PRESET_IMAGES={male:{},female:{}};
+  ["male","female"].forEach(gender=>{
+    AGE_PRESETS.forEach(preset=>{
+      AGE_PRESET_IMAGES[gender][preset.age]=makeAgeDemoPortrait(gender,preset.age);
+    });
+  });
 
   let trimStart = 0;
   let trimEnd = 0;
@@ -774,6 +843,9 @@
   photoUpload.addEventListener("change",function(){
     if(!this.files||!this.files.length)return;
     selectedPhoto=this.files[0];
+    latestAgeTransformOutput=null;
+    latestAgeTransformAge=null;
+    if(typeof ageResult!=="undefined") ageResult.classList.remove("show");
 
     if(selectedPhotoPreviewUrl) URL.revokeObjectURL(selectedPhotoPreviewUrl);
     selectedPhotoPreviewUrl=URL.createObjectURL(selectedPhoto);
@@ -803,11 +875,11 @@
   ageControls.innerHTML=`
     <div class="panel-top">
       <div>
-        <span class="panel-kicker">Age Transformation Preview</span>
-        <h3 class="panel-title">Pick an age preset</h3>
-        <p class="panel-copy">Use the example faces to quickly understand each age range, then choose a preset or set any custom age from 0 to 100.</p>
+        <span class="panel-kicker">Age Transformation</span>
+        <h3 class="panel-title">Choose how you want to look</h3>
+        <p class="panel-copy">The five AI-style demo faces are visible before upload. Pick age 5, 15, 30, 50 or 75, or choose any target age from 0 to 100.</p>
       </div>
-      <span class="beta-pill">Preview</span>
+      <span class="beta-pill">Beta</span>
     </div>
 
     <div class="gender-toggle" aria-label="Example face gender">
@@ -816,7 +888,7 @@
     </div>
 
     <div class="age-presets" id="agePresets"></div>
-    <div class="example-note">Example faces are for visual guidance only. The male/female toggle changes the example set; it does not change the gender of your uploaded face.</div>
+    <div class="example-note">AI-style example portraits are for visual guidance only. The male/female toggle changes the demo set; it does not change the gender of your uploaded face. Older examples are intentionally styled to look healthy, warm and natural.</div>
 
     <div class="custom-age-panel">
       <div class="age-label"><span>Or choose any target age</span><span class="age-value" id="ageValue">30 years</span></div>
@@ -824,19 +896,19 @@
     </div>
 
     <div class="quality-selector">
-      <div class="quality-selector-head"><strong>Output quality</strong><span>Higher quality is coming later</span></div>
+      <div class="quality-selector-head"><strong>Output quality</strong><span>Higher-quality options are coming later</span></div>
       <div class="quality-options-row">
-        <button type="button" class="quality-option active" data-quality="1K"><strong>1K</strong><small>Beta</small></button>
-        <button type="button" class="quality-option" data-quality="2K" disabled><strong>2K</strong><small>Coming soon</small></button>
+        <button type="button" class="quality-option active" data-quality="Standard"><strong>Standard</strong><small>Beta</small></button>
+        <button type="button" class="quality-option" data-quality="HD" disabled><strong>HD</strong><small>Coming soon</small></button>
         <button type="button" class="quality-option" data-quality="4K" disabled><strong>4K</strong><small>Coming soon</small></button>
       </div>
     </div>
 
-    <div class="age-summary" id="ageSummary">✨ Transform my uploaded face to <strong>age 30</strong> · 1K output</div>
+    <div class="age-summary" id="ageSummary">✨ Selected transformation: <strong>age 30</strong> · Standard output</div>
     <button class="transform-button" id="transformButton" type="button">✨ Transform to Age 30</button>
     <div class="processing-message" id="processingMessage"></div>
     <div class="error-message" id="ageError"></div>
-    <div class="age-result" id="ageResult"><img id="resultImage" alt="FaceEvol age transformation result"></div>
+    <div class="age-result" id="ageResult"><img id="resultImage" alt="FaceEvol age transformation result"><button class="handoff-button" id="useAgeResultForSwap" type="button">🎬 Use this face in Video Face Swap →</button><div class="handoff-note">No download and re-upload needed — continue directly with this transformed face.</div></div>
   `;
   studioMain.appendChild(ageControls);
 
@@ -849,6 +921,7 @@
   const ageError=document.getElementById("ageError");
   const ageResult=document.getElementById("ageResult");
   const resultImage=document.getElementById("resultImage");
+  const useAgeResultForSwap=document.getElementById("useAgeResultForSwap");
   const genderButtons=[...ageControls.querySelectorAll(".gender-button")];
 
   function renderAgePresets(){
@@ -872,9 +945,15 @@
 
   function updateAgeSelection(){
     const age=Number(ageSlider.value);
+    if(latestAgeTransformOutput && latestAgeTransformAge!==age){
+      latestAgeTransformOutput=null;
+      latestAgeTransformAge=null;
+      ageResult.classList.remove("show");
+      processingMessage.textContent="";
+    }
     ageValue.textContent=`${age} years`;
     transformButton.textContent=`✨ Transform to Age ${age}`;
-    ageSummary.innerHTML=`✨ Transform my uploaded face to <strong>age ${age}</strong> · ${selectedAgeQuality} output`;
+    ageSummary.innerHTML=`✨ Selected transformation: <strong>age ${age}</strong> · ${selectedAgeQuality} output`;
     renderAgePresets();
   }
 
@@ -897,6 +976,8 @@
     transformButton.textContent="Transforming...";
     processingMessage.textContent="Preparing your photo...";
     ageError.textContent="";
+    latestAgeTransformOutput=null;
+    latestAgeTransformAge=null;
     ageResult.classList.remove("show");
 
     try{
@@ -921,15 +1002,59 @@
       if(Array.isArray(output)) output=output[0];
       if(!output) throw new Error("The AI returned no image. Please try again.");
 
+      latestAgeTransformOutput=output;
+      latestAgeTransformAge=Number(ageSlider.value);
       resultImage.src=output;
       ageResult.classList.add("show");
-      processingMessage.textContent=`✓ Transformation complete — age ${ageSlider.value}.`;
+      processingMessage.textContent=`✓ Transformation complete — age ${ageSlider.value}. You can now use this face directly in Video Face Swap.`;
     }catch(error){
       processingMessage.textContent="";
       ageError.textContent=error instanceof Error?error.message:String(error);
     }finally{
       transformButton.disabled=false;
       transformButton.textContent=`✨ Transform to Age ${ageSlider.value}`;
+    }
+  });
+
+  useAgeResultForSwap.addEventListener("click",async function(){
+    if(!latestAgeTransformOutput){
+      ageError.textContent="Please create an age transformation first.";
+      return;
+    }
+
+    useAgeResultForSwap.disabled=true;
+    useAgeResultForSwap.textContent="Preparing face for Video Face Swap...";
+    ageError.textContent="";
+
+    try{
+      const response=await fetch(latestAgeTransformOutput,{cache:"no-store"});
+      if(!response.ok) throw new Error("Could not prepare the transformed face.");
+      const blob=await response.blob();
+      if(!blob||!blob.size) throw new Error("The transformed face file was empty.");
+
+      const extension=(blob.type||"").includes("png")?"png":(blob.type||"").includes("webp")?"webp":"jpg";
+      const transformedAge=latestAgeTransformAge??Number(ageSlider.value);
+      const transformedFile=new File([blob],`faceevol-age-${transformedAge}.${extension}`,{type:blob.type||"image/jpeg"});
+      selectedPhoto=transformedFile;
+
+      if(selectedPhotoPreviewUrl) URL.revokeObjectURL(selectedPhotoPreviewUrl);
+      selectedPhotoPreviewUrl=URL.createObjectURL(transformedFile);
+
+      uploadBox.innerHTML=`
+        <img class="selected-photo-preview" src="${selectedPhotoPreviewUrl}" alt="Age-transformed face selected for video face swap">
+        <strong>Age ${transformedAge} face selected ✓</strong>
+        <small>Ready for Video Face Swap</small>
+      `;
+
+      activateFaceSwapMode();
+      uploadStatus.textContent=`✓ Your age ${transformedAge} transformation is now the face for Video Face Swap. Choose an MP4 video below — no re-upload needed.`;
+      document.getElementById("studio").scrollIntoView({behavior:"smooth",block:"start"});
+    }catch(error){
+      console.error("FaceEvol age-to-swap handoff error:",error);
+      ageError.textContent="We could not pass this result into Video Face Swap automatically. Please try the transformation again.";
+    }finally{
+      useAgeResultForSwap.disabled=false;
+      useAgeResultForSwap.textContent="🎬 Use this face in Video Face Swap →";
     }
   });
 
@@ -1242,13 +1367,15 @@
     document.querySelectorAll(".tool-option").forEach(o=>o.classList.remove("active"));
     ageOption.classList.add("active");
     faceSwapControls.classList.remove("show");
-    if(selectedPhoto) ageControls.classList.add("show");
+    ageControls.classList.add("show");
 
-    document.querySelector(".upload-title").textContent="Upload a photo for Age Preview";
-    document.querySelector(".upload-description").textContent="Upload a clear face photo, then pick an age preset or choose any target age from 0 to 100.";
+    document.querySelector(".upload-title").textContent="Upload a photo for Age Transformation";
+    document.querySelector(".upload-description").textContent="Explore all five AI-style age examples below before uploading. Then choose a clear face photo, select a preset or any age from 0 to 100, and create your transformation.";
 
     if(selectedPhoto){
       uploadStatus.textContent="✓ Photo ready. Choose an age preset below or set your own target age.";
+    }else{
+      uploadStatus.textContent="Explore the presets first — you only need to upload a photo when you are ready to transform.";
     }
   }
 
@@ -1256,6 +1383,14 @@
   ageOption.addEventListener("click",activateAgeMode);
 
   ctaStartButton.addEventListener("click",function(){
+    activateAgeMode();
+  });
+
+  heroAgeButton.addEventListener("click",function(){
+    activateAgeMode();
+  });
+
+  heroFaceSwapButton.addEventListener("click",function(){
     activateFaceSwapMode();
   });
 
@@ -1502,8 +1637,8 @@
     }
   });
 
-  /* Start the page in the real MVP mode: Video Face Swap. */
-  activateFaceSwapMode();
+  /* Start in Age Transformation so the five preset examples are visible immediately, before upload. */
+  activateAgeMode();
 </script>
 </body>
-  </html>
+</html>
