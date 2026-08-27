@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- FaceEvol · AI Age Transformation + Video Face Swap · resilient age prediction flow · 2026-08-27 -->
+<!-- FaceEvol · AI Age Transformation + Video Face Swap · portrait framing + resilient age prediction flow · 2026-08-27 -->
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -134,8 +134,20 @@
     .age-preset-card{padding:0;overflow:hidden;border-radius:13px;border:1px solid rgba(255,255,255,.075);background:#090f1e;cursor:pointer;text-align:left;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
     .age-preset-card:hover{transform:translateY(-2px);border-color:rgba(125,211,252,.3)}
     .age-preset-card.active{border-color:rgba(125,211,252,.62);box-shadow:0 0 0 2px rgba(56,189,248,.09),0 12px 24px rgba(0,0,0,.2)}
-    .age-preset-media{position:relative;aspect-ratio:4/5;overflow:hidden;background:linear-gradient(145deg,#121a2d,#0a1020);padding:7px}
-    .age-preset-image{position:absolute;inset:7px;width:calc(100% - 14px);height:calc(100% - 14px);object-fit:contain;object-position:center center;display:block;z-index:2;border-radius:9px;background:#090f1e}.age-preset-fallback{z-index:1}
+    /* Demo portrait framing: keep the entire source portrait visible instead of visually cropping it. */
+    .age-preset-media{
+      position:relative;aspect-ratio:1/1.08;overflow:hidden;isolation:isolate;
+      background:linear-gradient(145deg,#121a2d,#0a1020);
+    }
+    .age-preset-backdrop{
+      position:absolute;inset:-12%;width:124%;height:124%;object-fit:cover;object-position:center center;
+      filter:blur(14px) brightness(.46) saturate(.8);opacity:.72;transform:scale(1.06);z-index:0;pointer-events:none;
+    }
+    .age-preset-image{
+      position:absolute;left:10%;top:7%;width:80%;height:86%;object-fit:contain;object-position:center center;display:block;z-index:2;
+      border-radius:10px;background:#090f1e;border:1px solid rgba(255,255,255,.10);box-shadow:0 10px 22px rgba(0,0,0,.28);
+    }
+    .age-preset-fallback{z-index:1}
     .age-preset-fallback{position:absolute;inset:0;display:grid;place-items:center;overflow:hidden;background:
       radial-gradient(circle at 50% 34%,rgba(255,255,255,.14),transparent 20%),
       radial-gradient(circle at 50% 70%,rgba(56,189,248,.10),transparent 38%),
@@ -985,7 +997,8 @@
     agePresets.innerHTML=AGE_PRESETS.map(preset=>`
       <button type="button" class="age-preset-card ${Number(ageSlider.value)===preset.age?"active":""}" data-age="${preset.age}">
         <div class="age-preset-media">
-          <img class="age-preset-image" src="${AGE_PRESET_IMAGES[selectedAgeExampleGender][preset.age]}" alt="${selectedAgeExampleGender} age ${preset.age} example" onload="if(this.nextElementSibling)this.nextElementSibling.style.display='none'" onerror="this.style.display='none'">
+          <img class="age-preset-backdrop" src="${AGE_PRESET_IMAGES[selectedAgeExampleGender][preset.age]}" alt="" aria-hidden="true">
+          <img class="age-preset-image" src="${AGE_PRESET_IMAGES[selectedAgeExampleGender][preset.age]}" alt="${selectedAgeExampleGender} age ${preset.age} example" onload="const f=this.nextElementSibling;if(f)f.style.display='none'" onerror="this.style.display='none';const b=this.previousElementSibling;if(b)b.style.display='none'">
           <div class="age-preset-fallback ${selectedAgeExampleGender} ${preset.className}"></div>
         </div>
         <div class="age-preset-body"><span class="age-preset-number">Age ${preset.age}</span></div>
