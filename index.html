@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- FaceEvol · AI Age Transformation + Video Face Swap · stable private chunk upload + production status polish · 2026-08-28 -->
+<!-- FaceEvol · AI Age Transformation + Photo & Video Face Swap · photo face swap added without changing the working age/video pipelines · 2026-08-28 -->
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FaceEvol — AI Age Transformation & Video Face Swap</title>
-  <meta name="description" content="Transform your face to any age and use it in an AI video face swap with FaceEvol — or go straight to video face swap. Simple, private and easy to use." />
+  <title>FaceEvol — AI Age Transformation & Face Swap</title>
+  <meta name="description" content="Transform your face to any age and swap faces in photos or videos with FaceEvol. Simple, private and easy to use." />
   <meta name="theme-color" content="#070b17" />
 
   <!-- Browser-side video trimming. Loaded only by the page; your API routes stay unchanged. -->
@@ -222,6 +222,50 @@
     .processing-message{margin-top:14px;color:#7dd3fc;font-size:13px;font-weight:700;line-height:1.5}
     .error-message{margin-top:14px;color:#fda4af;font-size:13px;line-height:1.5}
 
+
+    /* PHOTO FACE SWAP */
+    .photo-swap-grid{margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px;text-align:left}
+    .photo-swap-card{
+      padding:14px;border-radius:14px;border:1px solid rgba(255,255,255,.07);
+      background:rgba(255,255,255,.02);
+    }
+    .photo-swap-label{
+      display:block;margin-bottom:9px;color:#dce8f8;font-size:11px;font-weight:850;
+      letter-spacing:.7px;text-transform:uppercase;
+    }
+    .photo-source-state{
+      min-height:122px;padding:15px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      border-radius:12px;border:1px solid rgba(125,211,252,.11);background:rgba(56,189,248,.035);
+      color:#a9b8cc;text-align:center;font-size:12px;line-height:1.55;
+    }
+    .photo-source-state strong{display:block;margin-bottom:5px;color:#eaf6ff;font-size:13px}
+    .photo-source-state.ready{border-color:rgba(74,222,176,.2);background:rgba(74,222,176,.035)}
+    .photo-target-box{
+      min-height:122px;padding:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      border-radius:12px;border:1px dashed rgba(148,163,184,.26);background:rgba(255,255,255,.015);
+      cursor:pointer;text-align:center;transition:border-color .2s ease,background .2s ease;
+    }
+    .photo-target-box:hover,.photo-target-box:focus{outline:none;border-color:rgba(56,189,248,.45);background:rgba(56,189,248,.025)}
+    .photo-target-box strong{font-size:13px;color:#e8f3ff}
+    .photo-target-box small{margin-top:5px;color:#77859d;font-size:10px;line-height:1.45}
+    .photo-target-preview{
+      width:94px;height:94px;object-fit:contain;margin-bottom:9px;border-radius:11px;
+      background:#050914;border:1px solid rgba(255,255,255,.11);
+    }
+    .photo-swap-tip{
+      margin-top:12px;padding:11px 13px;border-radius:11px;background:rgba(56,189,248,.04);
+      border:1px solid rgba(56,189,248,.09);color:#9db0c8;font-size:11px;line-height:1.6;text-align:left;
+    }
+    .photo-swap-result{display:none;margin-top:18px}
+    .photo-swap-result.show{display:block}
+    .photo-swap-result img{
+      width:100%;max-height:560px;object-fit:contain;display:block;border-radius:16px;
+      background:#050914;border:1px solid rgba(255,255,255,.08);
+    }
+    .photo-result-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+    .photo-result-actions .download-button,.photo-result-actions .handoff-button{display:flex;margin-top:0}
+    .transform-button.gated:disabled{opacity:.48;cursor:not-allowed}
+
     /* VIDEO PREVIEW + TRIM */
     .video-editor{
       display:none;margin-top:18px;padding:14px;border-radius:16px;text-align:left;
@@ -285,6 +329,7 @@
     }
     .feature-card:hover{transform:translateY(-4px);border-color:rgba(125,211,252,.2)}
     .feature-card.large{grid-column:span 6}
+    .feature-card.core{grid-column:span 4}
     .feature-card.small{grid-column:span 3}
     .feature-icon{width:50px;height:50px;margin-bottom:20px;display:grid;place-items:center;border-radius:14px;font-size:23px;background:linear-gradient(145deg,rgba(124,58,237,.21),rgba(14,165,233,.12))}
     .feature-card h3{margin-bottom:10px;font-size:20px}
@@ -352,13 +397,14 @@
 
     @media(max-width:1000px){
       .feature-card.large,.feature-card.small{grid-column:span 6}
+      .feature-card.core{grid-column:span 12}
       .quality-box{grid-template-columns:1fr}
       .pricing-grid{grid-template-columns:1fr;max-width:560px}
     }
     @media(max-width:850px){
       .nav-links a:not(.nav-button){display:none}
       .studio-inner{grid-template-columns:1fr}
-      .studio-sidebar{border-right:none;border-bottom:1px solid rgba(255,255,255,.06);display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:16px}
+      .studio-sidebar{border-right:none;border-bottom:1px solid rgba(255,255,255,.06);display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:16px}
       .studio-label{display:none}
       .tool-option{margin:0;flex-direction:column;text-align:center;padding:11px 6px}
       .tool-name{font-size:11px}.tool-sub{font-size:8px}
@@ -371,17 +417,19 @@
       .hero h1{font-size:clamp(36px,10vw,48px);letter-spacing:-1.7px}
       .hero-description{margin-top:20px;font-size:15px}.hero-actions{margin-top:26px;flex-direction:column}.button{width:100%}
       .hero-trust{margin-top:18px;gap:8px 13px;font-size:11px}.studio-wrap{margin-top:38px}.studio-main{padding:25px 17px}
+      .studio-sidebar{grid-template-columns:repeat(2,1fr)}
       .upload-box{min-height:190px;padding:22px}.selected-photo-preview{width:112px;height:112px}
       .panel-top{align-items:flex-start}.panel-title{font-size:18px}.age-controls{padding:16px}
       .age-presets{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
       .age-preset-body{padding:8px}.quality-options-row{gap:6px}.quality-option{min-height:45px;padding:6px}
       .proof{padding-top:18px}.proof-items{gap:12px 20px;font-size:11px}
       section{padding:56px 0}.section-heading{margin-bottom:30px}.section-heading h2{font-size:clamp(32px,9vw,44px);letter-spacing:-1.2px}.section-heading p{font-size:14px}
-      .feature-card.large,.feature-card.small{grid-column:span 12}.feature-card{min-height:0;padding:23px}
+      .feature-card.large,.feature-card.core,.feature-card.small{grid-column:span 12}.feature-card{min-height:0;padding:23px}
       .feature-grid,.steps,.privacy-grid,.pricing-grid{gap:14px}.step-card{padding:23px}
       .quality-box{padding:28px 20px;gap:30px}.quality-content h2{font-size:34px}.quality-visual{min-height:255px}.quality-circle{width:145px;height:145px}
       .privacy-card{padding:22px}.price-card{padding:25px}.cta{padding-top:25px;padding-bottom:55px}.cta-box{padding:48px 20px}
       .footer-main,.footer-bottom{justify-content:center;text-align:center}.swap-preview{max-height:220px}
+      .photo-swap-grid,.photo-result-actions{grid-template-columns:1fr}
     }
   </style>
 </head>
@@ -405,11 +453,11 @@
   <section class="hero">
     <div class="container">
       <div class="badge"><span class="badge-dot"></span>FaceEvol Beta</div>
-      <h1>AI Age Transformation <span class="gradient-text">&amp; Video Face Swap</span></h1>
-      <p class="hero-description">Transform your face to any age, then use that result in a video face swap — or go straight to Video Face Swap.</p>
+      <h1>AI Age Transformation <span class="gradient-text">&amp; Face Swap</span></h1>
+      <p class="hero-description">Transform your face to any age, swap a face into a photo, or bring your face into video — all in one simple AI studio.</p>
       <div class="hero-actions">
         <a href="#studio" class="button button-primary" id="heroAgeButton">✨ Start Creating</a>
-        <a href="#studio" class="button button-secondary" id="heroFaceSwapButton">🎬 Video Face Swap</a>
+        <a href="#studio" class="button button-secondary" id="heroFaceSwapButton">🖼️ Photo Face Swap</a>
       </div>
 
       <div class="studio-wrap" id="studio">
@@ -420,6 +468,10 @@
               <div class="tool-option active" id="ageOption">
                 <div class="tool-icon">🕒</div>
                 <div><div class="tool-name">Age Transformation</div><span class="tool-sub">5 presets + custom age</span></div>
+              </div>
+              <div class="tool-option" id="photoFaceSwapOption">
+                <div class="tool-icon">🖼️</div>
+                <div><div class="tool-name">Photo Face Swap</div><span class="tool-sub">Live beta</span></div>
               </div>
               <div class="tool-option" id="faceSwapOption">
                 <div class="tool-icon">🎬</div>
@@ -451,30 +503,35 @@
 
   <div class="proof">
     <div class="container">
-      <div class="proof-label">AI Age Transformation &amp; Video Face Swap in one connected flow</div>
-      <div class="proof-items"><span>🕒 Age Transformation</span><span>🎬 Use Result in Face Swap</span><span>🔒 Private Uploads</span><span>✨ HD &amp; 4K Enhancement Coming Soon</span></div>
+      <div class="proof-label">AI Age Transformation &amp; Face Swap in one connected flow</div>
+      <div class="proof-items"><span>🕒 Age Transformation</span><span>🖼️ Photo Face Swap</span><span>🎬 Video Face Swap</span><span>🔒 Privacy-Focused Processing</span><span>✨ HD &amp; 4K Coming Soon</span></div>
     </div>
   </div>
 
   <section id="features">
     <div class="container">
       <div class="section-heading">
-        <span class="section-eyebrow">Two Tools. One Flow.</span>
-        <h2>Transform a face. <span class="gradient-text">Then take it into video.</span></h2>
-        <p>FaceEvol connects age transformation and video face swap so the result from one tool can become the starting point for the next.</p>
+        <span class="section-eyebrow">Three Tools. One Flow.</span>
+        <h2>Transform an age. <span class="gradient-text">Swap a face in photos or video.</span></h2>
+        <p>FaceEvol brings age transformation, photo face swap and video face swap into one clean creation experience.</p>
       </div>
       <div class="feature-grid">
-        <div class="feature-card large">
+        <div class="feature-card core">
           <div class="feature-icon">🕒</div><h3>Age Transformation</h3>
-          <p>Choose age 5, 15, 30, 50 or 75, or use the 0–100 slider. The preset examples stay visible before upload so you can explore the idea first.</p>
+          <p>Choose age 5, 15, 30, 50 or 75, or use the 0–100 slider. Explore the preset examples before you upload.</p>
           <span class="feature-tag"><span class="beta-pill">Beta</span> AGE 0 → 100</span>
         </div>
-        <div class="feature-card large">
+        <div class="feature-card core">
+          <div class="feature-icon">🖼️</div><h3>Photo Face Swap</h3>
+          <p>Choose a clear source face and a target photo, then create a realistic face swap with a simple photo-to-photo workflow.</p>
+          <span class="feature-tag"><span class="live-pill">Live Beta</span> PHOTO</span>
+        </div>
+        <div class="feature-card core">
           <div class="feature-icon">🎬</div><h3>Video Face Swap</h3>
-          <p>Use your original photo or your new age-transformed result, add an MP4 video, select up to 20 seconds, and create your face swap.</p>
+          <p>Use your original face, an age-transformed face, or a photo-swap result, then select up to 20 seconds of an MP4 video.</p>
           <span class="feature-tag"><span class="live-pill">Live Beta</span> VIDEO</span>
         </div>
-        <div class="feature-card small"><div class="feature-icon">🔗</div><h3>Connected Workflow</h3><p>After an age transformation, continue directly into Video Face Swap without downloading and uploading the image again.</p><span class="feature-tag"><span class="beta-pill">Built In</span></span></div>
+        <div class="feature-card small"><div class="feature-icon">🔗</div><h3>Connected Workflow</h3><p>Move from an age result or photo face-swap result directly into Video Face Swap without a manual re-upload.</p><span class="feature-tag"><span class="beta-pill">Built In</span></span></div>
         <div class="feature-card small"><div class="feature-icon">✨</div><h3>HD &amp; 4K Video Enhancement</h3><p>Upgrade clarity and resolution with HD and 4K enhancement options as the quality pipeline expands.</p><span class="feature-tag"><span class="soon-pill">Coming Soon</span></span></div>
         <div class="feature-card small"><div class="feature-icon">👥</div><h3>Multiple Faces</h3><p>Swap more than one person in the same video with dedicated face selection.</p><span class="feature-tag"><span class="soon-pill">Coming Soon</span></span></div>
         <div class="feature-card small"><div class="feature-icon">🚀</div><h3>Longer Videos</h3><p>Support for longer clips will expand as processing speed and cost are optimized.</p><span class="feature-tag"><span class="soon-pill">Coming Soon</span></span></div>
@@ -486,13 +543,13 @@
     <div class="container">
       <div class="section-heading">
         <span class="section-eyebrow">One Connected Journey</span>
-        <h2>From one photo to <span class="gradient-text">a completely new video.</span></h2>
-        <p>Age transformation is optional. Use your original face anytime, or transform it first and carry the result directly into the video workflow.</p>
+        <h2>Start with one face. <span class="gradient-text">Choose what to create next.</span></h2>
+        <p>Use the same clear source face for age transformation, photo face swap or video face swap, and move between tools without unnecessary steps.</p>
       </div>
       <div class="steps">
-        <div class="step-card"><div class="step-number">1</div><h3>Choose your face</h3><p>Upload a clear, front-facing photo. You can already browse all five age examples before uploading.</p></div>
-        <div class="step-card"><div class="step-number">2</div><h3>Transform the age</h3><p>Pick 5, 15, 30, 50 or 75, or choose any age from 0–100. When the result is ready, tap “Use this face in Video Face Swap.”</p></div>
-        <div class="step-card"><div class="step-number">3</div><h3>Bring it into video</h3><p>Add an MP4 up to 300 MB, select a clip up to 20 seconds, and create the face swap with your original or transformed face.</p></div>
+        <div class="step-card"><div class="step-number">1</div><h3>Choose your face</h3><p>Use a clear, front-facing photo with the full face visible and good lighting for the most reliable results.</p></div>
+        <div class="step-card"><div class="step-number">2</div><h3>Transform or swap</h3><p>Choose any target age, or open Photo Face Swap and add the target photo where you want your selected face to appear.</p></div>
+        <div class="step-card"><div class="step-number">3</div><h3>Continue into video</h3><p>When you want motion, add an MP4 up to 300 MB, select a clip up to 20 seconds, and create your Video Face Swap.</p></div>
       </div>
     </div>
   </section>
@@ -540,13 +597,13 @@
       <div class="section-heading">
         <span class="section-eyebrow">Beta Access</span>
         <h2>Create with the core. <span class="gradient-text">Grow into higher quality.</span></h2>
-        <p>FaceEvol is still in beta. Age transformation and video face swap form the connected creation experience, with HD/4K enhancement and expanded video tools planned next.</p>
+        <p>FaceEvol is still in beta. Age transformation, photo face swap and video face swap form the connected creation experience, with HD/4K enhancement and expanded tools planned next.</p>
       </div>
       <div class="pricing-grid">
         <div class="price-card featured">
           <div class="popular-label">Beta</div><div class="price-name">Free Beta</div><div class="price">€0</div>
           <p class="price-description">Try the current FaceEvol experience while the product is being refined.</p>
-          <ul class="price-features"><li>✓ Age transformation workflow</li><li>✓ Video face swap beta</li><li>✓ Up to 20-second selected clips</li><li>✓ Direct age-result → face-swap handoff</li></ul>
+          <ul class="price-features"><li>✓ Age transformation workflow</li><li>✓ Photo face swap beta</li><li>✓ Video face swap beta</li><li>✓ Up to 20-second selected clips</li><li>✓ Direct result → video handoff</li></ul>
           <a href="#studio" class="button button-primary">Start Creating</a>
         </div>
         <div class="price-card">
@@ -569,7 +626,8 @@
     <div class="container">
       <div class="section-heading"><span class="section-eyebrow">FAQ</span><h2>Questions? <span class="gradient-text">We've got answers.</span></h2></div>
       <div class="faq-list">
-        <details><summary>What can I create with FaceEvol?</summary><p>FaceEvol combines Age Transformation and Video Face Swap in one workflow. You can use your original face for a swap, or transform the face first and continue directly into the video tool.</p></details>
+        <details><summary>What can I create with FaceEvol?</summary><p>FaceEvol combines Age Transformation, Photo Face Swap and Video Face Swap. Use an original face, transform it to another age, swap it into a photo, or continue into video.</p></details>
+        <details><summary>What photos work best for face swap?</summary><p>Use a clear, front-facing source face with good lighting and the full face visible. Avoid blur, sunglasses, masks, heavy shadows and extreme side angles. A target photo with a clearly visible face and a similar angle usually gives a more natural result.</p></details>
         <details><summary>Which ages can I choose?</summary><p>The five visual presets are ages 5, 15, 30, 50 and 75. You can also use the custom slider to choose any target age from 0 to 100.</p></details>
         <details><summary>Can I use an age-transformed face directly in Video Face Swap?</summary><p>Yes. When an age transformation finishes, use the “Use this face in Video Face Swap” button to continue without manually downloading and uploading the result again.</p></details>
         <details><summary>What video can I upload?</summary><p>For the beta, use an MP4 source file smaller than 300 MB. You can then select any section up to 20 seconds for processing.</p></details>
@@ -582,9 +640,9 @@
   <section class="cta" id="start">
     <div class="container">
       <div class="cta-box">
-        <div class="badge">✨ AI Age Transformation &amp; Video Face Swap</div>
-        <h2>Transform your age.<br><span class="gradient-text">Then bring that face into video.</span></h2>
-        <p>Explore the five age presets, create your transformation, and continue directly into Video Face Swap when you are ready.</p>
+        <div class="badge">✨ AI Age Transformation &amp; Face Swap</div>
+        <h2>Transform your age.<br><span class="gradient-text">Swap a face. Bring it into video.</span></h2>
+        <p>Explore age transformation, create a photo face swap, or continue directly into Video Face Swap when you are ready.</p>
         <a href="#studio" class="button button-primary" id="ctaStartButton">Start Creating →</a>
       </div>
     </div>
@@ -597,7 +655,7 @@
       <a href="#" class="footer-logo"><img src="a.png" alt="FaceEvol"></a>
       <div class="footer-links"><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Contact</a></div>
     </div>
-    <div class="footer-bottom"><div>© 2026 FaceEvol. All rights reserved.</div><div>Age transformation + video face swap, connected in one creative flow. ❤️</div></div>
+    <div class="footer-bottom"><div>© 2026 FaceEvol. All rights reserved.</div><div>Age transformation + photo &amp; video face swap, connected in one creative flow. ❤️</div></div>
   </div>
 </footer>
 
@@ -607,6 +665,7 @@
   const uploadStatus = document.getElementById("uploadStatus");
   const studioMain = document.querySelector(".studio-main");
   const faceSwapOption = document.getElementById("faceSwapOption");
+  const photoFaceSwapOption = document.getElementById("photoFaceSwapOption");
   const ageOption = document.getElementById("ageOption");
   const ctaStartButton = document.getElementById("ctaStartButton");
   const heroAgeButton = document.getElementById("heroAgeButton");
@@ -615,10 +674,14 @@
   let selectedPhoto = null;
   let selectedSwapVideo = null;
   let faceSwapMode = true;
+  let activeStudioMode = "age";
   let selectedPhotoPreviewUrl = null;
   let selectedSwapVideoPreviewUrl = null;
   let faceSwapResultObjectUrl = null;
   let latestFaceSwapOutput = null;
+  let selectedPhotoSwapTarget = null;
+  let selectedPhotoSwapTargetPreviewUrl = null;
+  let latestPhotoSwapOutput = null;
   let sourcePreviewRecoveryAttempts = 0;
   let resultPlaybackRecoveryRunning = false;
   let resultPlaybackRecoveryAttempted = false;
@@ -942,6 +1005,13 @@
     latestAgeTransformAge=null;
     if(typeof ageResult!=="undefined") ageResult.classList.remove("show");
 
+    // A new source face makes any previous photo-swap result stale.
+    latestPhotoSwapOutput=null;
+    if(typeof photoSwapResult!=="undefined"){
+      photoSwapResult.classList.remove("show");
+      photoSwapResultImage.removeAttribute("src");
+    }
+
     if(selectedPhotoPreviewUrl) URL.revokeObjectURL(selectedPhotoPreviewUrl);
     selectedPhotoPreviewUrl=URL.createObjectURL(selectedPhoto);
 
@@ -951,15 +1021,21 @@
       <small>${selectedPhoto.name}</small>
     `;
 
-    uploadStatus.textContent=faceSwapMode
-      ?"✓ Face photo ready. Tip for best results: use a clear, front-facing photo with good lighting. Avoid sunglasses, heavy shadows, blur, and strong side angles."
-      :"✓ Photo ready. Choose an age preset below or set your own target age.";
-
-    if(faceSwapMode){
+    if(activeStudioMode==="video"){
+      uploadStatus.textContent="✓ Face photo ready. For best results, use a clear, front-facing photo with good lighting and the full face visible.";
       ageControls.classList.remove("show");
+      photoSwapControls.classList.remove("show");
       faceSwapControls.classList.add("show");
-    }else{
+    }else if(activeStudioMode==="photo"){
+      uploadStatus.textContent="✓ Source face ready. Now choose the target photo below.";
+      ageControls.classList.remove("show");
       faceSwapControls.classList.remove("show");
+      photoSwapControls.classList.add("show");
+      if(typeof syncPhotoSwapReadyState==="function") syncPhotoSwapReadyState();
+    }else{
+      uploadStatus.textContent="✓ Photo ready. Choose an age preset below or set your own target age.";
+      faceSwapControls.classList.remove("show");
+      photoSwapControls.classList.remove("show");
       ageControls.classList.add("show");
     }
   });
@@ -1175,6 +1251,343 @@
       useAgeResultForSwap.textContent="🎬 Use this face in Video Face Swap →";
     }
   });
+
+
+  /* PHOTO FACE SWAP */
+  const photoSwapControls=document.createElement("div");
+  photoSwapControls.className="age-controls";
+  photoSwapControls.innerHTML=`
+    <div style="text-align:center;">
+      <div class="panel-top">
+        <div>
+          <span class="panel-kicker">Photo Face Swap</span>
+          <h3 class="panel-title">Swap a face into a photo</h3>
+          <p class="panel-copy">Use the face photo above as your source, then choose the target photo where you want that face to appear.</p>
+        </div>
+        <span class="live-pill">Live Beta</span>
+      </div>
+
+      <div class="photo-swap-tip">
+        <strong style="color:#dff6ff;">For the best result:</strong>
+        use a clear, front-facing source face with good lighting and the full face visible. Avoid sunglasses, hats, masks, blur, heavy shadows and extreme side angles. A clearly visible target face with a similar angle usually looks more natural. Only use photos you have permission to edit.
+      </div>
+
+      <div class="photo-swap-grid">
+        <div class="photo-swap-card">
+          <span class="photo-swap-label">1 · Source face</span>
+          <div class="photo-source-state" id="photoSourceState">
+            <strong>Choose your face above</strong>
+            <span>This is the face FaceEvol will place into the target photo.</span>
+          </div>
+        </div>
+
+        <div class="photo-swap-card">
+          <span class="photo-swap-label">2 · Target photo</span>
+          <div class="photo-target-box" id="photoSwapTargetBox" role="button" tabindex="0" aria-label="Choose target photo">
+            <div style="font-size:26px;margin-bottom:7px;">🖼️</div>
+            <strong>Choose target photo</strong>
+            <small>JPG, PNG or WebP · keep the target face clearly visible</small>
+          </div>
+          <input type="file" id="photoSwapTargetUpload" accept="image/*" hidden>
+        </div>
+      </div>
+
+      <button type="button" class="transform-button gated" id="startPhotoSwapButton" disabled>✨ Swap Face in Photo</button>
+      <div class="processing-message" id="photoSwapStatus"></div>
+      <div class="error-message" id="photoSwapError"></div>
+
+      <div class="photo-swap-result" id="photoSwapResult">
+        <img id="photoSwapResultImage" alt="FaceEvol photo face swap result">
+        <div class="photo-result-actions">
+          <button type="button" class="download-button" id="downloadPhotoSwapButton">⬇ Download Photo</button>
+          <button type="button" class="handoff-button" id="usePhotoResultForVideo">🎬 Use in Video Face Swap →</button>
+        </div>
+        <div class="handoff-note">Continue with this result as your face source — no manual re-upload needed.</div>
+      </div>
+    </div>
+  `;
+  studioMain.appendChild(photoSwapControls);
+
+  const photoSourceState=document.getElementById("photoSourceState");
+  const photoSwapTargetBox=document.getElementById("photoSwapTargetBox");
+  const photoSwapTargetUpload=document.getElementById("photoSwapTargetUpload");
+  const startPhotoSwapButton=document.getElementById("startPhotoSwapButton");
+  const photoSwapStatus=document.getElementById("photoSwapStatus");
+  const photoSwapError=document.getElementById("photoSwapError");
+  const photoSwapResult=document.getElementById("photoSwapResult");
+  const photoSwapResultImage=document.getElementById("photoSwapResultImage");
+  const downloadPhotoSwapButton=document.getElementById("downloadPhotoSwapButton");
+  const usePhotoResultForVideo=document.getElementById("usePhotoResultForVideo");
+
+  function syncPhotoSwapReadyState(){
+    const sourceReady=!!selectedPhoto;
+    const targetReady=!!selectedPhotoSwapTarget;
+
+    photoSourceState.classList.toggle("ready",sourceReady);
+    photoSourceState.innerHTML=sourceReady
+      ? `<strong>Source face ready ✓</strong><span>${selectedPhoto.name||"Selected face photo"}</span>`
+      : `<strong>Choose your face above</strong><span>This is the face FaceEvol will place into the target photo.</span>`;
+
+    startPhotoSwapButton.disabled=!(sourceReady&&targetReady);
+
+    if(sourceReady&&targetReady){
+      photoSwapStatus.textContent="✓ Both photos are ready. Tap “Swap Face in Photo” when you are ready.";
+    }else if(sourceReady){
+      photoSwapStatus.textContent="Source face ready. Choose the target photo next.";
+    }else if(targetReady){
+      photoSwapStatus.textContent="Target photo ready. Choose the source face above.";
+    }else{
+      photoSwapStatus.textContent="Choose a source face above and a target photo here.";
+    }
+  }
+
+  function clearPhotoSwapResult(){
+    latestPhotoSwapOutput=null;
+    photoSwapResult.classList.remove("show");
+    photoSwapResultImage.removeAttribute("src");
+    photoSwapError.textContent="";
+  }
+
+  photoSwapTargetBox.addEventListener("click",()=>photoSwapTargetUpload.click());
+  photoSwapTargetBox.addEventListener("keydown",(event)=>{
+    if(event.key==="Enter"||event.key===" "){
+      event.preventDefault();
+      photoSwapTargetUpload.click();
+    }
+  });
+
+  photoSwapTargetUpload.addEventListener("change",function(){
+    if(!this.files||!this.files.length)return;
+
+    const file=this.files[0];
+    if(!file.type.startsWith("image/")){
+      selectedPhotoSwapTarget=null;
+      this.value="";
+      photoSwapError.textContent="Please choose a JPG, PNG or WebP image.";
+      syncPhotoSwapReadyState();
+      return;
+    }
+
+    selectedPhotoSwapTarget=file;
+    clearPhotoSwapResult();
+
+    if(selectedPhotoSwapTargetPreviewUrl) URL.revokeObjectURL(selectedPhotoSwapTargetPreviewUrl);
+    selectedPhotoSwapTargetPreviewUrl=URL.createObjectURL(file);
+
+    photoSwapTargetBox.innerHTML=`
+      <img class="photo-target-preview" src="${selectedPhotoSwapTargetPreviewUrl}" alt="Selected target photo">
+      <strong>Target photo selected ✓</strong>
+      <small>${file.name}</small>
+    `;
+
+    syncPhotoSwapReadyState();
+  });
+
+  function friendlyPhotoSwapError(error){
+    const raw=error instanceof Error?error.message:String(error||"");
+    const message=raw.toLowerCase();
+
+    if(message.includes("too large")||message.includes("413")){
+      return "These photos are too large to prepare. Please try smaller images.";
+    }
+    if(message.includes("no face")||message.includes("face")){
+      return "FaceEvol couldn't find a usable face. Try clearer photos with the face fully visible.";
+    }
+    if(message.includes("failed to fetch")||message.includes("network")||message.includes("connect")){
+      return "We couldn't connect to FaceEvol. Please check your connection and try again.";
+    }
+    if(message.includes("timed out")||message.includes("too long")){
+      return "The photo face swap took longer than expected. Please try again.";
+    }
+    return "We couldn't complete this photo face swap. Please try clear, well-lit photos with visible faces.";
+  }
+
+  async function pollPhotoSwapPrediction(initialPrediction){
+    let prediction=initialPrediction;
+    if(!prediction||!prediction.id||isTerminalPredictionStatus(prediction.status)) return prediction;
+
+    for(let attempt=0;attempt<60;attempt++){
+      photoSwapStatus.textContent=attempt<8
+        ?"Creating your photo face swap..."
+        :"Still creating your photo... Please keep this page open.";
+
+      await wait(2000);
+      const statusResponse=await fetch(`/api/prediction?id=${encodeURIComponent(prediction.id)}`,{cache:"no-store"});
+      const statusData=await readJsonResponse(statusResponse);
+      if(!statusResponse.ok) throw new Error(statusData.error||"Could not check photo face swap status.");
+
+      prediction=statusData.prediction||statusData;
+      if(!prediction) throw new Error("No photo face swap prediction status was returned.");
+      if(isTerminalPredictionStatus(prediction.status)) return prediction;
+    }
+
+    throw new Error("The photo face swap timed out.");
+  }
+
+  startPhotoSwapButton.addEventListener("click",async function(){
+    if(!selectedPhoto){
+      photoSwapError.textContent="Choose the source face photo above first.";
+      return;
+    }
+    if(!selectedPhotoSwapTarget){
+      photoSwapError.textContent="Choose a target photo first.";
+      return;
+    }
+
+    startPhotoSwapButton.disabled=true;
+    startPhotoSwapButton.textContent="Preparing photos...";
+    photoSwapError.textContent="";
+    clearPhotoSwapResult();
+
+    try{
+      photoSwapStatus.textContent="1/3 Optimizing your photos...";
+
+      const [sourceBlob,targetBlob]=await Promise.all([
+        optimizeImageToBlob(selectedPhoto,{maxDimension:1600,maxBytes:700*1024,quality:.92}),
+        optimizeImageToBlob(selectedPhotoSwapTarget,{maxDimension:1800,maxBytes:900*1024,quality:.92})
+      ]);
+
+      const [faceData,targetData]=await Promise.all([
+        blobToDataURL(sourceBlob),
+        blobToDataURL(targetBlob)
+      ]);
+
+      photoSwapStatus.textContent="2/3 Starting FaceEvol AI...";
+      startPhotoSwapButton.textContent="Swapping face...";
+
+      const response=await fetch("/api/photo-faceswap",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({face:faceData,target:targetData})
+      });
+
+      const data=await readJsonResponse(response);
+      if(!response.ok){
+        const detail=typeof data.details==="string"?` ${data.details}`:"";
+        throw new Error((data.error||"Photo face swap failed.")+detail);
+      }
+
+      let prediction=data.prediction||data;
+      if(!prediction) throw new Error("No photo face swap prediction was returned.");
+
+      if(prediction.id&&!isTerminalPredictionStatus(prediction.status)){
+        photoSwapStatus.textContent="3/3 Creating your photo...";
+        prediction=await pollPhotoSwapPrediction(prediction);
+      }
+
+      if(prediction.status==="failed"||prediction.status==="canceled"||prediction.error){
+        throw new Error(prediction.error||"Photo face swap failed.");
+      }
+
+      const output=findImageUrl(prediction.output)||findImageUrl(prediction);
+      if(!output) throw new Error("No output image was generated.");
+
+      latestPhotoSwapOutput=output;
+      photoSwapResultImage.src=output;
+      photoSwapResult.classList.add("show");
+      photoSwapStatus.textContent="✓ Photo face swap complete — your image is ready.";
+      photoSwapResult.scrollIntoView({behavior:"smooth",block:"nearest"});
+    }catch(error){
+      console.error("FaceEvol photo face swap error:",error);
+      photoSwapError.textContent=friendlyPhotoSwapError(error);
+      syncPhotoSwapReadyState();
+    }finally{
+      startPhotoSwapButton.textContent="✨ Swap Face in Photo";
+      startPhotoSwapButton.disabled=!(selectedPhoto&&selectedPhotoSwapTarget);
+    }
+  });
+
+  downloadPhotoSwapButton.addEventListener("click",async function(){
+    if(!latestPhotoSwapOutput){
+      photoSwapError.textContent="Create a photo face swap first.";
+      return;
+    }
+
+    downloadPhotoSwapButton.disabled=true;
+    downloadPhotoSwapButton.textContent="Preparing download...";
+
+    try{
+      const response=await fetch(latestPhotoSwapOutput,{cache:"no-store"});
+      if(!response.ok) throw new Error("Could not prepare the photo download.");
+      const blob=await response.blob();
+      const url=URL.createObjectURL(blob);
+      const link=document.createElement("a");
+      link.href=url;
+      link.download=`faceevol-photo-swap-${Date.now()}.${blob.type.includes("png")?"png":"jpg"}`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),1500);
+    }catch(error){
+      const link=document.createElement("a");
+      link.href=latestPhotoSwapOutput;
+      link.target="_blank";
+      link.rel="noopener";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }finally{
+      downloadPhotoSwapButton.disabled=false;
+      downloadPhotoSwapButton.textContent="⬇ Download Photo";
+    }
+  });
+
+  usePhotoResultForVideo.addEventListener("click",async function(){
+    if(!latestPhotoSwapOutput){
+      photoSwapError.textContent="Create a photo face swap first.";
+      return;
+    }
+
+    usePhotoResultForVideo.disabled=true;
+    usePhotoResultForVideo.textContent="Preparing face...";
+    photoSwapError.textContent="";
+
+    try{
+      const response=await fetch(latestPhotoSwapOutput,{cache:"no-store"});
+      if(!response.ok) throw new Error("Could not prepare the photo face swap result.");
+
+      const resultBlob=await response.blob();
+      const resultFile=new File(
+        [resultBlob],
+        `faceevol-photo-swap-result-${Date.now()}`,
+        {type:resultBlob.type||"image/jpeg",lastModified:Date.now()}
+      );
+
+      const preparedFace=await optimizeImageToBlob(resultFile,{
+        maxDimension:1600,
+        maxBytes:TARGET_FACE_UPLOAD_BYTES,
+        quality:.92
+      });
+
+      const videoFaceFile=new File(
+        [preparedFace],
+        `faceevol-photo-swap-face-${Date.now()}.jpg`,
+        {type:"image/jpeg",lastModified:Date.now()}
+      );
+
+      selectedPhoto=videoFaceFile;
+      if(selectedPhotoPreviewUrl) URL.revokeObjectURL(selectedPhotoPreviewUrl);
+      selectedPhotoPreviewUrl=URL.createObjectURL(videoFaceFile);
+
+      uploadBox.innerHTML=`
+        <img class="selected-photo-preview" src="${selectedPhotoPreviewUrl}" alt="Photo face swap result selected for video face swap">
+        <strong>Photo Face Swap result selected ✓</strong>
+        <small>Ready for Video Face Swap</small>
+      `;
+
+      activateFaceSwapMode();
+      uploadStatus.textContent="✓ Photo Face Swap result ready for Video Face Swap. Choose an MP4 video below — no re-upload needed.";
+      document.getElementById("studio").scrollIntoView({behavior:"smooth",block:"start"});
+    }catch(error){
+      console.error("FaceEvol photo-to-video handoff error:",error);
+      photoSwapError.textContent="We couldn't prepare this result for Video Face Swap. Please try again.";
+    }finally{
+      usePhotoResultForVideo.disabled=false;
+      usePhotoResultForVideo.textContent="🎬 Use in Video Face Swap →";
+    }
+  });
+
+  syncPhotoSwapReadyState();
 
   /* FACE SWAP UI */
   const faceSwapControls=document.createElement("div");
@@ -1768,24 +2181,47 @@
 
   function activateFaceSwapMode(){
     faceSwapMode=true;
+    activeStudioMode="video";
     document.querySelectorAll(".tool-option").forEach(o=>o.classList.remove("active"));
     faceSwapOption.classList.add("active");
     ageControls.classList.remove("show");
+    photoSwapControls.classList.remove("show");
     faceSwapControls.classList.add("show");
 
     document.querySelector(".upload-title").textContent="Upload your face photo";
-    document.querySelector(".upload-description").textContent="Choose a clear, front-facing photo first. Then add your MP4 video and select the clip you want to face swap.";
+    document.querySelector(".upload-description").textContent="Choose a clear, front-facing photo with the full face visible. Then add your MP4 video and select the clip you want to face swap.";
 
-    if(selectedPhoto){
-      uploadStatus.textContent="✓ Face photo ready. Tip for best results: use a clear, front-facing photo with good lighting. Avoid sunglasses, heavy shadows, blur, and strong side angles.";
-    }
+    uploadStatus.textContent=selectedPhoto
+      ?"✓ Face photo ready. For best results, use good lighting and avoid sunglasses, masks, blur, heavy shadows and extreme side angles."
+      :"Choose a clear, front-facing face photo to begin.";
+  }
+
+  function activatePhotoFaceSwapMode(){
+    faceSwapMode=true;
+    activeStudioMode="photo";
+    document.querySelectorAll(".tool-option").forEach(o=>o.classList.remove("active"));
+    photoFaceSwapOption.classList.add("active");
+    ageControls.classList.remove("show");
+    faceSwapControls.classList.remove("show");
+    photoSwapControls.classList.add("show");
+
+    document.querySelector(".upload-title").textContent="Upload the face you want to use";
+    document.querySelector(".upload-description").textContent="Choose a clear, front-facing source face with good lighting and the full face visible. Then choose the target photo below.";
+
+    uploadStatus.textContent=selectedPhoto
+      ?"✓ Source face ready. Now choose the target photo below."
+      :"For best results, use a clear front-facing photo and avoid sunglasses, hats, masks, blur, heavy shadows and extreme side angles.";
+
+    syncPhotoSwapReadyState();
   }
 
   function activateAgeMode(){
     faceSwapMode=false;
+    activeStudioMode="age";
     document.querySelectorAll(".tool-option").forEach(o=>o.classList.remove("active"));
     ageOption.classList.add("active");
     faceSwapControls.classList.remove("show");
+    photoSwapControls.classList.remove("show");
     ageControls.classList.add("show");
 
     document.querySelector(".upload-title").textContent="Upload a photo for Age Transformation";
@@ -1799,6 +2235,7 @@
   }
 
   faceSwapOption.addEventListener("click",activateFaceSwapMode);
+  photoFaceSwapOption.addEventListener("click",activatePhotoFaceSwapMode);
   ageOption.addEventListener("click",activateAgeMode);
 
   ctaStartButton.addEventListener("click",function(){
@@ -1810,7 +2247,7 @@
   });
 
   heroFaceSwapButton.addEventListener("click",function(){
-    activateFaceSwapMode();
+    activatePhotoFaceSwapMode();
   });
 
   chooseSwapVideo.addEventListener("click",()=>swapVideoUpload.click());
