@@ -2,15 +2,22 @@
  * FaceEvol Photo Face Swap
  * Save as: /api/photo-faceswap.js
  *
- * Uses small optimized data-URI images from the browser, so the photo-to-photo
- * beta does not need a second Vercel Blob upload path.
+ * Source face  -> swap_image
+ * Target photo -> input_image
+ *
+ * The frontend sends compact JPEG data URIs so no additional public image
+ * storage is required for this photo-to-photo beta.
  */
 
 const MODEL_VERSION =
-  "naimish-gami/face-swapper:8b13ba2a79d97de3f36b5e79fa71347716102e5c3412e35b8830689dd68fe1b1";
+  "codeplugtech/face-swap:278a81e7ebb22db98bcba54de985d22cc1abeead2754eb1f2af717247be69b34";
 
-const MAX_IMAGE_DATA_URI_CHARS = 1_500_000;
-const MAX_TOTAL_DATA_URI_CHARS = 3_200_000;
+/*
+ * The frontend currently targets about 220–240 KB per JPEG before Base64.
+ * Base64 expands the string, so these limits leave comfortable headroom.
+ */
+const MAX_IMAGE_DATA_URI_CHARS = 550_000;
+const MAX_TOTAL_DATA_URI_CHARS = 1_150_000;
 
 function isImageDataUri(value) {
   return (
@@ -23,177 +30,144 @@ function safeDetail(value) {
   if (!value) return "";
 
   if (typeof value === "string") {
-    return value.slice(0, 700);
+    return value.slice(0, 1000);
   }
 
   try {
-    return JSON.stringify(value).slice(0, 700);
+    return JSON.stringify(value).slice(0, 1000);
   } catch {
-    return String(value).slice(0, 700);
+    return String(value).slice(0, 1000);
   }
 }
 
 export default async function handler(req, res) {
+  res.setHeader("Cache-Control", "no-store");
+
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
 
     return res.status(405).json({
-      error: "Method not allowed"
+      error: "Method not allowed",
     });
   }
 
-  const token =
-    process.env.REPLICATE_API_TOKEN;
+  const token = process.env.REPLICATE_API_TOKEN;
 
   if (!token) {
     return res.status(500).json({
-      error:
-        "REPLICATE_API_TOKEN is not configured"
+      error: "REPLICATE_API_TOKEN is not configured",
     });
   }
 
-  const {
-    face,
-    target
-  } = req.body || {};
+  const { face, target } = req.body || {};
 
-  /*
-   * Validate source face photo
-   */
   if (!isImageDataUri(face)) {
     return res.status(400).json({
-      error:
-        "A valid source face image is required."
+      error: "A valid source face image is required.",
     });
   }
 
-  /*
-   * Validate target photo
-   */
   if (!isImageDataUri(target)) {
     return res.status(400).json({
-      error:
-        "A valid target image is required."
+      error: "A valid target image is required.",
     });
   }
 
-  /*
-   * Keep request size comfortably below
-   * Vercel's serverless body limit.
-   */
   if (
-    face.length >
-      MAX_IMAGE_DATA_URI_CHARS ||
-    target.length >
-      MAX_IMAGE_DATA_URI_CHARS ||
-    face.length +
-      target.length >
-      MAX_TOTAL_DATA_URI_CHARS
+    face.length > MAX_IMAGE_DATA_URI_CHARS ||
+    target.length > MAX_IMAGE_DATA_URI_CHARS ||
+    face.length + target.length > MAX_TOTAL_DATA_URI_CHARS
   ) {
     return res.status(413).json({
       error:
-        "The prepared photos are too large. Please try smaller images."
+        "The prepared photos are too large for the photo face swap request. Please try again.",
     });
   }
 
   try {
-    /*
-     * Start Replicate photo face swap
-     */
-    const response =
-      await fetch(
-        "https://api.replicate.com/v1/predictions",
-        {
-          method: "POST",
+    const response = await fetch(
+      "https://api.replicate.com/v1/predictions",
+      {
+        method: "POST",
 
-          headers: {
-            Authorization:
-              `Bearer ${token}`,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
 
-            "Content-Type":
-              "application/json",
+          /*
+           * Ask Replicate to wait when it can. If the model needs longer,
+           * the frontend continues through the existing /api/prediction poller.
+           */
+          Prefer: "wait",
+        },
 
-            Prefer: "wait=10"
+        body: JSON.stringify({
+          version: MODEL_VERSION,
+
+          input: {
+            /*
+             * Verified model schema:
+             * swap_image  = source face to insert
+             * input_image = target photo receiving the face
+             */
+            swap_image: face,
+            input_image: target,
           },
+        }),
+      }
+    );
 
-          body: JSON.stringify({
-            version:
-              MODEL_VERSION,
+    let prediction;
 
-            input: {
-              /*
-               * Face to insert
-               */
-              swap_image:
-                face,
-
-              /*
-               * Photo receiving the face
-               */
-              input_image:
-                target,
-
-              /*
-               * Improve final facial quality
-               */
-              enhance:
-                true
-            }
-          })
-        }
-      );
-
-    const prediction =
-      await response.json();
-
-    /*
-     * Replicate returned an error
-     */
-    if (!response.ok) {
-      return res
-        .status(response.status)
-        .json({
-          error:
-            "Photo face swap request failed.",
-
-          details:
-            safeDetail(
-              prediction?.detail ||
-              prediction?.error ||
-              prediction
-            )
-        });
+    try {
+      prediction = await response.json();
+    } catch {
+      prediction = null;
     }
 
-    /*
-     * Return prediction to browser.
-     *
-     * If Replicate finishes immediately,
-     * prediction.status may already be
-     * "succeeded".
-     *
-     * Otherwise the frontend continues
-     * polling /api/prediction.
-     */
+    if (!response.ok) {
+      const details = safeDetail(
+        prediction?.detail ||
+        prediction?.error ||
+        prediction ||
+        `Replicate HTTP ${response.status}`
+      );
+
+      console.error(
+        "FaceEvol photo face swap Replicate request failed:",
+        response.status,
+        details
+      );
+
+      return res.status(response.status).json({
+        error: "Photo face swap request failed.",
+        details,
+      });
+    }
+
+    if (!prediction || typeof prediction !== "object") {
+      return res.status(502).json({
+        error: "Photo face swap returned an invalid response.",
+      });
+    }
+
     return res.status(200).json({
       success: true,
-      prediction
+      prediction,
     });
 
   } catch (error) {
     console.error(
-      "FaceEvol photo face swap error:",
+      "FaceEvol photo face swap server error:",
       error
     );
 
     return res.status(500).json({
-      error:
-        "Could not start the photo face swap.",
-
+      error: "Could not start the photo face swap.",
       details:
         error instanceof Error
           ? error.message
-          : String(error)
+          : String(error),
     });
   }
 }
