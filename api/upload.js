@@ -8,8 +8,13 @@ export default async function handler(req, res) {
   }
 
   try {
+    const body =
+      typeof req.body === "string"
+        ? JSON.parse(req.body)
+        : req.body;
+
     const jsonResponse = await handleUpload({
-      body: req.body,
+      body,
       request: req,
 
       onBeforeGenerateToken: async (pathname) => {
@@ -57,7 +62,7 @@ export default async function handler(req, res) {
             ],
 
             maximumSizeInBytes:
-              200 * 1024 * 1024,
+              300 * 1024 * 1024,
 
             addRandomSuffix: true
           };
