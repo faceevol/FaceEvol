@@ -2392,7 +2392,11 @@
     if(message.includes("300")||message.includes("too large")||message.includes("413")){
       return "That video is too large. Please use an MP4 under 300 MB.";
     }
-    if(message.includes("mp4")||message.includes("video format")){
+    if(
+      message.includes("video uploads must be mp4") ||
+      message.includes("unsupported video format") ||
+      message.includes("invalid video format")
+    ){
       return "Please choose an MP4 video.";
     }
     if(message.includes("timed out")||message.includes("timeout")){
@@ -2507,6 +2511,11 @@
     if(!isMp4(file)){
       selectedEnhanceVideo=null;
       this.value="";
+      enhanceUploadBox.innerHTML=`
+        <div style="font-size:30px;margin-bottom:8px;">✨</div>
+        <strong>Choose MP4 video</strong>
+        <small>Up to 20 seconds · maximum 300 MB</small>
+      `;
       enhanceError.textContent="Please choose an MP4 video.";
       syncEnhanceReadyState();
       return;
@@ -3147,7 +3156,7 @@
           statusNode.textContent=`${step} ${label} ${pct}%`;
         },
         timeoutMs,
-        blob.type||(pathname.endsWith(".mp4")?"video/mp4":"application/octet-stream")
+        pathname.toLowerCase().endsWith(".mp4")?"video/mp4":(blob.type||"application/octet-stream")
       );
 
       if(!data || typeof data.url!=="string" || !data.url){
