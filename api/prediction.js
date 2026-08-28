@@ -83,11 +83,26 @@ async function cleanupPredictionInputs(
     );
 
 
+  /*
+   * Video Enhance uses input.video instead of input.source.
+   * Clean up that temporary private upload after Replicate is finished.
+   */
+  const enhancedVideoPathname =
+    extractTemporaryPathname(
+      prediction?.input?.video,
+      "/api/video.mp4",
+      "faceevol-video-"
+    );
+
+
   const pathnames =
     [
-      facePathname,
-      videoPathname
-    ].filter(Boolean);
+      ...new Set([
+        facePathname,
+        videoPathname,
+        enhancedVideoPathname
+      ].filter(Boolean))
+    ];
 
 
   if (!pathnames.length) {
