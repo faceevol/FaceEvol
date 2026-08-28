@@ -2564,6 +2564,82 @@
     }
   });
 
+
+  /*
+   * VIDEO ENHANCE DIRECT PRIVATE UPLOAD
+   *
+   * Video Enhance uses Vercel Blob's browser upload client and the
+   * existing /api/upload route. This bypasses /api/private-upload
+   * only for Video Enhance; the other working FaceEvol flows stay unchanged.
+   */
+  async function uploadEnhanceVideoDirect(file){
+    if(!(file instanceof Blob)||!file.size){
+      throw new Error("The enhancement video could not be prepared for upload.");
+    }
+
+    const sizeMb=(file.size/(1024*1024)).toFixed(1);
+    enhanceStatus.textContent=`1/3 Preparing secure upload... · ${sizeMb} MB`;
+
+    let upload;
+    try{
+      const module=await import("https://esm.sh/@vercel/blob/client");
+      upload=module.upload;
+    }catch(error){
+      throw new Error(
+        `Could not load the secure upload client. ${
+          error instanceof Error?error.message:String(error)
+        }`
+      );
+    }
+
+    if(typeof upload!=="function"){
+      throw new Error("The secure upload client is unavailable.");
+    }
+
+    const pathname=
+      `faceevol-video-${Date.now()}-${safeFileName(file.name||"enhance.mp4")}`;
+
+    const controller=new AbortController();
+    const timeoutMs=10*60*1000;
+    const timer=setTimeout(()=>controller.abort(),timeoutMs);
+
+    try{
+      const result=await upload(pathname,file,{
+        access:"private",
+        handleUploadUrl:"/api/upload",
+        contentType:"video/mp4",
+        multipart:file.size>=100*1024*1024,
+        abortSignal:controller.signal,
+
+        onUploadProgress(progress){
+          const pct=
+            Number.isFinite(progress?.percentage)
+              ? Math.max(0,Math.min(100,Math.round(progress.percentage)))
+              : 0;
+
+          enhanceStatus.textContent=
+            `1/3 Uploading video securely... ${pct}% · ${sizeMb} MB`;
+        }
+      });
+
+      if(!result||typeof result.pathname!=="string"||!result.pathname){
+        throw new Error("The secure upload completed but no Blob pathname was returned.");
+      }
+
+      enhanceStatus.textContent=`1/3 Upload complete ✓ · ${sizeMb} MB`;
+      return result;
+
+    }catch(error){
+      if(error?.name==="AbortError"){
+        throw new Error("The secure video upload timed out.");
+      }
+      throw error;
+
+    }finally{
+      clearTimeout(timer);
+    }
+  }
+
   startEnhanceButton.addEventListener("click",async function(){
     if(!selectedEnhanceVideo){
       enhanceError.textContent="Choose an MP4 video first.";
@@ -2577,26 +2653,16 @@
 
     try{
       /*
-       * Reuse FaceEvol's working private, chunked video upload path.
-       * The uploaded Blob stays private; /api/video-enhance gives Replicate
-       * only FaceEvol's controlled /api/video.mp4 proxy URL.
+       * Upload directly to PRIVATE Vercel Blob through /api/upload.
+       * Do not use /api/private-upload for Video Enhance.
        */
-      const uploaded=await uploadFaceEvolPrivate(
-        `faceevol-video-${Date.now()}-${safeFileName(selectedEnhanceVideo.name)}`,
-        selectedEnhanceVideo,
-        {
-          step:"1/3",
-          label:"Uploading video securely...",
-          timeoutMs:300000,
-          statusNode:enhanceStatus
-        }
-      );
+      const uploaded=await uploadEnhanceVideoDirect(selectedEnhanceVideo);
 
       if(!uploaded||!uploaded.pathname){
         throw new Error("Private upload did not return a video pathname.");
       }
 
-      enhanceStatus.textContent="2/3 Starting AI enhancement...";
+      enhanceStatus.textContent="2/3 Upload complete. Starting AI enhancement...";
       startEnhanceButton.textContent="Enhancing...";
 
       const response=await fetch("/api/video-enhance",{
