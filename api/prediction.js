@@ -4,15 +4,15 @@ import {
 
 
 function extractTemporaryPathname(
-  proxyUrlString,
+  inputUrlString,
   expectedRoute,
   expectedPrefix
 ) {
   try {
     if (
-      typeof proxyUrlString !==
+      typeof inputUrlString !==
         "string" ||
-      !proxyUrlString.startsWith(
+      !inputUrlString.startsWith(
         "https://"
       )
     ) {
@@ -22,41 +22,70 @@ function extractTemporaryPathname(
 
     const url =
       new URL(
-        proxyUrlString
+        inputUrlString
       );
 
 
     /*
-     * Only accept URLs generated
-     * by our own FaceEvol proxy.
+     * Existing FaceEvol proxy URL:
+     * https://www.faceevol.com/api/video.mp4?pathname=...
      */
     if (
-      url.hostname !==
-        "www.faceevol.com" ||
-      url.pathname !==
+      url.hostname ===
+        "www.faceevol.com" &&
+      url.pathname ===
         expectedRoute
     ) {
-      return null;
+      const pathname =
+        url.searchParams.get(
+          "pathname"
+        );
+
+
+      if (
+        pathname &&
+        pathname.startsWith(
+          expectedPrefix
+        )
+      ) {
+        return pathname;
+      }
     }
 
 
-    const pathname =
-      url.searchParams.get(
-        "pathname"
-      );
-
-
+    /*
+     * Video Enhance signed Vercel Blob URL.
+     * Recover only a FaceEvol temporary pathname so cleanup
+     * cannot delete an arbitrary external object.
+     */
     if (
-      !pathname ||
-      !pathname.startsWith(
-        expectedPrefix
+      url.hostname.endsWith(
+        ".private.blob.vercel-storage.com"
       )
     ) {
-      return null;
+      const pathname =
+        decodeURIComponent(
+          url.pathname.replace(
+            /^\/+/, ""
+          )
+        );
+
+
+      if (
+        pathname &&
+        pathname.startsWith(
+          expectedPrefix
+        ) &&
+        !pathname.includes(
+          ".."
+        )
+      ) {
+        return pathname;
+      }
     }
 
 
-    return pathname;
+    return null;
 
   } catch {
     return null;
