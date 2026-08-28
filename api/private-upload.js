@@ -57,9 +57,10 @@ async function readJsonBody(req) {
   let total = 0;
 
   for await (const chunk of req) {
-    const buffer = Buffer.isBuffer(chunk)
-      ? chunk
-      : Buffer.from(chunk);
+    const buffer =
+      Buffer.isBuffer(chunk)
+        ? chunk
+        : Buffer.from(chunk);
 
     total += buffer.length;
 
@@ -72,9 +73,9 @@ async function readJsonBody(req) {
     chunks.push(buffer);
   }
 
-  const text = Buffer.concat(chunks).toString(
-    "utf8"
-  );
+  const text =
+    Buffer.concat(chunks)
+      .toString("utf8");
 
   if (!text) return {};
 
@@ -82,17 +83,19 @@ async function readJsonBody(req) {
 }
 
 function validateRawSize(req) {
-  const contentLength = Number(
-    req.headers["content-length"] || 0
-  );
+  const contentLength =
+    Number(
+      req.headers["content-length"] || 0
+    );
 
   if (
     Number.isFinite(contentLength) &&
     contentLength > MAX_RAW_REQUEST_BYTES
   ) {
-    const error = new Error(
-      "Private upload request is too large."
-    );
+    const error =
+      new Error(
+        "Private upload request is too large."
+      );
 
     error.statusCode = 413;
 
@@ -116,12 +119,13 @@ async function createCombinedPrivateStream(
               return;
             }
 
-            const result = await get(
-              pathnames[index],
-              {
-                access: "private",
-              }
-            );
+            const result =
+              await get(
+                pathnames[index],
+                {
+                  access: "private",
+                }
+              );
 
             if (
               !result ||
@@ -141,8 +145,9 @@ async function createCombinedPrivateStream(
 
           const {
             done,
-            value,
-          } = await reader.read();
+            value
+          } =
+            await reader.read();
 
           if (done) {
             try {
@@ -183,40 +188,60 @@ export default async function handler(
   res
 ) {
   if (req.method !== "POST") {
-    res.setHeader("Allow", "POST");
+    res.setHeader(
+      "Allow",
+      "POST"
+    );
 
-    return sendJson(res, 405, {
-      error: "Method not allowed",
-    });
+    return sendJson(
+      res,
+      405,
+      {
+        error: "Method not allowed",
+      }
+    );
   }
 
-  const action = String(
-    req.query.action || "single"
-  ).toLowerCase();
+  const action =
+    String(
+      req.query.action || "single"
+    ).toLowerCase();
 
   try {
+
     /*
-     * Small face photo or already-small MP4
+     * Small face photo or
+     * already-small MP4.
      */
     if (action === "single") {
       validateRawSize(req);
 
       const rawFilename =
-        Array.isArray(req.query.filename)
+        Array.isArray(
+          req.query.filename
+        )
           ? req.query.filename[0]
           : req.query.filename;
 
       const filename =
-        cleanFilename(rawFilename);
+        cleanFilename(
+          rawFilename
+        );
 
       if (
         !filename ||
-        !isAllowedFinalFilename(filename)
+        !isAllowedFinalFilename(
+          filename
+        )
       ) {
-        return sendJson(res, 400, {
-          error:
-            "Invalid FaceEvol upload filename.",
-        });
+        return sendJson(
+          res,
+          400,
+          {
+            error:
+              "Invalid FaceEvol upload filename.",
+          }
+        );
       }
 
       const isVideo =
@@ -229,52 +254,95 @@ export default async function handler(
           "faceevol-face-"
         );
 
-      const contentType = String(
-        req.headers["content-type"] || ""
-      ).split(";")[0];
+      const incomingContentType =
+        String(
+          req.headers[
+            "content-type"
+          ] || ""
+        ).split(";")[0];
 
+      /*
+       * Some browsers report MP4
+       * screen recordings as
+       * video/quicktime,
+       * application/octet-stream,
+       * or even an empty MIME type.
+       *
+       * The filename is already
+       * restricted by FaceEvol,
+       * so normalize
+       * faceevol-video-*.mp4
+       * uploads to video/mp4.
+       */
       if (
         isVideo &&
-        contentType !== "video/mp4"
+        !filename
+          .toLowerCase()
+          .endsWith(".mp4")
       ) {
-        return sendJson(res, 415, {
-          error:
-            "Video uploads must be MP4.",
-        });
+        return sendJson(
+          res,
+          415,
+          {
+            error:
+              "Video uploads must be MP4.",
+          }
+        );
       }
 
       if (
         isFace &&
-        contentType !== "image/jpeg"
+        incomingContentType !==
+          "image/jpeg"
       ) {
-        return sendJson(res, 415, {
-          error:
-            "Face uploads must be JPEG.",
-        });
+        return sendJson(
+          res,
+          415,
+          {
+            error:
+              "Face uploads must be JPEG.",
+          }
+        );
       }
 
-      const blob = await put(
-        filename,
-        req,
+      const contentType =
+        isVideo
+          ? "video/mp4"
+          : incomingContentType;
+
+      const blob =
+        await put(
+          filename,
+          req,
+          {
+            access: "private",
+            contentType,
+            addRandomSuffix: true,
+            multipart: false,
+          }
+        );
+
+      return sendJson(
+        res,
+        200,
         {
-          access: "private",
-          contentType,
-          addRandomSuffix: true,
-          multipart: false,
+          url: blob.url,
+
+          pathname:
+            blob.pathname,
+
+          contentType:
+            blob.contentType ||
+            contentType,
         }
       );
-
-      return sendJson(res, 200, {
-        url: blob.url,
-        pathname: blob.pathname,
-        contentType:
-          blob.contentType ||
-          contentType,
-      });
     }
 
+
     /*
-     * One raw video chunk
+     * One raw video part,
+     * always comfortably below
+     * the Function body limit.
      */
     if (action === "chunk") {
       validateRawSize(req);
@@ -288,23 +356,33 @@ export default async function handler(
             : req.query.uploadId
         );
 
-      const part = Number(
-        Array.isArray(req.query.part)
-          ? req.query.part[0]
-          : req.query.part
-      );
+      const part =
+        Number(
+          Array.isArray(
+            req.query.part
+          )
+            ? req.query.part[0]
+            : req.query.part
+        );
 
-      const total = Number(
-        Array.isArray(req.query.total)
-          ? req.query.total[0]
-          : req.query.total
-      );
+      const total =
+        Number(
+          Array.isArray(
+            req.query.total
+          )
+            ? req.query.total[0]
+            : req.query.total
+        );
 
       if (!uploadId) {
-        return sendJson(res, 400, {
-          error:
-            "Missing private upload id.",
-        });
+        return sendJson(
+          res,
+          400,
+          {
+            error:
+              "Missing private upload id.",
+          }
+        );
       }
 
       if (
@@ -312,10 +390,14 @@ export default async function handler(
         part < 1 ||
         part > MAX_CHUNKS
       ) {
-        return sendJson(res, 400, {
-          error:
-            "Invalid private upload part number.",
-        });
+        return sendJson(
+          res,
+          400,
+          {
+            error:
+              "Invalid private upload part number.",
+          }
+        );
       }
 
       if (
@@ -324,62 +406,92 @@ export default async function handler(
         total > MAX_CHUNKS ||
         part > total
       ) {
-        return sendJson(res, 400, {
-          error:
-            "Invalid private upload part count.",
-        });
+        return sendJson(
+          res,
+          400,
+          {
+            error:
+              "Invalid private upload part count.",
+          }
+        );
       }
 
       const pathname =
-        `faceevol-temp/${uploadId}/` +
-        `part-${String(part).padStart(
-          4,
-          "0"
-        )}.bin`;
+        `faceevol-temp/${uploadId}/part-${
+          String(part)
+            .padStart(4, "0")
+        }.bin`;
 
-      const blob = await put(
-        pathname,
-        req,
+      const blob =
+        await put(
+          pathname,
+          req,
+          {
+            access: "private",
+
+            contentType:
+              "application/octet-stream",
+
+            addRandomSuffix:
+              false,
+
+            allowOverwrite:
+              true,
+
+            multipart:
+              false,
+          }
+        );
+
+      return sendJson(
+        res,
+        200,
         {
-          access: "private",
-          contentType:
-            "application/octet-stream",
-          addRandomSuffix: false,
-          allowOverwrite: true,
-          multipart: false,
+          pathname:
+            blob.pathname,
+
+          part,
         }
       );
-
-      return sendJson(res, 200, {
-        pathname: blob.pathname,
-        part,
-      });
     }
 
+
     /*
-     * Join temporary chunks into
-     * one private MP4
+     * Join the private temporary
+     * parts into one private MP4.
      */
     if (action === "complete") {
       const body =
         await readJsonBody(req);
 
       const uploadId =
-        cleanUploadId(body.uploadId);
+        cleanUploadId(
+          body.uploadId
+        );
 
       const filename =
-        cleanFilename(body.filename);
+        cleanFilename(
+          body.filename
+        );
 
       const chunks =
-        Array.isArray(body.chunks)
-          ? body.chunks.map(String)
+        Array.isArray(
+          body.chunks
+        )
+          ? body.chunks.map(
+              String
+            )
           : [];
 
       if (!uploadId) {
-        return sendJson(res, 400, {
-          error:
-            "Missing private upload id.",
-        });
+        return sendJson(
+          res,
+          400,
+          {
+            error:
+              "Missing private upload id.",
+          }
+        );
       }
 
       if (
@@ -387,22 +499,33 @@ export default async function handler(
         !filename.startsWith(
           "faceevol-video-"
         ) ||
-        !filename.endsWith(".mp4")
+        !filename.endsWith(
+          ".mp4"
+        )
       ) {
-        return sendJson(res, 400, {
-          error:
-            "Invalid final video filename.",
-        });
+        return sendJson(
+          res,
+          400,
+          {
+            error:
+              "Invalid final video filename.",
+          }
+        );
       }
 
       if (
         !chunks.length ||
-        chunks.length > MAX_CHUNKS
+        chunks.length >
+          MAX_CHUNKS
       ) {
-        return sendJson(res, 400, {
-          error:
-            "Invalid private upload part list.",
-        });
+        return sendJson(
+          res,
+          400,
+          {
+            error:
+              "Invalid private upload part list.",
+          }
+        );
       }
 
       const expectedPrefix =
@@ -416,10 +539,14 @@ export default async function handler(
             )
         )
       ) {
-        return sendJson(res, 400, {
-          error:
-            "Private upload part path mismatch.",
-        });
+        return sendJson(
+          res,
+          400,
+          {
+            error:
+              "Private upload part path mismatch.",
+          }
+        );
       }
 
       const stream =
@@ -427,107 +554,63 @@ export default async function handler(
           chunks
         );
 
-      const blob = await put(
-        filename,
-        stream,
-        {
-          access: "private",
-          contentType: "video/mp4",
-          addRandomSuffix: true,
-          multipart: true,
-        }
-      );
+      const blob =
+        await put(
+          filename,
+          stream,
+          {
+            access: "private",
+
+            contentType:
+              "video/mp4",
+
+            addRandomSuffix:
+              true,
+
+            multipart:
+              true,
+          }
+        );
 
       /*
-       * Final video exists,
-       * remove temporary chunks
+       * The final private video
+       * now exists, so temporary
+       * private parts can go.
        */
       try {
-        await del(chunks);
-      } catch (cleanupError) {
+        await del(
+          chunks
+        );
+      } catch (
+        cleanupError
+      ) {
         console.warn(
           "FaceEvol temporary Blob cleanup warning:",
           cleanupError
         );
       }
 
-      return sendJson(res, 200, {
-        url: blob.url,
-        pathname: blob.pathname,
-        contentType:
-          blob.contentType ||
-          "video/mp4",
-      });
+      return sendJson(
+        res,
+        200,
+        {
+          url:
+            blob.url,
+
+          pathname:
+            blob.pathname,
+
+          contentType:
+            blob.contentType ||
+            "video/mp4",
+        }
+      );
     }
+
 
     /*
-     * Cleanup if browser upload
-     * stops halfway through
+     * Best-effort cleanup when
+     * a browser upload fails
+     * halfway through.
      */
-    if (action === "abort") {
-      const body =
-        await readJsonBody(req);
-
-      const uploadId =
-        cleanUploadId(body.uploadId);
-
-      const chunks =
-        Array.isArray(body.chunks)
-          ? body.chunks.map(String)
-          : [];
-
-      const expectedPrefix =
-        `faceevol-temp/${uploadId}/`;
-
-      const safeChunks =
-        uploadId
-          ? chunks
-              .filter((pathname) =>
-                pathname.startsWith(
-                  expectedPrefix
-                )
-              )
-              .slice(0, MAX_CHUNKS)
-          : [];
-
-      if (safeChunks.length) {
-        try {
-          await del(safeChunks);
-        } catch {}
-      }
-
-      return sendJson(res, 200, {
-        ok: true,
-      });
-    }
-
-    return sendJson(res, 400, {
-      error:
-        "Unknown private upload action.",
-    });
-  } catch (error) {
-    console.error(
-      "FaceEvol private upload error:",
-      error
-    );
-
-    const status =
-      Number(error?.statusCode) ||
-      500;
-
-    const message =
-      error instanceof Error
-        ? error.message
-        : "Private upload failed.";
-
-    return sendJson(
-      res,
-      status,
-      {
-        error:
-          "FaceEvol could not save the private upload.",
-        details: message,
-      }
-    );
-  }
-}
+    if (action === "abort")
