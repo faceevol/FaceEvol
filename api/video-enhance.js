@@ -13,11 +13,12 @@ import {
  * bytedance/video-upscaler
  *
  * Flow:
- * 1. User's MP4 is stored privately in Vercel Blob.
- * 2. FaceEvol creates a temporary GET-only signed URL.
- * 3. Replicate receives that temporary URL.
- * 4. Replicate starts the enhancement asynchronously.
- * 5. Frontend polls /api/prediction.js until finished.
+ * 1. FaceEvol uploads the MP4 to PRIVATE Vercel Blob.
+ * 2. This API verifies that private Blob exists.
+ * 3. FaceEvol creates a temporary GET-only signed URL.
+ * 4. Replicate receives that signed URL.
+ * 5. Replicate starts ByteDance Video Upscaler asynchronously.
+ * 6. The frontend polls /api/prediction.js until completion.
  */
 
 const ALLOWED_RESOLUTIONS =
@@ -44,22 +45,24 @@ const ALLOWED_SCENES =
 
 
 /*
- * Give Replicate two hours to access
- * the private source video.
+ * Replicate gets temporary access
+ * to this one private video for 2 hours.
  */
 const SIGNED_URL_LIFETIME_MS =
   2 * 60 * 60 * 1000;
 
 
 /*
- * Validate that the pathname belongs
- * to a FaceEvol temporary MP4.
+ * Only allow temporary FaceEvol MP4s.
  */
-function cleanPathname(value) {
+function cleanPathname(
+  value
+) {
   const pathname =
     typeof value === "string"
       ? value.trim()
       : "";
+
 
   if (
     !pathname ||
@@ -68,7 +71,9 @@ function cleanPathname(value) {
     ) ||
     !pathname
       .toLowerCase()
-      .endsWith(".mp4") ||
+      .endsWith(
+        ".mp4"
+      ) ||
     !/^[a-zA-Z0-9._/-]+$/.test(
       pathname
     )
@@ -76,50 +81,60 @@ function cleanPathname(value) {
     return null;
   }
 
+
   return pathname;
 }
 
 
 /*
- * Keep external error responses small
- * enough to safely return to the browser.
+ * Keep error details small enough
+ * to safely return to the frontend.
  */
-function safeDetail(value) {
-  if (!value) {
+function safeDetail(
+  value
+) {
+  if (
+    !value
+  ) {
     return "";
   }
 
+
   if (
-    typeof value === "string"
+    typeof value ===
+    "string"
   ) {
     return value.slice(
       0,
-      1600
+      2000
     );
   }
 
+
   try {
+
     return JSON.stringify(
       value
     ).slice(
       0,
-      1600
+      2000
     );
 
   } catch {
+
     return String(
       value
     ).slice(
       0,
-      1600
+      2000
     );
   }
 }
 
 
 /*
- * Create temporary read-only access
- * for the private uploaded MP4.
+ * Create temporary GET access
+ * to one PRIVATE Vercel Blob.
  */
 async function createTemporaryVideoReadUrl(
   pathname
@@ -128,16 +143,20 @@ async function createTemporaryVideoReadUrl(
 
 
   /*
-   * First verify that the Blob
-   * actually exists.
+   * Verify that the private source
+   * file actually exists.
    */
   try {
+
     metadata =
       await head(
         pathname
       );
 
-  } catch (error) {
+  } catch (
+    error
+  ) {
+
     throw new Error(
       `PRIVATE_VIDEO_NOT_FOUND: ${
         error instanceof Error
@@ -152,6 +171,7 @@ async function createTemporaryVideoReadUrl(
     !metadata ||
     !metadata.pathname
   ) {
+
     throw new Error(
       "PRIVATE_VIDEO_NOT_FOUND: FaceEvol could not find the uploaded video."
     );
@@ -159,7 +179,7 @@ async function createTemporaryVideoReadUrl(
 
 
   /*
-   * Reject an empty uploaded file.
+   * Reject empty files.
    */
   if (
     metadata.size !==
@@ -170,6 +190,7 @@ async function createTemporaryVideoReadUrl(
       metadata.size
     ) <= 0
   ) {
+
     throw new Error(
       "PRIVATE_VIDEO_EMPTY: The uploaded video is empty."
     );
@@ -182,8 +203,12 @@ async function createTemporaryVideoReadUrl(
 
 
   /*
-   * Issue a signed token that allows
-   * GET access only to this pathname.
+   * Issue a delegation token.
+   *
+   * It is limited to:
+   * - this exact pathname
+   * - GET only
+   * - two-hour expiry
    */
   const signedToken =
     await issueSignedToken({
@@ -198,19 +223,42 @@ async function createTemporaryVideoReadUrl(
 
 
   /*
-   * Turn the signed token into
-   * a temporary URL Replicate can read.
+   * IMPORTANT FIX:
+   *
+   * access: "private"
+   *
+   * Without the access value,
+   * Vercel can construct:
+   *
+   * <store>.undefined.blob.vercel-storage.com
+   *
+   * instead of:
+   *
+   * <store>.private.blob.vercel-storage.com
    */
   const signed =
     await presignUrl(
       signedToken,
       {
-        pathname,
-
         operation:
           "get",
 
-        validUntil
+        pathname,
+
+        access:
+          "private",
+
+        validUntil,
+
+        /*
+         * This is a video that may
+         * have been uploaded seconds ago.
+         *
+         * Bypass CDN cache and read
+         * directly from origin storage.
+         */
+        useCache:
+          false
       }
     );
 
@@ -223,8 +271,42 @@ async function createTemporaryVideoReadUrl(
       "https://"
     )
   ) {
+
     throw new Error(
       "SIGNED_VIDEO_URL_FAILED: FaceEvol could not create temporary video access."
+    );
+  }
+
+
+  /*
+   * Extra safety check:
+   * Never send Replicate another
+   * malformed ".undefined." URL.
+   */
+  if (
+    signed.presignedUrl.includes(
+      ".undefined.blob.vercel-storage.com"
+    )
+  ) {
+
+    throw new Error(
+      "SIGNED_VIDEO_URL_FAILED: Vercel returned an invalid Blob hostname."
+    );
+  }
+
+
+  /*
+   * The correct private Blob URL should
+   * contain .private.blob.vercel-storage.com
+   */
+  if (
+    !signed.presignedUrl.includes(
+      ".private.blob.vercel-storage.com"
+    )
+  ) {
+
+    throw new Error(
+      "SIGNED_VIDEO_URL_FAILED: Vercel did not return a private Blob URL."
     );
   }
 
@@ -237,6 +319,7 @@ export default async function handler(
   req,
   res
 ) {
+
   res.setHeader(
     "Cache-Control",
     "no-store"
@@ -244,18 +327,23 @@ export default async function handler(
 
 
   /*
-   * Only POST is allowed.
+   * POST only.
    */
   if (
-    req.method !== "POST"
+    req.method !==
+    "POST"
   ) {
+
     res.setHeader(
       "Allow",
       "POST"
     );
 
+
     return res
-      .status(405)
+      .status(
+        405
+      )
       .json({
         error:
           "Method not allowed"
@@ -264,7 +352,7 @@ export default async function handler(
 
 
   /*
-   * Replicate API key.
+   * Replicate API token.
    */
   const replicateToken =
     process.env
@@ -274,8 +362,11 @@ export default async function handler(
   if (
     !replicateToken
   ) {
+
     return res
-      .status(500)
+      .status(
+        500
+      )
       .json({
         error:
           "REPLICATE_API_TOKEN is not configured"
@@ -284,7 +375,8 @@ export default async function handler(
 
 
   /*
-   * Read options sent by index.html.
+   * Values received from
+   * FaceEvol index.html.
    */
   const {
     pathname:
@@ -301,7 +393,7 @@ export default async function handler(
 
 
   /*
-   * Validate video pathname.
+   * Validate private Blob pathname.
    */
   const pathname =
     cleanPathname(
@@ -312,8 +404,11 @@ export default async function handler(
   if (
     !pathname
   ) {
+
     return res
-      .status(400)
+      .status(
+        400
+      )
       .json({
         error:
           "A valid FaceEvol MP4 upload is required."
@@ -322,10 +417,7 @@ export default async function handler(
 
 
   /*
-   * Validate resolution.
-   *
-   * If something unexpected arrives,
-   * safely fall back to 1080p.
+   * Validate output resolution.
    */
   const resolution =
     ALLOWED_RESOLUTIONS.has(
@@ -336,7 +428,7 @@ export default async function handler(
 
 
   /*
-   * Validate target FPS.
+   * Validate output FPS.
    */
   const requestedFps =
     Number(
@@ -353,7 +445,7 @@ export default async function handler(
 
 
   /*
-   * Validate enhancement preset.
+   * Validate enhancement scene.
    */
   const selectedScene =
     ALLOWED_SCENES.has(
@@ -366,8 +458,8 @@ export default async function handler(
   try {
 
     /*
-     * Create secure temporary access
-     * to the private MP4.
+     * Create temporary secure
+     * read access for Replicate.
      */
     const videoUrl =
       await createTemporaryVideoReadUrl(
@@ -385,19 +477,30 @@ export default async function handler(
 
 
     /*
-     * Start ByteDance Video Upscaler.
-     *
-     * IMPORTANT:
+     * Do NOT log the actual signed URL.
+     * It contains temporary credentials.
+     */
+    console.log(
+      "FACEVOL SIGNED VIDEO URL READY:",
+      videoUrl.includes(
+        ".private.blob.vercel-storage.com"
+      )
+    );
+
+
+    /*
+     * Start ByteDance Video Upscaler
+     * asynchronously.
      *
      * There is intentionally NO:
      *
      * Prefer: "wait=60"
      *
-     * This makes Replicate return the
-     * prediction immediately instead
-     * of holding this Vercel function
-     * open while a 3–5+ minute video
-     * enhancement runs.
+     * Video enhancement can take
+     * several minutes.
+     *
+     * Replicate should return the
+     * prediction ID immediately.
      */
     const response =
       await fetch(
@@ -407,6 +510,7 @@ export default async function handler(
             "POST",
 
           headers: {
+
             Authorization:
               `Bearer ${replicateToken}`,
 
@@ -414,12 +518,13 @@ export default async function handler(
               "application/json",
 
             /*
-             * Allow long enhancement
-             * jobs on Replicate itself.
+             * Allow long processing
+             * on Replicate.
              */
             "Cancel-After":
               "30m"
           },
+
 
           body:
             JSON.stringify({
@@ -427,22 +532,22 @@ export default async function handler(
 
                 /*
                  * Temporary signed
-                 * private video URL.
+                 * PRIVATE Blob URL.
                  */
                 video:
                   videoUrl,
 
 
                 /*
-                 * Standard works without
-                 * Pro allowlist access.
+                 * Standard mode does
+                 * not require Pro access.
                  */
                 processing_type:
                   "standard",
 
 
                 /*
-                 * Scene-aware preset.
+                 * Enhancement preset.
                  */
                 scene:
                   selectedScene,
@@ -473,21 +578,25 @@ export default async function handler(
 
 
     try {
+
       prediction =
         await response.json();
 
     } catch {
+
       prediction =
         null;
     }
 
 
     /*
-     * Replicate rejected the request.
+     * Replicate rejected the
+     * enhancement request.
      */
     if (
       !response.ok
     ) {
+
       const details =
         safeDetail(
           prediction?.detail ||
@@ -520,17 +629,18 @@ export default async function handler(
 
 
     /*
-     * Replicate should return a
-     * prediction object containing
-     * an ID and status.
+     * Validate prediction response.
      */
     if (
       !prediction ||
       typeof prediction !==
         "object"
     ) {
+
       return res
-        .status(502)
+        .status(
+          502
+        )
         .json({
           error:
             "Video enhancement returned an invalid response."
@@ -538,142 +648,9 @@ export default async function handler(
     }
 
 
+    /*
+     * We need the prediction ID
+     * for /api/prediction.js.
+     */
     if (
       !prediction.id
-    ) {
-      console.error(
-        "FaceEvol enhancement prediction has no ID:",
-        prediction
-      );
-
-      return res
-        .status(502)
-        .json({
-          error:
-            "Video enhancement did not return a prediction ID."
-        });
-    }
-
-
-    /*
-     * This should normally be:
-     *
-     * starting
-     * or
-     * processing
-     *
-     * The frontend then polls
-     * /api/prediction.js.
-     */
-    console.log(
-      "FACEVOL VIDEO ENHANCE STARTED:",
-      prediction.id,
-      prediction.status,
-      resolution,
-      `${fps}fps`,
-      selectedScene
-    );
-
-
-    /*
-     * Immediately return prediction
-     * to the browser.
-     */
-    return res
-      .status(200)
-      .json({
-        success:
-          true,
-
-        prediction
-      });
-
-
-  } catch (error) {
-
-    const message =
-      error instanceof Error
-        ? error.message
-        : String(error);
-
-
-    console.error(
-      "FaceEvol video enhancement server error:",
-      message
-    );
-
-
-    /*
-     * Private Blob missing.
-     */
-    if (
-      message.startsWith(
-        "PRIVATE_VIDEO_NOT_FOUND:"
-      )
-    ) {
-      return res
-        .status(404)
-        .json({
-          error:
-            "FaceEvol could not read the private uploaded video.",
-
-          details:
-            message
-        });
-    }
-
-
-    /*
-     * Empty Blob.
-     */
-    if (
-      message.startsWith(
-        "PRIVATE_VIDEO_EMPTY:"
-      )
-    ) {
-      return res
-        .status(400)
-        .json({
-          error:
-            "The uploaded video is empty.",
-
-          details:
-            message
-        });
-    }
-
-
-    /*
-     * Signed URL creation failed.
-     */
-    if (
-      message.startsWith(
-        "SIGNED_VIDEO_URL_FAILED:"
-      )
-    ) {
-      return res
-        .status(500)
-        .json({
-          error:
-            "FaceEvol could not prepare secure AI access to the video.",
-
-          details:
-            message
-        });
-    }
-
-
-    /*
-     * Unknown server error.
-     */
-    return res
-      .status(500)
-      .json({
-        error:
-          "Could not start video enhancement.",
-
-        details:
-          message
-      });
-  }
-}
