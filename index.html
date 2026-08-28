@@ -626,7 +626,7 @@
               </div>
               <div class="tool-option" id="videoEnhanceOption">
                 <div class="tool-icon">✨</div>
-                <div><div class="tool-name">Video Enhance</div><span class="tool-sub">1080p · 2K · 4K</span></div>
+                <div><div class="tool-name">Video Enhance</div><span class="tool-sub">1080p · 4K</span></div>
               </div>
             </div>
 
@@ -684,7 +684,7 @@
           <span class="feature-tag"><span class="live-pill">Live Beta</span> VIDEO</span>
         </div>
         <div class="feature-card small"><div class="feature-icon">⬇️</div><h3>Easy Downloads</h3><p>Save your image results, generated videos and enhanced videos directly to your device when they are ready.</p><span class="feature-tag"><span class="beta-pill">Built In</span></span></div>
-        <div class="feature-card small"><div class="feature-icon">✨</div><h3>HD &amp; 4K Video Enhancement</h3><p>Enhance clarity and upscale a short MP4 to 1080p, 2K or 4K with optional 30 or 60 FPS output.</p><span class="feature-tag"><span class="live-pill">Live Beta</span> VIDEO</span></div>
+        <div class="feature-card small"><div class="feature-icon">✨</div><h3>HD &amp; 4K Video Enhancement</h3><p>Enhance clarity and upscale a short MP4 to 1080p or 4K with optional 30 or 60 FPS output.</p><span class="feature-tag"><span class="live-pill">Live Beta</span> VIDEO</span></div>
         <div class="feature-card small"><div class="feature-icon">👥</div><h3>Multiple Faces</h3><p>Swap more than one person in the same video with dedicated face selection.</p><span class="feature-tag"><span class="soon-pill">Coming Soon</span></span></div>
         <div class="feature-card small"><div class="feature-icon">🚀</div><h3>Longer Videos</h3><p>Support for longer clips will expand as processing speed and cost are optimized.</p><span class="feature-tag"><span class="soon-pill">Coming Soon</span></span></div>
       </div>
@@ -785,7 +785,7 @@
         <details><summary>Can I download my photo face swap?</summary><p>Yes. When the photo face swap is complete, tap “Download Image” below the result to save it directly to your device.</p></details>
         <details><summary>How does Photo to Video work?</summary><p>Upload a JPG, PNG or WebP photo, type a short description of the motion you want, then tap “Generate Short Video.” FaceEvol creates a short clip that you can preview and download.</p></details>
         <details><summary>What video can I upload?</summary><p>For the beta, use an MP4 source file smaller than 300 MB. You can then select any section up to 20 seconds for processing.</p></details>
-        <details><summary>How does Video Enhance work?</summary><p>Upload an MP4 up to 60 seconds, use the trim handles to select any section up to 20 seconds, then choose 1080p, 2K or 4K and 30 or 60 FPS. FaceEvol enhances only the selected clip.</p></details>
+        <details><summary>How does Video Enhance work?</summary><p>Upload an MP4 up to 60 seconds, use the trim handles to select any section up to 20 seconds, then choose 1080p or 4K and 30 or 60 FPS. FaceEvol enhances only the selected clip.</p></details>
         <details><summary>Is FaceEvol free?</summary><p>FaceEvol currently offers beta access while the core experience is being refined. Future paid plans may add higher limits, quality and processing options.</p></details>
         <details><summary>How does FaceEvol handle my uploads?</summary><p>Your uploads are processed to create the result you request. FaceEvol is designed to minimize unnecessary storage, while third-party hosting and AI providers may process content as needed to provide the service. See the Privacy Policy below for more detail.</p></details>
         <details><summary>Where can I find the legal information?</summary><p>Privacy, Terms, Refunds and Contact information are available in the Legal &amp; Support section at the bottom of this page.</p></details>
@@ -2344,7 +2344,7 @@
         <div>
           <span class="panel-kicker">Video Enhance</span>
           <h3 class="panel-title">Enhance video up to 4K</h3>
-          <p class="panel-copy">Upload an MP4 up to 60 seconds, select any section up to 20 seconds, then choose the output quality and let FaceEvol enhance that clip.</p>
+          <p class="panel-copy">Upload an MP4 up to 60 seconds, select any section up to 20 seconds, then choose 1080p or 4K output and let FaceEvol enhance that clip.</p>
         </div>
         <span class="live-pill">Live Beta</span>
       </div>
@@ -2394,28 +2394,16 @@
         <div class="enhance-setting">
           <label for="enhanceResolution">Output quality</label>
           <select id="enhanceResolution">
-            <option value="1080p" selected>Full HD · 1080p</option>
-            <option value="2k">2K</option>
-            <option value="4k">4K</option>
+            <option value="1080p">Full HD · 1080p</option>
+            <option value="4k" selected>4K · Best quality</option>
           </select>
         </div>
 
         <div class="enhance-setting">
           <label for="enhanceFps">Frame rate</label>
           <select id="enhanceFps">
-            <option value="30" selected>30 FPS</option>
+            <option value="30" selected>30 FPS · Recommended</option>
             <option value="60">60 FPS</option>
-          </select>
-        </div>
-
-        <div class="enhance-setting">
-          <label for="enhanceScene">Video type</label>
-          <select id="enhanceScene">
-            <option value="common" selected>General</option>
-            <option value="aigc">AI-generated</option>
-            <option value="ugc">Phone / social</option>
-            <option value="short_series">Short drama</option>
-            <option value="old_film">Old film</option>
           </select>
         </div>
       </div>
@@ -2447,7 +2435,6 @@
   const previewEnhanceSelectionButton=document.getElementById("previewEnhanceSelectionButton");
   const enhanceResolution=document.getElementById("enhanceResolution");
   const enhanceFps=document.getElementById("enhanceFps");
-  const enhanceScene=document.getElementById("enhanceScene");
   const startEnhanceButton=document.getElementById("startEnhanceButton");
   const enhanceStatus=document.getElementById("enhanceStatus");
   const enhanceError=document.getElementById("enhanceError");
@@ -3222,8 +3209,7 @@
         body:JSON.stringify({
           pathname:uploaded.pathname,
           target_resolution:enhanceResolution.value,
-          target_fps:Number(enhanceFps.value),
-          scene:enhanceScene.value
+          target_fps:Number(enhanceFps.value)
         })
       });
 
