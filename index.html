@@ -1393,89 +1393,98 @@
 
   async function uploadFaceEvolBlob(upload,pathname,blob,{step,label,timeoutMs=300000,multipart=false}={}){
     const sizeMb=(blob.size/(1024*1024)).toFixed(1);
-    let lastBlobDiagnostic="";
+    const controller=new AbortController();
+    const originalFetch=window.fetch;
+    let lastStage="requesting upload permission";
+    let lastDiagnostic="";
+    let timeoutId;
 
-    async function runUpload(useMultipart){
-      const controller=new AbortController();
-      const totalTimer=setTimeout(()=>controller.abort(),timeoutMs);
-      let stalled=false;
-      let stallTimer=setTimeout(()=>{
-        stalled=true;
-        controller.abort();
-      },45000);
+    const describeUrl=(rawUrl)=>{
+      try{
+        const u=new URL(rawUrl,window.location.href);
+        return u.origin===window.location.origin?`${u.pathname}${u.search}`:u.host;
+      }catch{
+        return String(rawUrl||"unknown URL");
+      }
+    };
 
-      const resetStallTimer=()=>{
-        clearTimeout(stallTimer);
-        stallTimer=setTimeout(()=>{
-          stalled=true;
-          controller.abort();
-        },45000);
-      };
+    window.fetch=async function(...args){
+      const request=args[0];
+      const rawUrl=typeof request==="string"?request:(request&&request.url)||"";
+      let path="";
+      try{path=new URL(rawUrl,window.location.href).pathname;}catch{}
 
-      const originalFetch=window.fetch.bind(window);
-      window.fetch=async (...args)=>{
-        const request=args[0];
-        const url=typeof request==="string"?request:(request&&request.url)||"";
-        const isBlobWrite=/vercel\.com\/api\/blob|blob\.vercel-storage\.com/i.test(url);
+      const isTokenRequest=path==="/api/upload";
+      const isBlobWrite=/vercel\.com\/api\/blob|blob\.vercel-storage\.com|blob\.vercel-storage\.com/i.test(rawUrl);
 
-        try{
-          const response=await originalFetch(...args);
-          if(isBlobWrite){
-            lastBlobDiagnostic=`Blob HTTP ${response.status}${response.statusText?` ${response.statusText}`:""}`;
-            swapVideoStatus.textContent=`${step} ${label} · ${lastBlobDiagnostic}`;
-          }
-          return response;
-        }catch(fetchError){
-          if(isBlobWrite){
-            const detail=fetchError instanceof Error?`${fetchError.name}: ${fetchError.message}`:String(fetchError);
-            lastBlobDiagnostic=`Blob fetch failed — ${detail}`;
-            swapVideoStatus.textContent=`${step} ${label} · ${lastBlobDiagnostic}`;
-          }
-          throw fetchError;
-        }
-      };
+      if(isTokenRequest){
+        lastStage="requesting upload permission from /api/upload";
+        swapVideoStatus.textContent=`${step} ${label} · requesting secure upload permission… · ${sizeMb} MB`;
+      }else if(isBlobWrite){
+        lastStage="sending the file to Vercel Blob";
+      }
 
       try{
-        swapVideoStatus.textContent=`${step} ${label} 0% · ${sizeMb} MB`;
+        const response=await originalFetch.apply(window,args);
 
-        return await upload(pathname,blob,{
-          access:"private",
-          handleUploadUrl:"/api/upload",
-          contentType:blob.type||(pathname.endsWith(".mp4")?"video/mp4":"application/octet-stream"),
-          multipart:useMultipart,
-          abortSignal:controller.signal,
-          onUploadProgress(progress){
-            const pct=Number.isFinite(progress?.percentage)?Math.max(0,Math.min(100,Math.round(progress.percentage))):0;
-            if(pct>0) resetStallTimer();
-            swapVideoStatus.textContent=`${step} ${label} ${pct}% · ${sizeMb} MB`;
+        if(isTokenRequest){
+          lastDiagnostic=`/api/upload HTTP ${response.status}${response.statusText?` ${response.statusText}`:""}`;
+          if(response.ok){
+            swapVideoStatus.textContent=`${step} ${label} · upload permission ready; starting transfer… · ${sizeMb} MB`;
+          }else{
+            let bodyText="";
+            try{bodyText=(await response.clone().text()).replace(/\s+/g," ").trim().slice(0,240);}catch{}
+            if(bodyText) lastDiagnostic+=` — ${bodyText}`;
+            swapVideoStatus.textContent=`${step} ${label} · ${lastDiagnostic}`;
           }
-        });
-      }catch(error){
-        if(controller.signal.aborted){
-          if(stalled){
-            const detail=lastBlobDiagnostic?` ${lastBlobDiagnostic}`:"";
-            throw new Error(`${label} stayed at 0% or stopped making progress.${detail}`);
+        }else if(isBlobWrite){
+          lastDiagnostic=`Blob HTTP ${response.status}${response.statusText?` ${response.statusText}`:""} (${describeUrl(rawUrl)})`;
+          if(!response.ok){
+            swapVideoStatus.textContent=`${step} ${label} · ${lastDiagnostic}`;
           }
-          const detail=lastBlobDiagnostic?` ${lastBlobDiagnostic}`:"";
-          throw new Error(`${label} upload timed out before the AI started.${detail}`);
         }
-        throw error;
-      }finally{
-        window.fetch=originalFetch;
-        clearTimeout(totalTimer);
-        clearTimeout(stallTimer);
+
+        return response;
+      }catch(fetchError){
+        if(isTokenRequest||isBlobWrite){
+          const detail=fetchError instanceof Error?`${fetchError.name}: ${fetchError.message}`:String(fetchError);
+          lastDiagnostic=`${isTokenRequest?"/api/upload":"Blob transfer"} fetch failed — ${detail}`;
+          swapVideoStatus.textContent=`${step} ${label} · ${lastDiagnostic}`;
+        }
+        throw fetchError;
       }
-    }
+    };
 
     try{
-      return await runUpload(multipart);
-    }catch(error){
-      const message=error instanceof Error?error.message:String(error||"");
-      if(/0%|progress|timed out|network|fetch|upload|cors|failed|503/i.test(message)){
-        swapVideoStatus.textContent=`${step} ${label} retrying with a different upload mode... · ${sizeMb} MB`;
-        return await runUpload(!multipart);
-      }
-      throw error;
+      swapVideoStatus.textContent=`${step} ${label} · requesting secure upload permission… · ${sizeMb} MB`;
+
+      const uploadPromise=upload(pathname,blob,{
+        access:"private",
+        handleUploadUrl:"/api/upload",
+        contentType:blob.type||(pathname.endsWith(".mp4")?"video/mp4":"application/octet-stream"),
+        multipart,
+        abortSignal:controller.signal,
+        onUploadProgress(progress){
+          lastStage="sending the file to Vercel Blob";
+          const pct=Number.isFinite(progress?.percentage)?Math.max(0,Math.min(100,Math.round(progress.percentage))):0;
+          swapVideoStatus.textContent=`${step} ${label} ${pct}% · ${sizeMb} MB`;
+        }
+      });
+
+      const timeoutPromise=new Promise((_,reject)=>{
+        timeoutId=setTimeout(()=>{
+          controller.abort();
+          const detail=lastDiagnostic?` Last response: ${lastDiagnostic}.`:"";
+          reject(new Error(`${label} timed out while ${lastStage}.${detail}`));
+        },timeoutMs);
+      });
+
+      const result=await Promise.race([uploadPromise,timeoutPromise]);
+      swapVideoStatus.textContent=`${step} ${label} 100% · ${sizeMb} MB`;
+      return result;
+    }finally{
+      clearTimeout(timeoutId);
+      window.fetch=originalFetch;
     }
   }
 
@@ -1483,6 +1492,12 @@
     const raw=error instanceof Error?error.message:String(error||"");
     const message=raw.toLowerCase();
 
+    if(message.includes("/api/upload") || message.includes("upload permission")){
+      return "FaceEvol could not get secure upload permission from /api/upload. The status above should now show the exact HTTP response so we can fix the server route.";
+    }
+    if(message.includes("403") || message.includes("access denied") || message.includes("unauthorized")){
+      return "Vercel Blob rejected the upload permission. Please check the private Blob upload configuration in /api/upload.";
+    }
     if(message.includes("failed to fetch") || message.includes("network") || message.includes("internet")){
       return "We couldn’t connect to FaceEvol. Please check your internet connection and try again.";
     }
