@@ -3384,15 +3384,67 @@
 
     const parseResponse=(xhr)=>{
       let data={};
-      try{data=xhr.responseText?JSON.parse(xhr.responseText):{};}
-      catch{data={error:"The private upload server returned an unexpected response."};}
+
+      try{
+        data=xhr.responseText
+          ? JSON.parse(xhr.responseText)
+          : {};
+      }catch{
+        const raw=String(xhr.responseText||"")
+          .replace(/\s+/g," ")
+          .trim()
+          .slice(0,500);
+
+        const contentType=
+          String(
+            xhr.getResponseHeader("content-type")||
+            ""
+          );
+
+        const requestId=
+          String(
+            xhr.getResponseHeader("x-vercel-id")||
+            ""
+          );
+
+        const parts=[
+          `Private upload returned non-JSON.`,
+          `HTTP ${xhr.status||0}.`
+        ];
+
+        if(contentType){
+          parts.push(`Content-Type: ${contentType}.`);
+        }
+
+        if(requestId){
+          parts.push(`X-Vercel-ID: ${requestId}.`);
+        }
+
+        if(raw){
+          parts.push(`Response: ${raw}`);
+        }
+
+        throw new Error(parts.join(" "));
+      }
 
       if(xhr.status<200 || xhr.status>=300){
-        const detail=data.details
+        const requestId=
+          String(
+            xhr.getResponseHeader("x-vercel-id")||
+            ""
+          );
+
+        let detail=data.details
           ? `${data.error||`Private upload HTTP ${xhr.status}.`} ${data.details}`
           : (data.error||`Private upload HTTP ${xhr.status}.`);
+
+        if(requestId){
+          detail+=` X-Vercel-ID: ${requestId}.`;
+        }
+
         throw new Error(detail);
       }
+
       return data;
     };
 
