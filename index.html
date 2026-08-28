@@ -1393,6 +1393,7 @@
 
   async function uploadFaceEvolBlob(upload,pathname,blob,{step,label,timeoutMs=300000,multipart=false}={}){
     const sizeMb=(blob.size/(1024*1024)).toFixed(1);
+    let lastBlobDiagnostic="";
 
     async function runUpload(useMultipart){
       const controller=new AbortController();
@@ -1409,6 +1410,29 @@
           stalled=true;
           controller.abort();
         },45000);
+      };
+
+      const originalFetch=window.fetch.bind(window);
+      window.fetch=async (...args)=>{
+        const request=args[0];
+        const url=typeof request==="string"?request:(request&&request.url)||"";
+        const isBlobWrite=/vercel\.com\/api\/blob|blob\.vercel-storage\.com/i.test(url);
+
+        try{
+          const response=await originalFetch(...args);
+          if(isBlobWrite){
+            lastBlobDiagnostic=`Blob HTTP ${response.status}${response.statusText?` ${response.statusText}`:""}`;
+            swapVideoStatus.textContent=`${step} ${label} · ${lastBlobDiagnostic}`;
+          }
+          return response;
+        }catch(fetchError){
+          if(isBlobWrite){
+            const detail=fetchError instanceof Error?`${fetchError.name}: ${fetchError.message}`:String(fetchError);
+            lastBlobDiagnostic=`Blob fetch failed — ${detail}`;
+            swapVideoStatus.textContent=`${step} ${label} · ${lastBlobDiagnostic}`;
+          }
+          throw fetchError;
+        }
       };
 
       try{
@@ -1428,11 +1452,16 @@
         });
       }catch(error){
         if(controller.signal.aborted){
-          if(stalled) throw new Error(`${label} stayed at 0% or stopped making progress.`);
-          throw new Error(`${label} upload timed out before the AI started.`);
+          if(stalled){
+            const detail=lastBlobDiagnostic?` ${lastBlobDiagnostic}`:"";
+            throw new Error(`${label} stayed at 0% or stopped making progress.${detail}`);
+          }
+          const detail=lastBlobDiagnostic?` ${lastBlobDiagnostic}`:"";
+          throw new Error(`${label} upload timed out before the AI started.${detail}`);
         }
         throw error;
       }finally{
+        window.fetch=originalFetch;
         clearTimeout(totalTimer);
         clearTimeout(stallTimer);
       }
@@ -1442,7 +1471,7 @@
       return await runUpload(multipart);
     }catch(error){
       const message=error instanceof Error?error.message:String(error||"");
-      if(/0%|progress|timed out|network|fetch|upload|cors|failed/i.test(message)){
+      if(/0%|progress|timed out|network|fetch|upload|cors|failed|503/i.test(message)){
         swapVideoStatus.textContent=`${step} ${label} retrying with a different upload mode... · ${sizeMb} MB`;
         return await runUpload(!multipart);
       }
