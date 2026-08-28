@@ -712,7 +712,7 @@
         <div class="quality-content">
           <span class="section-eyebrow">AI Video Enhancement</span>
           <h2>Make video clearer. <span class="gradient-text">Enhance up to 4K.</span></h2>
-          <p>Upload a short MP4 and enhance it with AI. Choose 1080p, 2K or 4K output, with 30 or 60 FPS depending on the result you want.</p>
+          <p>Upload an MP4 up to 60 seconds, select any section up to 20 seconds, then enhance that clip to 1080p, 2K or 4K with 30 or 60 FPS.</p>
           <div class="quality-list">
             <div class="quality-item"><span class="check">✓</span>1080p, 2K and 4K output options</div>
             <div class="quality-item"><span class="check">✓</span>30 FPS or smoother 60 FPS output</div>
@@ -785,7 +785,7 @@
         <details><summary>Can I download my photo face swap?</summary><p>Yes. When the photo face swap is complete, tap “Download Image” below the result to save it directly to your device.</p></details>
         <details><summary>How does Photo to Video work?</summary><p>Upload a JPG, PNG or WebP photo, type a short description of the motion you want, then tap “Generate Short Video.” FaceEvol creates a short clip that you can preview and download.</p></details>
         <details><summary>What video can I upload?</summary><p>For the beta, use an MP4 source file smaller than 300 MB. You can then select any section up to 20 seconds for processing.</p></details>
-        <details><summary>How does Video Enhance work?</summary><p>Upload an MP4 up to 20 seconds, choose 1080p, 2K or 4K and select 30 or 60 FPS. FaceEvol enhances the video, then lets you preview and download the result.</p></details>
+        <details><summary>How does Video Enhance work?</summary><p>Upload an MP4 up to 60 seconds, use the trim handles to select any section up to 20 seconds, then choose 1080p, 2K or 4K and 30 or 60 FPS. FaceEvol enhances only the selected clip.</p></details>
         <details><summary>Is FaceEvol free?</summary><p>FaceEvol currently offers beta access while the core experience is being refined. Future paid plans may add higher limits, quality and processing options.</p></details>
         <details><summary>How does FaceEvol handle my uploads?</summary><p>Your uploads are processed to create the result you request. FaceEvol is designed to minimize unnecessary storage, while third-party hosting and AI providers may process content as needed to provide the service. See the Privacy Policy below for more detail.</p></details>
         <details><summary>Where can I find the legal information?</summary><p>Privacy, Terms, Refunds and Contact information are available in the Legal &amp; Support section at the bottom of this page.</p></details>
@@ -1042,6 +1042,9 @@
   let photoToVideoResultObjectUrl = null;
   let selectedEnhanceVideo = null;
   let selectedEnhanceVideoPreviewUrl = null;
+  let enhanceSourceVideoDuration = 0;
+  let enhanceTrimStart = 0;
+  let enhanceTrimEnd = 0;
   let latestEnhancedVideoOutput = null;
   let enhancedVideoResultObjectUrl = null;
   let sourcePreviewRecoveryAttempts = 0;
@@ -1052,6 +1055,7 @@
   let latestAgeTransformAge = null;
 
   const MAX_TRIM_SECONDS = 20;
+  const MAX_ENHANCE_UPLOAD_SECONDS = 60;
   const MAX_VIDEO_BYTES = 300 * 1024 * 1024;
 
   /*
@@ -2340,21 +2344,51 @@
         <div>
           <span class="panel-kicker">Video Enhance</span>
           <h3 class="panel-title">Enhance video up to 4K</h3>
-          <p class="panel-copy">Upload a short MP4, choose the output quality and frame rate, then let FaceEvol improve clarity and detail.</p>
+          <p class="panel-copy">Upload an MP4 up to 60 seconds, select any section up to 20 seconds, then choose the output quality and let FaceEvol enhance that clip.</p>
         </div>
         <span class="live-pill">Live Beta</span>
       </div>
 
       <div class="enhance-tip">
-        For this beta, use an MP4 up to 20 seconds and under 300 MB. Higher resolutions and 60 FPS take longer to process.
+        Upload an MP4 up to 60 seconds and under 300 MB. Use the trim handles to select any section up to 20 seconds to enhance.
       </div>
 
-      <div class="enhance-upload" id="enhanceUploadBox" role="button" tabindex="0" aria-label="Choose video to enhance">
-        <div style="font-size:30px;margin-bottom:8px;">✨</div>
-        <strong>Choose MP4 video</strong>
-        <small>Up to 20 seconds · maximum 300 MB</small>
-      </div>
+      <button type="button" class="transform-button" id="chooseEnhanceVideo">🎥 Choose MP4 Video</button>
       <input type="file" id="enhanceVideoUpload" accept="video/mp4,.mp4" hidden>
+
+      <div class="video-editor" id="enhanceVideoEditor">
+        <video id="enhanceVideoPreview" class="swap-preview" controls playsinline preload="metadata"></video>
+
+        <div class="video-meta">
+          <span id="enhanceSourceVideoInfo">Video ready</span>
+          <span id="enhanceSourceVideoDurationLabel">0:00.0</span>
+        </div>
+
+        <div class="trim-header">
+          <span>Trim video</span>
+          <span class="trim-duration" id="enhanceTrimDurationLabel">20.0 sec selected</span>
+        </div>
+
+        <div class="trim-ruler-labels">
+          <span>Start</span>
+          <span>Drag the handles</span>
+          <span>End</span>
+        </div>
+
+        <div class="trim-timeline">
+          <div class="trim-base"></div>
+          <div class="trim-selected" id="enhanceTrimSelected"></div>
+          <input class="trim-range" id="enhanceTrimStartRange" type="range" min="0" max="20" value="0" step="0.1" aria-label="Enhancement trim start">
+          <input class="trim-range" id="enhanceTrimEndRange" type="range" min="0" max="20" value="20" step="0.1" aria-label="Enhancement trim end">
+        </div>
+
+        <div class="trim-readout">
+          <div class="trim-time-box"><span>Starts at</span><strong id="enhanceTrimStartLabel">0:00.0</strong></div>
+          <div class="trim-time-box"><span>Ends at</span><strong id="enhanceTrimEndLabel">0:20.0</strong></div>
+        </div>
+
+        <button type="button" class="preview-selection-button" id="previewEnhanceSelectionButton">▶ Preview selected clip</button>
+      </div>
 
       <div class="enhance-settings">
         <div class="enhance-setting">
@@ -2398,8 +2432,19 @@
   `;
   studioMain.appendChild(videoEnhanceControls);
 
-  const enhanceUploadBox=document.getElementById("enhanceUploadBox");
+  const chooseEnhanceVideo=document.getElementById("chooseEnhanceVideo");
   const enhanceVideoUpload=document.getElementById("enhanceVideoUpload");
+  const enhanceVideoEditor=document.getElementById("enhanceVideoEditor");
+  const enhanceVideoPreview=document.getElementById("enhanceVideoPreview");
+  const enhanceSourceVideoInfo=document.getElementById("enhanceSourceVideoInfo");
+  const enhanceSourceVideoDurationLabel=document.getElementById("enhanceSourceVideoDurationLabel");
+  const enhanceTrimStartRange=document.getElementById("enhanceTrimStartRange");
+  const enhanceTrimEndRange=document.getElementById("enhanceTrimEndRange");
+  const enhanceTrimSelected=document.getElementById("enhanceTrimSelected");
+  const enhanceTrimStartLabel=document.getElementById("enhanceTrimStartLabel");
+  const enhanceTrimEndLabel=document.getElementById("enhanceTrimEndLabel");
+  const enhanceTrimDurationLabel=document.getElementById("enhanceTrimDurationLabel");
+  const previewEnhanceSelectionButton=document.getElementById("previewEnhanceSelectionButton");
   const enhanceResolution=document.getElementById("enhanceResolution");
   const enhanceFps=document.getElementById("enhanceFps");
   const enhanceScene=document.getElementById("enhanceScene");
@@ -2424,15 +2469,82 @@
   }
 
   function syncEnhanceReadyState(){
-    startEnhanceButton.disabled=!selectedEnhanceVideo;
+    const selectedDuration=enhanceTrimEnd-enhanceTrimStart;
+    startEnhanceButton.disabled=!selectedEnhanceVideo ||
+      !Number.isFinite(selectedDuration) ||
+      selectedDuration<.1 ||
+      selectedDuration>MAX_TRIM_SECONDS+.05;
+  }
+
+  function resetEnhanceVideoSelection(){
+    selectedEnhanceVideo=null;
+    enhanceSourceVideoDuration=0;
+    enhanceTrimStart=0;
+    enhanceTrimEnd=0;
+
+    if(selectedEnhanceVideoPreviewUrl){
+      try{URL.revokeObjectURL(selectedEnhanceVideoPreviewUrl);}catch{}
+      selectedEnhanceVideoPreviewUrl=null;
+    }
+
+    enhanceVideoPreview.pause();
+    enhanceVideoPreview.removeAttribute("src");
+    enhanceVideoPreview.load();
+    enhanceVideoEditor.classList.remove("show");
+    chooseEnhanceVideo.textContent="🎥 Choose MP4 Video";
+    syncEnhanceReadyState();
+  }
+
+  function updateEnhanceTrimUI(seekPreview=false){
+    if(!enhanceSourceVideoDuration) return;
+
+    let start=Number(enhanceTrimStartRange.value);
+    let end=Number(enhanceTrimEndRange.value);
+
+    start=Math.max(0,Math.min(start,enhanceSourceVideoDuration));
+    end=Math.max(0,Math.min(end,enhanceSourceVideoDuration));
+
+    if(end<start+.1){
+      end=Math.min(enhanceSourceVideoDuration,start+.1);
+    }
+
+    if(end-start>MAX_TRIM_SECONDS){
+      end=Math.min(enhanceSourceVideoDuration,start+MAX_TRIM_SECONDS);
+    }
+
+    enhanceTrimStart=start;
+    enhanceTrimEnd=end;
+
+    enhanceTrimStartRange.value=String(enhanceTrimStart);
+    enhanceTrimEndRange.value=String(enhanceTrimEnd);
+
+    const left=(enhanceTrimStart/enhanceSourceVideoDuration)*100;
+    const right=(enhanceTrimEnd/enhanceSourceVideoDuration)*100;
+
+    enhanceTrimSelected.style.left=`${left}%`;
+    enhanceTrimSelected.style.width=`${Math.max(0,right-left)}%`;
+
+    enhanceTrimStartLabel.textContent=formatTime(enhanceTrimStart);
+    enhanceTrimEndLabel.textContent=formatTime(enhanceTrimEnd);
+    enhanceTrimDurationLabel.textContent=`${(enhanceTrimEnd-enhanceTrimStart).toFixed(1)} sec selected`;
+
+    if(seekPreview && Number.isFinite(enhanceVideoPreview.duration)){
+      enhanceVideoPreview.currentTime=
+        Math.min(enhanceTrimStart,enhanceVideoPreview.duration);
+    }
+
+    syncEnhanceReadyState();
   }
 
   function friendlyEnhanceError(error){
     const raw=error instanceof Error?error.message:String(error||"");
     const message=raw.toLowerCase();
 
-    if(message.includes("20 seconds")||message.includes("too long")){
-      return "For the beta, please choose an MP4 that is 20 seconds or shorter.";
+    if(message.includes("60 seconds")||message.includes("upload is too long")){
+      return "Please choose an MP4 that is 60 seconds or shorter.";
+    }
+    if(message.includes("20 seconds")||message.includes("selected clip")){
+      return "Please keep the selected enhancement clip at 20 seconds or less.";
     }
     if(message.includes("300")||message.includes("too large")||message.includes("413")){
       return "That video is too large. Please use an MP4 under 300 MB.";
@@ -2536,12 +2648,71 @@
     enhanceResultVideo.load();
   }
 
-  enhanceUploadBox.addEventListener("click",()=>enhanceVideoUpload.click());
+  chooseEnhanceVideo.addEventListener("click",()=>{
+    enhanceVideoUpload.click();
+  });
 
-  enhanceUploadBox.addEventListener("keydown",event=>{
-    if(event.key==="Enter"||event.key===" "){
-      event.preventDefault();
-      enhanceVideoUpload.click();
+  enhanceTrimStartRange.addEventListener("input",function(){
+    let newStart=Number(this.value);
+    const currentEnd=Number(enhanceTrimEndRange.value);
+
+    if(currentEnd-newStart>MAX_TRIM_SECONDS){
+      enhanceTrimEndRange.value=
+        String(Math.min(enhanceSourceVideoDuration,newStart+MAX_TRIM_SECONDS));
+    }
+
+    if(newStart>=Number(enhanceTrimEndRange.value)){
+      newStart=Math.max(0,Number(enhanceTrimEndRange.value)-.1);
+      this.value=String(newStart);
+    }
+
+    updateEnhanceTrimUI(true);
+  });
+
+  enhanceTrimEndRange.addEventListener("input",function(){
+    let newEnd=Number(this.value);
+    const currentStart=Number(enhanceTrimStartRange.value);
+
+    if(newEnd-currentStart>MAX_TRIM_SECONDS){
+      enhanceTrimStartRange.value=
+        String(Math.max(0,newEnd-MAX_TRIM_SECONDS));
+    }
+
+    if(newEnd<=Number(enhanceTrimStartRange.value)){
+      newEnd=Math.min(
+        enhanceSourceVideoDuration,
+        Number(enhanceTrimStartRange.value)+.1
+      );
+      this.value=String(newEnd);
+    }
+
+    updateEnhanceTrimUI(true);
+  });
+
+  previewEnhanceSelectionButton.addEventListener("click",async function(){
+    if(!selectedEnhanceVideo) return;
+
+    enhanceVideoPreview.pause();
+    enhanceVideoPreview.currentTime=enhanceTrimStart;
+
+    try{
+      await enhanceVideoPreview.play();
+    }catch{}
+  });
+
+  enhanceVideoPreview.addEventListener("play",function(){
+    if(
+      this.currentTime<enhanceTrimStart-.15 ||
+      this.currentTime>=enhanceTrimEnd
+    ){
+      this.currentTime=enhanceTrimStart;
+    }
+  });
+
+  enhanceVideoPreview.addEventListener("timeupdate",function(){
+    if(this.currentTime>=enhanceTrimEnd){
+      this.pause();
+      this.currentTime=enhanceTrimStart;
     }
   });
 
@@ -2549,65 +2720,181 @@
     if(!this.files||!this.files.length) return;
 
     const file=this.files[0];
+
     enhanceError.textContent="";
     enhanceStatus.textContent="";
     clearEnhanceResult();
 
     if(!isMp4(file)){
-      selectedEnhanceVideo=null;
       this.value="";
-      enhanceUploadBox.innerHTML=`
-        <div style="font-size:30px;margin-bottom:8px;">✨</div>
-        <strong>Choose MP4 video</strong>
-        <small>Up to 20 seconds · maximum 300 MB</small>
-      `;
+      resetEnhanceVideoSelection();
       enhanceError.textContent="Please choose an MP4 video.";
-      syncEnhanceReadyState();
       return;
     }
 
     if(file.size>MAX_VIDEO_BYTES){
-      selectedEnhanceVideo=null;
       this.value="";
+      resetEnhanceVideoSelection();
       enhanceError.textContent="Please use an MP4 smaller than 300 MB.";
-      syncEnhanceReadyState();
       return;
     }
 
     try{
       const duration=await getVideoDuration(file);
 
-      if(duration>MAX_TRIM_SECONDS+.05){
-        selectedEnhanceVideo=null;
+      if(duration>MAX_ENHANCE_UPLOAD_SECONDS+.05){
         this.value="";
-        enhanceError.textContent="For the beta, choose a video that is 20 seconds or shorter.";
-        syncEnhanceReadyState();
+        resetEnhanceVideoSelection();
+        enhanceError.textContent=
+          "Please choose a video that is 60 seconds or shorter.";
         return;
       }
 
       selectedEnhanceVideo=file;
+      enhanceSourceVideoDuration=duration;
+      enhanceTrimStart=0;
+      enhanceTrimEnd=Math.min(MAX_TRIM_SECONDS,duration);
 
       if(selectedEnhanceVideoPreviewUrl){
         try{URL.revokeObjectURL(selectedEnhanceVideoPreviewUrl);}catch{}
       }
-      selectedEnhanceVideoPreviewUrl=URL.createObjectURL(file);
 
-      enhanceUploadBox.innerHTML=`
-        <video class="enhance-preview" src="${selectedEnhanceVideoPreviewUrl}" controls playsinline preload="metadata"></video>
-        <strong>Video selected ✓</strong>
-        <small>${file.name} · ${duration.toFixed(1)} seconds</small>
-      `;
+      selectedEnhanceVideoPreviewUrl=
+        URL.createObjectURL(file);
 
-      enhanceStatus.textContent="✓ Video ready. Choose your output quality.";
-      syncEnhanceReadyState();
+      enhanceVideoPreview.src=
+        selectedEnhanceVideoPreviewUrl;
+
+      enhanceVideoPreview.load();
+
+      enhanceTrimStartRange.min="0";
+      enhanceTrimEndRange.min="0";
+      enhanceTrimStartRange.max=String(duration);
+      enhanceTrimEndRange.max=String(duration);
+      enhanceTrimStartRange.value="0";
+      enhanceTrimEndRange.value=String(enhanceTrimEnd);
+
+      enhanceSourceVideoInfo.textContent=
+        `${file.name} · max 20 sec selection`;
+
+      enhanceSourceVideoDurationLabel.textContent=
+        formatTime(duration);
+
+      chooseEnhanceVideo.textContent=
+        "🎥 Change MP4 Video";
+
+      enhanceVideoEditor.classList.add("show");
+
+      updateEnhanceTrimUI(false);
+
+      enhanceStatus.textContent=
+        duration>MAX_TRIM_SECONDS
+          ? "✓ Video ready. Choose any section up to 20 seconds."
+          : "✓ Video ready. Adjust the trim handles if you want.";
 
     }catch(error){
-      selectedEnhanceVideo=null;
+      console.error("FaceEvol enhancement video metadata error:",error);
       this.value="";
-      enhanceError.textContent="We couldn't read this MP4. Please try another video.";
-      syncEnhanceReadyState();
+      resetEnhanceVideoSelection();
+      enhanceError.textContent=
+        "We couldn't read this MP4. Please try another video.";
     }
   });
+
+  /*
+   * Prepare the exact user-selected enhancement section.
+   *
+   * We re-encode when trimming is required instead of using stream-copy.
+   * That gives the selected clip a clean first frame, fresh timestamps and
+   * a keyframe at the beginning, which is better input for an AI enhancer.
+   */
+  async function trimEnhanceVideoToMp4(file,start,end){
+    const duration=end-start;
+
+    if(duration<=0){
+      throw new Error("Please choose a valid enhancement section.");
+    }
+
+    if(duration>MAX_TRIM_SECONDS+.05){
+      throw new Error("Please keep the selected clip at 20 seconds or less.");
+    }
+
+    /*
+     * If the complete source is already 20 seconds or shorter and the user
+     * selected the whole file, preserve the original source without re-encoding.
+     */
+    if(
+      start<.05 &&
+      enhanceSourceVideoDuration<=MAX_TRIM_SECONDS+.05 &&
+      Math.abs(end-enhanceSourceVideoDuration)<.15
+    ){
+      return file;
+    }
+
+    enhanceStatus.textContent="Preparing selected clip...";
+    startEnhanceButton.textContent="Preparing clip...";
+
+    const ffmpeg=await ensureFFmpeg();
+    const stamp=Date.now();
+    const inputName=`faceevol-enhance-trim-input-${stamp}.mp4`;
+    const outputName=`faceevol-enhance-trim-${stamp}.mp4`;
+
+    try{
+      ffmpeg.FS(
+        "writeFile",
+        inputName,
+        await ffmpegFetchFile(file)
+      );
+
+      /*
+       * Re-encode to H.264/AAC so the output starts cleanly at the selected
+       * point instead of depending on an earlier source keyframe.
+       */
+      await ffmpeg.run(
+        "-ss",start.toFixed(3),
+        "-i",inputName,
+        "-t",duration.toFixed(3),
+        "-map","0:v:0",
+        "-map","0:a?",
+        "-c:v","libx264",
+        "-preset","veryfast",
+        "-crf","18",
+        "-pix_fmt","yuv420p",
+        "-c:a","aac",
+        "-b:a","128k",
+        "-ac","2",
+        "-movflags","+faststart",
+        "-avoid_negative_ts","make_zero",
+        "-y",
+        outputName
+      );
+
+      const data=
+        ffmpeg.FS(
+          "readFile",
+          outputName
+        );
+
+      if(!data||!data.length){
+        throw new Error(
+          "The selected enhancement clip could not be created."
+        );
+      }
+
+      return new File(
+        [data.buffer],
+        `faceevol-enhance-selected-${stamp}.mp4`,
+        {
+          type:"video/mp4",
+          lastModified:Date.now()
+        }
+      );
+
+    }finally{
+      try{ffmpeg.FS("unlink",inputName);}catch{}
+      try{ffmpeg.FS("unlink",outputName);}catch{}
+    }
+  }
 
 
   /*
@@ -2882,6 +3169,19 @@
       return;
     }
 
+    const selectedEnhanceDuration=
+      enhanceTrimEnd-enhanceTrimStart;
+
+    if(
+      !Number.isFinite(selectedEnhanceDuration) ||
+      selectedEnhanceDuration<.1 ||
+      selectedEnhanceDuration>MAX_TRIM_SECONDS+.05
+    ){
+      enhanceError.textContent=
+        "Please select a video section up to 20 seconds.";
+      return;
+    }
+
     startEnhanceButton.disabled=true;
     startEnhanceButton.textContent="Preparing video...";
     enhanceError.textContent="";
@@ -2889,11 +3189,25 @@
 
     try{
       /*
-       * Preserve original quality when direct Vercel Blob upload works.
-       * If Vercel's client upload is stuck at 0%, automatically switch
-       * to FaceEvol's small server-upload fallback.
+       * Create only the section the user selected with the trim handles.
+       * This also gives trimmed clips a clean first frame and fresh timestamps.
        */
-      const uploaded=await uploadEnhanceVideoWithFallback(selectedEnhanceVideo);
+      const videoForEnhancement=
+        await trimEnhanceVideoToMp4(
+          selectedEnhanceVideo,
+          enhanceTrimStart,
+          enhanceTrimEnd
+        );
+
+      /*
+       * Preserve the selected clip's quality when direct Vercel Blob upload
+       * works. If direct upload is unavailable, use the existing secure
+       * server fallback.
+       */
+      const uploaded=
+        await uploadEnhanceVideoWithFallback(
+          videoForEnhancement
+        );
 
       if(!uploaded||!uploaded.pathname){
         throw new Error("Private upload did not return a video pathname.");
