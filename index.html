@@ -145,11 +145,14 @@
       border-radius:10px;background:#090f1e;border:1px solid rgba(255,255,255,.10);box-shadow:0 10px 22px rgba(0,0,0,.28);
       transform-origin:center center;
     }
-    /* Ages 15 and 50 are already centered in their source portraits.
-       Keep them at the true midpoint on desktop, tablet and mobile. */
+    /* Fine-tune the visual FACE center inside the webpage cards.
+       Ages 15 and 50 sit slightly left in their source portraits, so move
+       only the displayed portrait a little to the right. The small scale
+       keeps the square frame filled while preserving the existing cards. */
     .age-preset-card[data-age="15"] .age-preset-image,
     .age-preset-card[data-age="50"] .age-preset-image{
-      transform:none;object-position:50% 50%;
+      transform:translateX(4.7%) scale(1.07);
+      object-position:50% 50%;
     }
     .age-preset-fallback{z-index:1}
     .age-preset-fallback{position:absolute;inset:0;display:grid;place-items:center;overflow:hidden;background:
