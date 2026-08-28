@@ -1154,9 +1154,54 @@
 
   async function readJsonResponse(response){
     const text=await response.text();
-    if(!text) return {};
-    try{return JSON.parse(text);}
-    catch{return {error:response.status===413?"The request was too large.":"The server returned an unexpected response."};}
+
+    if(!text){
+      return {};
+    }
+
+    try{
+      return JSON.parse(text);
+    }catch{
+      const raw=String(text||"")
+        .replace(/\\s+/g," ")
+        .trim()
+        .slice(0,700);
+
+      const contentType=
+        String(
+          response.headers.get("content-type")||
+          ""
+        );
+
+      const requestId=
+        String(
+          response.headers.get("x-vercel-id")||
+          ""
+        );
+
+      const parts=[
+        response.status===413
+          ? "The request was too large."
+          : "The server returned a non-JSON response.",
+        `HTTP ${response.status||0}.`
+      ];
+
+      if(contentType){
+        parts.push(`Content-Type: ${contentType}.`);
+      }
+
+      if(requestId){
+        parts.push(`X-Vercel-ID: ${requestId}.`);
+      }
+
+      if(raw){
+        parts.push(`Response: ${raw}`);
+      }
+
+      return {
+        error:parts.join(" ")
+      };
+    }
   }
 
   function findVideoUrl(value){
