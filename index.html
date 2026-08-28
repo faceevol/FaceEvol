@@ -265,6 +265,63 @@
     .photo-result-actions .download-button{display:flex;margin-top:0}
     .transform-button.gated:disabled{opacity:.48;cursor:not-allowed}
 
+
+    /* PHOTO TO VIDEO */
+    .photo-video-tip{
+      margin-top:12px;padding:11px 13px;border-radius:11px;background:rgba(56,189,248,.04);
+      border:1px solid rgba(56,189,248,.09);color:#9db0c8;font-size:11px;line-height:1.6;text-align:left;
+    }
+    .photo-video-upload{
+      min-height:190px;margin-top:16px;padding:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      border-radius:15px;border:1px dashed rgba(148,163,184,.28);background:rgba(255,255,255,.018);
+      color:#a9b8cc;cursor:pointer;text-align:center;transition:border-color .2s ease,background .2s ease;
+    }
+    .photo-video-upload:hover,.photo-video-upload:focus{
+      outline:none;border-color:rgba(56,189,248,.48);background:rgba(56,189,248,.025);
+    }
+    .photo-video-upload strong{color:#e8f3ff;font-size:14px}
+    .photo-video-upload small{margin-top:5px;color:#77859d;font-size:10px;line-height:1.45}
+    .photo-video-preview{
+      width:150px;max-height:170px;object-fit:contain;margin-bottom:10px;border-radius:12px;
+      background:#050914;border:1px solid rgba(255,255,255,.1);box-shadow:0 9px 24px rgba(0,0,0,.22);
+    }
+    .photo-video-prompt-wrap{margin-top:15px;text-align:left}
+    .photo-video-prompt-wrap label{
+      display:block;margin-bottom:7px;color:#dce8f8;font-size:11px;font-weight:850;letter-spacing:.7px;text-transform:uppercase;
+    }
+    .photo-video-prompt{
+      width:100%;min-height:108px;padding:13px 14px;resize:vertical;border-radius:13px;
+      border:1px solid rgba(255,255,255,.09);outline:none;background:rgba(3,7,18,.68);
+      color:#edf7ff;font:inherit;font-size:13px;line-height:1.6;
+    }
+    .photo-video-prompt:focus{border-color:rgba(56,189,248,.45);box-shadow:0 0 0 3px rgba(56,189,248,.05)}
+    .photo-video-prompt::placeholder{color:#65738a}
+    .prompt-examples{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
+    .prompt-chip{
+      padding:7px 10px;border-radius:999px;border:1px solid rgba(125,211,252,.14);
+      background:rgba(56,189,248,.035);color:#9fcde0;font-size:10px;font-weight:750;cursor:pointer;
+    }
+    .prompt-chip:hover{border-color:rgba(125,211,252,.34);color:#ddf7ff}
+    .photo-video-settings{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:13px;text-align:left}
+    .photo-video-setting{
+      padding:11px 12px;border-radius:11px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);
+    }
+    .photo-video-setting label{display:block;margin-bottom:6px;color:#7f8da4;font-size:9px;font-weight:850;letter-spacing:.6px;text-transform:uppercase}
+    .photo-video-setting select{
+      width:100%;border:0;outline:none;background:transparent;color:#e6f5ff;font-weight:800;font-size:12px;
+    }
+    .photo-video-setting select option{background:#0b1223;color:#e6f5ff}
+    .photo-video-result{display:none;margin-top:18px}
+    .photo-video-result.show{display:block}
+    .photo-video-result video{
+      width:100%;max-height:580px;object-fit:contain;display:block;border-radius:16px;
+      background:#02040a;border:1px solid rgba(255,255,255,.08);
+    }
+    .photo-video-result .download-button{display:flex}
+    @media(max-width:680px){
+      .photo-video-settings{grid-template-columns:1fr}
+    }
+
     /* VIDEO PREVIEW + TRIM */
     .video-editor{
       display:none;margin-top:18px;padding:14px;border-radius:16px;text-align:left;
@@ -328,7 +385,7 @@
     }
     .feature-card:hover{transform:translateY(-4px);border-color:rgba(125,211,252,.2)}
     .feature-card.large{grid-column:span 6}
-    .feature-card.core{grid-column:span 4}
+    .feature-card.core{grid-column:span 3}
     .feature-card.small{grid-column:span 3}
     .feature-icon{width:50px;height:50px;margin-bottom:20px;display:grid;place-items:center;border-radius:14px;font-size:23px;background:linear-gradient(145deg,rgba(124,58,237,.21),rgba(14,165,233,.12))}
     .feature-card h3{margin-bottom:10px;font-size:20px}
@@ -436,14 +493,14 @@
 
     @media(max-width:1000px){
       .feature-card.large,.feature-card.small{grid-column:span 6}
-      .feature-card.core{grid-column:span 12}
+      .feature-card.core{grid-column:span 6}
       .quality-box{grid-template-columns:1fr}
       .pricing-grid{grid-template-columns:1fr;max-width:560px}
     }
     @media(max-width:850px){
       .nav-links a:not(.nav-button){display:none}
       .studio-inner{grid-template-columns:1fr}
-      .studio-sidebar{border-right:none;border-bottom:1px solid rgba(255,255,255,.06);display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:16px}
+      .studio-sidebar{border-right:none;border-bottom:1px solid rgba(255,255,255,.06);display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:16px}
       .studio-label{display:none}
       .tool-option{margin:0;flex-direction:column;text-align:center;padding:11px 6px}
       .tool-name{font-size:11px}.tool-sub{font-size:8px}
@@ -493,10 +550,11 @@
     <div class="container">
       <div class="badge"><span class="badge-dot"></span>FaceEvol Beta</div>
       <h1>AI Age Transformation<br><span class="gradient-text">&amp; Face Swap</span></h1>
-      <p class="hero-description">Transform your age. Swap faces in photos or videos. Simple, private, and built for natural results.</p>
+      <p class="hero-description">Transform your age, swap faces, or bring a photo to life with a short AI video. Simple, private, and built for natural results.</p>
       <div class="hero-actions">
         <a href="#studio" class="button button-primary" id="heroAgeButton">✨ Start Creating</a>
         <a href="#studio" class="button button-secondary" id="heroFaceSwapButton">🖼️ Photo Face Swap</a>
+        <a href="#studio" class="button button-secondary" id="heroPhotoToVideoButton">🎞️ Photo to Video</a>
         <a href="#studio" class="button button-secondary" id="heroVideoFaceSwapButton">🎬 Video Face Swap</a>
       </div>
       <div class="hero-trust" aria-label="FaceEvol benefits">
@@ -517,6 +575,10 @@
               <div class="tool-option" id="photoFaceSwapOption">
                 <div class="tool-icon">🖼️</div>
                 <div><div class="tool-name">Photo Face Swap</div><span class="tool-sub">Live beta</span></div>
+              </div>
+              <div class="tool-option" id="photoToVideoOption">
+                <div class="tool-icon">🎞️</div>
+                <div><div class="tool-name">Photo to Video</div><span class="tool-sub">Prompt → short video</span></div>
               </div>
               <div class="tool-option" id="faceSwapOption">
                 <div class="tool-icon">🎬</div>
@@ -548,17 +610,17 @@
 
   <div class="proof">
     <div class="container">
-      <div class="proof-label">AI Age Transformation &amp; Face Swap in one connected flow</div>
-      <div class="proof-items"><span>🕒 Age Transformation</span><span>🖼️ Photo Face Swap</span><span>🎬 Video Face Swap</span><span>🔒 Privacy-Focused Processing</span><span>✨ HD &amp; 4K Coming Soon</span></div>
+      <div class="proof-label">Four AI creation tools in one simple studio</div>
+      <div class="proof-items"><span>🕒 Age Transformation</span><span>🖼️ Photo Face Swap</span><span>🎞️ Photo to Video</span><span>🎬 Video Face Swap</span><span>🔒 Privacy-Focused Processing</span></div>
     </div>
   </div>
 
   <section id="features">
     <div class="container">
       <div class="section-heading">
-        <span class="section-eyebrow">Three Tools. One Flow.</span>
-        <h2>Transform an age. <span class="gradient-text">Swap a face in photos or video.</span></h2>
-        <p>FaceEvol brings age transformation, photo face swap and video face swap into one clean creation experience.</p>
+        <span class="section-eyebrow">Four Tools. One Studio.</span>
+        <h2>Transform a face. <span class="gradient-text">Bring a photo to life.</span></h2>
+        <p>FaceEvol brings age transformation, photo face swap, prompt-based photo animation and video face swap into one clean creation experience.</p>
       </div>
       <div class="feature-grid">
         <div class="feature-card core">
@@ -572,11 +634,16 @@
           <span class="feature-tag"><span class="live-pill">Live Beta</span> PHOTO</span>
         </div>
         <div class="feature-card core">
+          <div class="feature-icon">🎞️</div><h3>Photo to Video</h3>
+          <p>Upload a photo, describe the motion you want, and turn the still image into a short AI-generated video.</p>
+          <span class="feature-tag"><span class="live-pill">Live Beta</span> IMAGE → VIDEO</span>
+        </div>
+        <div class="feature-card core">
           <div class="feature-icon">🎬</div><h3>Video Face Swap</h3>
           <p>Upload a clear source face, then select up to 20 seconds of an MP4 video for your face swap.</p>
           <span class="feature-tag"><span class="live-pill">Live Beta</span> VIDEO</span>
         </div>
-        <div class="feature-card small"><div class="feature-icon">⬇️</div><h3>Easy Downloads</h3><p>Save your age transformation or photo face swap result directly to your device when it is ready.</p><span class="feature-tag"><span class="beta-pill">Built In</span></span></div>
+        <div class="feature-card small"><div class="feature-icon">⬇️</div><h3>Easy Downloads</h3><p>Save your age transformation, photo face swap or Photo to Video result directly to your device when it is ready.</p><span class="feature-tag"><span class="beta-pill">Built In</span></span></div>
         <div class="feature-card small"><div class="feature-icon">✨</div><h3>HD &amp; 4K Video Enhancement</h3><p>Upgrade clarity and resolution with HD and 4K enhancement options as the quality pipeline expands.</p><span class="feature-tag"><span class="soon-pill">Coming Soon</span></span></div>
         <div class="feature-card small"><div class="feature-icon">👥</div><h3>Multiple Faces</h3><p>Swap more than one person in the same video with dedicated face selection.</p><span class="feature-tag"><span class="soon-pill">Coming Soon</span></span></div>
         <div class="feature-card small"><div class="feature-icon">🚀</div><h3>Longer Videos</h3><p>Support for longer clips will expand as processing speed and cost are optimized.</p><span class="feature-tag"><span class="soon-pill">Coming Soon</span></span></div>
@@ -593,8 +660,8 @@
       </div>
       <div class="steps">
         <div class="step-card"><div class="step-number">1</div><h3>Choose your face</h3><p>Use a clear, front-facing photo with the full face visible and good lighting for the most reliable results.</p></div>
-        <div class="step-card"><div class="step-number">2</div><h3>Transform or swap</h3><p>Choose any target age, or open Photo Face Swap and add the target photo where you want your selected face to appear.</p></div>
-        <div class="step-card"><div class="step-number">3</div><h3>Continue into video</h3><p>When you want motion, add an MP4 up to 300 MB, select a clip up to 20 seconds, and create your Video Face Swap.</p></div>
+        <div class="step-card"><div class="step-number">2</div><h3>Choose what to create</h3><p>Transform an age, swap a face in a photo, or upload a still image and describe how you want it to move.</p></div>
+        <div class="step-card"><div class="step-number">3</div><h3>Create &amp; download</h3><p>Generate your result, preview it on the page, then download the finished image or video directly to your device.</p></div>
       </div>
     </div>
   </section>
@@ -642,13 +709,13 @@
       <div class="section-heading">
         <span class="section-eyebrow">Beta Access</span>
         <h2>Create with the core. <span class="gradient-text">Grow into higher quality.</span></h2>
-        <p>FaceEvol is still in beta. Age transformation, photo face swap and video face swap form the core creation toolkit, with HD/4K enhancement and expanded tools planned next.</p>
+        <p>FaceEvol is still in beta. Age transformation, photo face swap, Photo to Video and video face swap form the core creation toolkit, with HD/4K enhancement and expanded tools planned next.</p>
       </div>
       <div class="pricing-grid">
         <div class="price-card featured">
           <div class="popular-label">Beta</div><div class="price-name">Free Beta</div><div class="price">€0</div>
           <p class="price-description">Try the current FaceEvol experience while the product is being refined.</p>
-          <ul class="price-features"><li>✓ Age transformation workflow</li><li>✓ Photo face swap beta</li><li>✓ Video face swap beta</li><li>✓ Up to 20-second selected clips</li><li>✓ Download age transformation results</li></ul>
+          <ul class="price-features"><li>✓ Age transformation workflow</li><li>✓ Photo face swap beta</li><li>✓ Photo to Video beta</li><li>✓ Video face swap beta</li><li>✓ Direct result downloads</li></ul>
           <a href="#studio" class="button button-primary">Start Creating</a>
         </div>
         <div class="price-card">
@@ -671,11 +738,12 @@
     <div class="container">
       <div class="section-heading"><span class="section-eyebrow">FAQ</span><h2>Questions? <span class="gradient-text">We've got answers.</span></h2></div>
       <div class="faq-list">
-        <details><summary>What can I create with FaceEvol?</summary><p>FaceEvol combines Age Transformation, Photo Face Swap and Video Face Swap. Use an original face, transform it to another age, swap it into a photo, or continue into video.</p></details>
+        <details><summary>What can I create with FaceEvol?</summary><p>FaceEvol combines Age Transformation, Photo Face Swap, Photo to Video and Video Face Swap. Transform an age, swap a face, animate a still photo from a prompt, or create a video face swap.</p></details>
         <details><summary>What photos work best for face swap?</summary><p>Use a clear, front-facing source face with good lighting and the full face visible. Avoid blur, sunglasses, masks, heavy shadows and extreme side angles. A target photo with a clearly visible face and a similar angle usually gives a more natural result.</p></details>
         <details><summary>Which ages can I choose?</summary><p>The five visual presets are ages 5, 15, 30, 50 and 75. You can also use the custom slider to choose any target age from 0 to 100.</p></details>
         <details><summary>Can I download my age transformation?</summary><p>Yes. When an age transformation finishes, tap “Download Image” below the result to save it to your device.</p></details>
         <details><summary>Can I download my photo face swap?</summary><p>Yes. When the photo face swap is complete, tap “Download Image” below the result to save it directly to your device.</p></details>
+        <details><summary>How does Photo to Video work?</summary><p>Upload a JPG, PNG or WebP photo, type a short description of the motion you want, then tap “Generate Short Video.” FaceEvol creates a short clip that you can preview and download.</p></details>
         <details><summary>What video can I upload?</summary><p>For the beta, use an MP4 source file smaller than 300 MB. You can then select any section up to 20 seconds for processing.</p></details>
         <details><summary>Will HD and 4K video enhancement be available?</summary><p>Yes, that is on the FaceEvol roadmap. The current beta prioritizes the core creation tools first, with HD and 4K enhancement planned as upcoming quality options.</p></details>
         <details><summary>Is FaceEvol free?</summary><p>FaceEvol currently offers beta access while the core experience is being refined. Future paid plans may add higher limits, quality and processing options.</p></details>
@@ -688,9 +756,9 @@
   <section class="cta" id="start">
     <div class="container">
       <div class="cta-box">
-        <div class="badge">✨ AI Age Transformation &amp; Face Swap</div>
-        <h2>Transform your age.<br><span class="gradient-text">Swap a face. Bring it into video.</span></h2>
-        <p>Explore age transformation, create a photo face swap, or create a Video Face Swap when you are ready.</p>
+        <div class="badge">✨ FaceEvol AI Studio</div>
+        <h2>Transform your age.<br><span class="gradient-text">Swap a face. Bring a photo to life.</span></h2>
+        <p>Explore age transformation, photo face swap, Photo to Video, or Video Face Swap from one simple studio.</p>
         <a href="#studio" class="button button-primary" id="ctaStartButton">Start Creating →</a>
       </div>
     </div>
@@ -716,7 +784,7 @@
           </summary>
           <div class="legal-content">
             <h3>FaceEvol Privacy Policy</h3>
-            <p>This Privacy Policy explains how FaceEvol handles information when you use its AI age transformation, photo face swap and video face swap features.</p>
+            <p>This Privacy Policy explains how FaceEvol handles information when you use its AI age transformation, photo face swap, Photo to Video and video face swap features.</p>
 
             <h4>1. Information you provide</h4>
             <p>When you use FaceEvol, you may provide photos, videos and other content needed to create the result you request. You may also provide information when contacting support.</p>
@@ -773,7 +841,7 @@
             <p>These Terms govern your use of FaceEvol. By using the service, you agree to use it lawfully and responsibly.</p>
 
             <h4>1. The service</h4>
-            <p>FaceEvol provides AI-powered age transformation, photo face swap and video face swap tools. Features, processing limits, supported formats, models and availability may change as the service develops.</p>
+            <p>FaceEvol provides AI-powered age transformation, photo face swap, Photo to Video and video face swap tools. Features, processing limits, supported formats, models and availability may change as the service develops.</p>
 
             <h4>2. Beta status</h4>
             <p>FaceEvol is currently offered as a beta service. Beta features may contain errors, change without notice, become temporarily unavailable or produce unexpected results.</p>
@@ -897,7 +965,7 @@
       <a href="#" class="footer-logo"><img src="a.png" alt="FaceEvol"></a>
       <div class="footer-links"><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a><a href="#privacy-policy">Privacy</a><a href="#terms">Terms</a><a href="#refunds">Refunds</a><a href="#contact">Contact</a></div>
     </div>
-    <div class="footer-bottom"><div>© 2026 FaceEvol. All rights reserved.</div><div>AI age transformation · photo face swap · video face swap</div></div>
+    <div class="footer-bottom"><div>© 2026 FaceEvol. All rights reserved.</div><div>AI age transformation · photo face swap · photo to video · video face swap</div></div>
   </div>
 </footer>
 
@@ -908,10 +976,12 @@
   const studioMain = document.querySelector(".studio-main");
   const faceSwapOption = document.getElementById("faceSwapOption");
   const photoFaceSwapOption = document.getElementById("photoFaceSwapOption");
+  const photoToVideoOption = document.getElementById("photoToVideoOption");
   const ageOption = document.getElementById("ageOption");
   const ctaStartButton = document.getElementById("ctaStartButton");
   const heroAgeButton = document.getElementById("heroAgeButton");
   const heroFaceSwapButton = document.getElementById("heroFaceSwapButton");
+  const heroPhotoToVideoButton = document.getElementById("heroPhotoToVideoButton");
   const heroVideoFaceSwapButton = document.getElementById("heroVideoFaceSwapButton");
 
   let selectedPhoto = null;
@@ -925,6 +995,10 @@
   let selectedPhotoSwapTarget = null;
   let selectedPhotoSwapTargetPreviewUrl = null;
   let latestPhotoSwapOutput = null;
+  let selectedPhotoToVideo = null;
+  let selectedPhotoToVideoPreviewUrl = null;
+  let latestPhotoToVideoOutput = null;
+  let photoToVideoResultObjectUrl = null;
   let sourcePreviewRecoveryAttempts = 0;
   let resultPlaybackRecoveryRunning = false;
   let resultPlaybackRecoveryAttempted = false;
@@ -1810,6 +1884,362 @@
 
   syncPhotoSwapReadyState();
 
+
+  /* PHOTO TO VIDEO */
+  const photoToVideoControls=document.createElement("div");
+  photoToVideoControls.className="age-controls";
+  photoToVideoControls.innerHTML=`
+    <div style="text-align:center;">
+      <div class="panel-top">
+        <div>
+          <span class="panel-kicker">Photo to Video</span>
+          <h3 class="panel-title">Bring a photo to life</h3>
+          <p class="panel-copy">Upload a still photo, describe the motion you want, and FaceEvol will create a short cinematic video from it.</p>
+        </div>
+        <span class="live-pill">Live Beta</span>
+      </div>
+
+      <div class="photo-video-tip">
+        Describe the movement naturally. For example: “smile gently and look toward the camera” or “slow cinematic camera push-in with a soft breeze.”
+      </div>
+
+      <div class="photo-video-upload" id="photoToVideoUploadBox" role="button" tabindex="0" aria-label="Choose photo to animate">
+        <div style="font-size:30px;margin-bottom:8px;">🎞️</div>
+        <strong>Choose a photo</strong>
+        <small>JPG, PNG or WebP · clear, detailed photos work best</small>
+      </div>
+      <input type="file" id="photoToVideoUpload" accept="image/*" hidden>
+
+      <div class="photo-video-prompt-wrap">
+        <label for="photoToVideoPrompt">Describe the motion</label>
+        <textarea
+          id="photoToVideoPrompt"
+          class="photo-video-prompt"
+          maxlength="1200"
+          placeholder="Example: The person smiles gently, blinks naturally, and the camera slowly moves closer."
+        ></textarea>
+
+        <div class="prompt-examples" aria-label="Prompt examples">
+          <button type="button" class="prompt-chip" data-prompt="The person smiles gently and blinks naturally. Subtle realistic movement.">Gentle smile</button>
+          <button type="button" class="prompt-chip" data-prompt="A slow cinematic camera push-in. Natural subtle movement and realistic lighting.">Slow zoom</button>
+          <button type="button" class="prompt-chip" data-prompt="The person turns slightly toward the camera and smiles naturally.">Turn &amp; smile</button>
+          <button type="button" class="prompt-chip" data-prompt="A soft breeze moves the hair and clothing naturally while the subject remains relaxed.">Soft breeze</button>
+        </div>
+      </div>
+
+      <div class="photo-video-settings">
+        <div class="photo-video-setting">
+          <label for="photoToVideoDuration">Video length</label>
+          <select id="photoToVideoDuration">
+            <option value="5" selected>5 seconds</option>
+            <option value="10">10 seconds</option>
+          </select>
+        </div>
+        <div class="photo-video-setting">
+          <label>Generation</label>
+          <div style="color:#e6f5ff;font-size:12px;font-weight:800;padding-top:2px;">Kling 2.5 Turbo Pro</div>
+        </div>
+      </div>
+
+      <button type="button" class="transform-button gated" id="startPhotoToVideoButton" disabled>🎞️ Generate Short Video</button>
+      <div class="processing-message" id="photoToVideoStatus"></div>
+      <div class="error-message" id="photoToVideoError"></div>
+
+      <div class="photo-video-result" id="photoToVideoResult">
+        <video id="photoToVideoResultVideo" controls playsinline preload="metadata"></video>
+        <button type="button" class="download-button" id="downloadPhotoToVideoButton">⬇️ Download Video</button>
+      </div>
+    </div>
+  `;
+  studioMain.appendChild(photoToVideoControls);
+
+  const photoToVideoUploadBox=document.getElementById("photoToVideoUploadBox");
+  const photoToVideoUpload=document.getElementById("photoToVideoUpload");
+  const photoToVideoPrompt=document.getElementById("photoToVideoPrompt");
+  const photoToVideoDuration=document.getElementById("photoToVideoDuration");
+  const startPhotoToVideoButton=document.getElementById("startPhotoToVideoButton");
+  const photoToVideoStatus=document.getElementById("photoToVideoStatus");
+  const photoToVideoError=document.getElementById("photoToVideoError");
+  const photoToVideoResult=document.getElementById("photoToVideoResult");
+  const photoToVideoResultVideo=document.getElementById("photoToVideoResultVideo");
+  const downloadPhotoToVideoButton=document.getElementById("downloadPhotoToVideoButton");
+
+  function clearPhotoToVideoResult(){
+    latestPhotoToVideoOutput=null;
+    photoToVideoResult.classList.remove("show");
+    photoToVideoResultVideo.pause();
+    photoToVideoResultVideo.removeAttribute("src");
+    photoToVideoResultVideo.load();
+
+    if(photoToVideoResultObjectUrl){
+      try{URL.revokeObjectURL(photoToVideoResultObjectUrl);}catch{}
+      photoToVideoResultObjectUrl=null;
+    }
+  }
+
+  function syncPhotoToVideoReadyState(){
+    const ready=Boolean(
+      selectedPhotoToVideo &&
+      photoToVideoPrompt.value.trim().length>=3
+    );
+    startPhotoToVideoButton.disabled=!ready;
+  }
+
+  function friendlyPhotoToVideoError(error){
+    const raw=error instanceof Error?error.message:String(error||"");
+    const message=raw.toLowerCase();
+
+    if(message.includes("prompt_not_allowed") || message.includes("can't be processed") || message.includes("cannot be processed")){
+      return "That prompt can't be processed. Try a different creative motion or style request.";
+    }
+    if(message.includes("too large") || message.includes("413")){
+      return "That photo is too large. Please try another image.";
+    }
+    if(message.includes("image") && (message.includes("invalid") || message.includes("read"))){
+      return "We couldn't read that photo. Please try a clear JPG, PNG or WebP image.";
+    }
+    if(message.includes("timed out") || message.includes("timeout")){
+      return "The video is taking longer than expected. Please try again.";
+    }
+    if(message.includes("network") || message.includes("failed to fetch")){
+      return "We couldn't connect to FaceEvol. Please check your connection and try again.";
+    }
+    return "FaceEvol couldn't create this video this time. Try a different photo or motion description.";
+  }
+
+  async function pollPhotoToVideoPrediction(initialPrediction){
+    let prediction=initialPrediction;
+    if(!prediction||!prediction.id||isTerminalPredictionStatus(prediction.status)) return prediction;
+
+    for(let attempt=0;attempt<180;attempt++){
+      photoToVideoStatus.textContent=attempt<8
+        ?"Creating your short video..."
+        :"Still creating your video... Please keep this page open.";
+
+      await wait(2500);
+
+      const statusResponse=await fetch(
+        `/api/prediction?id=${encodeURIComponent(prediction.id)}`,
+        {cache:"no-store"}
+      );
+      const statusData=await readJsonResponse(statusResponse);
+
+      if(!statusResponse.ok){
+        throw new Error(statusData.error||"Could not check Photo to Video status.");
+      }
+
+      prediction=statusData.prediction||statusData;
+      if(!prediction) throw new Error("No Photo to Video prediction status was returned.");
+      if(isTerminalPredictionStatus(prediction.status)) return prediction;
+    }
+
+    throw new Error("Photo to Video timed out.");
+  }
+
+  async function loadPhotoToVideoResult(outputUrl){
+    if(photoToVideoResultObjectUrl){
+      try{URL.revokeObjectURL(photoToVideoResultObjectUrl);}catch{}
+      photoToVideoResultObjectUrl=null;
+    }
+
+    try{
+      const response=await fetch(outputUrl,{cache:"no-store"});
+      if(!response.ok) throw new Error("Could not prepare generated video.");
+      const blob=await response.blob();
+      if(!blob||!blob.size) throw new Error("Generated video was empty.");
+
+      photoToVideoResultObjectUrl=URL.createObjectURL(blob);
+      photoToVideoResultVideo.src=photoToVideoResultObjectUrl;
+    }catch(error){
+      console.warn("Photo to Video local playback fallback:",error);
+      photoToVideoResultVideo.src=outputUrl;
+    }
+
+    photoToVideoResultVideo.load();
+  }
+
+  function choosePhotoToVideoFile(){
+    photoToVideoUpload.click();
+  }
+
+  photoToVideoUploadBox.addEventListener("click",choosePhotoToVideoFile);
+  photoToVideoUploadBox.addEventListener("keydown",event=>{
+    if(event.key==="Enter"||event.key===" "){
+      event.preventDefault();
+      choosePhotoToVideoFile();
+    }
+  });
+
+  photoToVideoUpload.addEventListener("change",function(){
+    if(!this.files||!this.files.length) return;
+
+    const file=this.files[0];
+
+    if(!/^image\//i.test(file.type||"") && !/\.(jpe?g|png|webp)$/i.test(file.name||"")){
+      selectedPhotoToVideo=null;
+      this.value="";
+      photoToVideoError.textContent="Please choose a JPG, PNG or WebP photo.";
+      syncPhotoToVideoReadyState();
+      return;
+    }
+
+    selectedPhotoToVideo=file;
+    photoToVideoError.textContent="";
+    photoToVideoStatus.textContent="";
+    clearPhotoToVideoResult();
+
+    if(selectedPhotoToVideoPreviewUrl){
+      try{URL.revokeObjectURL(selectedPhotoToVideoPreviewUrl);}catch{}
+    }
+    selectedPhotoToVideoPreviewUrl=URL.createObjectURL(file);
+
+    photoToVideoUploadBox.innerHTML=`
+      <img class="photo-video-preview" src="${selectedPhotoToVideoPreviewUrl}" alt="Selected photo to animate">
+      <strong>Photo selected ✓</strong>
+      <small>${file.name}</small>
+    `;
+
+    syncPhotoToVideoReadyState();
+  });
+
+  photoToVideoPrompt.addEventListener("input",()=>{
+    photoToVideoError.textContent="";
+    syncPhotoToVideoReadyState();
+  });
+
+  document.querySelectorAll(".prompt-chip").forEach(chip=>{
+    chip.addEventListener("click",()=>{
+      photoToVideoPrompt.value=chip.dataset.prompt||"";
+      photoToVideoPrompt.focus();
+      syncPhotoToVideoReadyState();
+    });
+  });
+
+  startPhotoToVideoButton.addEventListener("click",async function(){
+    if(!selectedPhotoToVideo){
+      photoToVideoError.textContent="Choose a photo first.";
+      return;
+    }
+
+    const prompt=photoToVideoPrompt.value.trim();
+    if(prompt.length<3){
+      photoToVideoError.textContent="Describe the motion you want first.";
+      return;
+    }
+
+    startPhotoToVideoButton.disabled=true;
+    startPhotoToVideoButton.textContent="Preparing photo...";
+    photoToVideoError.textContent="";
+    clearPhotoToVideoResult();
+
+    try{
+      photoToVideoStatus.textContent="1/3 Preparing your photo...";
+
+      /*
+       * Keep the data-URI input compact. Replicate accepts data URLs for
+       * file inputs, and this stays comfortably below the Vercel body limit.
+       */
+      const preparedBlob=await optimizeImageToBlob(
+        selectedPhotoToVideo,
+        {maxDimension:1280,maxBytes:235*1024,quality:.92}
+      );
+      const imageData=await blobToDataURL(preparedBlob);
+
+      photoToVideoStatus.textContent="2/3 Starting FaceEvol AI...";
+      startPhotoToVideoButton.textContent="Generating video...";
+
+      const response=await fetch("/api/photo-to-video",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+          image:imageData,
+          prompt,
+          duration:Number(photoToVideoDuration.value)
+        })
+      });
+
+      const data=await readJsonResponse(response);
+
+      if(!response.ok){
+        const code=data.code?` ${data.code}`:"";
+        const detail=typeof data.details==="string"?` ${data.details}`:"";
+        throw new Error(`${data.error||"Photo to Video request failed."}${code}${detail}`);
+      }
+
+      let prediction=data.prediction||data;
+      if(!prediction) throw new Error("No Photo to Video prediction was returned.");
+
+      if(prediction.id&&!isTerminalPredictionStatus(prediction.status)){
+        photoToVideoStatus.textContent="3/3 Creating your short video...";
+        prediction=await pollPhotoToVideoPrediction(prediction);
+      }
+
+      if(prediction.status==="failed"||prediction.status==="canceled"||prediction.error){
+        const predictionError=
+          typeof prediction.error==="string"
+            ? prediction.error
+            : prediction.error
+              ? JSON.stringify(prediction.error)
+              : "Photo to Video failed.";
+        throw new Error(predictionError);
+      }
+
+      const output=findVideoUrl(prediction.output)||findVideoUrl(prediction);
+      if(!output) throw new Error("No output video was generated.");
+
+      latestPhotoToVideoOutput=output;
+      await loadPhotoToVideoResult(output);
+      photoToVideoResult.classList.add("show");
+      photoToVideoStatus.textContent="✓ Your short video is ready.";
+      photoToVideoResult.scrollIntoView({behavior:"smooth",block:"nearest"});
+
+    }catch(error){
+      console.error("FaceEvol Photo to Video error:",error);
+      photoToVideoStatus.textContent="";
+      photoToVideoError.textContent=friendlyPhotoToVideoError(error);
+    }finally{
+      startPhotoToVideoButton.textContent="🎞️ Generate Short Video";
+      syncPhotoToVideoReadyState();
+    }
+  });
+
+  downloadPhotoToVideoButton.addEventListener("click",async function(){
+    if(!latestPhotoToVideoOutput){
+      photoToVideoError.textContent="Create a short video first.";
+      return;
+    }
+
+    downloadPhotoToVideoButton.disabled=true;
+    downloadPhotoToVideoButton.textContent="Preparing download...";
+
+    try{
+      const response=await fetch(latestPhotoToVideoOutput,{cache:"no-store"});
+      if(!response.ok) throw new Error("Could not prepare video download.");
+      const blob=await response.blob();
+      const url=URL.createObjectURL(blob);
+      const link=document.createElement("a");
+      link.href=url;
+      link.download=`faceevol-photo-to-video-${Date.now()}.mp4`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),1800);
+    }catch(error){
+      const link=document.createElement("a");
+      link.href=latestPhotoToVideoOutput;
+      link.target="_blank";
+      link.rel="noopener";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }finally{
+      downloadPhotoToVideoButton.disabled=false;
+      downloadPhotoToVideoButton.textContent="⬇️ Download Video";
+    }
+  });
+
+  syncPhotoToVideoReadyState();
+
   /* FACE SWAP UI */
   const faceSwapControls=document.createElement("div");
   faceSwapControls.className="age-controls";
@@ -2417,6 +2847,7 @@
     faceSwapOption.classList.add("active");
     ageControls.classList.remove("show");
     photoSwapControls.classList.remove("show");
+    photoToVideoControls.classList.remove("show");
     faceSwapControls.classList.add("show");
     setSharedUploadVisible(true);
 
@@ -2435,10 +2866,24 @@
     photoFaceSwapOption.classList.add("active");
     ageControls.classList.remove("show");
     faceSwapControls.classList.remove("show");
+    photoToVideoControls.classList.remove("show");
     photoSwapControls.classList.add("show");
     setSharedUploadVisible(false);
 
     syncPhotoSwapReadyState();
+  }
+
+  function activatePhotoToVideoMode(){
+    faceSwapMode=false;
+    activeStudioMode="photo-video";
+    document.querySelectorAll(".tool-option").forEach(o=>o.classList.remove("active"));
+    photoToVideoOption.classList.add("active");
+    ageControls.classList.remove("show");
+    photoSwapControls.classList.remove("show");
+    faceSwapControls.classList.remove("show");
+    photoToVideoControls.classList.add("show");
+    setSharedUploadVisible(false);
+    syncPhotoToVideoReadyState();
   }
 
   function activateAgeMode(){
@@ -2448,6 +2893,7 @@
     ageOption.classList.add("active");
     faceSwapControls.classList.remove("show");
     photoSwapControls.classList.remove("show");
+    photoToVideoControls.classList.remove("show");
     ageControls.classList.add("show");
     setSharedUploadVisible(true);
 
@@ -2463,6 +2909,7 @@
 
   faceSwapOption.addEventListener("click",activateFaceSwapMode);
   photoFaceSwapOption.addEventListener("click",activatePhotoFaceSwapMode);
+  photoToVideoOption.addEventListener("click",activatePhotoToVideoMode);
   ageOption.addEventListener("click",activateAgeMode);
 
   ctaStartButton.addEventListener("click",function(){
@@ -2475,6 +2922,10 @@
 
   heroFaceSwapButton.addEventListener("click",function(){
     activatePhotoFaceSwapMode();
+  });
+
+  heroPhotoToVideoButton.addEventListener("click",function(){
+    activatePhotoToVideoMode();
   });
 
   heroVideoFaceSwapButton.addEventListener("click",function(){
