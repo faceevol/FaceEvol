@@ -388,6 +388,46 @@
     .cta-box h2{margin-bottom:15px;font-size:clamp(36px,5vw,54px);line-height:1.08;letter-spacing:-1.8px}
     .cta-box p{max-width:590px;margin:0 auto 27px;color:#a3aec1;line-height:1.65;font-size:15px}
 
+
+    /* Legal & support */
+    .legal-section{padding-top:42px}
+    .legal-shell{max-width:920px;margin:0 auto;display:grid;gap:13px}
+    .legal-card{
+      scroll-margin-top:92px;
+      padding:0;
+      overflow:hidden;
+      border-radius:17px;
+      background:rgba(255,255,255,.022);
+      border:1px solid rgba(255,255,255,.065);
+    }
+    .legal-card>summary{
+      padding:21px 23px;
+      align-items:center;
+      color:#eef3fa;
+    }
+    .legal-card>summary .legal-summary-title{display:flex;flex-direction:column;gap:5px}
+    .legal-card>summary .legal-summary-title strong{font-size:16px}
+    .legal-card>summary .legal-summary-title span{color:#7f8ba1;font-size:11px;font-weight:600}
+    .legal-card[open]>summary{border-bottom:1px solid rgba(255,255,255,.06)}
+    .legal-content{padding:24px 23px 26px;color:#95a2b8;font-size:13px;line-height:1.72}
+    .legal-content h3{margin:0 0 10px;color:#edf3fb;font-size:18px}
+    .legal-content h4{margin:22px 0 8px;color:#dfe7f2;font-size:14px}
+    .legal-content p{margin:0 0 11px}
+    .legal-content ul{margin:8px 0 13px 19px;display:grid;gap:7px}
+    .legal-content a{color:#73d2f5;text-decoration:underline;text-underline-offset:3px}
+    .legal-note{
+      margin:0 0 18px;padding:12px 14px;border-radius:11px;
+      background:rgba(14,165,233,.055);border:1px solid rgba(56,189,248,.12);
+      color:#adbbcf;font-size:12px;line-height:1.6;
+    }
+    .legal-contact-box{
+      margin-top:16px;padding:17px;border-radius:13px;
+      background:linear-gradient(135deg,rgba(124,58,237,.08),rgba(14,165,233,.045));
+      border:1px solid rgba(255,255,255,.07);
+    }
+    .legal-contact-box strong{display:block;margin-bottom:7px;color:#e9eff8}
+    .legal-contact-box a{font-weight:800}
+
     footer{padding:42px 0 28px;border-top:1px solid rgba(255,255,255,.065)}
     .footer-main{display:flex;justify-content:space-between;align-items:center;gap:25px;flex-wrap:wrap;padding-bottom:25px}
     .footer-logo img{height:47px;width:auto}
@@ -639,6 +679,8 @@
         <details><summary>What video can I upload?</summary><p>For the beta, use an MP4 source file smaller than 300 MB. You can then select any section up to 20 seconds for processing.</p></details>
         <details><summary>Will HD and 4K video enhancement be available?</summary><p>Yes, that is on the FaceEvol roadmap. The current beta prioritizes the core creation tools first, with HD and 4K enhancement planned as upcoming quality options.</p></details>
         <details><summary>Is FaceEvol free?</summary><p>FaceEvol currently offers beta access while the core experience is being refined. Future paid plans may add higher limits, quality and processing options.</p></details>
+        <details><summary>How does FaceEvol handle my uploads?</summary><p>Your uploads are processed to create the result you request. FaceEvol is designed to minimize unnecessary storage, while third-party hosting and AI providers may process content as needed to provide the service. See the Privacy Policy below for more detail.</p></details>
+        <details><summary>Where can I find the legal information?</summary><p>Privacy, Terms, Refunds and Contact information are available in the Legal &amp; Support section at the bottom of this page.</p></details>
       </div>
     </div>
   </section>
@@ -653,15 +695,209 @@
       </div>
     </div>
   </section>
+
+
+  <section class="legal-section" id="legal">
+    <div class="container">
+      <div class="section-heading">
+        <span class="section-eyebrow">Legal &amp; Support</span>
+        <h2>Clear information. <span class="gradient-text">Simple terms.</span></h2>
+        <p>Review how FaceEvol handles content, responsible use, service terms, refunds and support.</p>
+      </div>
+
+      <div class="legal-shell">
+
+        <details class="legal-card" id="privacy-policy">
+          <summary>
+            <span class="legal-summary-title">
+              <strong>Privacy Policy</strong>
+              <span>Last updated: 28 August 2026</span>
+            </span>
+          </summary>
+          <div class="legal-content">
+            <h3>FaceEvol Privacy Policy</h3>
+            <p>This Privacy Policy explains how FaceEvol handles information when you use its AI age transformation, photo face swap and video face swap features.</p>
+
+            <h4>1. Information you provide</h4>
+            <p>When you use FaceEvol, you may provide photos, videos and other content needed to create the result you request. You may also provide information when contacting support.</p>
+
+            <h4>2. Technical and usage information</h4>
+            <p>FaceEvol and its infrastructure providers may process basic technical information needed to operate, secure and troubleshoot the service, such as request information, device or browser information, IP address, timestamps, error logs and feature usage.</p>
+
+            <h4>3. How uploaded content is used</h4>
+            <p>Your uploaded photos and videos are used to provide the transformation or face swap you request, maintain service security, prevent abuse and diagnose technical problems. FaceEvol does not claim ownership of your original photos or videos.</p>
+
+            <h4>4. AI and infrastructure providers</h4>
+            <p>To generate results, FaceEvol relies on third-party hosting, storage and AI-processing providers. This currently includes infrastructure used to host the website, securely transfer temporary files and run AI models. Those providers may process your content only as necessary to deliver their services and are subject to their own privacy and security terms.</p>
+
+            <h4>5. Storage and retention</h4>
+            <p>FaceEvol is designed to minimize unnecessary storage of user uploads. Temporary files may be retained for the time reasonably necessary to upload, process, deliver and troubleshoot a result. Some temporary files may be automatically deleted after processing. Service providers may maintain limited logs or temporary copies according to their own retention policies and legal obligations.</p>
+
+            <h4>6. What you should not upload</h4>
+            <p>Do not upload content that you do not have the right or permission to use. Avoid uploading highly confidential documents, passwords, financial records, medical records or other information that is not needed for the creative task.</p>
+
+            <h4>7. Legal bases for processing</h4>
+            <p>Where applicable, FaceEvol processes information because it is necessary to provide the service you request, because there is a legitimate interest in operating and securing the service, because you have provided consent where required, or because processing is necessary to comply with law.</p>
+
+            <h4>8. Your privacy rights</h4>
+            <p>Depending on where you live, you may have rights to request access to, correction of or deletion of personal information, or to object to or restrict certain processing. You may also have rights relating to data portability and complaints to a local data-protection authority. These rights are subject to applicable law and reasonable identity verification.</p>
+
+            <h4>9. International processing</h4>
+            <p>Some service providers may process information in countries other than your own. Where required, appropriate contractual or legal safeguards should be used for international transfers.</p>
+
+            <h4>10. Children</h4>
+            <p>FaceEvol is not intended to be independently used by children under 16. A parent or legal guardian should supervise use where required by local law.</p>
+
+            <h4>11. Security</h4>
+            <p>FaceEvol uses reasonable technical and organizational measures intended to protect content during the service workflow. No internet or cloud service can guarantee absolute security.</p>
+
+            <h4>12. Changes to this policy</h4>
+            <p>This policy may be updated as FaceEvol adds accounts, payments, additional AI providers or new features. The date above will be updated when material changes are made.</p>
+
+            <div class="legal-contact-box">
+              <strong>Privacy questions or requests</strong>
+              <p>Email <a href="mailto:support@faceevol.com">support@faceevol.com</a>.</p>
+            </div>
+          </div>
+        </details>
+
+        <details class="legal-card" id="terms">
+          <summary>
+            <span class="legal-summary-title">
+              <strong>Terms of Service</strong>
+              <span>Last updated: 28 August 2026</span>
+            </span>
+          </summary>
+          <div class="legal-content">
+            <h3>FaceEvol Terms of Service</h3>
+            <p>These Terms govern your use of FaceEvol. By using the service, you agree to use it lawfully and responsibly.</p>
+
+            <h4>1. The service</h4>
+            <p>FaceEvol provides AI-powered age transformation, photo face swap and video face swap tools. Features, processing limits, supported formats, models and availability may change as the service develops.</p>
+
+            <h4>2. Beta status</h4>
+            <p>FaceEvol is currently offered as a beta service. Beta features may contain errors, change without notice, become temporarily unavailable or produce unexpected results.</p>
+
+            <h4>3. Your content and permissions</h4>
+            <p>You retain the rights you hold in content you upload. You grant FaceEvol and the service providers involved in processing a limited permission to host, transmit, process and transform that content only as reasonably necessary to provide, secure and troubleshoot the requested service.</p>
+            <p>You are responsible for ensuring you have all permissions and rights needed to upload and edit the content you submit.</p>
+
+            <h4>4. Responsible use</h4>
+            <p>You may not use FaceEvol to violate law, deceive or defraud others, harass or threaten people, impersonate someone for harmful purposes, violate privacy or intellectual-property rights, or create or distribute abusive or non-consensual content.</p>
+            <p>You must not use another person's face, photo or video in a way that violates their rights or reasonable expectation of privacy. When appropriate, obtain permission before editing or sharing content involving another person.</p>
+
+            <h4>5. AI-generated results</h4>
+            <p>AI outputs are generated probabilistically. FaceEvol does not guarantee that a result will be perfectly accurate, realistic, identical to a person, suitable for a specific purpose or free from artifacts. Age-transformation results are creative estimates and are not a prediction or verification of a person's real future or past appearance.</p>
+
+            <h4>6. Prohibited technical activity</h4>
+            <p>Do not attempt to interfere with the service, bypass usage or security limits, probe private infrastructure, distribute malware, automate abusive traffic or use FaceEvol in a way that materially disrupts other users.</p>
+
+            <h4>7. FaceEvol intellectual property</h4>
+            <p>The FaceEvol name, branding, website design, software and original service materials remain the property of their respective owner or licensors. These Terms do not transfer ownership of FaceEvol technology to you.</p>
+
+            <h4>8. Availability and changes</h4>
+            <p>FaceEvol may modify, suspend or discontinue features when reasonably necessary for maintenance, security, legal compliance, model changes or product development.</p>
+
+            <h4>9. Paid features</h4>
+            <p>Paid plans are not currently enabled in this beta. Before paid features launch, FaceEvol will display applicable prices, included usage and important purchase terms before checkout. Mandatory consumer rights always continue to apply.</p>
+
+            <h4>10. Disclaimer</h4>
+            <p>To the extent permitted by law, FaceEvol is provided on an “as available” basis without a guarantee of uninterrupted operation or a particular creative result. Nothing in these Terms excludes rights or remedies that cannot legally be excluded.</p>
+
+            <h4>11. Liability</h4>
+            <p>To the extent permitted by applicable law, FaceEvol is not responsible for indirect or consequential losses arising from misuse of the service, unauthorized use of uploaded content, third-party services or reliance on an AI-generated result. This limitation does not apply where liability cannot legally be limited.</p>
+
+            <h4>12. Suspension or restriction</h4>
+            <p>Access may be restricted or suspended where reasonably necessary to address abuse, security threats, unlawful use or material violations of these Terms.</p>
+
+            <h4>13. Changes to these Terms</h4>
+            <p>These Terms may be updated as FaceEvol develops. Material changes will be reflected by updating the date above.</p>
+
+            <div class="legal-contact-box">
+              <strong>Terms questions</strong>
+              <p>Email <a href="mailto:support@faceevol.com">support@faceevol.com</a>.</p>
+            </div>
+          </div>
+        </details>
+
+        <details class="legal-card" id="refunds">
+          <summary>
+            <span class="legal-summary-title">
+              <strong>Refund Policy</strong>
+              <span>Prepared for future paid features</span>
+            </span>
+          </summary>
+          <div class="legal-content">
+            <h3>FaceEvol Refund Policy</h3>
+            <div class="legal-note">FaceEvol is currently in free beta, so no paid purchase or refund is required today. This policy is included now so the website is ready for the later payment stage.</div>
+
+            <h4>1. When paid features launch</h4>
+            <p>Prices, included credits or usage, billing frequency and any important purchase conditions will be shown before a user confirms payment.</p>
+
+            <h4>2. Failed processing</h4>
+            <p>If a paid generation fails because of a verified FaceEvol processing error and no usable result is delivered, FaceEvol may restore the affected credit, retry the generation or provide another appropriate remedy.</p>
+
+            <h4>3. Completed AI generations</h4>
+            <p>AI generation uses computing resources immediately. Once a paid generation has successfully completed, a refund may not always be available merely because the user prefers a different creative result. This does not affect mandatory consumer rights or remedies for a defective service.</p>
+
+            <h4>4. Duplicate or incorrect charges</h4>
+            <p>Verified duplicate or erroneous charges should be reported to support so they can be investigated and corrected.</p>
+
+            <h4>5. Consumer rights</h4>
+            <p>Nothing in this policy limits statutory cancellation, refund or consumer-protection rights that apply in the user's country. Where digital services begin immediately after purchase, any legally required consent or acknowledgement will be presented during checkout.</p>
+
+            <h4>6. Requesting help</h4>
+            <p>When paid features become available, refund requests should include the payment reference, approximate purchase date and a short description of the issue. Never send a full card number or banking password by email.</p>
+
+            <div class="legal-contact-box">
+              <strong>Billing support</strong>
+              <p>Email <a href="mailto:support@faceevol.com">support@faceevol.com</a>.</p>
+            </div>
+          </div>
+        </details>
+
+        <details class="legal-card" id="contact">
+          <summary>
+            <span class="legal-summary-title">
+              <strong>Contact &amp; Support</strong>
+              <span>Questions, privacy requests and technical help</span>
+            </span>
+          </summary>
+          <div class="legal-content">
+            <h3>Contact FaceEvol</h3>
+            <p>For technical support, privacy requests, copyright concerns, responsible-use reports or future billing questions, contact FaceEvol by email.</p>
+
+            <div class="legal-contact-box">
+              <strong>Email Support</strong>
+              <p><a href="mailto:support@faceevol.com">support@faceevol.com</a></p>
+              <p>Please include a short description of the problem and, when useful, the device/browser you were using. Do not email passwords, payment-card numbers or highly sensitive personal information.</p>
+              <a class="button button-secondary" href="mailto:support@faceevol.com?subject=FaceEvol%20Support">✉️ Contact Support</a>
+            </div>
+
+            <h4>Reporting misuse</h4>
+            <p>If you believe FaceEvol has been used to create content that violates your rights, describe the issue and provide enough information to identify the relevant content or incident. FaceEvol may request additional information where reasonably necessary to evaluate a report.</p>
+
+            <h4>Privacy requests</h4>
+            <p>For privacy-related access, correction or deletion requests, use the subject line “Privacy Request” and provide enough information for the request to be understood and, where necessary, verified.</p>
+
+            <h4>Response times</h4>
+            <p>FaceEvol will aim to review support messages within a reasonable period. Response times may be longer during beta testing or periods of high demand.</p>
+          </div>
+        </details>
+
+      </div>
+    </div>
+  </section>
+
 </main>
 
 <footer>
   <div class="container">
     <div class="footer-main">
       <a href="#" class="footer-logo"><img src="a.png" alt="FaceEvol"></a>
-      <div class="footer-links"><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Contact</a></div>
+      <div class="footer-links"><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a><a href="#privacy-policy">Privacy</a><a href="#terms">Terms</a><a href="#refunds">Refunds</a><a href="#contact">Contact</a></div>
     </div>
-    <div class="footer-bottom"><div>© 2026 FaceEvol. All rights reserved.</div><div>Age transformation + photo &amp; video face swap, connected in one creative flow. ❤️</div></div>
+    <div class="footer-bottom"><div>© 2026 FaceEvol. All rights reserved.</div><div>AI age transformation · photo face swap · video face swap</div></div>
   </div>
 </footer>
 
@@ -2505,6 +2741,34 @@
       startFaceSwapButton.textContent="🎬 Start Face Swap";
     }
   });
+
+
+  /* Open the matching Legal & Support panel when a hash link is used. */
+  function openLegalHashPanel(){
+    const hash=window.location.hash;
+    if(!hash) return;
+    const target=document.querySelector(hash);
+    if(target && target.matches("details.legal-card")){
+      target.open=true;
+      requestAnimationFrame(()=>{
+        target.scrollIntoView({behavior:"smooth",block:"start"});
+      });
+    }
+  }
+
+  document.querySelectorAll('a[href^="#"]').forEach(link=>{
+    link.addEventListener("click",()=>{
+      const selector=link.getAttribute("href");
+      if(!selector || selector==="#") return;
+      const target=document.querySelector(selector);
+      if(target && target.matches("details.legal-card")){
+        target.open=true;
+      }
+    });
+  });
+
+  window.addEventListener("hashchange",openLegalHashPanel);
+  openLegalHashPanel();
 
   /* Start in Age Transformation so the five preset examples are visible immediately, before upload. */
   activateAgeMode();
