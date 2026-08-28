@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- FaceEvol · AI Age Transformation + Video Face Swap · male-only separated portrait examples + resilient age prediction flow · 2026-08-27 -->
+<!-- FaceEvol · AI Age Transformation + Video Face Swap · portrait centering + upload progress/timeout hardening · 2026-08-28 -->
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -143,7 +143,12 @@
     .age-preset-image{
       position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center center;display:block;z-index:2;
       border-radius:10px;background:#090f1e;border:1px solid rgba(255,255,255,.10);box-shadow:0 10px 22px rgba(0,0,0,.28);
+      transform-origin:center center;
     }
+    /* Fine-tune the two portraits whose face center sits slightly off the visual midpoint.
+       A tiny scale prevents an exposed edge while shifting the portrait. */
+    .age-preset-card[data-age="15"] .age-preset-image{transform:translateX(-1.2%) scale(1.015)}
+    .age-preset-card[data-age="50"] .age-preset-image{transform:translateX(1.2%) scale(1.015)}
     .age-preset-fallback{z-index:1}
     .age-preset-fallback{position:absolute;inset:0;display:grid;place-items:center;overflow:hidden;background:
       radial-gradient(circle at 50% 34%,rgba(255,255,255,.14),transparent 20%),
@@ -155,7 +160,7 @@
     .age-preset-fallback.mature::after,.age-preset-fallback.senior::after{content:"";position:absolute;width:34%;height:2px;top:45%;left:33%;border-radius:999px;background:rgba(92,58,55,.18);box-shadow:0 12px 0 rgba(92,58,55,.14)}
     .age-preset-fallback.senior::before{filter:saturate(.7) brightness(1.03);box-shadow:0 -10px 0 3px rgba(210,215,225,.55)}
     .age-preset-body{padding:9px 9px 10px}
-    .age-preset-number{display:block;color:#f5f8ff;font-size:13px;font-weight:850}
+    .age-preset-number{display:block;color:#f5f8ff;font-size:13px;font-weight:850;text-align:center}
     .age-preset-name{display:block;margin-top:2px;color:#7f8da4;font-size:9px;font-weight:750}
     .example-note{margin-top:11px;color:#6f7e95;font-size:10px;line-height:1.5;text-align:left}
 
@@ -1386,6 +1391,33 @@
     }
   }
 
+  async function uploadFaceEvolBlob(upload,pathname,blob,{step,label,timeoutMs=120000,multipart=false}={}){
+    const controller=new AbortController();
+    const timer=setTimeout(()=>controller.abort(),timeoutMs);
+    const sizeMb=(blob.size/(1024*1024)).toFixed(1);
+
+    try{
+      return await upload(pathname,blob,{
+        access:"private",
+        handleUploadUrl:"/api/upload",
+        multipart,
+        abortSignal:controller.signal,
+        onUploadProgress(progress){
+          const pct=Number.isFinite(progress?.percentage)?Math.max(0,Math.min(100,Math.round(progress.percentage))):null;
+          const progressText=pct===null?"":` ${pct}%`;
+          swapVideoStatus.textContent=`${step} ${label}${progressText} · ${sizeMb} MB`;
+        }
+      });
+    }catch(error){
+      if(controller.signal.aborted){
+        throw new Error(`${label} upload timed out before the AI started.`);
+      }
+      throw error;
+    }finally{
+      clearTimeout(timer);
+    }
+  }
+
   function friendlyFaceSwapError(error){
     const raw=error instanceof Error?error.message:String(error||"");
     const message=raw.toLowerCase();
@@ -1401,6 +1433,9 @@
     }
     if(message.includes("trimmer") || message.includes("ffmpeg") || message.includes("selected clip could not be created")){
       return "We couldn’t prepare the selected clip. Please refresh the page and try again, or choose a different MP4.";
+    }
+    if(message.includes("upload timed out") || message.includes("upload aborted")){
+      return "The upload stalled before the AI started. Please try again. If it stops at 3/6 again, use a shorter clip or try again later.";
     }
     if(message.includes("too long") || message.includes("timed out")){
       return "FaceEvol temporarily lost the status connection. Your AI job may still be processing, so please try checking again.";
@@ -1606,18 +1641,25 @@
       const optimizedFace=await optimizeImageToBlob(selectedPhoto,{maxDimension:2048,maxBytes:5*1024*1024,quality:.94});
       const {upload}=await import("https://esm.sh/@vercel/blob@2.6.1/client");
 
-      swapVideoStatus.textContent=`3/6 Uploading your ${(trimEnd-trimStart).toFixed(1)}-second clip...`;
-      const videoBlob=await upload(
+      startFaceSwapButton.textContent="Uploading video...";
+      const videoBlob=await uploadFaceEvolBlob(
+        upload,
         `faceevol-video-${Date.now()}-${safeFileName(videoForUpload.name)}`,
         videoForUpload,
-        {access:"private",handleUploadUrl:"/api/upload"}
+        {
+          step:"3/6",
+          label:`Uploading your ${(trimEnd-trimStart).toFixed(1)}-second clip...`,
+          timeoutMs:120000,
+          multipart:videoForUpload.size>=8*1024*1024
+        }
       );
 
-      swapVideoStatus.textContent="4/6 Uploading your face photo...";
-      const faceBlob=await upload(
+      startFaceSwapButton.textContent="Uploading face...";
+      const faceBlob=await uploadFaceEvolBlob(
+        upload,
         `faceevol-face-${Date.now()}.jpg`,
         optimizedFace,
-        {access:"private",handleUploadUrl:"/api/upload"}
+        {step:"4/6",label:"Uploading your face photo...",timeoutMs:60000,multipart:false}
       );
 
       swapVideoStatus.textContent="5/6 Starting FaceEvol AI...";
