@@ -1508,95 +1508,190 @@
   }
 
   async function prepareVideoForPrivateUpload(file,start,end){
-    const duration=end-start;
-    const trimmed=await trimVideoToMp4(file,start,end);
-
-    if(trimmed.size<=TARGET_VIDEO_UPLOAD_BYTES){
-      return trimmed;
-    }
-
-    return await compressVideoForPrivateUpload(trimmed,duration);
+    /*
+     * Keep the original quality of the selected clip. Large trimmed clips are
+     * uploaded in small private chunks, so browser-side re-encoding is no
+     * longer required (and avoids mobile/iPad FFmpeg compression failures).
+     */
+    return await trimVideoToMp4(file,start,end);
   }
 
-  async function uploadFaceEvolPrivate(pathname,blob,{step,label,timeoutMs=180000}={}){
+  async function uploadFaceEvolPrivate(pathname,blob,{step,label,timeoutMs=300000}={}){
     if(!(blob instanceof Blob) || !blob.size){
       throw new Error(`${label} could not be prepared for upload.`);
     }
 
-    if(blob.size>MAX_PRIVATE_UPLOAD_BYTES){
-      const sizeMb=(blob.size/(1024*1024)).toFixed(1);
-      throw new Error(
-        `${label} is ${sizeMb} MB after preparation, which is too large for the private server upload route.`
-      );
-    }
+    const totalSizeMb=(blob.size/(1024*1024)).toFixed(1);
 
-    const sizeMb=(blob.size/(1024*1024)).toFixed(1);
-    const uploadUrl=
-      `/api/private-upload?filename=${encodeURIComponent(pathname)}`;
+    const parseResponse=(xhr)=>{
+      let data={};
+      try{data=xhr.responseText?JSON.parse(xhr.responseText):{};}
+      catch{data={error:"The private upload server returned an unexpected response."};}
 
-    return await new Promise((resolve,reject)=>{
-      const xhr=new XMLHttpRequest();
-      let settled=false;
+      if(xhr.status<200 || xhr.status>=300){
+        const detail=data.details
+          ? `${data.error||`Private upload HTTP ${xhr.status}.`} ${data.details}`
+          : (data.error||`Private upload HTTP ${xhr.status}.`);
+        throw new Error(detail);
+      }
+      return data;
+    };
 
-      const fail=(error)=>{
-        if(settled) return;
-        settled=true;
-        reject(error instanceof Error?error:new Error(String(error||"Private upload failed.")));
-      };
+    const sendRaw=(url,body,onProgress,rawTimeout=timeoutMs,contentType="application/octet-stream")=>
+      new Promise((resolve,reject)=>{
+        const xhr=new XMLHttpRequest();
+        let settled=false;
+        const fail=(error)=>{
+          if(settled) return;
+          settled=true;
+          reject(error instanceof Error?error:new Error(String(error||"Private upload failed.")));
+        };
 
-      xhr.open("POST",uploadUrl,true);
-      xhr.responseType="text";
-      xhr.timeout=timeoutMs;
-      xhr.setRequestHeader(
-        "Content-Type",
+        xhr.open("POST",url,true);
+        xhr.responseType="text";
+        xhr.timeout=rawTimeout;
+        xhr.setRequestHeader("Content-Type",contentType);
+
+        xhr.upload.onprogress=(event)=>{
+          if(event.lengthComputable && typeof onProgress==="function"){
+            onProgress(event.loaded,event.total);
+          }
+        };
+
+        xhr.onload=()=>{
+          if(settled) return;
+          try{
+            const data=parseResponse(xhr);
+            settled=true;
+            resolve(data);
+          }catch(error){
+            fail(error);
+          }
+        };
+
+        xhr.onerror=()=>fail(new Error(`${label} could not reach FaceEvol's private upload route.`));
+        xhr.ontimeout=()=>fail(new Error(`${label} timed out while uploading privately.`));
+        xhr.onabort=()=>fail(new Error(`${label} upload was aborted.`));
+        xhr.send(body);
+      });
+
+    /* Small files can still use one private server request. */
+    if(blob.size<=MAX_PRIVATE_UPLOAD_BYTES){
+      const uploadUrl=`/api/private-upload?action=single&filename=${encodeURIComponent(pathname)}`;
+      swapVideoStatus.textContent=`${step} ${label} 0% · ${totalSizeMb} MB`;
+
+      const data=await sendRaw(
+        uploadUrl,
+        blob,
+        (loaded,total)=>{
+          const pct=Math.max(0,Math.min(100,Math.round((loaded/total)*100)));
+          swapVideoStatus.textContent=`${step} ${label} ${pct}% · ${totalSizeMb} MB`;
+        },
+        timeoutMs,
         blob.type||(pathname.endsWith(".mp4")?"video/mp4":"application/octet-stream")
       );
 
-      xhr.upload.onprogress=(event)=>{
-        if(!event.lengthComputable){
-          swapVideoStatus.textContent=`${step} ${label} · sending ${sizeMb} MB privately...`;
-          return;
-        }
+      if(!data || typeof data.url!=="string" || !data.url){
+        throw new Error("The private upload completed but no Blob URL was returned.");
+      }
+      return data;
+    }
 
-        const pct=Math.max(0,Math.min(100,Math.round((event.loaded/event.total)*100)));
-        swapVideoStatus.textContent=`${step} ${label} ${pct}% · ${sizeMb} MB`;
-      };
+    /*
+     * Large videos are split into <4 MB requests. Each temporary part is
+     * stored privately. The server then streams those private parts back into
+     * one final private MP4, so the browser never has to compress the video.
+     */
+    if(!pathname.endsWith(".mp4")){
+      throw new Error(`${label} is too large for a single private upload request.`);
+    }
 
-      xhr.upload.onload=()=>{
+    const CHUNK_BYTES=3*1024*1024;
+    const totalChunks=Math.ceil(blob.size/CHUNK_BYTES);
+    const uploadId=`${Date.now()}-${Math.random().toString(36).slice(2,12)}`;
+    const chunkPathnames=[];
+
+    try{
+      for(let index=0;index<totalChunks;index++){
+        const start=index*CHUNK_BYTES;
+        const end=Math.min(blob.size,start+CHUNK_BYTES);
+        const chunk=blob.slice(start,end,"application/octet-stream");
+        const partNumber=index+1;
+        const chunkUrl=
+          `/api/private-upload?action=chunk&uploadId=${encodeURIComponent(uploadId)}`+
+          `&part=${partNumber}&total=${totalChunks}`;
+
         swapVideoStatus.textContent=
-          `${step} ${label} 100% · saving securely to private storage...`;
-      };
+          `${step} ${label} · secure part ${partNumber}/${totalChunks} · ${totalSizeMb} MB`;
 
-      xhr.onload=()=>{
-        if(settled) return;
+        const data=await sendRaw(
+          chunkUrl,
+          chunk,
+          (loaded,total)=>{
+            const fraction=(index+(loaded/total))/totalChunks;
+            const pct=Math.max(0,Math.min(94,Math.round(fraction*94)));
+            swapVideoStatus.textContent=
+              `${step} ${label} ${pct}% · secure part ${partNumber}/${totalChunks} · ${totalSizeMb} MB`;
+          },
+          timeoutMs,
+          "application/octet-stream"
+        );
 
-        let data={};
-        try{
-          data=xhr.responseText?JSON.parse(xhr.responseText):{};
-        }catch{
-          data={error:"The private upload server returned an unexpected response."};
+        if(!data || typeof data.pathname!=="string" || !data.pathname){
+          throw new Error(`Private upload part ${partNumber} did not return a pathname.`);
         }
+        chunkPathnames.push(data.pathname);
+      }
 
-        if(xhr.status<200 || xhr.status>=300){
-          const detail=data.error||data.details||`Private upload HTTP ${xhr.status}.`;
-          return fail(new Error(detail));
-        }
+      swapVideoStatus.textContent=
+        `${step} ${label} 95% · joining secure parts in private storage...`;
 
-        if(!data || typeof data.url!=="string" || !data.url){
-          return fail(new Error("The private upload completed but no Blob URL was returned."));
-        }
+      const controller=new AbortController();
+      const timer=setTimeout(()=>controller.abort(),timeoutMs);
+      let response;
+      try{
+        response=await fetch("/api/private-upload?action=complete",{
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          signal:controller.signal,
+          body:JSON.stringify({
+            uploadId,
+            filename:pathname,
+            contentType:"video/mp4",
+            chunks:chunkPathnames
+          })
+        });
+      }finally{
+        clearTimeout(timer);
+      }
 
-        settled=true;
-        resolve(data);
-      };
+      const text=await response.text();
+      let data={};
+      try{data=text?JSON.parse(text):{};}
+      catch{data={error:"The private upload server returned an unexpected completion response."};}
 
-      xhr.onerror=()=>fail(new Error(`${label} could not reach FaceEvol's private upload route.`));
-      xhr.ontimeout=()=>fail(new Error(`${label} timed out while uploading privately.`));
-      xhr.onabort=()=>fail(new Error(`${label} upload was aborted.`));
+      if(!response.ok){
+        let detail=data.error||`Private upload completion HTTP ${response.status}.`;
+        if(data.details) detail+=` ${data.details}`;
+        throw new Error(detail);
+      }
 
-      swapVideoStatus.textContent=`${step} ${label} 0% · ${sizeMb} MB`;
-      xhr.send(blob);
-    });
+      if(!data || typeof data.url!=="string" || !data.url){
+        throw new Error("The private video parts were uploaded, but the final Blob URL was not returned.");
+      }
+
+      swapVideoStatus.textContent=`${step} ${label} 100% · private upload complete.`;
+      return data;
+    }catch(error){
+      if(chunkPathnames.length){
+        fetch("/api/private-upload?action=abort",{
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({uploadId,chunks:chunkPathnames})
+        }).catch(()=>{});
+      }
+      throw error;
+    }
   }
 
   function friendlyFaceSwapError(error){
@@ -1606,8 +1701,8 @@
     if(message.includes("413") || message.includes("4.5") || message.includes("private upload limit")){
       return "The prepared file is still too large for the private upload route. Please choose a shorter clip.";
     }
-    if(message.includes("compress")){
-      return "FaceEvol could not compress this clip in your browser. Please choose a shorter clip or another MP4.";
+    if(message.includes("secure part") || message.includes("joining secure parts") || message.includes("completion")){
+      return "FaceEvol could not finish the secure chunked upload. Please try again; the debug error shows the exact server step.";
     }
     if(message.includes("private-upload") || message.includes("private upload")){
       return "FaceEvol could not complete the private server upload. Please try again; the debug message will show the exact server response.";
