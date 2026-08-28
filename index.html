@@ -1768,7 +1768,13 @@
       faceSwapResultVideo.play().then(()=>faceSwapResultVideo.pause()).catch(()=>{});
     }catch(error){
       console.error("FaceEvol face swap / trim error:",error);
-      swapVideoStatus.textContent=friendlyFaceSwapError(error);
+
+      const rawError =
+        error instanceof Error
+          ? `${error.name}: ${error.message}`
+          : String(error);
+
+      swapVideoStatus.textContent=`DEBUG ERROR: ${rawError}`;
     }finally{
       startFaceSwapButton.disabled=false;
       chooseSwapVideo.disabled=false;
@@ -1781,4 +1787,4 @@
 </script>
 <!-- trigger vercel deploy -->
 </body>
-  </html>
+</html>
