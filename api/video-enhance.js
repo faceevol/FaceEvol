@@ -3,13 +3,16 @@
  * Save as: /api/video-enhance.js
  *
  * Model:
- * topazlabs/video-upscale
+ * philz1337x/crystal-video-upscaler
  *
- * FaceEvol keeps the existing private-upload + signed-URL flow.
- * The only model inputs Topaz needs are:
- * - video
- * - target_resolution
- * - target_fps
+ * Crystal is optimized for:
+ * - people
+ * - portraits
+ * - faces
+ * - natural skin detail
+ *
+ * Existing FaceEvol private Vercel Blob
+ * signed-URL flow is preserved.
  */
 
 const ALLOWED_RESOLUTIONS =
@@ -18,14 +21,28 @@ const ALLOWED_RESOLUTIONS =
     "4k"
   ]);
 
-const ALLOWED_FPS =
-  new Set([
-    30,
-    60
-  ]);
-
 const SIGNED_URL_LIFETIME_MS =
   2 * 60 * 60 * 1000;
+
+
+/*
+ * Convert the existing FaceEvol quality selector
+ * into Crystal's scale_factor.
+ *
+ * 1080p option -> 2x upscale
+ * 4K option    -> 4x upscale, capped by Crystal at 4K
+ */
+function getScaleFactor(
+  targetResolution
+) {
+  if (
+    targetResolution === "4k"
+  ) {
+    return 4;
+  }
+
+  return 2;
+}
 
 
 function cleanPathname(value) {
@@ -36,9 +53,15 @@ function cleanPathname(value) {
 
   if (
     !pathname ||
-    !pathname.startsWith("faceevol-video-") ||
-    !pathname.toLowerCase().endsWith(".mp4") ||
-    !/^[a-zA-Z0-9._/-]+$/.test(pathname)
+    !pathname.startsWith(
+      "faceevol-video-"
+    ) ||
+    !pathname
+      .toLowerCase()
+      .endsWith(".mp4") ||
+    !/^[a-zA-Z0-9._/-]+$/.test(
+      pathname
+    )
   ) {
     return null;
   }
@@ -52,14 +75,29 @@ function safeDetail(value) {
     return "";
   }
 
-  if (typeof value === "string") {
-    return value.slice(0, 2000);
+  if (
+    typeof value === "string"
+  ) {
+    return value.slice(
+      0,
+      2000
+    );
   }
 
   try {
-    return JSON.stringify(value).slice(0, 2000);
+    return JSON.stringify(
+      value
+    ).slice(
+      0,
+      2000
+    );
   } catch {
-    return String(value).slice(0, 2000);
+    return String(
+      value
+    ).slice(
+      0,
+      2000
+    );
   }
 }
 
@@ -74,17 +112,24 @@ function sendError(
     .status(status)
     .json({
       error,
-      details: safeDetail(details)
+      details:
+        safeDetail(details)
     });
 }
 
 
+/*
+ * Load Vercel Blob's
+ * signed/private URL functions.
+ */
 async function loadBlobSignedUrlFunctions() {
   let blobSdk;
 
   try {
     blobSdk =
-      await import("@vercel/blob");
+      await import(
+        "@vercel/blob"
+      );
   } catch (error) {
     throw new Error(
       `BLOB_SDK_LOAD_FAILED: ${
@@ -102,8 +147,10 @@ async function loadBlobSignedUrlFunctions() {
     blobSdk?.presignUrl;
 
   if (
-    typeof issueSignedToken !== "function" ||
-    typeof presignUrl !== "function"
+    typeof issueSignedToken !==
+      "function" ||
+    typeof presignUrl !==
+      "function"
   ) {
     const exportsFound =
       blobSdk
@@ -125,6 +172,10 @@ async function loadBlobSignedUrlFunctions() {
 }
 
 
+/*
+ * Create temporary GET-only access
+ * to the private uploaded video.
+ */
 async function createTemporaryVideoReadUrl(
   pathname
 ) {
@@ -144,7 +195,9 @@ async function createTemporaryVideoReadUrl(
     signedToken =
       await issueSignedToken({
         pathname,
-        operations: ["get"],
+        operations: [
+          "get"
+        ],
         validUntil
       });
   } catch (error) {
@@ -174,9 +227,14 @@ async function createTemporaryVideoReadUrl(
       await presignUrl(
         signedToken,
         {
-          operation: "get",
+          operation:
+            "get",
+
           pathname,
-          access: "private",
+
+          access:
+            "private",
+
           validUntil
         }
       );
@@ -195,7 +253,9 @@ async function createTemporaryVideoReadUrl(
 
   if (
     typeof url !== "string" ||
-    !url.startsWith("https://")
+    !url.startsWith(
+      "https://"
+    )
   ) {
     throw new Error(
       "BLOB_PRESIGN_FAILED: Vercel Blob returned no usable presigned URL."
@@ -226,6 +286,9 @@ async function createTemporaryVideoReadUrl(
 }
 
 
+/*
+ * Main FaceEvol endpoint.
+ */
 export default async function handler(
   req,
   res
@@ -246,14 +309,18 @@ export default async function handler(
     return res
       .status(405)
       .json({
-        error: "Method not allowed"
+        error:
+          "Method not allowed"
       });
   }
 
   const replicateToken =
-    process.env.REPLICATE_API_TOKEN;
+    process.env
+      .REPLICATE_API_TOKEN;
 
-  if (!replicateToken) {
+  if (
+    !replicateToken
+  ) {
     return res
       .status(500)
       .json({
@@ -262,17 +329,29 @@ export default async function handler(
       });
   }
 
+  /*
+   * Keep accepting the same frontend
+   * parameters so index.html does not
+   * need to change for this test.
+   *
+   * target_fps is intentionally ignored.
+   * Crystal preserves the source video
+   * instead of generating artificial FPS.
+   */
   const {
     pathname: rawPathname,
-    target_resolution,
-    target_fps
+    target_resolution
   } =
     req.body || {};
 
   const pathname =
-    cleanPathname(rawPathname);
+    cleanPathname(
+      rawPathname
+    );
 
-  if (!pathname) {
+  if (
+    !pathname
+  ) {
     return res
       .status(400)
       .json({
@@ -288,20 +367,16 @@ export default async function handler(
       ? target_resolution
       : "4k";
 
-  const requestedFps =
-    Number(target_fps);
-
-  const fps =
-    ALLOWED_FPS.has(
-      requestedFps
-    )
-      ? requestedFps
-      : 30;
+  const scaleFactor =
+    getScaleFactor(
+      resolution
+    );
 
   try {
     /*
-     * Replicate receives temporary GET-only access
-     * to this one private uploaded clip.
+     * Give Replicate temporary
+     * read-only access to this
+     * private video.
      */
     const videoUrl =
       await createTemporaryVideoReadUrl(
@@ -309,21 +384,25 @@ export default async function handler(
       );
 
     console.log(
-      "FACEVOL TOPAZ VIDEO ENHANCE INPUT READY:",
+      "FACEVOL CRYSTAL VIDEO INPUT READY:",
       pathname,
       resolution,
-      `${fps}fps`
+      `${scaleFactor}x`
     );
 
     /*
-     * Start Topaz asynchronously.
-     * No Prefer: wait header: FaceEvol already polls /api/prediction.js.
+     * Start Crystal asynchronously.
+     *
+     * FaceEvol's existing
+     * /api/prediction.js continues
+     * polling the prediction.
      */
     const response =
       await fetch(
-        "https://api.replicate.com/v1/models/topazlabs/video-upscale/predictions",
+        "https://api.replicate.com/v1/models/philz1337x/crystal-video-upscaler/predictions",
         {
-          method: "POST",
+          method:
+            "POST",
 
           headers: {
             Authorization:
@@ -333,7 +412,8 @@ export default async function handler(
               "application/json",
 
             /*
-             * 4K video processing can take several minutes.
+             * Video enhancement can
+             * take several minutes.
              */
             "Cancel-After":
               "30m"
@@ -345,11 +425,8 @@ export default async function handler(
                 video:
                   videoUrl,
 
-                target_resolution:
-                  resolution,
-
-                target_fps:
-                  fps
+                scale_factor:
+                  scaleFactor
               }
             })
         }
@@ -360,21 +437,30 @@ export default async function handler(
 
     let prediction = {};
 
-    if (responseText) {
+    if (
+      responseText
+    ) {
       try {
         prediction =
-          JSON.parse(responseText);
+          JSON.parse(
+            responseText
+          );
       } catch {
         return sendError(
           res,
-          response.status || 502,
-          "Topaz returned a non-JSON response.",
+          response.status ||
+            502,
+
+          "Crystal returned a non-JSON response.",
+
           responseText
         );
       }
     }
 
-    if (!response.ok) {
+    if (
+      !response.ok
+    ) {
       const details =
         prediction?.detail ||
         prediction?.error ||
@@ -382,62 +468,74 @@ export default async function handler(
         `Replicate HTTP ${response.status}`;
 
       console.error(
-        "FaceEvol Topaz request failed:",
+        "FaceEvol Crystal request failed:",
         response.status,
-        safeDetail(details)
+        safeDetail(
+          details
+        )
       );
 
       return sendError(
         res,
         response.status,
+
         "Video enhancement request failed.",
+
         details
       );
     }
 
     if (
       !prediction ||
-      typeof prediction !== "object"
+      typeof prediction !==
+        "object"
     ) {
       return sendError(
         res,
         502,
-        "Topaz returned an invalid prediction response.",
+
+        "Crystal returned an invalid prediction response.",
+
         prediction
       );
     }
 
-    if (!prediction.id) {
+    if (
+      !prediction.id
+    ) {
       return sendError(
         res,
         502,
-        "Topaz did not return a prediction ID.",
+
+        "Crystal did not return a prediction ID.",
+
         prediction
       );
     }
 
     console.log(
-      "FACEVOL TOPAZ ENHANCEMENT STARTED:",
+      "FACEVOL CRYSTAL ENHANCEMENT STARTED:",
       prediction.id,
       prediction.status,
       resolution,
-      `${fps}fps`
+      `${scaleFactor}x`
     );
 
     return res
       .status(200)
       .json({
-        success: true,
+        success:
+          true,
 
         model:
-          "topazlabs/video-upscale",
+          "philz1337x/crystal-video-upscaler",
 
         settings: {
           target_resolution:
             resolution,
 
-          target_fps:
-            fps
+          scale_factor:
+            scaleFactor
         },
 
         prediction
@@ -450,7 +548,7 @@ export default async function handler(
         : String(error);
 
     console.error(
-      "FaceEvol Topaz enhancement server error:",
+      "FaceEvol Crystal enhancement server error:",
       message
     );
 
@@ -462,7 +560,9 @@ export default async function handler(
       return sendError(
         res,
         500,
+
         "FaceEvol could not load the Vercel Blob SDK.",
+
         message
       );
     }
@@ -475,7 +575,9 @@ export default async function handler(
       return sendError(
         res,
         500,
+
         "The deployed Vercel Blob SDK is missing signed-URL support.",
+
         message
       );
     }
@@ -488,7 +590,9 @@ export default async function handler(
       return sendError(
         res,
         500,
+
         "FaceEvol could not authorize temporary video access.",
+
         message
       );
     }
@@ -501,7 +605,9 @@ export default async function handler(
       return sendError(
         res,
         500,
+
         "FaceEvol could not create temporary video access.",
+
         message
       );
     }
@@ -509,7 +615,9 @@ export default async function handler(
     return sendError(
       res,
       500,
-      "Could not start Topaz video enhancement.",
+
+      "Could not start Crystal video enhancement.",
+
       message
     );
   }
