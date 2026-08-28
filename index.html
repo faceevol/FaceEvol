@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- FaceEvol · AI Age Transformation + Video Face Swap · private server-upload fallback + browser clip compression · 2026-08-28 -->
+<!-- FaceEvol · AI Age Transformation + Video Face Swap · stable private chunk upload + production status polish · 2026-08-28 -->
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -145,10 +145,12 @@
       border-radius:10px;background:#090f1e;border:1px solid rgba(255,255,255,.10);box-shadow:0 10px 22px rgba(0,0,0,.28);
       transform-origin:center center;
     }
-    /* Fine-tune the two portraits whose face center sits slightly off the visual midpoint.
-       A tiny scale prevents an exposed edge while shifting the portrait. */
-    .age-preset-card[data-age="15"] .age-preset-image{transform:translateX(-2.4%) scale(1.02)}
-    .age-preset-card[data-age="50"] .age-preset-image{transform:translateX(2.4%) scale(1.02)}
+    /* Ages 15 and 50 are already centered in their source portraits.
+       Keep them at the true midpoint on desktop, tablet and mobile. */
+    .age-preset-card[data-age="15"] .age-preset-image,
+    .age-preset-card[data-age="50"] .age-preset-image{
+      transform:none;object-position:50% 50%;
+    }
     .age-preset-fallback{z-index:1}
     .age-preset-fallback{position:absolute;inset:0;display:grid;place-items:center;overflow:hidden;background:
       radial-gradient(circle at 50% 34%,rgba(255,255,255,.14),transparent 20%),
@@ -796,6 +798,25 @@
       message.includes("429") || message.includes("502") || message.includes("503") || message.includes("504");
   }
 
+  function friendlyAgeError(error){
+    const raw=error instanceof Error?error.message:String(error||"");
+    const message=raw.toLowerCase();
+
+    if(message.includes("no usable image") || message.includes("no image") || message.includes("incomplete")){
+      return "FaceEvol couldn't create a usable transformation this time. Please try again with a clear, front-facing photo in good lighting.";
+    }
+    if(message.includes("timed out") || message.includes("timeout")){
+      return "The transformation took longer than expected. Please try again.";
+    }
+    if(message.includes("failed to fetch") || message.includes("network") || message.includes("could not reach")){
+      return "We couldn't connect to FaceEvol. Please check your connection and try again.";
+    }
+    if(message.includes("read this image") || message.includes("selected photo") || message.includes("jpg") || message.includes("png") || message.includes("webp")){
+      return "We couldn't read that photo. Please try a clear JPG, PNG or WebP image.";
+    }
+    return "We couldn't complete the age transformation. Please try again.";
+  }
+
   async function pollAgePrediction(initialPrediction){
     let prediction=initialPrediction;
     if(!prediction || !prediction.id || isTerminalPredictionStatus(prediction.status)) return prediction;
@@ -804,8 +825,8 @@
     for(let poll=0;poll<maxPolls;poll++){
       const seconds=Math.round((poll*2500)/1000);
       processingMessage.textContent=seconds<8
-        ?"FaceEvol AI is creating your age transformation..."
-        :`FaceEvol AI is still working on your transformation${seconds?` · about ${seconds}s`:""}. Please keep this page open.`;
+        ?"Creating your age transformation..."
+        :"Still creating your transformation... Please keep this page open.";
 
       await wait(2500);
       const statusResponse=await fetch(`/api/prediction?id=${encodeURIComponent(prediction.id)}`,{cache:"no-store"});
@@ -822,8 +843,8 @@
 
   async function runAgePrediction(imageData,targetAge,attempt){
     processingMessage.textContent=attempt>1
-      ?"The first AI result was incomplete, so FaceEvol is retrying automatically..."
-      :"FaceEvol AI is creating your age transformation. This may take a little while.";
+      ?"FaceEvol is trying your transformation again..."
+      :"Creating your age transformation...";
 
     const response=await fetch("/api/predict",{
       method:"POST",
@@ -1063,7 +1084,7 @@
           lastError=error;
           console.warn(`FaceEvol age transformation attempt ${attempt} failed:`,error);
           if(attempt<maxAttempts && isRetryableAgeError(error)){
-            processingMessage.textContent="The AI result was incomplete. Retrying automatically once...";
+            processingMessage.textContent="FaceEvol is trying your transformation again...";
             await wait(1800);
             continue;
           }
@@ -1081,14 +1102,7 @@
     }catch(error){
       console.error("FaceEvol age transformation error:",error);
       processingMessage.textContent="";
-      const rawMessage=error instanceof Error?error.message:String(error);
-      if(/no usable image|no image/i.test(rawMessage)){
-        ageError.textContent="The AI finished without a usable image even after an automatic retry. Please try again with a clear, front-facing photo in good lighting.";
-      }else if(/timed out|timeout/i.test(rawMessage)){
-        ageError.textContent="The transformation took longer than expected. Please try again — your photo is still okay.";
-      }else{
-        ageError.textContent=rawMessage||"The age transformation could not be completed. Please try again.";
-      }
+      ageError.textContent=friendlyAgeError(error);
     }finally{
       transformButton.disabled=false;
       transformButton.textContent=`✨ Transform to Age ${ageSlider.value}`;
@@ -1102,18 +1116,40 @@
     }
 
     useAgeResultForSwap.disabled=true;
-    useAgeResultForSwap.textContent="Preparing face for Video Face Swap...";
+    useAgeResultForSwap.textContent="Preparing transformed face...";
     ageError.textContent="";
 
     try{
       const response=await fetch(latestAgeTransformOutput,{cache:"no-store"});
       if(!response.ok) throw new Error("Could not prepare the transformed face.");
-      const blob=await response.blob();
-      if(!blob||!blob.size) throw new Error("The transformed face file was empty.");
 
-      const extension=(blob.type||"").includes("png")?"png":(blob.type||"").includes("webp")?"webp":"jpg";
+      const sourceBlob=await response.blob();
+      if(!sourceBlob||!sourceBlob.size) throw new Error("The transformed face file was empty.");
+
       const transformedAge=latestAgeTransformAge??Number(ageSlider.value);
-      const transformedFile=new File([blob],`faceevol-age-${transformedAge}.${extension}`,{type:blob.type||"image/jpeg"});
+      const sourceFile=new File(
+        [sourceBlob],
+        `faceevol-age-${transformedAge}-source`,
+        {type:sourceBlob.type||"image/jpeg",lastModified:Date.now()}
+      );
+
+      /*
+       * Normalize the handoff to JPEG now. The working private face-upload route
+       * expects JPEG, so the age result enters Video Face Swap in the exact same
+       * format as a normal prepared face photo.
+       */
+      const preparedFace=await optimizeImageToBlob(sourceFile,{
+        maxDimension:1600,
+        maxBytes:TARGET_FACE_UPLOAD_BYTES,
+        quality:.92
+      });
+
+      const transformedFile=new File(
+        [preparedFace],
+        `faceevol-age-${transformedAge}.jpg`,
+        {type:"image/jpeg",lastModified:Date.now()}
+      );
+
       selectedPhoto=transformedFile;
 
       if(selectedPhotoPreviewUrl) URL.revokeObjectURL(selectedPhotoPreviewUrl);
@@ -1126,11 +1162,11 @@
       `;
 
       activateFaceSwapMode();
-      uploadStatus.textContent=`✓ Your age ${transformedAge} transformation is now the face for Video Face Swap. Choose an MP4 video below — no re-upload needed.`;
+      uploadStatus.textContent=`✓ Age ${transformedAge} face ready for Video Face Swap. Choose an MP4 video below — no re-upload needed.`;
       document.getElementById("studio").scrollIntoView({behavior:"smooth",block:"start"});
     }catch(error){
       console.error("FaceEvol age-to-swap handoff error:",error);
-      ageError.textContent="We could not pass this result into Video Face Swap automatically. Please try the transformation again.";
+      ageError.textContent="We couldn't prepare this transformed face for Video Face Swap. Please try the transformation again.";
     }finally{
       useAgeResultForSwap.disabled=false;
       useAgeResultForSwap.textContent="🎬 Use this face in Video Face Swap →";
@@ -1365,13 +1401,13 @@
 
     /*
      * If the whole selected video is already the desired clip, keep the original.
-     * We will still compress it below if it is too large for the private server route.
+     * Larger files are handled later by the existing private chunk-upload flow.
      */
     if(start<.05 && sourceVideoDuration<=MAX_TRIM_SECONDS+.05 && Math.abs(end-sourceVideoDuration)<.15){
       return file;
     }
 
-    swapVideoStatus.textContent="1/6 Preparing your selected clip...";
+    swapVideoStatus.textContent="1/6 Preparing selected clip...";
     const ffmpeg=await ensureFFmpeg();
 
     const stamp=Date.now();
@@ -1379,7 +1415,7 @@
     const outputName=`faceevol-trim-${stamp}.mp4`;
 
     try{
-      swapVideoStatus.textContent=`1/6 Trimming your selected ${duration.toFixed(1)}-second clip...`;
+      swapVideoStatus.textContent="1/6 Preparing selected clip...";
       ffmpeg.FS("writeFile",inputName,await ffmpegFetchFile(file));
 
       await ffmpeg.run(
@@ -1578,14 +1614,14 @@
     /* Small files can still use one private server request. */
     if(blob.size<=MAX_PRIVATE_UPLOAD_BYTES){
       const uploadUrl=`/api/private-upload?action=single&filename=${encodeURIComponent(pathname)}`;
-      swapVideoStatus.textContent=`${step} ${label} 0% · ${totalSizeMb} MB`;
+      swapVideoStatus.textContent=`${step} ${label} 0%`;
 
       const data=await sendRaw(
         uploadUrl,
         blob,
         (loaded,total)=>{
           const pct=Math.max(0,Math.min(100,Math.round((loaded/total)*100)));
-          swapVideoStatus.textContent=`${step} ${label} ${pct}% · ${totalSizeMb} MB`;
+          swapVideoStatus.textContent=`${step} ${label} ${pct}%`;
         },
         timeoutMs,
         blob.type||(pathname.endsWith(".mp4")?"video/mp4":"application/octet-stream")
@@ -1621,8 +1657,8 @@
           `/api/private-upload?action=chunk&uploadId=${encodeURIComponent(uploadId)}`+
           `&part=${partNumber}&total=${totalChunks}`;
 
-        swapVideoStatus.textContent=
-          `${step} ${label} · secure part ${partNumber}/${totalChunks} · ${totalSizeMb} MB`;
+        if(index===0) swapVideoStatus.textContent=`${step} ${label} 0%`;
+        console.debug(`FaceEvol secure upload part ${partNumber}/${totalChunks}`);
 
         const data=await sendRaw(
           chunkUrl,
@@ -1630,8 +1666,7 @@
           (loaded,total)=>{
             const fraction=(index+(loaded/total))/totalChunks;
             const pct=Math.max(0,Math.min(94,Math.round(fraction*94)));
-            swapVideoStatus.textContent=
-              `${step} ${label} ${pct}% · secure part ${partNumber}/${totalChunks} · ${totalSizeMb} MB`;
+            swapVideoStatus.textContent=`${step} ${label} ${pct}%`;
           },
           timeoutMs,
           "application/octet-stream"
@@ -1643,8 +1678,7 @@
         chunkPathnames.push(data.pathname);
       }
 
-      swapVideoStatus.textContent=
-        `${step} ${label} 95% · joining secure parts in private storage...`;
+      swapVideoStatus.textContent=`${step} ${label} 95% · Finalizing secure upload...`;
 
       const controller=new AbortController();
       const timer=setTimeout(()=>controller.abort(),timeoutMs);
@@ -1680,7 +1714,7 @@
         throw new Error("The private video parts were uploaded, but the final Blob URL was not returned.");
       }
 
-      swapVideoStatus.textContent=`${step} ${label} 100% · private upload complete.`;
+      swapVideoStatus.textContent=`${step} ${label} 100%`;
       return data;
     }catch(error){
       if(chunkPathnames.length){
@@ -1699,37 +1733,34 @@
     const message=raw.toLowerCase();
 
     if(message.includes("413") || message.includes("4.5") || message.includes("private upload limit")){
-      return "The prepared file is still too large for the private upload route. Please choose a shorter clip.";
+      return "The selected clip is too large to upload securely. Please choose a shorter section and try again.";
     }
-    if(message.includes("secure part") || message.includes("joining secure parts") || message.includes("completion")){
-      return "FaceEvol could not finish the secure chunked upload. Please try again; the debug error shows the exact server step.";
-    }
-    if(message.includes("private-upload") || message.includes("private upload")){
-      return "FaceEvol could not complete the private server upload. Please try again; the debug message will show the exact server response.";
+    if(message.includes("secure part") || message.includes("joining secure parts") || message.includes("completion") || message.includes("private-upload") || message.includes("private upload")){
+      return "We couldn't finish the secure upload. Please try again. If it happens again, choose a shorter clip.";
     }
     if(message.includes("failed to fetch") || message.includes("network") || message.includes("internet") || message.includes("could not reach")){
-      return "We couldn’t connect to FaceEvol. Please check your internet connection and try again.";
+      return "We couldn't connect to FaceEvol. Please check your internet connection and try again.";
     }
     if(message.includes("300 mb") || message.includes("too large") || message.includes("request was too large")){
       return "This video is too large. Please choose an MP4 smaller than 300 MB.";
     }
     if(message.includes("mp4") || message.includes("video duration") || message.includes("could not read the video")){
-      return "We couldn’t read this video. Please try another MP4 file.";
+      return "We couldn't read this video. Please try another MP4 file.";
     }
     if(message.includes("trimmer") || message.includes("ffmpeg") || message.includes("selected clip could not be created")){
-      return "We couldn’t prepare the selected clip. Please refresh the page and try again, or choose a different MP4.";
+      return "We couldn't prepare the selected clip. Please refresh the page and try again, or choose a different MP4.";
     }
     if(message.includes("upload timed out") || message.includes("timed out while uploading privately") || message.includes("upload was aborted")){
-      return "The private upload timed out before the AI started. Please try again, or choose a shorter clip.";
+      return "The secure upload took too long. Please try again, or choose a shorter clip.";
     }
     if(message.includes("too long") || message.includes("timed out")){
-      return "FaceEvol temporarily lost the status connection. Your AI job may still be processing, so please try checking again.";
+      return "FaceEvol temporarily lost the processing connection. Please try again.";
     }
     if(message.includes("face swap failed") || message.includes("prediction") || message.includes("no output video")){
-      return "FaceEvol couldn’t complete this face swap. Please try again with a clear face photo or a different video.";
+      return "FaceEvol couldn't complete this face swap. Please try again with a clear face photo or a different video.";
     }
 
-    return "Something went wrong while creating your face swap. Please try again. If it happens again, use the debug error to identify the exact step.";
+    return "Something went wrong while creating your video. Please try again.";
   }
 
   function activateFaceSwapMode(){
@@ -1924,7 +1955,7 @@
         trimEnd
       );
 
-      swapVideoStatus.textContent="2/6 Preparing your face photo...";
+      swapVideoStatus.textContent="2/6 Preparing your face...";
       startFaceSwapButton.textContent="Preparing face...";
 
       const optimizedFace=await optimizeImageToBlob(
@@ -1942,7 +1973,7 @@
         videoForUpload,
         {
           step:"3/6",
-          label:`Uploading your ${(trimEnd-trimStart).toFixed(1)}-second clip privately...`,
+          label:"Uploading video securely...",
           timeoutMs:180000
         }
       );
@@ -1953,7 +1984,7 @@
         optimizedFace,
         {
           step:"4/6",
-          label:"Uploading your face photo privately...",
+          label:"Uploading face securely...",
           timeoutMs:120000
         }
       );
@@ -1982,11 +2013,11 @@
         const elapsedSeconds=Math.floor((Date.now()-pollingStartedAt)/1000);
 
         if(elapsedSeconds<120){
-          swapVideoStatus.textContent="6/6 FaceEvol AI is processing your video. This can take a little while...";
+          swapVideoStatus.textContent="6/6 Creating your video...";
         }else if(elapsedSeconds<300){
-          swapVideoStatus.textContent="6/6 Still working — the AI needs a little more time. Keep this page open.";
+          swapVideoStatus.textContent="6/6 Still creating your video... Please keep this page open.";
         }else{
-          swapVideoStatus.textContent="6/6 Still working — some videos take several minutes. Your face swap is still processing.";
+          swapVideoStatus.textContent="6/6 Still creating your video... This one is taking a little longer.";
         }
 
         await new Promise(resolve=>setTimeout(resolve,3000));
@@ -2004,7 +2035,7 @@
 
           if(consecutiveStatusErrors>=5) throw statusError;
 
-          swapVideoStatus.textContent="6/6 FaceEvol is still working. Reconnecting to the status check...";
+          swapVideoStatus.textContent="6/6 Creating your video... Reconnecting securely.";
           await new Promise(resolve=>setTimeout(resolve,3000));
         }
       }
@@ -2028,17 +2059,11 @@
 
       await loadStableResultVideo(output);
 
-      swapVideoStatus.textContent="✓ Face swap complete — your video is ready to preview or download.";
+      swapVideoStatus.textContent="✓ Your FaceEvol video is ready.";
       faceSwapResultVideo.play().then(()=>faceSwapResultVideo.pause()).catch(()=>{});
     }catch(error){
       console.error("FaceEvol face swap / trim error:",error);
-
-      const rawError =
-        error instanceof Error
-          ? `${error.name}: ${error.message}`
-          : String(error);
-
-      swapVideoStatus.textContent=`DEBUG ERROR: ${rawError}`;
+      swapVideoStatus.textContent=`⚠ ${friendlyFaceSwapError(error)}`;
     }finally{
       startFaceSwapButton.disabled=false;
       chooseSwapVideo.disabled=false;
