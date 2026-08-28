@@ -38,7 +38,7 @@ export default async function handler(req, res) {
   }
 
   /*
-   * Validate target age
+   * Validate age
    */
   if (
     !Number.isFinite(age) ||
@@ -52,8 +52,8 @@ export default async function handler(req, res) {
   }
 
   /*
-   * Keep upload protection from
-   * the previous implementation.
+   * Protect the server from
+   * unnecessarily large requests.
    */
   if (image.length > 11_000_000) {
     return res.status(413).json({
@@ -63,130 +63,189 @@ export default async function handler(req, res) {
   }
 
   /*
-   * Age-specific instructions.
+   * IMPORTANT:
    *
-   * The goal is natural aging rather
-   * than exaggerated AI aging.
+   * Qwen is being instructed to perform
+   * a SURGICAL AGE EDIT, not recreate
+   * the portrait.
    */
-  let ageDescription = "";
+  const prompt = `
+Perform a minimal, photorealistic AGE EDIT on the person
+in this exact photograph.
 
-  if (age <= 8) {
-    ageDescription = `
-Create a believable childhood version of this same person
-at approximately ${age} years old.
+Target apparent age: approximately ${age} years old.
 
-Use natural child facial proportions and smooth healthy skin.
-Do not make the face doll-like, cartoonish, distorted,
-unnaturally round, or artificial.
+THIS IS THE SAME PERSON BEFORE AND AFTER.
+
+The person's identity is LOCKED.
+
+ABSOLUTELY PRESERVE:
+- biological sex and gender presentation
+- facial identity
+- ethnicity
+- skin tone
+- eye shape
+- eye color
+- eyebrow shape
+- nose shape
+- nostril shape
+- mouth shape
+- lip shape
+- jawline identity
+- cheekbone identity
+- facial proportions
+- recognizable bone structure
+- hairstyle
+- hairline except for subtle natural age-related changes
+- expression
+- gaze direction
+- head orientation
+- pose
+- clothing
+- body
+- camera position
+- crop
+- background
+- lighting
+
+DO NOT turn a male into a female.
+DO NOT turn a female into a male.
+DO NOT feminize a male face.
+DO NOT masculinize a female face.
+
+DO NOT replace the person with another person.
+DO NOT redesign the face.
+DO NOT beautify the face.
+DO NOT change facial attractiveness.
+DO NOT change ethnicity.
+DO NOT change hairstyle unless a tiny age-related adjustment
+is genuinely necessary.
+
+Only modify visible characteristics that naturally communicate
+the requested age.
+
+`;
+
+  /*
+   * More precise instructions depending
+   * on the requested age.
+   */
+  let ageInstruction = "";
+
+  if (age <= 10) {
+    ageInstruction = `
+Create a believable child version of this SAME person.
+
+Use natural child facial development:
+slightly softer skin,
+age-appropriate facial proportions,
+and realistic youthful features.
+
+Do not make the child doll-like.
+Do not enlarge the eyes unnaturally.
+Do not create a completely new childhood face.
 `;
   } else if (age <= 17) {
-    ageDescription = `
-Make this same person look approximately ${age} years old.
+    ageInstruction = `
+Create a believable teenage version of this SAME person.
 
-Create a believable teenage version of the person.
-Use natural youthful facial proportions and healthy skin.
-Avoid exaggerated baby-face effects.
+Use subtle youthful facial development,
+healthy natural skin,
+and age-appropriate proportions.
+
+Do not create a different teenager.
+The original person's identity must remain obvious.
 `;
   } else if (age <= 35) {
-    ageDescription = `
-Make this same person look approximately ${age} years old.
+    ageInstruction = `
+Create a realistic version of this SAME person
+at approximately ${age} years old.
 
-Keep the appearance realistic and natural.
-Use healthy adult skin and age-appropriate facial details.
-Do not unnecessarily change the person's appearance.
+Make only very subtle age-related adjustments.
+
+Do not unnecessarily alter any facial features.
 `;
   } else if (age <= 55) {
-    ageDescription = `
-Make this same person look approximately ${age} years old.
+    ageInstruction = `
+Create a natural middle-aged version of this SAME person.
 
-Apply subtle and realistic middle-age changes only.
-Use natural skin texture and very restrained age lines.
-Do not exaggerate wrinkles, sagging, discoloration,
-or facial structure changes.
+Use restrained realistic age changes:
+subtle skin texture,
+very mild expression lines,
+and natural facial maturity.
+
+Do not exaggerate wrinkles.
+Do not dramatically change facial shape.
 `;
   } else {
-    ageDescription = `
-Make this same person look approximately ${age} years old.
+    ageInstruction = `
+Create a healthy, realistic older version of this SAME person.
 
-Create healthy, natural and realistic aging.
-Add only believable age-related details such as subtle
-skin texture, age lines and modest maturity of facial features.
+Add restrained natural aging:
+realistic fine lines,
+subtle skin texture,
+mild age-related facial maturity,
+and age-appropriate hair changes.
 
-The person should look healthy and approachable.
-Do not create excessive wrinkles, extreme sagging,
-sun damage, sickness, skeletal features,
-dark eye sockets, frightening features,
-or exaggerated old-age effects.
+The person should look healthy,
+normal,
+recognizable,
+and approachable.
+
+Avoid:
+extreme wrinkles,
+extreme sagging,
+sunken cheeks,
+dark eye sockets,
+skeletal features,
+diseased-looking skin,
+unnatural discoloration,
+or frightening aging effects.
 `;
   }
 
-  const prompt = `
-Edit the provided portrait so the person appears
-approximately ${age} years old.
+  const finalPrompt =
+    `${prompt}
 
-${ageDescription}
+${ageInstruction}
 
-CRITICAL IDENTITY REQUIREMENTS:
+CRITICAL OUTPUT REQUIREMENTS:
 
-Keep this unmistakably the SAME PERSON.
+Treat the original photograph as the base image.
 
-Preserve the person's:
-- core facial identity
-- eye shape and eye color
-- nose identity
-- mouth and lip shape
-- jaw and recognizable bone structure
-- ethnicity and natural skin tone
-- hairstyle and hair direction where age appropriate
-- expression
-- head position
-- pose
-- camera angle
-- framing
-- lighting
-- clothing
-- background
+EDIT it.
+DO NOT regenerate it from scratch.
 
-Only make the minimum facial and hair changes
-necessary to represent the requested age.
+Change ONLY age-related facial details.
 
-The result must look like a genuine high-quality photograph,
-not an AI-generated portrait.
+Everything unrelated to age should remain
+as close as possible to the original pixels.
 
-Maintain realistic skin pores and fine facial detail.
-Keep both eyes sharp and symmetrical.
-Keep facial anatomy natural.
+The final result must look like a real photograph
+of the SAME PERSON at age ${age}.
 
-Do not blur or soften the face.
-Do not over-smooth the skin.
-Do not beautify or redesign the person.
-Do not change gender presentation.
-Do not change facial identity.
-Do not change the background.
-Do not add objects.
-Do not add makeup unless it already exists.
-Do not create plastic-looking skin.
-Do not create distorted teeth.
-Do not create warped ears.
-Do not create asymmetrical eyes.
-Do not create uncanny or frightening features.
-
-The final image should be sharp,
-photorealistic, natural,
-healthy-looking and identity-preserving.
+Natural skin texture.
+Sharp eyes.
+Sharp facial details.
+No blur.
+No artificial smoothness.
+No plastic skin.
+No AI-looking face.
+No facial distortion.
+No gender change.
+No identity change.
 `;
 
   try {
     /*
-     * FLUX.1 Kontext Pro
+     * Qwen Image Edit 2511
      *
-     * Official Replicate model.
-     * Using the official-model endpoint means
-     * we don't need to hard-code a version hash.
+     * Current Replicate official image-edit model
+     * with improved identity consistency.
      */
     const response =
       await fetch(
-        "https://api.replicate.com/v1/models/black-forest-labs/flux-kontext-pro/predictions",
+        "https://api.replicate.com/v1/models/qwen/qwen-image-edit-2511/predictions",
         {
           method: "POST",
 
@@ -198,37 +257,48 @@ healthy-looking and identity-preserving.
               "application/json",
 
             /*
-             * Wait briefly for fast predictions.
-             * If it takes longer, Replicate returns
-             * the prediction ID and your existing
-             * polling flow can continue.
+             * Qwen is usually fast.
+             * Wait up to 60 seconds before
+             * falling back to the existing
+             * prediction polling flow.
              */
-            Prefer: "wait=60"
+            Prefer:
+              "wait=60"
           },
 
           body: JSON.stringify({
             input: {
-              prompt,
+              /*
+               * Qwen 2511 accepts an array
+               * of reference images.
+               */
+              image: [
+                image
+              ],
 
-              input_image:
-                image,
+              prompt:
+                finalPrompt,
+
+              /*
+               * Disable speed optimization.
+               * For FaceEvol we care more
+               * about quality and consistency.
+               */
+              go_fast:
+                false,
 
               aspect_ratio:
                 "match_input_image",
 
+              /*
+               * PNG avoids lossy compression
+               * artifacts around facial details.
+               */
               output_format:
                 "png",
 
-              safety_tolerance:
-                2,
-
-              /*
-               * Keep this disabled so the model
-               * doesn't creatively rewrite our
-               * carefully controlled age prompt.
-               */
-              prompt_upsampling:
-                false
+              output_quality:
+                100
             }
           })
         }
@@ -245,7 +315,7 @@ healthy-looking and identity-preserving.
 
     if (!response.ok) {
       console.error(
-        "Age transformation Replicate error:",
+        "AGE QWEN ERROR:",
         prediction
       );
 
@@ -268,23 +338,25 @@ healthy-looking and identity-preserving.
     }
 
     console.log(
-      "AGE MODEL:",
-      "black-forest-labs/flux-kontext-pro"
+      "FACEVOL AGE MODEL:",
+      "qwen/qwen-image-edit-2511"
     );
 
     console.log(
-      "AGE TARGET:",
+      "FACEVOL TARGET AGE:",
       age
     );
 
     console.log(
-      "AGE PREDICTION ID:",
-      prediction.id
+      "FACEVOL AGE STATUS:",
+      prediction.status
     );
 
     console.log(
-      "AGE PREDICTION STATUS:",
-      prediction.status
+      "FACEVOL AGE OUTPUT:",
+      JSON.stringify(
+        prediction.output
+      )
     );
 
     return res.status(200).json({
@@ -294,7 +366,7 @@ healthy-looking and identity-preserving.
 
   } catch (error) {
     console.error(
-      "Age transformation server error:",
+      "AGE TRANSFORMATION ERROR:",
       error
     );
 
