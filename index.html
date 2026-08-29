@@ -621,6 +621,31 @@
       .footer-main,.footer-bottom{justify-content:center;text-align:center}.swap-preview{max-height:220px}
       .photo-swap-grid{grid-template-columns:1fr}
     }
+
+    /* Professional polish: clearer hierarchy, calmer cards, stronger focus states. */
+    html{scroll-behavior:smooth}
+    .hero{position:relative;overflow:hidden;padding-top:96px}
+    .hero::before{content:"";position:absolute;left:50%;top:-190px;width:820px;height:420px;transform:translateX(-50%);pointer-events:none;background:radial-gradient(circle,rgba(78,70,229,.16),rgba(14,165,233,.05) 42%,transparent 70%);filter:blur(12px)}
+    .hero>.container{position:relative;z-index:1}
+    .hero h1{max-width:940px;font-size:clamp(42px,6vw,70px);letter-spacing:-2.6px}
+    .hero-description{max-width:700px}
+    .hero-actions .button{min-width:168px}
+    .hero-trust span{padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.055)}
+    .studio{border-color:rgba(125,211,252,.12);box-shadow:0 30px 90px rgba(0,0,0,.44),0 0 0 1px rgba(255,255,255,.015) inset}
+    .tool-option{transition:background .18s ease,border-color .18s ease,color .18s ease,transform .18s ease}
+    .tool-option:hover{background:rgba(255,255,255,.035);color:#dce8f8;transform:translateY(-1px)}
+    .feature-grid{gap:20px}
+    .feature-card.core{grid-column:span 4}
+    .feature-card{position:relative;overflow:hidden;background:linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,255,255,.018));border-color:rgba(255,255,255,.075);box-shadow:0 18px 45px rgba(0,0,0,.12)}
+    .feature-card::after{content:"";position:absolute;inset:auto -45px -70px auto;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle,rgba(56,189,248,.08),transparent 68%);pointer-events:none}
+    .feature-card h3{font-size:19px}
+    .feature-tag{padding:6px 9px;border-radius:999px;background:rgba(125,211,252,.045);border:1px solid rgba(125,211,252,.1);color:#9bb7c9;letter-spacing:.45px}
+    .step-card,.privacy-card,.price-card{box-shadow:0 16px 42px rgba(0,0,0,.10)}
+    .future-button{opacity:.58;pointer-events:none;user-select:none}
+    a:focus-visible,button:focus-visible,select:focus-visible,textarea:focus-visible,input:focus-visible,.tool-option:focus-visible{outline:2px solid #7dd3fc;outline-offset:3px}
+    .button:active{transform:translateY(0)}
+    @media(max-width:1000px){.feature-card.core{grid-column:span 6}}
+    @media(max-width:650px){.hero{padding-top:64px}.hero h1{font-size:clamp(38px,11vw,50px)}.hero-actions .button{min-width:0}.feature-card.core{grid-column:span 12}}
   </style>
 </head>
 
@@ -647,14 +672,12 @@
       <p class="hero-description">Transform your age, swap faces, bring a photo to life, and create high-quality AI results in seconds.</p>
       <div class="hero-actions">
         <a href="#studio" class="button button-primary" id="heroAgeButton">✨ Start Creating</a>
-        <a href="#studio" class="button button-secondary" id="heroFaceSwapButton">🖼️ Photo Face Swap</a>
-        <a href="#studio" class="button button-secondary" id="heroPhotoToVideoButton">🎞️ Photo to Video</a>
-        <a href="#studio" class="button button-secondary" id="heroVideoFaceSwapButton">🎬 Video Face Swap</a>
+        <a href="#features" class="button button-secondary">Explore All Tools</a>
       </div>
       <div class="hero-trust" aria-label="FaceEvol benefits">
-        <span>🔒 Private</span>
-        <span>⚡ Fast</span>
-        <span>✨ High quality</span>
+        <span>🔒 Privacy focused</span>
+        <span>🧰 6 AI tools</span>
+        <span>⬇️ Downloadable results</span>
       </div>
 
       <div class="studio-wrap" id="studio">
@@ -668,7 +691,7 @@
               </div>
               <div class="tool-option" id="photoFaceSwapOption">
                 <div class="tool-icon">🖼️</div>
-                <div><div class="tool-name">Photo Face Swap</div><span class="tool-sub">Live beta</span></div>
+                <div><div class="tool-name">Photo Face Swap</div><span class="tool-sub">Photo → photo</span></div>
               </div>
               <div class="tool-option" id="photoToVideoOption">
                 <div class="tool-icon">🎞️</div>
@@ -676,7 +699,7 @@
               </div>
               <div class="tool-option" id="faceSwapOption">
                 <div class="tool-icon">🎬</div>
-                <div><div class="tool-name">Video Face Swap</div><span class="tool-sub">Live beta</span></div>
+                <div><div class="tool-name">Video Face Swap</div><span class="tool-sub">Up to 20 sec</span></div>
               </div>
               <div class="tool-option" id="photoEnhanceOption">
                 <div class="tool-icon">✨</div>
@@ -706,50 +729,44 @@
     </div>
   </section>
 
-  <div class="proof">
-    <div class="container">
-      <div class="proof-label">Six AI creation tools in one simple studio</div>
-      <div class="proof-items"><span>🕒 Age Transformation</span><span>🖼️ Photo Face Swap</span><span>🎞️ Photo to Video</span><span>🎬 Video Face Swap</span><span>✨ Photo Enhance</span><span>🎥 Video Enhance</span><span>🔒 Privacy-Focused Processing</span></div>
-    </div>
-  </div>
-
   <section id="features">
     <div class="container">
       <div class="section-heading">
         <span class="section-eyebrow">Six Tools. One Studio.</span>
-        <h2>Transform a face. <span class="gradient-text">Bring a photo to life.</span></h2>
-        <p>FaceEvol brings age transformation, photo face swap, prompt-based photo animation, video face swap, photo enhancement and AI video enhancement into one clean creation experience.</p>
+        <h2>Everything you need to <span class="gradient-text">transform, animate and enhance.</span></h2>
+        <p>Choose the tool you need without leaving the studio. Each workflow is designed to stay simple from upload to finished result.</p>
       </div>
       <div class="feature-grid">
         <div class="feature-card core">
           <div class="feature-icon">🕒</div><h3>Age Transformation</h3>
-          <p>Choose age 5, 15, 30, 50 or 75, or use the 0–100 slider. Explore the preset examples before you upload.</p>
-          <span class="feature-tag"><span class="beta-pill">Beta</span> AGE 0 → 100</span>
+          <p>Explore younger or older versions of a face with five visual presets or any custom age from 0 to 100.</p>
+          <span class="feature-tag">AGE 0 → 100</span>
         </div>
         <div class="feature-card core">
           <div class="feature-icon">🖼️</div><h3>Photo Face Swap</h3>
-          <p>Choose a clear source face and a target photo, then create a realistic face swap with a simple photo-to-photo workflow.</p>
-          <span class="feature-tag"><span class="live-pill">Live Beta</span> PHOTO</span>
+          <p>Choose a source face and a target photo, then create a natural-looking photo face swap in a few steps.</p>
+          <span class="feature-tag">PHOTO → PHOTO</span>
         </div>
         <div class="feature-card core">
           <div class="feature-icon">🎞️</div><h3>Photo to Video</h3>
-          <p>Upload a photo, describe the motion you want, and turn the still image into a short AI-generated video.</p>
-          <span class="feature-tag"><span class="live-pill">Live Beta</span> IMAGE → VIDEO</span>
+          <p>Upload a still photo, describe the motion you want, and turn it into a short AI-generated video.</p>
+          <span class="feature-tag">IMAGE → VIDEO</span>
         </div>
         <div class="feature-card core">
           <div class="feature-icon">🎬</div><h3>Video Face Swap</h3>
-          <p>Upload a clear source face, then select up to 20 seconds of an MP4 video for your face swap.</p>
-          <span class="feature-tag"><span class="live-pill">Live Beta</span> VIDEO</span>
+          <p>Use a clear source face and select up to 20 seconds of an MP4 video for your face swap.</p>
+          <span class="feature-tag">VIDEO</span>
         </div>
         <div class="feature-card core">
           <div class="feature-icon">✨</div><h3>Photo Enhance</h3>
-          <p>Make a photo clearer, sharper and higher resolution while keeping the result close to the original image.</p>
-          <span class="feature-tag"><span class="live-pill">Live Beta</span> 2X · 4X</span>
+          <p>Restore detail and improve clarity while keeping faces natural, with 2× and 4× enhancement options.</p>
+          <span class="feature-tag">2× · 4×</span>
         </div>
-        <div class="feature-card small"><div class="feature-icon">⬇️</div><h3>Easy Downloads</h3><p>Save your image results, generated videos and enhanced videos directly to your device when they are ready.</p><span class="feature-tag"><span class="beta-pill">Built In</span></span></div>
-        <div class="feature-card small"><div class="feature-icon">✨</div><h3>HD &amp; 4K Video Enhancement</h3><p>Enhance clarity and upscale a short MP4 to 1080p or 4K with optional 30 or 60 FPS output.</p><span class="feature-tag"><span class="live-pill">Live Beta</span> VIDEO</span></div>
-        <div class="feature-card small"><div class="feature-icon">👥</div><h3>Multiple Faces</h3><p>Swap more than one person in the same video with dedicated face selection.</p><span class="feature-tag"><span class="soon-pill">Coming Soon</span></span></div>
-        <div class="feature-card small"><div class="feature-icon">🚀</div><h3>Longer Videos</h3><p>Support for longer clips will expand as processing speed and cost are optimized.</p><span class="feature-tag"><span class="soon-pill">Coming Soon</span></span></div>
+        <div class="feature-card core">
+          <div class="feature-icon">🎥</div><h3>Video Enhance</h3>
+          <p>Enhance a selected short video clip and export at higher resolution with flexible frame-rate options.</p>
+          <span class="feature-tag">1080P · 4K</span>
+        </div>
       </div>
     </div>
   </section>
@@ -762,8 +779,8 @@
         <p>Choose the FaceEvol tool you want, create your result, and save it when you are finished.</p>
       </div>
       <div class="steps">
-        <div class="step-card"><div class="step-number">1</div><h3>Choose your face</h3><p>Use a clear, front-facing photo with the full face visible and good lighting for the most reliable results.</p></div>
-        <div class="step-card"><div class="step-number">2</div><h3>Choose what to create</h3><p>Transform an age, swap a face, animate a still photo, enhance a photo, or improve an existing video.</p></div>
+        <div class="step-card"><div class="step-number">1</div><h3>Choose your file</h3><p>Upload the photo or video you want to work with. Clear, well-lit source material gives the best results.</p></div>
+        <div class="step-card"><div class="step-number">2</div><h3>Choose a tool</h3><p>Transform an age, swap a face, animate a photo, or enhance an existing image or video.</p></div>
         <div class="step-card"><div class="step-number">3</div><h3>Create &amp; download</h3><p>Generate your result, preview or compare it on the page, then download the finished image or video directly to your device.</p></div>
       </div>
     </div>
@@ -810,9 +827,9 @@
   <section id="pricing">
     <div class="container">
       <div class="section-heading">
-        <span class="section-eyebrow">Beta Access</span>
-        <h2>Create with the core. <span class="gradient-text">Grow into higher quality.</span></h2>
-        <p>FaceEvol is still in beta. Age transformation, photo face swap, Photo to Video, video face swap, photo enhancement and video enhancement form the current creation toolkit, with expanded limits and additional tools planned next.</p>
+        <span class="section-eyebrow">Access</span>
+        <h2>Start with the beta. <span class="gradient-text">More options are coming.</span></h2>
+        <p>The current FaceEvol beta is free to explore. Future plans may add higher limits, faster processing and expanded quality options.</p>
       </div>
       <div class="pricing-grid">
         <div class="price-card featured">
@@ -825,13 +842,13 @@
           <div class="price-name">Creator</div><div class="coming-soon">Coming Soon</div>
           <p class="price-description">More processing capacity and higher-quality options for frequent creators.</p>
           <ul class="price-features"><li>✓ More creations</li><li>✓ HD enhancement options</li><li>✓ Faster processing options</li><li>✓ Expanded video limits</li></ul>
-          <a href="#studio" class="button button-secondary">Try Beta</a>
+          <span class="button button-secondary future-button" aria-disabled="true">Coming Soon</span>
         </div>
         <div class="price-card">
           <div class="price-name">Pro</div><div class="coming-soon">Coming Soon</div>
           <p class="price-description">Advanced quality and expanded tools for power users.</p>
           <ul class="price-features"><li>✓ Higher usage limits</li><li>✓ 4K enhancement options</li><li>✓ Longer videos</li><li>✓ Advanced enhancement</li></ul>
-          <a href="#studio" class="button button-secondary">Try Beta</a>
+          <span class="button button-secondary future-button" aria-disabled="true">Coming Soon</span>
         </div>
       </div>
     </div>
@@ -862,7 +879,7 @@
       <div class="cta-box">
         <div class="badge">✨ FaceEvol AI Studio</div>
         <h2>Transform your age.<br><span class="gradient-text">Swap a face. Bring a photo to life.</span></h2>
-        <p>Explore age transformation, photo face swap, Photo to Video, Video Face Swap, Photo Enhance or Video Enhance from one simple studio.</p>
+        <p>Choose a tool, create your result, and download it — all from one simple studio.</p>
         <a href="#studio" class="button button-primary" id="ctaStartButton">Start Creating →</a>
       </div>
     </div>
@@ -1086,9 +1103,6 @@
   const ageOption = document.getElementById("ageOption");
   const ctaStartButton = document.getElementById("ctaStartButton");
   const heroAgeButton = document.getElementById("heroAgeButton");
-  const heroFaceSwapButton = document.getElementById("heroFaceSwapButton");
-  const heroPhotoToVideoButton = document.getElementById("heroPhotoToVideoButton");
-  const heroVideoFaceSwapButton = document.getElementById("heroVideoFaceSwapButton");
 
   let selectedPhoto = null;
   let selectedSwapVideo = null;
@@ -4597,18 +4611,6 @@
 
   heroAgeButton.addEventListener("click",function(){
     activateAgeMode();
-  });
-
-  heroFaceSwapButton.addEventListener("click",function(){
-    activatePhotoFaceSwapMode();
-  });
-
-  heroPhotoToVideoButton.addEventListener("click",function(){
-    activatePhotoToVideoMode();
-  });
-
-  heroVideoFaceSwapButton.addEventListener("click",function(){
-    activateFaceSwapMode();
   });
 
   chooseSwapVideo.addEventListener("click",()=>swapVideoUpload.click());
