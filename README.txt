@@ -1,8 +1,7 @@
-FACEVOL FAVICON UPDATE
+FaceEvol favicon replacement
 
-Upload/replace ALL files from this bundle in the ROOT of your FaceEvol project:
+Upload these files to the ROOT of the FaceEvol project, replacing files with the same names:
 
-index.html
 favicon.ico
 favicon.png
 favicon-16x16.png
@@ -13,9 +12,9 @@ android-chrome-192x192.png
 android-chrome-512x512.png
 site.webmanifest
 
-Important:
-- Keep your existing a.png. This update does NOT change the visible FaceEvol header logo.
-- These files only change the browser tab / home-screen icon.
-- Deploy after uploading all files together.
-- Safari can cache favicons. Close every FaceEvol tab, then reopen faceevol.com.
-- If Safari still shows the old icon, clear website data for faceevol.com or test in a private tab.
+No HTML change is required if your current index.html already points to these filenames.
+
+After deployment on Safari/iPad:
+1. Close every FaceEvol Safari tab.
+2. Force-quit Safari.
+3. Reopen https://www.faceevol.com/
