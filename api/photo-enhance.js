@@ -3,16 +3,19 @@
  * Save as: /api/photo-enhance.js
  *
  * Model:
- * nightmareai/real-esrgan
+ * sczhou/codeformer
  *
- * Real-ESRGAN:
- * - Upscales the complete photo
- * - GFPGAN face enhancement enabled
- * - Supports FaceEvol 2x / 4x options
+ * Purpose:
+ * - Restore blurry / low-quality facial detail
+ * - Enhance the background
+ * - Upscale to 2x or 4x
  *
- * Only ONE Photo Enhance API file is required.
+ * Only ONE Photo Enhance API file is needed.
  * Existing /api/prediction.js is reused for polling.
  */
+
+const CODEFORMER_VERSION =
+  "sczhou/codeformer:7de2ea26c616d5bf2245ad0d5e24f0ff9a6204578a5c876db53142edd9d2cd56";
 
 const MAX_IMAGE_DATA_URI_CHARS = 3_500_000;
 
@@ -27,13 +30,13 @@ function safeDetail(value) {
   if (!value) return "";
 
   if (typeof value === "string") {
-    return value.slice(0, 1500);
+    return value.slice(0, 1800);
   }
 
   try {
-    return JSON.stringify(value).slice(0, 1500);
+    return JSON.stringify(value).slice(0, 1800);
   } catch {
-    return String(value).slice(0, 1500);
+    return String(value).slice(0, 1800);
   }
 }
 
@@ -60,14 +63,8 @@ function normalizeScale(value) {
 }
 
 export default async function handler(req, res) {
-  /*
-   * Never cache user photo enhancement requests.
-   */
   res.setHeader("Cache-Control", "no-store");
 
-  /*
-   * POST only.
-   */
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
 
@@ -76,9 +73,6 @@ export default async function handler(req, res) {
     });
   }
 
-  /*
-   * Existing Replicate token from Vercel Environment Variables.
-   */
   const token = process.env.REPLICATE_API_TOKEN;
 
   if (!token) {
@@ -103,8 +97,7 @@ export default async function handler(req, res) {
   }
 
   /*
-   * Protect the Vercel function from excessively large
-   * Base64 request bodies.
+   * Keep the Base64 request inside a safe size.
    */
   if (image.length > MAX_IMAGE_DATA_URI_CHARS) {
     return res.status(413).json({
@@ -113,14 +106,6 @@ export default async function handler(req, res) {
     });
   }
 
-  /*
-   * Convert FaceEvol's frontend value into
-   * Real-ESRGAN's numeric scale value.
-   *
-   * Frontend:
-   * 2 / 2x -> 2
-   * 4 / 4x -> 4
-   */
   const scale = normalizeScale(scale_factor);
 
   if (!scale) {
@@ -131,14 +116,8 @@ export default async function handler(req, res) {
   }
 
   try {
-    /*
-     * Start Real-ESRGAN.
-     *
-     * Official Replicate endpoint:
-     * nightmareai/real-esrgan
-     */
     const response = await fetch(
-      "https://api.replicate.com/v1/models/nightmareai/real-esrgan/predictions",
+      "https://api.replicate.com/v1/predictions",
       {
         method: "POST",
 
@@ -147,44 +126,51 @@ export default async function handler(req, res) {
           "Content-Type": "application/json",
 
           /*
-           * Wait up to 60 seconds for a synchronous result.
-           * If processing takes longer, Replicate returns the
-           * prediction and FaceEvol continues polling through
-           * the existing /api/prediction.js endpoint.
+           * CodeFormer normally runs quickly.
+           * Wait when possible so FaceEvol can display
+           * the result without unnecessary polling.
            */
           Prefer: "wait=60",
 
           /*
-           * Prevent abandoned jobs from running indefinitely.
+           * Allow enough time for 4x photos.
            */
           "Cancel-After": "5m"
         },
 
         body: JSON.stringify({
+          version: CODEFORMER_VERSION,
+
           input: {
-            /*
-             * High-quality JPEG data URI prepared
-             * by the FaceEvol frontend.
-             */
             image,
 
             /*
-             * Actual Real-ESRGAN upscale factor.
+             * 2x or 4x final output.
              */
-            scale,
+            upscale: scale,
+
+            /*
+             * Upscale restored facial details.
+             */
+            face_upsample: true,
 
             /*
              * IMPORTANT:
-             *
-             * Enable GFPGAN face restoration.
-             *
-             * This is the major difference from the
-             * previous simple upscale tests.
-             *
-             * It actively reconstructs facial details
-             * instead of only increasing dimensions.
+             * CodeFormer uses Real-ESRGAN for the rest
+             * of the image/background when enabled.
              */
-            face_enhance: true
+            background_enhance: true,
+
+            /*
+             * CodeFormer:
+             *
+             * Lower value = stronger reconstruction
+             * Higher value = closer to original identity
+             *
+             * 0.6 gives a visible improvement while
+             * still protecting the person's identity.
+             */
+            codeformer_fidelity: 0.6
           }
         })
       }
@@ -199,7 +185,7 @@ export default async function handler(req, res) {
     }
 
     /*
-     * Replicate returned an error.
+     * API-level failure.
      */
     if (!response.ok) {
       const details = safeDetail(
@@ -210,7 +196,7 @@ export default async function handler(req, res) {
       );
 
       console.error(
-        "FACEVOL REAL-ESRGAN ERROR:",
+        "FACEVOL CODEFORMER REQUEST ERROR:",
         response.status,
         details
       );
@@ -222,9 +208,6 @@ export default async function handler(req, res) {
       });
     }
 
-    /*
-     * Make sure Replicate gave us a valid prediction.
-     */
     if (
       !prediction ||
       typeof prediction !== "object"
@@ -236,28 +219,50 @@ export default async function handler(req, res) {
     }
 
     /*
-     * Useful Vercel log information.
+     * CodeFormer can occasionally return "failed"
+     * immediately while using synchronous wait.
+     * Send the actual error back instead of hiding it.
      */
+    if (prediction.status === "failed") {
+      const details = safeDetail(
+        prediction.error ||
+        prediction.logs ||
+        "CodeFormer failed."
+      );
+
+      console.error(
+        "FACEVOL CODEFORMER MODEL ERROR:",
+        details
+      );
+
+      return res.status(502).json({
+        error:
+          "CodeFormer could not enhance this photo.",
+        details
+      });
+    }
+
+    if (prediction.status === "canceled") {
+      return res.status(502).json({
+        error:
+          "Photo enhancement was canceled.",
+        details:
+          safeDetail(prediction.error)
+      });
+    }
+
     console.log(
-      "FACEVOL REAL-ESRGAN PHOTO ENHANCE:",
+      "FACEVOL CODEFORMER PHOTO ENHANCE:",
       {
         id: prediction.id,
         status: prediction.status,
         scale,
-        faceEnhance: true
+        fidelity: 0.6,
+        faceUpsample: true,
+        backgroundEnhance: true
       }
     );
 
-    /*
-     * Return the same structure already expected
-     * by the FaceEvol frontend.
-     *
-     * If prediction.status === "succeeded",
-     * prediction.output contains the enhanced image URL.
-     *
-     * Otherwise the existing /api/prediction.js
-     * endpoint can continue polling it.
-     */
     return res.status(200).json({
       success: true,
       prediction
@@ -265,7 +270,7 @@ export default async function handler(req, res) {
 
   } catch (error) {
     console.error(
-      "FACEVOL REAL-ESRGAN SERVER ERROR:",
+      "FACEVOL CODEFORMER SERVER ERROR:",
       error
     );
 
