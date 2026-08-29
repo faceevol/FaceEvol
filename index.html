@@ -726,7 +726,7 @@
     .upload-box::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,transparent 35%,rgba(125,211,252,.03),transparent 65%);transform:translateX(-100%);transition:transform .5s ease}
     .upload-box:hover::after{transform:translateX(100%)}
     section{position:relative}
-    #features,#how-it-works,#quality,#pricing,#faq{scroll-margin-top:88px}
+    #demos,#features,#how-it-works,#quality,#pricing,#faq{scroll-margin-top:88px}
     .section-heading h2{text-wrap:balance}
     .section-heading p{text-wrap:balance}
     .feature-card{display:flex;flex-direction:column;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease;background:linear-gradient(150deg,rgba(255,255,255,.044),rgba(255,255,255,.018))}
@@ -745,7 +745,7 @@
     .quality-visual{box-shadow:inset 0 0 0 1px rgba(255,255,255,.012)}
     .privacy-card{transition:transform .2s ease,border-color .2s ease;background:linear-gradient(145deg,rgba(255,255,255,.034),rgba(255,255,255,.016))}
     .privacy-card:hover{transform:translateY(-3px);border-color:rgba(125,211,252,.14)}
-    .compact-pricing{grid-template-columns:1.1fr .9fr;max-width:860px}
+    .compact-pricing{grid-template-columns:repeat(3,1fr);max-width:1080px}
     .compact-pricing .price-card{min-height:100%;display:flex;flex-direction:column}
     .compact-pricing .price-features{flex:1}
     .price-card{transition:transform .2s ease,border-color .2s ease}
@@ -879,6 +879,134 @@
       .nav-links .account-nav-button{min-height:35px;font-size:11px}
     }
 
+  
+    /* =========================================================
+       FACEVOL PRE-GENERATED DEMO GALLERY
+       These interfaces never call an AI API.
+       Add media paths later in FACEVOL_DEMO_MEDIA in the script.
+       ========================================================= */
+    #demos{scroll-margin-top:88px}
+    .demo-section{position:relative}
+    .demo-section::before{
+      content:"";position:absolute;left:50%;top:0;width:min(900px,88vw);height:1px;transform:translateX(-50%);
+      background:linear-gradient(90deg,transparent,rgba(125,211,252,.18),rgba(167,139,250,.16),transparent)
+    }
+    .demo-intro-note{
+      width:max-content;max-width:100%;margin:0 auto 24px;padding:9px 13px;border-radius:999px;
+      border:1px solid rgba(52,211,153,.15);background:rgba(52,211,153,.045);
+      color:#9fd9bd;font-size:10px;font-weight:850;letter-spacing:.25px
+    }
+    .demo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .demo-card{
+      position:relative;overflow:hidden;display:flex;flex-direction:column;min-height:360px;padding:15px;border-radius:22px;
+      border:1px solid rgba(255,255,255,.07);background:linear-gradient(155deg,rgba(255,255,255,.032),rgba(255,255,255,.016));
+      box-shadow:0 22px 70px rgba(0,0,0,.12);transition:transform .22s ease,border-color .22s ease,background .22s ease
+    }
+    .demo-card:hover{transform:translateY(-3px);border-color:rgba(125,211,252,.18);background:linear-gradient(155deg,rgba(56,189,248,.04),rgba(124,58,237,.025))}
+    .demo-preview{
+      position:relative;min-height:186px;display:grid;place-items:center;overflow:hidden;border-radius:16px;
+      border:1px solid rgba(255,255,255,.065);
+      background:
+        radial-gradient(circle at 27% 20%,rgba(124,58,237,.13),transparent 34%),
+        radial-gradient(circle at 78% 72%,rgba(14,165,233,.09),transparent 38%),
+        rgba(2,6,17,.72)
+    }
+    .demo-preview::after{
+      content:"";position:absolute;inset:0;pointer-events:none;
+      background:linear-gradient(120deg,transparent 20%,rgba(255,255,255,.025) 50%,transparent 80%);
+      transform:translateX(-100%)
+    }
+    .demo-card:hover .demo-preview::after{animation:demoShimmer 1.1s ease}
+    @keyframes demoShimmer{to{transform:translateX(100%)}}
+    .demo-preview-placeholder{text-align:center;padding:22px;position:relative;z-index:1}
+    .demo-preview-icon{
+      width:48px;height:48px;margin:0 auto 12px;display:grid;place-items:center;border-radius:14px;
+      border:1px solid rgba(125,211,252,.13);background:rgba(56,189,248,.055);font-size:21px
+    }
+    .demo-preview-placeholder strong{display:block;color:#dcecff;font-size:12px}
+    .demo-preview-placeholder span{display:block;margin-top:5px;color:#60738d;font-size:9px;line-height:1.5}
+    .demo-card-copy{padding:17px 5px 4px;display:flex;flex:1;flex-direction:column}
+    .demo-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+    .demo-card h3{font-size:17px;line-height:1.2}
+    .demo-type{
+      flex:0 0 auto;padding:5px 7px;border-radius:999px;background:rgba(255,255,255,.035);
+      border:1px solid rgba(255,255,255,.06);color:#7890aa;font-size:7px;font-weight:900;letter-spacing:.8px;text-transform:uppercase
+    }
+    .demo-card p{margin-top:9px;color:#8290a6;font-size:11px;line-height:1.6}
+    .demo-card-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:auto;padding-top:15px}
+    .demo-card-actions button{
+      min-height:40px;border-radius:11px;font:inherit;font-size:9px;font-weight:900;cursor:pointer
+    }
+    .demo-view-button{border:1px solid rgba(125,211,252,.16);background:rgba(56,189,248,.07);color:#cfefff}
+    .demo-create-button{border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.035);color:#bac8db}
+    .demo-view-button:hover,.demo-create-button:hover{border-color:rgba(125,211,252,.3)}
+    .demo-cost-note{margin-top:8px;color:#5f728b;font-size:8px;text-align:center}
+    .demo-cost-note strong{color:#85d6b2}
+
+    .demo-modal{
+      position:fixed;z-index:6100;inset:0;display:none;align-items:center;justify-content:center;padding:22px;
+      background:rgba(0,0,0,.72);backdrop-filter:blur(14px)
+    }
+    .demo-modal.show{display:flex}
+    .demo-modal-card{
+      width:min(100%,900px);max-height:90vh;overflow:auto;position:relative;padding:22px;border-radius:24px;
+      border:1px solid rgba(255,255,255,.09);
+      background:linear-gradient(160deg,#0b1220,#060b14 68%);
+      box-shadow:0 30px 100px rgba(0,0,0,.55)
+    }
+    .demo-modal-close{
+      position:absolute;right:14px;top:14px;width:36px;height:36px;border-radius:11px;border:1px solid rgba(255,255,255,.08);
+      background:rgba(255,255,255,.035);color:#b8c8dc;font-size:18px;cursor:pointer
+    }
+    .demo-modal-head{padding:4px 48px 17px 2px}
+    .demo-modal-kicker{color:#67c7f2;font-size:8px;font-weight:900;letter-spacing:1.1px;text-transform:uppercase}
+    .demo-modal-head h3{margin-top:7px;font-size:25px}
+    .demo-modal-head p{margin-top:8px;color:#7889a2;font-size:11px;line-height:1.6}
+    .demo-stage{
+      min-height:410px;padding:14px;border-radius:19px;border:1px solid rgba(255,255,255,.065);
+      background:rgba(1,5,13,.6)
+    }
+    .demo-stage-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;height:100%}
+    .demo-stage-slot{
+      min-height:340px;position:relative;display:grid;place-items:center;overflow:hidden;border-radius:15px;
+      border:1px solid rgba(255,255,255,.065);background:rgba(255,255,255,.02)
+    }
+    .demo-stage-slot img,.demo-stage-slot video{display:block;width:100%;height:100%;min-height:340px;object-fit:cover;background:#02050b}
+    .demo-stage-label{
+      position:absolute;left:10px;top:10px;z-index:2;padding:5px 8px;border-radius:999px;
+      background:rgba(2,6,17,.76);border:1px solid rgba(255,255,255,.09);color:#d4e1f1;font-size:8px;font-weight:900
+    }
+    .demo-empty-slot{text-align:center;padding:22px;color:#667a93}
+    .demo-empty-slot div{font-size:26px}.demo-empty-slot strong{display:block;margin-top:9px;color:#a9bdd2;font-size:11px}
+    .demo-empty-slot span{display:block;margin-top:5px;font-size:9px;line-height:1.5}
+    .demo-age-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:9px}
+    .demo-age-item{min-width:0}
+    .demo-age-item .demo-stage-slot{min-height:250px}
+    .demo-age-item .demo-stage-slot img{min-height:250px}
+    .demo-age-caption{padding:8px 2px 0;text-align:center;color:#8fa2b8;font-size:9px;font-weight:850}
+    .demo-video-single{max-width:580px;margin:0 auto}
+    .demo-video-single .demo-stage-slot{min-height:380px}
+    .demo-modal-foot{
+      display:flex;align-items:center;justify-content:space-between;gap:14px;padding-top:15px
+    }
+    .demo-modal-foot-copy{color:#677a91;font-size:9px;line-height:1.55}
+    .demo-modal-foot-copy strong{color:#8fd8b6}
+    .demo-modal-create{min-height:42px;padding:0 16px;border:0;border-radius:12px;background:linear-gradient(90deg,#6d28d9,#0369a1);color:#fff;font:inherit;font-size:10px;font-weight:900;cursor:pointer}
+
+    @media(max-width:1000px){.demo-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:700px){
+      .demo-grid{grid-template-columns:1fr}
+      .demo-card{min-height:335px}
+      .demo-card-actions{grid-template-columns:1fr 1fr}
+      .demo-modal{padding:10px}.demo-modal-card{padding:17px;border-radius:19px}
+      .demo-stage{min-height:0;padding:9px}.demo-stage-grid{grid-template-columns:1fr}
+      .demo-stage-slot{min-height:300px}.demo-stage-slot img,.demo-stage-slot video{min-height:300px}
+      .demo-age-grid{display:flex;overflow:auto;scroll-snap-type:x mandatory;padding-bottom:4px}
+      .demo-age-item{flex:0 0 72%;scroll-snap-align:center}
+      .demo-age-item .demo-stage-slot,.demo-age-item .demo-stage-slot img{min-height:340px}
+      .demo-modal-foot{align-items:stretch;flex-direction:column}.demo-modal-create{width:100%}
+    }
+
   </style>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -903,6 +1031,7 @@
   <div class="container nav">
     <a href="#" class="logo"><img src="a.png" alt="FaceEvol"></a>
     <nav class="nav-links" aria-label="Primary navigation">
+      <a href="#demos">Demos</a>
       <a href="#features">Features</a>
       <a href="#how-it-works">How It Works</a>
       <a href="#quality">Quality</a>
@@ -922,7 +1051,7 @@
     <div id="signedOutPanel">
       <div class="auth-kicker">FaceEvol Account</div>
       <h3 id="authTitle">Sign in to FaceEvol</h3>
-      <p class="auth-copy" id="authCopy">Keep your credits connected to you and get FaceEvol ready for paid creations.</p>
+      <p class="auth-copy" id="authCopy">Explore every demo free. Sign in when you want to buy credits and create with your own photo or video.</p>
 
       <button type="button" class="auth-google" id="googleSignInButton">
         <span aria-hidden="true">G</span>
@@ -957,7 +1086,7 @@
       <div class="account-credit-card">
         <small>Available balance</small>
         <div class="account-credit-value"><strong id="accountCreditCount">0</strong><span>credits</span></div>
-        <div class="account-credit-note">Credits are enforced server-side when an AI job starts. If FaceEvol receives a verified failed or canceled prediction, the reserved credits are restored automatically.</div>
+        <div class="account-credit-note">Demo viewing never uses credits. Credits are charged only when you create with your own media. Verified failed or canceled AI jobs are restored automatically.</div>
       </div>
 
       <div class="account-actions">
@@ -1006,23 +1135,45 @@
     </div>
   </div>
 </div>
-<div class="auth-gate-toast" id="authGateToast" aria-live="polite">Sign in to start creating.</div>
+<div class="auth-gate-toast" id="authGateToast" aria-live="polite">Sign in and add credits to create with your own media.</div>
+
+
+<div class="demo-modal" id="faceEvolDemoModal" role="dialog" aria-modal="true" aria-labelledby="faceEvolDemoTitle">
+  <div class="demo-modal-card">
+    <button type="button" class="demo-modal-close" id="faceEvolDemoClose" aria-label="Close demo">×</button>
+
+    <div class="demo-modal-head">
+      <div class="demo-modal-kicker">Pre-generated FaceEvol Demo · 0 Credits</div>
+      <h3 id="faceEvolDemoTitle">FaceEvol Demo</h3>
+      <p id="faceEvolDemoDescription">This preview uses stored sample media only. It does not start an AI generation.</p>
+    </div>
+
+    <div class="demo-stage" id="faceEvolDemoStage"></div>
+
+    <div class="demo-modal-foot">
+      <div class="demo-modal-foot-copy">
+        <strong>No credits used.</strong> When final media is added, this demo will load only pre-generated files stored with the site.
+      </div>
+      <button type="button" class="demo-modal-create" id="faceEvolDemoCreate">Create Your Own →</button>
+    </div>
+  </div>
+</div>
 
 <main>
   <section class="hero">
     <div class="container">
-      <div class="badge"><span class="badge-dot"></span>Free Beta · 6 AI tools</div>
+      <div class="badge"><span class="badge-dot"></span>6 AI tools · Free demo gallery</div>
       <h1>AI Face <span class="gradient-text">Transformation</span></h1>
-      <p class="hero-description">Transform your age, swap faces, bring a photo to life, and create high-quality AI results in seconds.</p>
+      <p class="hero-description">Explore polished FaceEvol demos at no cost. When you are ready to use your own photo or video, buy credits and create for real.</p>
       <div class="hero-actions">
-        <a href="#studio" class="button button-primary" id="heroAgeButton">✨ Start Creating</a>
-        <a href="#features" class="button button-secondary">Explore All Tools</a>
+        <a href="#demos" class="button button-primary">▶ Explore Free Demos</a>
+        <a href="#studio" class="button button-secondary" id="heroAgeButton">Create With Credits →</a>
       </div>
       <div class="hero-trust" aria-label="FaceEvol benefits">
-        <span>🔒 Privacy-focused workflow</span>
+        <span>▶ Demos use no AI processing</span>
         <span>🧰 6 focused AI tools</span>
-        <span>👤 Secure accounts + credits</span>
-        <span>⬇️ Direct downloads</span>
+        <span>💳 Pay only for your own creations</span>
+        <span>🔒 Privacy-focused workflow</span>
       </div>
 
       <div class="studio-wrap" id="studio">
@@ -1030,7 +1181,7 @@
           <div class="studio-head" aria-label="FaceEvol Studio">
             <div class="studio-head-copy">
               <div class="studio-brand-icon">✦</div>
-              <div><strong>FaceEvol AI Studio</strong><small>Choose a tool. Upload your file. Create your result.</small></div>
+              <div><strong>FaceEvol AI Studio</strong><small>Demos are free to explore. Your own creations use credits.</small></div>
             </div>
             <span class="studio-current-tool" id="studioCurrentTool">Age Transformation</span>
           </div>
@@ -1065,7 +1216,7 @@
 
             <div class="studio-main">
               <h2 class="upload-title">Upload a photo for Age Transformation</h2>
-              <p class="upload-description">Explore the age examples below before you upload. When you are ready, choose a clear face photo and transform it to your selected age.</p>
+              <p class="upload-description">Want to see the quality first? Explore the free demo gallery above. Upload your own clear face photo here when you are ready to create with credits.</p>
 
               <div class="upload-box" id="uploadBox" role="button" tabindex="0" aria-label="Choose a face photo" onclick="document.getElementById('photoUpload').click()">
                 <div class="upload-icon">↑</div>
@@ -1081,12 +1232,141 @@
     </div>
   </section>
 
+
+  <section class="demo-section" id="demos">
+    <div class="container">
+      <div class="section-heading">
+        <span class="section-eyebrow">Explore Before You Buy</span>
+        <h2>See what FaceEvol can do. <span class="gradient-text">No credits. No AI cost.</span></h2>
+        <p>These demos will use pre-generated FaceEvol examples stored with the website. Visitors can explore the experience freely; no Replicate request, generation job, or credit charge happens in demo mode.</p>
+      </div>
+
+      <div class="demo-intro-note">✓ Demo viewing is always free · AI processing starts only for your own creation</div>
+
+      <div class="demo-grid">
+        <article class="demo-card">
+          <div class="demo-preview">
+            <div class="demo-preview-placeholder">
+              <div class="demo-preview-icon">🕒</div>
+              <strong>Age Transformation Demo</strong>
+              <span>Five age-result slots are ready for your final sample set.</span>
+            </div>
+          </div>
+          <div class="demo-card-copy">
+            <div class="demo-card-top"><h3>Age Transformation</h3><span class="demo-type">5 images</span></div>
+            <p>Show the same person at ages 5, 15, 30, 50 and 75 so visitors can judge identity consistency and realism before creating.</p>
+            <div class="demo-card-actions">
+              <button type="button" class="demo-view-button" data-demo-key="age">▶ View Demo</button>
+              <button type="button" class="demo-create-button" data-demo-create="age">Create Your Own</button>
+            </div>
+            <div class="demo-cost-note"><strong>0 credits</strong> to view · stored media only</div>
+          </div>
+        </article>
+
+        <article class="demo-card">
+          <div class="demo-preview">
+            <div class="demo-preview-placeholder">
+              <div class="demo-preview-icon">🖼️</div>
+              <strong>Photo Face Swap Demo</strong>
+              <span>Before and after image slots are ready.</span>
+            </div>
+          </div>
+          <div class="demo-card-copy">
+            <div class="demo-card-top"><h3>Photo Face Swap</h3><span class="demo-type">Before / After</span></div>
+            <p>Use a clean original/result comparison to demonstrate natural blending, facial detail and identity transfer.</p>
+            <div class="demo-card-actions">
+              <button type="button" class="demo-view-button" data-demo-key="photoFaceSwap">▶ View Demo</button>
+              <button type="button" class="demo-create-button" data-demo-create="photo">Create Your Own</button>
+            </div>
+            <div class="demo-cost-note"><strong>0 credits</strong> to view · stored media only</div>
+          </div>
+        </article>
+
+        <article class="demo-card">
+          <div class="demo-preview">
+            <div class="demo-preview-placeholder">
+              <div class="demo-preview-icon">🎞️</div>
+              <strong>Photo to Video Demo</strong>
+              <span>A polished short-video slot is ready.</span>
+            </div>
+          </div>
+          <div class="demo-card-copy">
+            <div class="demo-card-top"><h3>Photo to Video</h3><span class="demo-type">Short video</span></div>
+            <p>Demonstrate subtle, realistic motion from a still portrait with one carefully prepared pre-generated clip.</p>
+            <div class="demo-card-actions">
+              <button type="button" class="demo-view-button" data-demo-key="photoToVideo">▶ View Demo</button>
+              <button type="button" class="demo-create-button" data-demo-create="photo-video">Create Your Own</button>
+            </div>
+            <div class="demo-cost-note"><strong>0 credits</strong> to view · stored media only</div>
+          </div>
+        </article>
+
+        <article class="demo-card">
+          <div class="demo-preview">
+            <div class="demo-preview-placeholder">
+              <div class="demo-preview-icon">🎬</div>
+              <strong>Video Face Swap Demo</strong>
+              <span>Original and swapped video slots are ready.</span>
+            </div>
+          </div>
+          <div class="demo-card-copy">
+            <div class="demo-card-top"><h3>Video Face Swap</h3><span class="demo-type">2 videos</span></div>
+            <p>Let visitors compare the original clip with a finished FaceEvol swap without spending any processing budget.</p>
+            <div class="demo-card-actions">
+              <button type="button" class="demo-view-button" data-demo-key="videoFaceSwap">▶ View Demo</button>
+              <button type="button" class="demo-create-button" data-demo-create="video">Create Your Own</button>
+            </div>
+            <div class="demo-cost-note"><strong>0 credits</strong> to view · stored media only</div>
+          </div>
+        </article>
+
+        <article class="demo-card">
+          <div class="demo-preview">
+            <div class="demo-preview-placeholder">
+              <div class="demo-preview-icon">✨</div>
+              <strong>Photo Enhance Demo</strong>
+              <span>Original and enhanced image slots are ready.</span>
+            </div>
+          </div>
+          <div class="demo-card-copy">
+            <div class="demo-card-top"><h3>Photo Enhance</h3><span class="demo-type">Before / After</span></div>
+            <p>Use a detail-rich portrait so visitors can clearly see restoration, sharpness and natural facial detail.</p>
+            <div class="demo-card-actions">
+              <button type="button" class="demo-view-button" data-demo-key="photoEnhance">▶ View Demo</button>
+              <button type="button" class="demo-create-button" data-demo-create="photo-enhance">Create Your Own</button>
+            </div>
+            <div class="demo-cost-note"><strong>0 credits</strong> to view · stored media only</div>
+          </div>
+        </article>
+
+        <article class="demo-card">
+          <div class="demo-preview">
+            <div class="demo-preview-placeholder">
+              <div class="demo-preview-icon">🎥</div>
+              <strong>Video Enhance Demo</strong>
+              <span>Original and enhanced video slots are ready.</span>
+            </div>
+          </div>
+          <div class="demo-card-copy">
+            <div class="demo-card-top"><h3>Video Enhance</h3><span class="demo-type">2 videos</span></div>
+            <p>Show the same short clip before and after enhancement so the resolution and detail improvement is easy to judge.</p>
+            <div class="demo-card-actions">
+              <button type="button" class="demo-view-button" data-demo-key="videoEnhance">▶ View Demo</button>
+              <button type="button" class="demo-create-button" data-demo-create="enhance">Create Your Own</button>
+            </div>
+            <div class="demo-cost-note"><strong>0 credits</strong> to view · stored media only</div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
   <section id="features">
     <div class="container">
       <div class="section-heading">
         <span class="section-eyebrow">Six Focused Tools · One Studio</span>
-        <h2>Create faster with <span class="gradient-text">one clean AI workflow.</span></h2>
-        <p>Transform, swap, animate or enhance without jumping between different websites. Pick a tool and work from upload to download in the same studio.</p>
+        <h2>Explore first. <span class="gradient-text">Create when you are ready.</span></h2>
+        <p>Every FaceEvol tool has a free pre-generated demo experience. Real AI processing begins only when you choose your own media and create with credits.</p>
       </div>
       <div class="feature-grid">
         <div class="feature-card core">
@@ -1132,14 +1412,14 @@
   <section id="how-it-works">
     <div class="container">
       <div class="section-heading">
-        <span class="section-eyebrow">Three Simple Steps</span>
-        <h2>From upload to result, <span class="gradient-text">without the clutter.</span></h2>
-        <p>FaceEvol keeps every workflow familiar: choose a tool, add your file, then preview and download the result.</p>
+        <span class="section-eyebrow">A Budget-Safe Experience</span>
+        <h2>See the quality first. <span class="gradient-text">Pay only when you create.</span></h2>
+        <p>FaceEvol separates free demo exploration from real AI processing, so visitors can understand the product before buying credits.</p>
       </div>
       <div class="steps">
-        <div class="step-card"><div class="step-number">1</div><h3>Choose your file</h3><p>Upload the photo or video you want to work with. Clear, well-lit source material gives the best results.</p></div>
-        <div class="step-card"><div class="step-number">2</div><h3>Choose a tool</h3><p>Transform an age, swap a face, animate a photo, or enhance an existing image or video.</p></div>
-        <div class="step-card"><div class="step-number">3</div><h3>Create &amp; download</h3><p>Generate your result, preview or compare it on the page, then download the finished image or video directly to your device.</p></div>
+        <div class="step-card"><div class="step-number">1</div><h3>Explore a free demo</h3><p>View pre-generated FaceEvol examples for all six tools. Demo viewing uses stored media and never starts paid AI processing.</p></div>
+        <div class="step-card"><div class="step-number">2</div><h3>Add credits when ready</h3><p>Create an account and buy the credit pack that fits your needs. There is no subscription required for the current credit-pack model.</p></div>
+        <div class="step-card"><div class="step-number">3</div><h3>Create with your media</h3><p>Upload your own photo or video, see the credit cost before generation, then create and download your result.</p></div>
       </div>
     </div>
   </section>
@@ -1185,34 +1465,55 @@
   <section id="pricing">
     <div class="container">
       <div class="section-heading">
-        <span class="section-eyebrow">Simple Pricing</span>
-        <h2>Try FaceEvol free. <span class="gradient-text">Pay for creations when you need more.</span></h2>
-        <p>FaceEvol is free during beta while accounts and credits are being activated. At launch, new accounts will receive a small free allowance, with flexible credits for additional creations. Photo tools will use fewer credits than compute-heavy video tools.</p>
+        <span class="section-eyebrow">Simple Credit Packs</span>
+        <h2>Demos are free. <span class="gradient-text">Your creations use credits.</span></h2>
+        <p>FaceEvol does not include free AI-generation credits at launch. Explore the pre-generated demo gallery as much as you like, then buy credits only when you want to create with your own media.</p>
       </div>
+
       <div class="pricing-grid compact-pricing">
-        <div class="price-card featured">
-          <div class="popular-label">Available Now</div><div class="price-name">Free Beta</div><div class="price">€0</div>
-          <p class="price-description">Use the current FaceEvol studio while we activate secure accounts, credits and payment infrastructure.</p>
-          <ul class="price-features">
-            <li>✓ All six current AI tools</li>
-            <li>✓ Photo and short-video workflows</li>
-            <li>✓ Direct result downloads</li>
-            <li>✓ No payment required during beta</li>
-          </ul>
-          <a href="#studio" class="button button-primary">Open Free Beta</a>
-        </div>
         <div class="price-card">
-          <div class="price-name">FaceEvol Account</div><div class="coming-soon">Account-ready</div>
-          <p class="price-description">Secure sign-in, server-side credits and Stripe Checkout are being tested for FaceEvol's pay-as-you-create launch.</p>
+          <div class="price-name">Starter</div>
+          <div class="price">€4.99</div>
+          <p class="price-description">A small pack for trying FaceEvol with your own media after exploring the demos.</p>
           <ul class="price-features">
-            <li>✓ Small free allowance for new users</li>
-            <li>✓ Buy more credits when needed</li>
-            <li>✓ Lower credit cost for photo tools</li>
-            <li>✓ Higher credit cost for video tools</li>
-            <li>✓ Account balance visible before generating</li>
+            <li>✓ 20 FaceEvol credits</li>
+            <li>✓ No subscription</li>
+            <li>✓ Credits stay with your account</li>
+            <li>✓ Demo gallery remains free</li>
           </ul>
-          <button type="button" class="button button-secondary" id="pricingAccountButton">Sign In / Create Account</button>
+          <button type="button" class="button button-secondary" data-credit-pack="20">Buy 20 Credits</button>
         </div>
+
+        <div class="price-card featured">
+          <div class="popular-label">Best Value</div>
+          <div class="price-name">Creator</div>
+          <div class="price">€11.99</div>
+          <p class="price-description">More room for photo and video creations without committing to a recurring plan.</p>
+          <ul class="price-features">
+            <li>✓ 60 FaceEvol credits</li>
+            <li>✓ No subscription</li>
+            <li>✓ Server-side credit balance</li>
+            <li>✓ Failed verified jobs restore credits</li>
+          </ul>
+          <button type="button" class="button button-primary" data-credit-pack="60">Buy 60 Credits</button>
+        </div>
+
+        <div class="price-card">
+          <div class="price-name">Studio</div>
+          <div class="price">€24.99</div>
+          <p class="price-description">A larger prepaid balance for people who plan to create across several FaceEvol tools.</p>
+          <ul class="price-features">
+            <li>✓ 150 FaceEvol credits</li>
+            <li>✓ No subscription</li>
+            <li>✓ Use across all six AI tools</li>
+            <li>✓ Account activity history</li>
+          </ul>
+          <button type="button" class="button button-secondary" data-credit-pack="150">Buy 150 Credits</button>
+        </div>
+      </div>
+
+      <div style="margin:18px auto 0;max-width:780px;text-align:center;color:#67788f;font-size:10px;line-height:1.6">
+        Demo viewing never consumes credits. Current pack prices can be changed later without changing the demo system.
       </div>
     </div>
   </section>
@@ -1230,9 +1531,10 @@
         <details><summary>How does Photo Enhance work?</summary><p>Upload a JPG, PNG or WebP photo, choose 2x or 4x enhancement, then tap “Enhance Photo.” FaceEvol creates a clearer higher-resolution result that you can compare with the original and download.</p></details>
         <details><summary>What video can I upload?</summary><p>For the beta, use an MP4 source file smaller than 300 MB. You can then select any section up to 20 seconds for processing.</p></details>
         <details><summary>How does Video Enhance work?</summary><p>Upload an MP4 up to 60 seconds, use the trim handles to select any section up to 20 seconds, then choose 1080p or 4K and 30 or 60 FPS. FaceEvol enhances only the selected clip.</p></details>
-        <details><summary>Is FaceEvol free?</summary><p>FaceEvol is currently free during beta. At launch, the plan is to include a small free allowance and use credits for additional creations so you can pay for what you actually use.</p></details>
-        <details><summary>Will I need an account?</summary><p>You can browse FaceEvol without an account. Accounts connect your credit balance and future purchases to you. During beta, generation remains open while the account and payment system is being finalized.</p></details>
-        <details><summary>How will FaceEvol credits work?</summary><p>Your account has a server-side credit balance. At paid launch, lighter photo tools will use fewer credits while compute-heavy video tools will use more. The exact cost will be shown before a paid generation starts.</p></details>
+        <details><summary>Do the demos call the AI models?</summary><p>No. Demo mode loads only pre-generated sample images and videos stored for the website. Opening, replaying or comparing a demo does not contact the generation APIs and does not consume FaceEvol credits.</p></details>
+        <details><summary>Is FaceEvol free?</summary><p>The FaceEvol demo gallery is free to explore and uses pre-generated stored media, so viewing demos does not use credits or start AI processing. Creating with your own photo or video requires purchased credits. FaceEvol launches with zero free AI-generation credits.</p></details>
+        <details><summary>Will I need an account?</summary><p>No account is required to browse the site or explore the pre-generated demos. An account is required when you want to buy credits and create with your own photo or video.</p></details>
+        <details><summary>How do FaceEvol credits work?</summary><p>Your account stores a secure server-side credit balance. Demo viewing costs 0 credits. Real AI creations deduct the tool cost when a generation starts, and the cost is shown in the interface. Verified failed or canceled jobs are restored automatically.</p></details>
         <details><summary>How does FaceEvol handle my uploads?</summary><p>Your uploads are processed to create the result you request. FaceEvol is designed to minimize unnecessary storage, while third-party hosting and AI providers may process content as needed to provide the service. See the Privacy Policy below for more detail.</p></details>
         <details><summary>Where can I find the legal information?</summary><p>Privacy, Terms, Refunds and Contact information are available in the Legal &amp; Support section at the bottom of this page.</p></details>
       </div>
@@ -1242,10 +1544,13 @@
   <section class="cta" id="start">
     <div class="container">
       <div class="cta-box">
-        <div class="badge">✨ FaceEvol AI Studio</div>
-        <h2>Choose a tool.<br><span class="gradient-text">Create something worth keeping.</span></h2>
-        <p>Transform your age, swap faces, bring a photo to life, or enhance a photo or video — all from one simple studio.</p>
-        <a href="#studio" class="button button-primary" id="ctaStartButton">Start Creating →</a>
+        <div class="badge">▶ Free Demo Gallery · 6 Tools</div>
+        <h2>See the result first.<br><span class="gradient-text">Create when it feels worth it.</span></h2>
+        <p>Explore pre-generated examples at no cost, then use credits only when you are ready to transform your own photo or video.</p>
+        <div class="hero-actions" style="justify-content:center">
+          <a href="#demos" class="button button-primary">Explore Demos →</a>
+          <a href="#pricing" class="button button-secondary" id="ctaStartButton">View Credit Packs</a>
+        </div>
       </div>
     </div>
   </section>
@@ -1353,7 +1658,7 @@
             <p>FaceEvol may modify, suspend or discontinue features when reasonably necessary for maintenance, security, legal compliance, model changes or product development.</p>
 
             <h4>9. Paid features</h4>
-            <p>Paid plans are not currently enabled in this beta. Before paid features launch, FaceEvol will display applicable prices, included usage and important purchase terms before checkout. Mandatory consumer rights always continue to apply.</p>
+            <p>FaceEvol uses prepaid credits for AI creations. Pre-generated demo viewing does not consume credits. Applicable credit-pack prices, per-tool credit costs and important purchase terms are displayed before checkout or generation. Mandatory consumer rights always continue to apply.</p>
 
             <h4>10. Disclaimer</h4>
             <p>To the extent permitted by law, FaceEvol is provided on an “as available” basis without a guarantee of uninterrupted operation or a particular creative result. Nothing in these Terms excludes rights or remedies that cannot legally be excluded.</p>
@@ -1378,15 +1683,15 @@
           <summary>
             <span class="legal-summary-title">
               <strong>Refund Policy</strong>
-              <span>Prepared for future paid features</span>
+              <span>Credits, failed processing and billing support</span>
             </span>
           </summary>
           <div class="legal-content">
             <h3>FaceEvol Refund Policy</h3>
-            <div class="legal-note">FaceEvol is currently in free beta, so no paid purchase or refund is required today. This policy is included now so the website is ready for the later payment stage.</div>
+            <div class="legal-note">Viewing pre-generated FaceEvol demos is free and does not consume credits. AI processing with your own media uses prepaid credits.</div>
 
-            <h4>1. When paid features launch</h4>
-            <p>Prices, credit quantities, per-tool credit costs, billing terms and any important purchase conditions will be shown clearly before a user confirms payment.</p>
+            <h4>1. Credit purchases</h4>
+            <p>Credit-pack prices, included credit quantities, per-tool credit costs and important purchase conditions are shown before a user confirms payment or starts a paid generation.</p>
 
             <h4>2. Failed processing</h4>
             <p>If a paid generation fails because of a verified FaceEvol processing error and no usable result is delivered, FaceEvol may restore the affected credit, retry the generation or provide another appropriate remedy.</p>
@@ -1401,7 +1706,7 @@
             <p>Nothing in this policy limits statutory cancellation, refund or consumer-protection rights that apply in the user's country. Where digital services begin immediately after purchase, any legally required consent or acknowledgement will be presented during checkout.</p>
 
             <h4>6. Requesting help</h4>
-            <p>When paid features become available, refund requests should include the payment reference, approximate purchase date and a short description of the issue. Never send a full card number or banking password by email.</p>
+            <p>Refund or billing-support requests should include the payment reference, approximate purchase date and a short description of the issue. Never send a full card number or banking password by email.</p>
 
             <div class="legal-contact-box">
               <strong>Billing support</strong>
@@ -1449,15 +1754,319 @@
   <div class="container">
     <div class="footer-main">
       <a href="#" class="footer-logo"><img src="a.png" alt="FaceEvol"></a>
-      <div class="footer-links"><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a><a href="#privacy-policy">Privacy</a><a href="#terms">Terms</a><a href="#refunds">Refunds</a><a href="#contact">Contact</a></div>
+      <div class="footer-links"><a href="#demos">Demos</a><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a><a href="#privacy-policy">Privacy</a><a href="#terms">Terms</a><a href="#refunds">Refunds</a><a href="#contact">Contact</a></div>
     </div>
     <div class="footer-bottom"><div>© 2026 FaceEvol. All rights reserved.</div><div>One studio for AI face transformation, animation and enhancement.</div></div>
   </div>
 </footer>
 
-<a href="#studio" class="mobile-studio-cta" id="mobileStudioCta">✨ Open FaceEvol Studio</a>
+<a href="#demos" class="mobile-studio-cta" id="mobileStudioCta">▶ Explore Free Demos</a>
 
 <script>
+
+  /* =========================================================
+     FACEVOL PRE-GENERATED DEMOS
+     ---------------------------------------------------------
+     IMPORTANT:
+     Demo mode performs ZERO fetches to FaceEvol generation APIs.
+     It only renders static files listed below.
+
+     TO ADD FINAL MEDIA LATER:
+     Replace the empty strings with stored public asset paths.
+
+     Suggested folder:
+       /demos/
+
+     Suggested filenames:
+       /demos/age-05.webp
+       /demos/age-15.webp
+       /demos/age-30.webp
+       /demos/age-50.webp
+       /demos/age-75.webp
+
+       /demos/photo-face-swap-before.webp
+       /demos/photo-face-swap-after.webp
+
+       /demos/photo-to-video.mp4
+
+       /demos/video-face-swap-before.mp4
+       /demos/video-face-swap-after.mp4
+
+       /demos/photo-enhance-before.webp
+       /demos/photo-enhance-after.webp
+
+       /demos/video-enhance-before.mp4
+       /demos/video-enhance-after.mp4
+
+     Nothing else in the interface needs to be rebuilt when
+     those files are ready — just fill these source strings.
+     ========================================================= */
+
+  const FACEVOL_DEMO_MEDIA=Object.freeze({
+    age:{
+      title:"Age Transformation",
+      description:"The same person shown across five target ages. These will be pre-generated images stored with FaceEvol.",
+      createTool:"age",
+      kind:"age",
+      ages:[
+        {age:5,src:""},
+        {age:15,src:""},
+        {age:30,src:""},
+        {age:50,src:""},
+        {age:75,src:""}
+      ]
+    },
+
+    photoFaceSwap:{
+      title:"Photo Face Swap",
+      description:"A stored original/result pair for judging face blending and identity consistency.",
+      createTool:"photo",
+      kind:"compareImage",
+      before:"",
+      after:""
+    },
+
+    photoToVideo:{
+      title:"Photo to Video",
+      description:"A pre-generated short clip created from a still portrait. Replaying it never starts a generation.",
+      createTool:"photo-video",
+      kind:"singleVideo",
+      video:"",
+      poster:""
+    },
+
+    videoFaceSwap:{
+      title:"Video Face Swap",
+      description:"Original and swapped clips stored side by side so visitors can compare the result without AI processing.",
+      createTool:"video",
+      kind:"compareVideo",
+      before:"",
+      after:""
+    },
+
+    photoEnhance:{
+      title:"Photo Enhance",
+      description:"Original and enhanced images stored side by side for a clear detail comparison.",
+      createTool:"photo-enhance",
+      kind:"compareImage",
+      before:"",
+      after:""
+    },
+
+    videoEnhance:{
+      title:"Video Enhance",
+      description:"Original and enhanced clips stored side by side so visitors can compare clarity and detail.",
+      createTool:"enhance",
+      kind:"compareVideo",
+      before:"",
+      after:""
+    }
+  });
+
+  const faceEvolDemoModal=document.getElementById("faceEvolDemoModal");
+  const faceEvolDemoClose=document.getElementById("faceEvolDemoClose");
+  const faceEvolDemoTitle=document.getElementById("faceEvolDemoTitle");
+  const faceEvolDemoDescription=document.getElementById("faceEvolDemoDescription");
+  const faceEvolDemoStage=document.getElementById("faceEvolDemoStage");
+  const faceEvolDemoCreate=document.getElementById("faceEvolDemoCreate");
+
+  let faceEvolActiveDemoKey="";
+
+  function faceEvolEmptyDemoSlot(label="Demo media coming soon",icon="✦"){
+    const slot=document.createElement("div");
+    slot.className="demo-stage-slot";
+
+    const empty=document.createElement("div");
+    empty.className="demo-empty-slot";
+    empty.innerHTML=`<div>${icon}</div><strong>${label}</strong><span>The interface is ready. Add the final stored media path in FACEVOL_DEMO_MEDIA.</span>`;
+
+    slot.appendChild(empty);
+    return slot;
+  }
+
+  function faceEvolImageSlot(src,label){
+    if(!src){
+      const slot=faceEvolEmptyDemoSlot(`${label} image slot`,"🖼️");
+      const badge=document.createElement("span");
+      badge.className="demo-stage-label";
+      badge.textContent=label;
+      slot.appendChild(badge);
+      return slot;
+    }
+
+    const slot=document.createElement("div");
+    slot.className="demo-stage-slot";
+
+    const badge=document.createElement("span");
+    badge.className="demo-stage-label";
+    badge.textContent=label;
+
+    const image=document.createElement("img");
+    image.src=src;
+    image.alt=`FaceEvol ${label} demo`;
+    image.loading="lazy";
+
+    slot.append(badge,image);
+    return slot;
+  }
+
+  function faceEvolVideoSlot(src,label,poster=""){
+    if(!src){
+      const slot=faceEvolEmptyDemoSlot(`${label} video slot`,"▶");
+      const badge=document.createElement("span");
+      badge.className="demo-stage-label";
+      badge.textContent=label;
+      slot.appendChild(badge);
+      return slot;
+    }
+
+    const slot=document.createElement("div");
+    slot.className="demo-stage-slot";
+
+    const badge=document.createElement("span");
+    badge.className="demo-stage-label";
+    badge.textContent=label;
+
+    const video=document.createElement("video");
+    video.src=src;
+    if(poster) video.poster=poster;
+    video.controls=true;
+    video.playsInline=true;
+    video.preload="metadata";
+
+    slot.append(badge,video);
+    return slot;
+  }
+
+  function renderFaceEvolDemo(key){
+    const demo=FACEVOL_DEMO_MEDIA[key];
+    if(!demo||!faceEvolDemoStage) return;
+
+    faceEvolActiveDemoKey=key;
+    faceEvolDemoTitle.textContent=demo.title;
+    faceEvolDemoDescription.textContent=demo.description;
+    faceEvolDemoStage.innerHTML="";
+
+    if(demo.kind==="age"){
+      const grid=document.createElement("div");
+      grid.className="demo-age-grid";
+
+      demo.ages.forEach(item=>{
+        const wrap=document.createElement("div");
+        wrap.className="demo-age-item";
+        wrap.appendChild(faceEvolImageSlot(item.src,`Age ${item.age}`));
+
+        const caption=document.createElement("div");
+        caption.className="demo-age-caption";
+        caption.textContent=`Age ${item.age}`;
+        wrap.appendChild(caption);
+
+        grid.appendChild(wrap);
+      });
+
+      faceEvolDemoStage.appendChild(grid);
+    }
+
+    if(demo.kind==="compareImage"){
+      const grid=document.createElement("div");
+      grid.className="demo-stage-grid";
+      grid.append(
+        faceEvolImageSlot(demo.before,"Original"),
+        faceEvolImageSlot(demo.after,"FaceEvol Result")
+      );
+      faceEvolDemoStage.appendChild(grid);
+    }
+
+    if(demo.kind==="singleVideo"){
+      const wrap=document.createElement("div");
+      wrap.className="demo-video-single";
+      wrap.appendChild(
+        faceEvolVideoSlot(
+          demo.video,
+          "FaceEvol Result",
+          demo.poster||""
+        )
+      );
+      faceEvolDemoStage.appendChild(wrap);
+    }
+
+    if(demo.kind==="compareVideo"){
+      const grid=document.createElement("div");
+      grid.className="demo-stage-grid";
+      grid.append(
+        faceEvolVideoSlot(demo.before,"Original"),
+        faceEvolVideoSlot(demo.after,"FaceEvol Result")
+      );
+      faceEvolDemoStage.appendChild(grid);
+    }
+
+    faceEvolDemoModal.classList.add("show");
+    document.body.style.overflow="hidden";
+  }
+
+  function closeFaceEvolDemo(){
+    if(!faceEvolDemoModal) return;
+
+    faceEvolDemoModal.querySelectorAll("video").forEach(video=>{
+      try{video.pause();}catch{}
+    });
+
+    faceEvolDemoModal.classList.remove("show");
+    document.body.style.overflow="";
+  }
+
+  document.querySelectorAll("[data-demo-key]").forEach(button=>{
+    button.addEventListener("click",()=>{
+      renderFaceEvolDemo(button.dataset.demoKey);
+    });
+  });
+
+  document.querySelectorAll("[data-demo-create]").forEach(button=>{
+    button.addEventListener("click",()=>{
+      const tool=button.dataset.demoCreate;
+      closeFaceEvolDemo();
+
+      const opener=document.querySelector(`[data-open-tool="${tool}"]`);
+      if(opener){
+        opener.click();
+      }else{
+        document.getElementById("studio")?.scrollIntoView({
+          behavior:"smooth",
+          block:"start"
+        });
+      }
+    });
+  });
+
+  faceEvolDemoClose?.addEventListener("click",closeFaceEvolDemo);
+
+  faceEvolDemoModal?.addEventListener("click",event=>{
+    if(event.target===faceEvolDemoModal) closeFaceEvolDemo();
+  });
+
+  document.addEventListener("keydown",event=>{
+    if(event.key==="Escape"&&faceEvolDemoModal?.classList.contains("show")){
+      closeFaceEvolDemo();
+    }
+  });
+
+  faceEvolDemoCreate?.addEventListener("click",()=>{
+    const demo=FACEVOL_DEMO_MEDIA[faceEvolActiveDemoKey];
+    if(!demo) return;
+
+    closeFaceEvolDemo();
+
+    const opener=document.querySelector(`[data-open-tool="${demo.createTool}"]`);
+    if(opener){
+      opener.click();
+    }else{
+      document.getElementById("studio")?.scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+      });
+    }
+  });
+
   const photoUpload = document.getElementById("photoUpload");
   const uploadBox = document.getElementById("uploadBox");
   const uploadStatus = document.getElementById("uploadStatus");
@@ -5516,7 +6125,7 @@
     const value=String(reason||"").trim();
 
     const labels={
-      welcome:"Welcome credits",
+      welcome:"Legacy welcome credits",
       stripe_purchase:"Credits purchased",
       age:"Age Transformation",
       photo_faceswap:"Photo Face Swap",
@@ -5929,8 +6538,8 @@
 
   /*
    * Optional generation sign-in gate.
-   * Keep false during the current free beta.
-   * Change requireSignInForGeneration to true only after Supabase is configured.
+   * FaceEvol launches with zero free generation credits.
+   * Real creations require sign-in; demo viewing is handled separately and never reaches these buttons.
    * The UI gate improves UX; the API routes now perform their own Supabase authentication and credit enforcement as well.
    */
   const generationButtonIds=new Set([
