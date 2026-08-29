@@ -3167,7 +3167,7 @@
 
           try{
             const response=await fetch(
-              `/api/video-upload-chunk?uploadId=${encodeURIComponent(uploadId)}&index=${index}`,
+              `/api/upload?action=chunk&uploadId=${encodeURIComponent(uploadId)}&index=${index}`,
               {
                 method:"POST",
                 headers:{
@@ -3220,7 +3220,7 @@
         "1/3 Finalizing secure video upload...";
 
       const completeResponse=await fetch(
-        "/api/video-upload-complete",
+        "/api/upload?action=complete",
         {
           method:"POST",
           headers:{
@@ -3267,7 +3267,7 @@
        */
       try{
         await fetch(
-          "/api/video-upload-complete",
+          "/api/upload?action=complete",
           {
             method:"POST",
             headers:{
