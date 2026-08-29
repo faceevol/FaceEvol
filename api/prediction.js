@@ -7,6 +7,7 @@ import {
   timingSafeEqual
 } from "node:crypto";
 
+
 export const config = {
   api: {
     bodyParser: false
@@ -18,30 +19,40 @@ const FACEVOL_SUPABASE_URL =
   process.env.SUPABASE_URL ||
   "https://hasffllflyeoitsenlgc.supabase.co";
 
+
 const FACEVOL_SUPABASE_PUBLISHABLE_KEY =
   process.env.SUPABASE_PUBLISHABLE_KEY ||
   "sb_publishable_r4T07DT0rPGl1v6avJ-Qiw_exZZn30r";
+
 
 const FACEVOL_SUPABASE_SECRET_KEY =
   process.env.SUPABASE_SECRET_KEY ||
   process.env.SUPABASE_SERVICE_ROLE_KEY ||
   "";
 
+
 const STRIPE_SECRET_KEY =
   process.env.STRIPE_SECRET_KEY ||
   "";
+
 
 const STRIPE_WEBHOOK_SECRET =
   process.env.STRIPE_WEBHOOK_SECRET ||
   "";
 
 
+/*
+ * FaceEvol Stripe credit packs.
+ *
+ * Sandbox Price IDs are included here.
+ * Later, live Price IDs can be supplied through
+ * STRIPE_PRICE_20 / 60 / 150 environment variables.
+ */
 const FACEVOL_STRIPE_PACKS =
   Object.freeze({
     "20": {
       credits: 20,
-      amount: 499,
-      currency: "eur",
+
       priceId:
         process.env.STRIPE_PRICE_20 ||
         "price_1U9mH80rPkHkBzyys6sICOfU"
@@ -49,8 +60,7 @@ const FACEVOL_STRIPE_PACKS =
 
     "60": {
       credits: 60,
-      amount: 1199,
-      currency: "eur",
+
       priceId:
         process.env.STRIPE_PRICE_60 ||
         "price_1U9mHo0rPkHkBzyylbGQ3n2U"
@@ -58,8 +68,7 @@ const FACEVOL_STRIPE_PACKS =
 
     "150": {
       credits: 150,
-      amount: 2499,
-      currency: "eur",
+
       priceId:
         process.env.STRIPE_PRICE_150 ||
         "price_1U9mIJ0rPkHkBzyytYo2U6BM"
@@ -67,7 +76,14 @@ const FACEVOL_STRIPE_PACKS =
   });
 
 
-function faceEvolBearerToken(req) {
+/* =========================================================
+   BASIC SUPABASE HELPERS
+   ========================================================= */
+
+
+function faceEvolBearerToken(
+  req
+) {
   const header =
     String(
       req.headers?.authorization ||
@@ -75,10 +91,12 @@ function faceEvolBearerToken(req) {
       ""
     ).trim();
 
+
   const match =
     header.match(
       /^Bearer\s+(.+)$/i
     );
+
 
   return match
     ? match[1].trim()
@@ -92,12 +110,17 @@ async function faceEvolReadResponse(
   const text =
     await response.text();
 
+
   if (!text) {
     return null;
   }
 
+
   try {
-    return JSON.parse(text);
+    return JSON.parse(
+      text
+    );
+
   } catch {
     return text;
   }
@@ -162,11 +185,14 @@ async function faceEvolUserRequest(
         String(message)
       );
 
+
     error.status =
       response.status;
 
+
     error.payload =
       data;
+
 
     throw error;
   }
@@ -197,6 +223,10 @@ function faceEvolAdminHeaders(
   };
 
 
+  /*
+   * Legacy service_role JWT compatibility.
+   * New sb_secret_ keys are used as apikey only.
+   */
   if (
     !FACEVOL_SUPABASE_SECRET_KEY.startsWith(
       "sb_secret_"
@@ -224,7 +254,8 @@ async function faceEvolAdminRequest(
 
         headers:
           faceEvolAdminHeaders(
-            options.headers || {}
+            options.headers ||
+            {}
           )
       }
     );
@@ -261,11 +292,14 @@ async function faceEvolAdminRequest(
         String(message)
       );
 
+
     error.status =
       response.status;
 
+
     error.payload =
       data;
+
 
     throw error;
   }
@@ -287,7 +321,8 @@ async function faceEvolAdminRpc(
 
       body:
         JSON.stringify(
-          payload || {}
+          payload ||
+          {}
         )
     }
   );
@@ -299,30 +334,38 @@ async function faceEvolRequireUser(
   res
 ) {
   if (!FACEVOL_SUPABASE_SECRET_KEY) {
-    res.status(500).json({
-      error:
-        "FaceEvol server security is not configured.",
+    res
+      .status(500)
+      .json({
+        error:
+          "FaceEvol server security is not configured.",
 
-      code:
-        "SERVER_SECURITY_NOT_CONFIGURED"
-    });
+        code:
+          "SERVER_SECURITY_NOT_CONFIGURED"
+      });
+
 
     return null;
   }
 
 
   const accessToken =
-    faceEvolBearerToken(req);
+    faceEvolBearerToken(
+      req
+    );
 
 
   if (!accessToken) {
-    res.status(401).json({
-      error:
-        "Sign in is required to check FaceEvol AI results.",
+    res
+      .status(401)
+      .json({
+        error:
+          "Sign in is required to check FaceEvol AI results.",
 
-      code:
-        "AUTH_REQUIRED"
-    });
+        code:
+          "AUTH_REQUIRED"
+      });
+
 
     return null;
   }
@@ -344,13 +387,16 @@ async function faceEvolRequireUser(
       !user ||
       !user.id
     ) {
-      res.status(401).json({
-        error:
-          "Your FaceEvol session is no longer valid. Please sign in again.",
+      res
+        .status(401)
+        .json({
+          error:
+            "Your FaceEvol session is no longer valid. Please sign in again.",
 
-        code:
-          "AUTH_REQUIRED"
-      });
+          code:
+            "AUTH_REQUIRED"
+        });
+
 
       return null;
     }
@@ -370,18 +416,25 @@ async function faceEvolRequireUser(
     );
 
 
-    res.status(401).json({
-      error:
-        "Your FaceEvol session is no longer valid. Please sign in again.",
+    res
+      .status(401)
+      .json({
+        error:
+          "Your FaceEvol session is no longer valid. Please sign in again.",
 
-      code:
-        "AUTH_REQUIRED"
-    });
+        code:
+          "AUTH_REQUIRED"
+      });
 
 
     return null;
   }
 }
+
+
+/* =========================================================
+   EXISTING FACEVOL GENERATION SECURITY
+   ========================================================= */
 
 
 async function faceEvolOwnedGeneration(
@@ -392,6 +445,7 @@ async function faceEvolOwnedGeneration(
     encodeURIComponent(
       userId
     );
+
 
   const prediction =
     encodeURIComponent(
@@ -439,6 +493,11 @@ async function faceEvolFinalizePrediction(
 }
 
 
+/* =========================================================
+   TEMPORARY BLOB CLEANUP
+   ========================================================= */
+
+
 function extractTemporaryPathname(
   inputUrlString,
   expectedRoute,
@@ -463,8 +522,7 @@ function extractTemporaryPathname(
 
 
     /*
-     * Existing FaceEvol proxy URL:
-     * https://www.faceevol.com/api/video.mp4?pathname=...
+     * FaceEvol private proxy URLs.
      */
     if (
       url.hostname ===
@@ -490,7 +548,7 @@ function extractTemporaryPathname(
 
 
     /*
-     * Video Enhance signed Vercel Blob URL.
+     * Signed private Vercel Blob URL.
      */
     if (
       url.hostname.endsWith(
@@ -548,7 +606,7 @@ async function cleanupPredictionInputs(
 
 
   /*
-   * Video Enhance uses input.video instead of input.source.
+   * Video Enhance uses input.video.
    */
   const enhancedVideoPathname =
     extractTemporaryPathname(
@@ -558,21 +616,25 @@ async function cleanupPredictionInputs(
     );
 
 
-  const pathnames = [
-    ...new Set(
-      [
-        facePathname,
-        videoPathname,
-        enhancedVideoPathname
-      ].filter(Boolean)
-    )
-  ];
+  const pathnames =
+    [
+      ...new Set(
+        [
+          facePathname,
+          videoPathname,
+          enhancedVideoPathname
+        ].filter(
+          Boolean
+        )
+      )
+    ];
 
 
   if (!pathnames.length) {
     console.warn(
       "No temporary FaceEvol inputs found for cleanup."
     );
+
 
     return;
   }
@@ -592,7 +654,7 @@ async function cleanupPredictionInputs(
   } catch (error) {
     /*
      * Cleanup failure must never hide
-     * a successful AI result.
+     * a valid AI result.
      */
     console.warn(
       "Temporary Blob cleanup failed:",
@@ -605,7 +667,7 @@ async function cleanupPredictionInputs(
 
 
 /* =========================================================
-   STRIPE
+   RAW BODY HELPERS
    ========================================================= */
 
 
@@ -613,18 +675,25 @@ async function faceEvolReadRawBody(
   req,
   maxBytes = 1000000
 ) {
-  const chunks = [];
+  const chunks =
+    [];
 
-  let total = 0;
+
+  let total =
+    0;
 
 
   for await (
     const chunk of req
   ) {
     const buffer =
-      Buffer.isBuffer(chunk)
+      Buffer.isBuffer(
+        chunk
+      )
         ? chunk
-        : Buffer.from(chunk);
+        : Buffer.from(
+            chunk
+          );
 
 
     total +=
@@ -669,12 +738,17 @@ function faceEvolSafeJson(
 }
 
 
+/* =========================================================
+   STRIPE SANDBOX ACCESS
+   ========================================================= */
+
+
 function faceEvolEnforceStripeTester(
   user
 ) {
   /*
-   * Restrict Sandbox purchases to
-   * the configured FaceEvol test user.
+   * When Stripe is using a Sandbox sk_test_ key,
+   * Checkout is restricted to the FaceEvol test user.
    */
   if (
     !STRIPE_SECRET_KEY.startsWith(
@@ -698,7 +772,8 @@ function faceEvolEnforceStripeTester(
     String(
       process.env.STRIPE_TEST_USER_ID ||
       ""
-    ).trim();
+    )
+      .trim();
 
 
   if (
@@ -710,8 +785,10 @@ function faceEvolEnforceStripeTester(
         "STRIPE_TEST_ACCESS_NOT_CONFIGURED"
       );
 
+
     error.status =
       503;
+
 
     throw error;
   }
@@ -746,12 +823,19 @@ function faceEvolEnforceStripeTester(
         "STRIPE_TEST_ACCESS_DENIED"
       );
 
+
     error.status =
       403;
+
 
     throw error;
   }
 }
+
+
+/* =========================================================
+   STRIPE API REQUEST
+   ========================================================= */
 
 
 async function faceEvolStripeRequest(
@@ -790,7 +874,9 @@ async function faceEvolStripeRequest(
   try {
     data =
       text
-        ? JSON.parse(text)
+        ? JSON.parse(
+            text
+          )
         : null;
 
   } catch {
@@ -818,12 +904,21 @@ async function faceEvolStripeRequest(
       response.status;
 
 
+    error.stripe =
+      data;
+
+
     throw error;
   }
 
 
   return data;
 }
+
+
+/* =========================================================
+   STRIPE WEBHOOK SIGNATURE
+   ========================================================= */
 
 
 function faceEvolVerifyStripeWebhook(
@@ -840,6 +935,7 @@ function faceEvolVerifyStripeWebhook(
   let timestamp =
     null;
 
+
   const signatures =
     [];
 
@@ -852,11 +948,14 @@ function faceEvolVerifyStripeWebhook(
     ).split(",")
   ) {
     const index =
-      part.indexOf("=");
+      part.indexOf(
+        "="
+      );
 
 
     if (
-      index < 1
+      index <
+      1
     ) {
       continue;
     }
@@ -880,7 +979,8 @@ function faceEvolVerifyStripeWebhook(
 
 
     if (
-      key === "t"
+      key ===
+      "t"
     ) {
       timestamp =
         value;
@@ -888,7 +988,8 @@ function faceEvolVerifyStripeWebhook(
 
 
     if (
-      key === "v1"
+      key ===
+      "v1"
     ) {
       signatures.push(
         value
@@ -915,14 +1016,21 @@ function faceEvolVerifyStripeWebhook(
   }
 
 
-  if (
+  /*
+   * Five-minute replay tolerance.
+   */
+  const age =
     Math.abs(
       Math.floor(
         Date.now() /
         1000
       ) -
       timestampNumber
-    ) >
+    );
+
+
+  if (
+    age >
     300
   ) {
     throw new Error(
@@ -971,13 +1079,17 @@ function faceEvolVerifyStripeWebhook(
           );
 
 
-        return (
-          actual.length ===
-            expectedBuffer.length &&
-          timingSafeEqual(
-            actual,
-            expectedBuffer
-          )
+        if (
+          actual.length !==
+          expectedBuffer.length
+        ) {
+          return false;
+        }
+
+
+        return timingSafeEqual(
+          actual,
+          expectedBuffer
         );
       }
     );
@@ -991,19 +1103,26 @@ function faceEvolVerifyStripeWebhook(
 }
 
 
+/* =========================================================
+   CREATE STRIPE CHECKOUT
+   ========================================================= */
+
+
 async function handleStripeCheckout(
   req,
   res,
   raw
 ) {
   if (!STRIPE_SECRET_KEY) {
-    return res.status(500).json({
-      error:
-        "Stripe is not configured.",
+    return res
+      .status(500)
+      .json({
+        error:
+          "Stripe is not configured.",
 
-      code:
-        "STRIPE_NOT_CONFIGURED"
-    });
+        code:
+          "STRIPE_NOT_CONFIGURED"
+      });
   }
 
 
@@ -1027,17 +1146,20 @@ async function handleStripeCheckout(
   const body =
     faceEvolSafeJson(
       raw
-    ) || {};
+    ) ||
+    {};
 
 
   if (
     body.action !==
     "checkout"
   ) {
-    return res.status(400).json({
-      error:
-        "Invalid Stripe action."
-    });
+    return res
+      .status(400)
+      .json({
+        error:
+          "Invalid Stripe action."
+      });
   }
 
 
@@ -1054,11 +1176,23 @@ async function handleStripeCheckout(
     ];
 
 
-  if (!pack) {
-    return res.status(400).json({
-      error:
-        "Invalid FaceEvol credit pack."
-    });
+  /*
+   * Browser may choose only:
+   * 20 / 60 / 150
+   *
+   * It cannot submit an arbitrary price ID
+   * or arbitrary credit amount.
+   */
+  if (
+    !pack ||
+    !pack.priceId
+  ) {
+    return res
+      .status(400)
+      .json({
+        error:
+          "Invalid FaceEvol credit pack."
+      });
   }
 
 
@@ -1117,7 +1251,8 @@ async function handleStripeCheckout(
 
 
   /*
-   * Stripe metadata is set server-side.
+   * Metadata is created by FaceEvol server code.
+   * The browser cannot provide these values.
    */
   form.set(
     "metadata[purpose]",
@@ -1183,6 +1318,11 @@ async function handleStripeCheckout(
 }
 
 
+/* =========================================================
+   APPLY STRIPE CREDITS
+   ========================================================= */
+
+
 async function faceEvolApplyStripeCredits(
   session
 ) {
@@ -1191,6 +1331,10 @@ async function faceEvolApplyStripeCredits(
     {};
 
 
+  /*
+   * Ignore Stripe events unrelated
+   * to FaceEvol credit purchases.
+   */
   if (
     metadata.purpose !==
     "faceevol_credits"
@@ -1207,7 +1351,8 @@ async function faceEvolApplyStripeCredits(
       metadata.user_id ||
       session?.client_reference_id ||
       ""
-    ).trim();
+    )
+      .trim();
 
 
   const credits =
@@ -1219,9 +1364,9 @@ async function faceEvolApplyStripeCredits(
   const packKey =
     String(
       metadata.pack ||
-      credits ||
       ""
-    );
+    )
+      .trim();
 
 
   const pack =
@@ -1230,40 +1375,75 @@ async function faceEvolApplyStripeCredits(
     ];
 
 
-  const amount =
-    Number(
-      session?.amount_total
-    );
-
-
-  const currency =
-    String(
-      session?.currency ||
-      ""
-    ).toLowerCase();
-
-
+  /*
+   * IMPORTANT:
+   *
+   * Stripe Managed Payments can affect the
+   * checkout amount/tax representation.
+   *
+   * Therefore we validate:
+   *
+   * - verified Stripe webhook
+   * - FaceEvol purpose
+   * - server-created user ID
+   * - server-created fixed pack
+   * - server-created credit amount
+   *
+   * We DO NOT require amount_total to exactly
+   * equal the original product base price.
+   */
   if (
     !userId ||
+    !pack ||
     !Number.isInteger(
       credits
     ) ||
-    !pack ||
     pack.credits !==
-      credits ||
-    metadata.price_id !==
-      pack.priceId ||
-    amount !==
-      pack.amount ||
-    currency !==
-      pack.currency
+      credits
   ) {
+    console.error(
+      "Invalid Stripe purchase metadata:",
+      {
+        userIdPresent:
+          Boolean(
+            userId
+          ),
+
+        packKey,
+
+        credits,
+
+        purpose:
+          metadata.purpose
+      }
+    );
+
+
     throw new Error(
       "Invalid FaceEvol Stripe purchase metadata"
     );
   }
 
 
+  const amountTotal =
+    Number(
+      session?.amount_total
+    );
+
+
+  const currency =
+    session?.currency
+      ? String(
+          session.currency
+        ).toLowerCase()
+      : null;
+
+
+  /*
+   * Supabase function is idempotent.
+   * The same Stripe Checkout Session
+   * can never add credits twice.
+   */
   return faceEvolAdminRpc(
     "apply_faceevol_stripe_purchase_admin",
     {
@@ -1286,7 +1466,11 @@ async function faceEvolApplyStripeCredits(
           : null,
 
       p_amount_total:
-        amount,
+        Number.isFinite(
+          amountTotal
+        )
+          ? amountTotal
+          : null,
 
       p_currency:
         currency
@@ -1295,11 +1479,20 @@ async function faceEvolApplyStripeCredits(
 }
 
 
+/* =========================================================
+   STRIPE WEBHOOK
+   ========================================================= */
+
+
 async function handleStripeWebhook(
   req,
   res,
   raw
 ) {
+  /*
+   * Verify Stripe before trusting
+   * any webhook payload.
+   */
   try {
     faceEvolVerifyStripeWebhook(
       raw,
@@ -1342,6 +1535,13 @@ async function handleStripeWebhook(
   }
 
 
+  /*
+   * Normal immediate card payments:
+   * checkout.session.completed
+   *
+   * Delayed payment methods:
+   * checkout.session.async_payment_succeeded
+   */
   if (
     event.type ===
       "checkout.session.completed" ||
@@ -1352,6 +1552,10 @@ async function handleStripeWebhook(
       event?.data?.object;
 
 
+    /*
+     * Never add credits before Stripe
+     * confirms payment_status = paid.
+     */
     if (
       session?.mode ===
         "payment" &&
@@ -1359,8 +1563,16 @@ async function handleStripeWebhook(
         "paid"
     ) {
       try {
-        await faceEvolApplyStripeCredits(
-          session
+        const result =
+          await faceEvolApplyStripeCredits(
+            session
+          );
+
+
+        console.log(
+          "FaceEvol Stripe credit delivery succeeded:",
+          session?.id,
+          result
         );
 
       } catch (error) {
@@ -1371,9 +1583,12 @@ async function handleStripeWebhook(
 
 
         /*
-         * Return 500 so Stripe retries.
-         * Supabase prevents double-crediting
-         * by Stripe Checkout Session ID.
+         * Return 500.
+         *
+         * Stripe will retry.
+         * Supabase idempotency prevents
+         * the same Checkout Session
+         * from being credited twice.
          */
         return res
           .status(500)
@@ -1396,7 +1611,7 @@ async function handleStripeWebhook(
 
 
 /* =========================================================
-   EXISTING PREDICTION STATUS
+   EXISTING REPLICATE PREDICTION POLLING
    ========================================================= */
 
 
@@ -1584,17 +1799,27 @@ async function handlePredictionGet(
 
 
     /*
-     * Replicate is finished with
-     * the source files, so remove
-     * the temporary private Blobs.
+     * Provider has finished with
+     * temporary FaceEvol uploads.
      */
-    if (finished) {
+    if (
+      finished
+    ) {
       await cleanupPredictionInputs(
         prediction
       );
     }
 
 
+    /*
+     * Finalize credit state:
+     *
+     * succeeded:
+     *   reserved credits stay charged
+     *
+     * failed/canceled:
+     *   Supabase restores them exactly once
+     */
     let faceEvolCredit =
       null;
 
@@ -1603,10 +1828,12 @@ async function handlePredictionGet(
       faceEvolCredit =
         await faceEvolFinalizePrediction(
           faceEvolAuth.user.id,
+
           String(
             prediction.id ||
             id
           ),
+
           String(
             prediction.status ||
             ""
@@ -1615,8 +1842,9 @@ async function handlePredictionGet(
 
     } catch (creditError) {
       /*
-       * Never hide a valid AI result
-       * because credit finalization failed.
+       * Never hide a valid AI output
+       * just because credit reconciliation
+       * temporarily fails.
        */
       console.error(
         "FaceEvol prediction credit finalization failed:",
@@ -1652,6 +1880,7 @@ async function handlePredictionGet(
           faceEvolCredit &&
           typeof faceEvolCredit ===
             "object"
+
             ? {
                 ...faceEvolCredit,
 
@@ -1659,6 +1888,7 @@ async function handlePredictionGet(
                   faceEvolCredit.refunded !==
                   true
               }
+
             : null
       });
 
@@ -1688,10 +1918,10 @@ async function handlePredictionGet(
    MAIN ROUTER
 
    GET:
-     existing Replicate prediction polling
+     Existing FaceEvol Replicate prediction status
 
    POST without Stripe-Signature:
-     authenticated Stripe Checkout creation
+     FaceEvol Stripe Checkout
 
    POST with Stripe-Signature:
      Stripe webhook
@@ -1708,6 +1938,9 @@ export default async function handler(
   );
 
 
+  /*
+   * Existing AI prediction polling.
+   */
   if (
     req.method ===
     "GET"
@@ -1719,6 +1952,9 @@ export default async function handler(
   }
 
 
+  /*
+   * Stripe Checkout and webhook.
+   */
   if (
     req.method ===
     "POST"
@@ -1743,8 +1979,8 @@ export default async function handler(
 
 
     /*
-     * Stripe webhooks always include
-     * the Stripe-Signature header.
+     * Stripe's server includes this header.
+     * A browser Checkout request does not.
      */
     if (
       req.headers?.[
@@ -1760,8 +1996,8 @@ export default async function handler(
 
 
     /*
-     * Otherwise POST is a FaceEvol
-     * authenticated Checkout request.
+     * Authenticated browser request
+     * to create a Checkout Session.
      */
     try {
       return await handleStripeCheckout(
@@ -1789,7 +2025,8 @@ export default async function handler(
             error:
               "Stripe Sandbox is protected. Add STRIPE_TEST_EMAIL or STRIPE_TEST_USER_ID in Vercel before testing.",
 
-            code
+            code:
+              "STRIPE_TEST_ACCESS_NOT_CONFIGURED"
           });
       }
 
@@ -1804,7 +2041,8 @@ export default async function handler(
             error:
               "Stripe checkout is currently in private Sandbox testing.",
 
-            code
+            code:
+              "STRIPE_TEST_ACCESS_DENIED"
           });
       }
 
