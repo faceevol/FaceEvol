@@ -86,9 +86,6 @@ export default async function handler(req, res) {
     scale_factor
   } = req.body || {};
 
-  /*
-   * Validate image.
-   */
   if (!isImageDataUri(image)) {
     return res.status(400).json({
       error:
@@ -96,9 +93,6 @@ export default async function handler(req, res) {
     });
   }
 
-  /*
-   * Keep the Base64 request inside a safe size.
-   */
   if (image.length > MAX_IMAGE_DATA_URI_CHARS) {
     return res.status(413).json({
       error:
@@ -124,17 +118,7 @@ export default async function handler(req, res) {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
-
-          /*
-           * CodeFormer normally runs quickly.
-           * Wait when possible so FaceEvol can display
-           * the result without unnecessary polling.
-           */
           Prefer: "wait=60",
-
-          /*
-           * Allow enough time for 4x photos.
-           */
           "Cancel-After": "5m"
         },
 
@@ -145,7 +129,10 @@ export default async function handler(req, res) {
             image,
 
             /*
-             * 2x or 4x final output.
+             * FaceEvol output quality:
+             *
+             * 2x = enhanced
+             * 4x = maximum resolution
              */
             upscale: scale,
 
@@ -155,22 +142,25 @@ export default async function handler(req, res) {
             face_upsample: true,
 
             /*
-             * IMPORTANT:
-             * CodeFormer uses Real-ESRGAN for the rest
-             * of the image/background when enabled.
+             * Enhance the rest of the image using
+             * Real-ESRGAN.
              */
             background_enhance: true,
 
             /*
-             * CodeFormer:
+             * IMPORTANT:
              *
-             * Lower value = stronger reconstruction
-             * Higher value = closer to original identity
+             * Higher fidelity preserves the person's
+             * original facial structure more strongly.
              *
-             * 0.6 gives a visible improvement while
-             * still protecting the person's identity.
+             * Previous test:
+             * 0.60 = sharper but slightly unnatural
+             *
+             * New setting:
+             * 0.82 = more natural while keeping
+             * visible restoration.
              */
-            codeformer_fidelity: 0.6
+            codeformer_fidelity: 0.82
           }
         })
       }
@@ -184,9 +174,6 @@ export default async function handler(req, res) {
       prediction = null;
     }
 
-    /*
-     * API-level failure.
-     */
     if (!response.ok) {
       const details = safeDetail(
         prediction?.detail ||
@@ -218,11 +205,6 @@ export default async function handler(req, res) {
       });
     }
 
-    /*
-     * CodeFormer can occasionally return "failed"
-     * immediately while using synchronous wait.
-     * Send the actual error back instead of hiding it.
-     */
     if (prediction.status === "failed") {
       const details = safeDetail(
         prediction.error ||
@@ -257,7 +239,7 @@ export default async function handler(req, res) {
         id: prediction.id,
         status: prediction.status,
         scale,
-        fidelity: 0.6,
+        fidelity: 0.82,
         faceUpsample: true,
         backgroundEnhance: true
       }
