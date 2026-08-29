@@ -7,6 +7,19 @@
   <title>FaceEvol — AI Face Transformation</title>
   <meta name="description" content="Transform your age, swap faces, bring a photo to life and enhance photos or videos with FaceEvol. Simple, private and built for high-quality AI results." />
   <meta name="theme-color" content="#070b17" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="robots" content="index,follow" />
+  <link rel="canonical" href="https://www.faceevol.com/" />
+  <link rel="icon" href="a.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="FaceEvol" />
+  <meta property="og:title" content="FaceEvol — AI Face Transformation" />
+  <meta property="og:description" content="Transform your age, swap faces, bring a photo to life, and enhance photos or videos in one simple AI studio." />
+  <meta property="og:url" content="https://www.faceevol.com/" />
+  <meta property="og:image" content="https://www.faceevol.com/a.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="FaceEvol — AI Face Transformation" />
+  <meta name="twitter:description" content="Six focused AI tools for face transformation, animation and enhancement." />
 
   <!-- Browser-side video trimming. Loaded only by the page; your API routes stay unchanged. -->
   <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
@@ -646,14 +659,137 @@
     .button:active{transform:translateY(0)}
     @media(max-width:1000px){.feature-card.core{grid-column:span 6}}
     @media(max-width:650px){.hero{padding-top:64px}.hero h1{font-size:clamp(38px,11vw,50px)}.hero-actions .button{min-width:0}.feature-card.core{grid-column:span 12}}
+
+
+    /* 9+ polish pass — premium hierarchy, actionable feature cards, stronger mobile UX. */
+    :root{
+      --surface-1:rgba(255,255,255,.028);
+      --surface-2:rgba(255,255,255,.045);
+      --premium-line:rgba(255,255,255,.09);
+      --premium-glow:0 26px 70px rgba(0,0,0,.28);
+    }
+    ::selection{background:rgba(125,211,252,.25);color:#fff}
+    body{background-attachment:fixed}
+    .skip-link{
+      position:fixed;left:16px;top:12px;z-index:2000;transform:translateY(-160%);
+      padding:10px 14px;border-radius:10px;background:#f8fbff;color:#07101c;font-weight:850;
+      transition:transform .18s ease;
+    }
+    .skip-link:focus{transform:translateY(0)}
+    header{box-shadow:0 10px 40px rgba(0,0,0,.12)}
+    .nav-links a{position:relative;transition:color .18s ease}
+    .nav-links a:not(.nav-button)::after{
+      content:"";position:absolute;left:0;right:100%;bottom:-9px;height:2px;border-radius:999px;
+      background:linear-gradient(90deg,#a78bfa,#38bdf8);transition:right .18s ease;
+    }
+    .nav-links a:not(.nav-button):hover::after{right:0}
+    .nav-button,.button-primary,.transform-button{position:relative;overflow:hidden}
+    .nav-button::after,.button-primary::after,.transform-button::after{
+      content:"";position:absolute;inset:-80% auto -80% -45%;width:30%;transform:rotate(18deg);
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);transition:left .5s ease;
+    }
+    .nav-button:hover::after,.button-primary:hover::after,.transform-button:hover::after{left:120%}
+    .hero{padding-bottom:62px}
+    .badge{box-shadow:0 8px 30px rgba(0,0,0,.16)}
+    .hero h1{text-wrap:balance;text-shadow:0 10px 45px rgba(0,0,0,.18)}
+    .hero-description{text-wrap:balance}
+    .hero-trust{margin-top:19px}
+    .hero-trust span{display:inline-flex;align-items:center;gap:6px}
+    .studio-wrap{margin-top:46px}
+    .studio{padding:7px;background:linear-gradient(145deg,rgba(125,211,252,.05),rgba(167,139,250,.025));}
+    .studio-head{
+      min-height:62px;padding:12px 17px 12px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;
+      border-radius:20px 20px 12px 12px;background:rgba(4,8,18,.58);border:1px solid rgba(255,255,255,.055);
+      border-bottom-color:rgba(125,211,252,.08);text-align:left;
+    }
+    .studio-head-copy{display:flex;align-items:center;gap:12px;min-width:0}
+    .studio-brand-icon{width:36px;height:36px;flex:0 0 auto;display:grid;place-items:center;border-radius:11px;background:linear-gradient(145deg,rgba(124,58,237,.22),rgba(14,165,233,.16));border:1px solid rgba(125,211,252,.10)}
+    .studio-head strong{display:block;font-size:13px;letter-spacing:.1px}
+    .studio-head small{display:block;margin-top:2px;color:#7e8ca3;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .studio-current-tool{flex:0 0 auto;padding:7px 10px;border-radius:999px;background:rgba(56,189,248,.055);border:1px solid rgba(56,189,248,.12);color:#bcecff;font-size:10px;font-weight:850}
+    .studio-inner{margin-top:7px}
+    .tool-option{position:relative;user-select:none}
+    .tool-option::before{content:"";position:absolute;left:0;top:22%;bottom:22%;width:2px;border-radius:999px;background:transparent}
+    .tool-option.active::before{background:linear-gradient(#a78bfa,#38bdf8);box-shadow:0 0 12px rgba(56,189,248,.45)}
+    .tool-option.active{box-shadow:0 8px 22px rgba(0,0,0,.10)}
+    .upload-box{position:relative;overflow:hidden}
+    .upload-box::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,transparent 35%,rgba(125,211,252,.03),transparent 65%);transform:translateX(-100%);transition:transform .5s ease}
+    .upload-box:hover::after{transform:translateX(100%)}
+    section{position:relative}
+    #features,#how-it-works,#quality,#pricing,#faq{scroll-margin-top:88px}
+    .section-heading h2{text-wrap:balance}
+    .section-heading p{text-wrap:balance}
+    .feature-card{display:flex;flex-direction:column;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease;background:linear-gradient(150deg,rgba(255,255,255,.044),rgba(255,255,255,.018))}
+    .feature-card:hover{transform:translateY(-5px);border-color:rgba(125,211,252,.18);box-shadow:0 26px 55px rgba(0,0,0,.20)}
+    .feature-card p{flex:1}
+    .feature-action{
+      align-self:flex-start;margin-top:19px;padding:0;border:0;background:transparent;color:#8edcff;font-size:12px;font-weight:850;cursor:pointer;
+      display:inline-flex;align-items:center;gap:7px;transition:gap .18s ease,color .18s ease;
+    }
+    .feature-action:hover{gap:10px;color:#dff8ff}
+    .feature-action span{font-size:14px}
+    .steps{counter-reset:step}
+    .step-card{position:relative;overflow:hidden;border-color:rgba(255,255,255,.075);background:linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,255,255,.018))}
+    .step-card::after{content:"";position:absolute;width:110px;height:110px;right:-35px;bottom:-50px;border-radius:50%;background:radial-gradient(circle,rgba(167,139,250,.08),transparent 68%)}
+    .quality-box{box-shadow:var(--premium-glow);border-color:rgba(125,211,252,.11)}
+    .quality-visual{box-shadow:inset 0 0 0 1px rgba(255,255,255,.012)}
+    .privacy-card{transition:transform .2s ease,border-color .2s ease;background:linear-gradient(145deg,rgba(255,255,255,.034),rgba(255,255,255,.016))}
+    .privacy-card:hover{transform:translateY(-3px);border-color:rgba(125,211,252,.14)}
+    .compact-pricing{grid-template-columns:1.1fr .9fr;max-width:860px}
+    .compact-pricing .price-card{min-height:100%;display:flex;flex-direction:column}
+    .compact-pricing .price-features{flex:1}
+    .price-card{transition:transform .2s ease,border-color .2s ease}
+    .price-card:hover{transform:translateY(-3px);border-color:rgba(125,211,252,.14)}
+    details{transition:border-color .18s ease,background .18s ease}
+    details:hover{border-color:rgba(125,211,252,.12)}
+    details[open]{background:rgba(255,255,255,.028);border-color:rgba(125,211,252,.13)}
+    .cta-box{position:relative;overflow:hidden;box-shadow:var(--premium-glow)}
+    .cta-box::before{content:"";position:absolute;left:50%;top:-190px;width:600px;height:330px;transform:translateX(-50%);background:radial-gradient(circle,rgba(125,211,252,.13),transparent 67%);pointer-events:none}
+    .cta-box>*{position:relative;z-index:1}
+    .legal-section{padding-top:24px}
+    .legal-card{background:rgba(255,255,255,.018)}
+    .footer-links a{transition:color .18s ease}.footer-links a:hover{color:#eef7ff}
+    .mobile-studio-cta{display:none}
+    @media(max-width:1000px){.compact-pricing{grid-template-columns:1fr;max-width:590px}}
+    @media(max-width:650px){
+      body{padding-bottom:76px;background-attachment:scroll}
+      .hero{padding-bottom:46px}
+      .studio-head{padding:10px 12px}.studio-brand-icon{width:34px;height:34px}.studio-head small{max-width:170px}.studio-current-tool{display:none}
+      .studio-inner{margin-top:6px}
+      .tool-option::before{left:8%;right:8%;top:auto;bottom:0;width:auto;height:2px}
+      .feature-card:hover,.price-card:hover,.privacy-card:hover{transform:none}
+      .compact-pricing{max-width:none}
+      .mobile-studio-cta{
+        position:fixed;z-index:1200;left:14px;right:14px;bottom:calc(10px + env(safe-area-inset-bottom));min-height:52px;
+        display:flex;align-items:center;justify-content:center;border-radius:15px;background:linear-gradient(90deg,#6d28d9,#0369a1);
+        border:1px solid rgba(255,255,255,.14);box-shadow:0 18px 45px rgba(0,0,0,.42);color:#fff;font-size:13px;font-weight:850;
+      }
+    }
+    @media(prefers-reduced-motion:reduce){
+      html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+    }
   </style>
+
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"WebApplication",
+    "name":"FaceEvol",
+    "url":"https://www.faceevol.com/",
+    "applicationCategory":"MultimediaApplication",
+    "operatingSystem":"Web",
+    "description":"AI face transformation, face swap, photo-to-video and enhancement tools in one web studio.",
+    "offers":{"@type":"Offer","price":"0","priceCurrency":"EUR","description":"Free beta access"}
+  }
+  </script>
 </head>
 
 <body>
+<a class="skip-link" href="#studio">Skip to AI Studio</a>
 <header>
   <div class="container nav">
     <a href="#" class="logo"><img src="a.png" alt="FaceEvol"></a>
-    <nav class="nav-links">
+    <nav class="nav-links" aria-label="Primary navigation">
       <a href="#features">Features</a>
       <a href="#how-it-works">How It Works</a>
       <a href="#quality">Quality</a>
@@ -667,7 +803,7 @@
 <main>
   <section class="hero">
     <div class="container">
-      <div class="badge"><span class="badge-dot"></span>FaceEvol Beta</div>
+      <div class="badge"><span class="badge-dot"></span>Free Beta · No account needed</div>
       <h1>AI Face <span class="gradient-text">Transformation</span></h1>
       <p class="hero-description">Transform your age, swap faces, bring a photo to life, and create high-quality AI results in seconds.</p>
       <div class="hero-actions">
@@ -675,37 +811,44 @@
         <a href="#features" class="button button-secondary">Explore All Tools</a>
       </div>
       <div class="hero-trust" aria-label="FaceEvol benefits">
-        <span>🔒 Privacy focused</span>
-        <span>🧰 6 AI tools</span>
-        <span>⬇️ Downloadable results</span>
+        <span>🔒 Privacy-focused workflow</span>
+        <span>🧰 6 focused AI tools</span>
+        <span>⬇️ Direct downloads</span>
       </div>
 
       <div class="studio-wrap" id="studio">
         <div class="studio">
+          <div class="studio-head" aria-label="FaceEvol Studio">
+            <div class="studio-head-copy">
+              <div class="studio-brand-icon">✦</div>
+              <div><strong>FaceEvol AI Studio</strong><small>Choose a tool. Upload your file. Create your result.</small></div>
+            </div>
+            <span class="studio-current-tool" id="studioCurrentTool">Age Transformation</span>
+          </div>
           <div class="studio-inner">
             <div class="studio-sidebar">
               <div class="studio-label">Create</div>
-              <div class="tool-option active" id="ageOption">
+              <div class="tool-option active" id="ageOption" role="button" tabindex="0" aria-pressed="true" aria-label="Open Age Transformation">
                 <div class="tool-icon">🕒</div>
                 <div><div class="tool-name">Age Transformation</div><span class="tool-sub">5 presets + custom age</span></div>
               </div>
-              <div class="tool-option" id="photoFaceSwapOption">
+              <div class="tool-option" id="photoFaceSwapOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open Photo Face Swap">
                 <div class="tool-icon">🖼️</div>
                 <div><div class="tool-name">Photo Face Swap</div><span class="tool-sub">Photo → photo</span></div>
               </div>
-              <div class="tool-option" id="photoToVideoOption">
+              <div class="tool-option" id="photoToVideoOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open Photo to Video">
                 <div class="tool-icon">🎞️</div>
                 <div><div class="tool-name">Photo to Video</div><span class="tool-sub">Prompt → short video</span></div>
               </div>
-              <div class="tool-option" id="faceSwapOption">
+              <div class="tool-option" id="faceSwapOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open Video Face Swap">
                 <div class="tool-icon">🎬</div>
                 <div><div class="tool-name">Video Face Swap</div><span class="tool-sub">Up to 20 sec</span></div>
               </div>
-              <div class="tool-option" id="photoEnhanceOption">
+              <div class="tool-option" id="photoEnhanceOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open Photo Enhance">
                 <div class="tool-icon">✨</div>
                 <div><div class="tool-name">Photo Enhance</div><span class="tool-sub">2x · 4x</span></div>
               </div>
-              <div class="tool-option" id="videoEnhanceOption">
+              <div class="tool-option" id="videoEnhanceOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open Video Enhance">
                 <div class="tool-icon">✨</div>
                 <div><div class="tool-name">Video Enhance</div><span class="tool-sub">1080p · 4K</span></div>
               </div>
@@ -715,13 +858,13 @@
               <h2 class="upload-title">Upload a photo for Age Transformation</h2>
               <p class="upload-description">Explore the age examples below before you upload. When you are ready, choose a clear face photo and transform it to your selected age.</p>
 
-              <div class="upload-box" id="uploadBox" onclick="document.getElementById('photoUpload').click()">
+              <div class="upload-box" id="uploadBox" role="button" tabindex="0" aria-label="Choose a face photo" onclick="document.getElementById('photoUpload').click()">
                 <div class="upload-icon">↑</div>
                 <strong>Drop your face photo here</strong>
                 <small>or tap to choose a JPG, PNG or WebP</small>
               </div>
               <input type="file" id="photoUpload" accept="image/*" hidden>
-              <div class="upload-status" id="uploadStatus"></div>
+              <div class="upload-status" id="uploadStatus" aria-live="polite"></div>
             </div>
           </div>
         </div>
@@ -732,40 +875,46 @@
   <section id="features">
     <div class="container">
       <div class="section-heading">
-        <span class="section-eyebrow">Six Tools. One Studio.</span>
-        <h2>Everything you need to <span class="gradient-text">transform, animate and enhance.</span></h2>
-        <p>Choose the tool you need without leaving the studio. Each workflow is designed to stay simple from upload to finished result.</p>
+        <span class="section-eyebrow">Six Focused Tools · One Studio</span>
+        <h2>Create faster with <span class="gradient-text">one clean AI workflow.</span></h2>
+        <p>Transform, swap, animate or enhance without jumping between different websites. Pick a tool and work from upload to download in the same studio.</p>
       </div>
       <div class="feature-grid">
         <div class="feature-card core">
           <div class="feature-icon">🕒</div><h3>Age Transformation</h3>
           <p>Explore younger or older versions of a face with five visual presets or any custom age from 0 to 100.</p>
           <span class="feature-tag">AGE 0 → 100</span>
+          <button type="button" class="feature-action" data-open-tool="age" aria-label="Open Age Transformation">Open Age Transformation <span>→</span></button>
         </div>
         <div class="feature-card core">
           <div class="feature-icon">🖼️</div><h3>Photo Face Swap</h3>
           <p>Choose a source face and a target photo, then create a natural-looking photo face swap in a few steps.</p>
           <span class="feature-tag">PHOTO → PHOTO</span>
+          <button type="button" class="feature-action" data-open-tool="photo" aria-label="Open Photo Face Swap">Open Photo Face Swap <span>→</span></button>
         </div>
         <div class="feature-card core">
           <div class="feature-icon">🎞️</div><h3>Photo to Video</h3>
           <p>Upload a still photo, describe the motion you want, and turn it into a short AI-generated video.</p>
           <span class="feature-tag">IMAGE → VIDEO</span>
+          <button type="button" class="feature-action" data-open-tool="photo-video" aria-label="Open Photo to Video">Open Photo to Video <span>→</span></button>
         </div>
         <div class="feature-card core">
           <div class="feature-icon">🎬</div><h3>Video Face Swap</h3>
           <p>Use a clear source face and select up to 20 seconds of an MP4 video for your face swap.</p>
           <span class="feature-tag">VIDEO</span>
+          <button type="button" class="feature-action" data-open-tool="video" aria-label="Open Video Face Swap">Open Video Face Swap <span>→</span></button>
         </div>
         <div class="feature-card core">
           <div class="feature-icon">✨</div><h3>Photo Enhance</h3>
           <p>Restore detail and improve clarity while keeping faces natural, with 2× and 4× enhancement options.</p>
           <span class="feature-tag">2× · 4×</span>
+          <button type="button" class="feature-action" data-open-tool="photo-enhance" aria-label="Open Photo Enhance">Open Photo Enhance <span>→</span></button>
         </div>
         <div class="feature-card core">
           <div class="feature-icon">🎥</div><h3>Video Enhance</h3>
           <p>Enhance a selected short video clip and export at higher resolution with flexible frame-rate options.</p>
           <span class="feature-tag">1080P · 4K</span>
+          <button type="button" class="feature-action" data-open-tool="enhance" aria-label="Open Video Enhance">Open Video Enhance <span>→</span></button>
         </div>
       </div>
     </div>
@@ -774,9 +923,9 @@
   <section id="how-it-works">
     <div class="container">
       <div class="section-heading">
-        <span class="section-eyebrow">Simple Creative Workflow</span>
-        <h2>Start with one face. <span class="gradient-text">Choose what to create next.</span></h2>
-        <p>Choose the FaceEvol tool you want, create your result, and save it when you are finished.</p>
+        <span class="section-eyebrow">Three Simple Steps</span>
+        <h2>From upload to result, <span class="gradient-text">without the clutter.</span></h2>
+        <p>FaceEvol keeps every workflow familiar: choose a tool, add your file, then preview and download the result.</p>
       </div>
       <div class="steps">
         <div class="step-card"><div class="step-number">1</div><h3>Choose your file</h3><p>Upload the photo or video you want to work with. Clear, well-lit source material gives the best results.</p></div>
@@ -790,20 +939,20 @@
     <div class="container">
       <div class="quality-box">
         <div class="quality-content">
-          <span class="section-eyebrow">AI Video Enhancement</span>
-          <h2>Make video clearer. <span class="gradient-text">Enhance up to 4K.</span></h2>
-          <p>Upload an MP4 up to 60 seconds, select any section up to 20 seconds, then enhance that clip to 1080p, 2K or 4K with 30 or 60 FPS.</p>
+          <span class="section-eyebrow">Quality &amp; Detail</span>
+          <h2>Restore photo detail. <span class="gradient-text">Give video more resolution.</span></h2>
+          <p>Photo Enhance focuses on clearer, more natural-looking detail with 2× or 4× output. Video Enhance lets you select a short clip and export it at a higher resolution.</p>
           <div class="quality-list">
-            <div class="quality-item"><span class="check">✓</span>1080p, 2K and 4K output options</div>
-            <div class="quality-item"><span class="check">✓</span>30 FPS or smoother 60 FPS output</div>
-            <div class="quality-item"><span class="check">✓</span>Scene-aware enhancement for AI and real footage</div>
-            <div class="quality-item"><span class="check">✓</span>Direct preview and video download</div>
+            <div class="quality-item"><span class="check">✓</span>Natural-looking facial restoration for photos</div>
+            <div class="quality-item"><span class="check">✓</span>2× and 4× photo enhancement options</div>
+            <div class="quality-item"><span class="check">✓</span>Short-clip video enhancement workflow</div>
+            <div class="quality-item"><span class="check">✓</span>On-page preview, comparison and direct downloads</div>
           </div>
         </div>
         <div class="quality-visual">
-          <div class="quality-chip chip-1">1080p</div><div class="quality-chip chip-2">4K</div>
-          <div class="quality-chip chip-3">60 FPS</div><div class="quality-chip chip-4">AI Enhance</div>
-          <div class="quality-circle">💎</div>
+          <div class="quality-chip chip-1">2× Photo</div><div class="quality-chip chip-2">4× Photo</div>
+          <div class="quality-chip chip-3">1080p Video</div><div class="quality-chip chip-4">4K Export</div>
+          <div class="quality-circle">✨</div>
         </div>
       </div>
     </div>
@@ -813,11 +962,11 @@
     <div class="container">
       <div class="section-heading">
         <span class="section-eyebrow">Trust & Privacy</span>
-        <h2>Your creations should feel <span class="gradient-text">personal and protected.</span></h2>
-        <p>FaceEvol is designed with user trust, responsible creation and privacy-conscious processing as important parts of the experience.</p>
+        <h2>Creative tools should feel <span class="gradient-text">simple, responsible and private.</span></h2>
+        <p>FaceEvol is designed to minimize unnecessary friction while keeping privacy-conscious processing and responsible creation visible in the product.</p>
       </div>
       <div class="privacy-grid">
-        <div class="privacy-card"><div>🔒</div><strong>Privacy Focused</strong><p>Uploads and generated content are handled through private storage and controlled access in the FaceEvol workflow.</p></div>
+        <div class="privacy-card"><div>🔒</div><strong>Privacy Focused</strong><p>Temporary uploads are handled through privacy-conscious storage and controlled access as part of the FaceEvol workflow.</p></div>
         <div class="privacy-card"><div>🛡️</div><strong>Responsible Creation</strong><p>Designed for legitimate, creative and consensual use.</p></div>
         <div class="privacy-card"><div>❤️</div><strong>Made for People</strong><p>Technology should feel simple, friendly and empowering rather than complicated.</p></div>
       </div>
@@ -827,28 +976,32 @@
   <section id="pricing">
     <div class="container">
       <div class="section-heading">
-        <span class="section-eyebrow">Access</span>
-        <h2>Start with the beta. <span class="gradient-text">More options are coming.</span></h2>
-        <p>The current FaceEvol beta is free to explore. Future plans may add higher limits, faster processing and expanded quality options.</p>
+        <span class="section-eyebrow">Free Beta Access</span>
+        <h2>Use the studio now. <span class="gradient-text">Pay only when there is more to offer.</span></h2>
+        <p>FaceEvol is free during beta. If paid plans arrive later, pricing and included limits will be shown clearly before checkout.</p>
       </div>
-      <div class="pricing-grid">
+      <div class="pricing-grid compact-pricing">
         <div class="price-card featured">
-          <div class="popular-label">Beta</div><div class="price-name">Free Beta</div><div class="price">€0</div>
-          <p class="price-description">Try the current FaceEvol experience while the product is being refined.</p>
-          <ul class="price-features"><li>✓ Age transformation workflow</li><li>✓ Photo face swap beta</li><li>✓ Photo to Video beta</li><li>✓ Video face swap beta</li><li>✓ Photo enhancement beta</li><li>✓ Video enhancement beta</li><li>✓ Direct result downloads</li></ul>
-          <a href="#studio" class="button button-primary">Start Creating</a>
+          <div class="popular-label">Available Now</div><div class="price-name">Free Beta</div><div class="price">€0</div>
+          <p class="price-description">Explore the current FaceEvol studio while the product is being refined.</p>
+          <ul class="price-features">
+            <li>✓ All six current AI tools</li>
+            <li>✓ Photo and short-video workflows</li>
+            <li>✓ Direct result downloads</li>
+            <li>✓ No account required during beta</li>
+          </ul>
+          <a href="#studio" class="button button-primary">Open Free Beta</a>
         </div>
         <div class="price-card">
-          <div class="price-name">Creator</div><div class="coming-soon">Coming Soon</div>
-          <p class="price-description">More processing capacity and higher-quality options for frequent creators.</p>
-          <ul class="price-features"><li>✓ More creations</li><li>✓ HD enhancement options</li><li>✓ Faster processing options</li><li>✓ Expanded video limits</li></ul>
-          <span class="button button-secondary future-button" aria-disabled="true">Coming Soon</span>
-        </div>
-        <div class="price-card">
-          <div class="price-name">Pro</div><div class="coming-soon">Coming Soon</div>
-          <p class="price-description">Advanced quality and expanded tools for power users.</p>
-          <ul class="price-features"><li>✓ Higher usage limits</li><li>✓ 4K enhancement options</li><li>✓ Longer videos</li><li>✓ Advanced enhancement</li></ul>
-          <span class="button button-secondary future-button" aria-disabled="true">Coming Soon</span>
+          <div class="price-name">What Comes Next</div><div class="coming-soon">Growing with FaceEvol</div>
+          <p class="price-description">Future plans can focus on the things frequent creators actually need, without cluttering today's beta.</p>
+          <ul class="price-features">
+            <li>✓ Higher creation limits</li>
+            <li>✓ Faster processing options</li>
+            <li>✓ Expanded video limits</li>
+            <li>✓ Clear pricing before any paid launch</li>
+          </ul>
+          <span class="button button-secondary future-button" aria-disabled="true">Future Plans</span>
         </div>
       </div>
     </div>
@@ -878,8 +1031,8 @@
     <div class="container">
       <div class="cta-box">
         <div class="badge">✨ FaceEvol AI Studio</div>
-        <h2>Transform your age.<br><span class="gradient-text">Swap a face. Bring a photo to life.</span></h2>
-        <p>Choose a tool, create your result, and download it — all from one simple studio.</p>
+        <h2>Choose a tool.<br><span class="gradient-text">Create something worth keeping.</span></h2>
+        <p>Transform your age, swap faces, bring a photo to life, or enhance a photo or video — all from one simple studio.</p>
         <a href="#studio" class="button button-primary" id="ctaStartButton">Start Creating →</a>
       </div>
     </div>
@@ -1086,9 +1239,11 @@
       <a href="#" class="footer-logo"><img src="a.png" alt="FaceEvol"></a>
       <div class="footer-links"><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a><a href="#privacy-policy">Privacy</a><a href="#terms">Terms</a><a href="#refunds">Refunds</a><a href="#contact">Contact</a></div>
     </div>
-    <div class="footer-bottom"><div>© 2026 FaceEvol. All rights reserved.</div><div>AI age transformation · photo face swap · photo to video · video face swap · photo enhance · video enhance</div></div>
+    <div class="footer-bottom"><div>© 2026 FaceEvol. All rights reserved.</div><div>One studio for AI face transformation, animation and enhancement.</div></div>
   </div>
 </footer>
+
+<a href="#studio" class="mobile-studio-cta" id="mobileStudioCta">✨ Open FaceEvol Studio</a>
 
 <script>
   const photoUpload = document.getElementById("photoUpload");
@@ -1103,6 +1258,8 @@
   const ageOption = document.getElementById("ageOption");
   const ctaStartButton = document.getElementById("ctaStartButton");
   const heroAgeButton = document.getElementById("heroAgeButton");
+  const mobileStudioCta = document.getElementById("mobileStudioCta");
+  const studioCurrentTool = document.getElementById("studioCurrentTool");
 
   let selectedPhoto = null;
   let selectedSwapVideo = null;
@@ -4482,6 +4639,14 @@
     return "Something went wrong while creating your video. Please try again.";
   }
 
+
+  function syncStudioToolState(activeElement, label){
+    document.querySelectorAll(".tool-option").forEach(option=>{
+      option.setAttribute("aria-pressed", option===activeElement ? "true" : "false");
+    });
+    if(studioCurrentTool) studioCurrentTool.textContent=label;
+  }
+
   function setSharedUploadVisible(visible){
     const uploadTitle=document.querySelector(".upload-title");
     const uploadDescription=document.querySelector(".upload-description");
@@ -4497,6 +4662,7 @@
     activeStudioMode="video";
     document.querySelectorAll(".tool-option").forEach(o=>o.classList.remove("active"));
     faceSwapOption.classList.add("active");
+    syncStudioToolState(faceSwapOption,"Video Face Swap");
     ageControls.classList.remove("show");
     photoSwapControls.classList.remove("show");
     photoToVideoControls.classList.remove("show");
@@ -4518,6 +4684,7 @@
     activeStudioMode="photo";
     document.querySelectorAll(".tool-option").forEach(o=>o.classList.remove("active"));
     photoFaceSwapOption.classList.add("active");
+    syncStudioToolState(photoFaceSwapOption,"Photo Face Swap");
     ageControls.classList.remove("show");
     faceSwapControls.classList.remove("show");
     photoToVideoControls.classList.remove("show");
@@ -4534,6 +4701,7 @@
     activeStudioMode="photo-video";
     document.querySelectorAll(".tool-option").forEach(o=>o.classList.remove("active"));
     photoToVideoOption.classList.add("active");
+    syncStudioToolState(photoToVideoOption,"Photo to Video");
     ageControls.classList.remove("show");
     photoSwapControls.classList.remove("show");
     faceSwapControls.classList.remove("show");
@@ -4550,6 +4718,7 @@
     activeStudioMode="photo-enhance";
     document.querySelectorAll(".tool-option").forEach(o=>o.classList.remove("active"));
     photoEnhanceOption.classList.add("active");
+    syncStudioToolState(photoEnhanceOption,"Photo Enhance");
     ageControls.classList.remove("show");
     photoSwapControls.classList.remove("show");
     photoToVideoControls.classList.remove("show");
@@ -4565,6 +4734,7 @@
     activeStudioMode="enhance";
     document.querySelectorAll(".tool-option").forEach(o=>o.classList.remove("active"));
     videoEnhanceOption.classList.add("active");
+    syncStudioToolState(videoEnhanceOption,"Video Enhance");
     ageControls.classList.remove("show");
     photoSwapControls.classList.remove("show");
     photoToVideoControls.classList.remove("show");
@@ -4580,6 +4750,7 @@
     activeStudioMode="age";
     document.querySelectorAll(".tool-option").forEach(o=>o.classList.remove("active"));
     ageOption.classList.add("active");
+    syncStudioToolState(ageOption,"Age Transformation");
     faceSwapControls.classList.remove("show");
     photoSwapControls.classList.remove("show");
     photoToVideoControls.classList.remove("show");
@@ -4605,12 +4776,61 @@
   videoEnhanceOption.addEventListener("click",activateVideoEnhanceMode);
   ageOption.addEventListener("click",activateAgeMode);
 
+
+  const studioToolActions = new Map([
+    [ageOption,activateAgeMode],
+    [photoFaceSwapOption,activatePhotoFaceSwapMode],
+    [photoToVideoOption,activatePhotoToVideoMode],
+    [faceSwapOption,activateFaceSwapMode],
+    [photoEnhanceOption,activatePhotoEnhanceMode],
+    [videoEnhanceOption,activateVideoEnhanceMode]
+  ]);
+
+  studioToolActions.forEach((action,option)=>{
+    option.addEventListener("keydown",event=>{
+      if(event.key==="Enter" || event.key===" "){
+        event.preventDefault();
+        action();
+      }
+    });
+  });
+
+  function openStudioTool(mode){
+    const actions={
+      age:activateAgeMode,
+      photo:activatePhotoFaceSwapMode,
+      "photo-video":activatePhotoToVideoMode,
+      video:activateFaceSwapMode,
+      "photo-enhance":activatePhotoEnhanceMode,
+      enhance:activateVideoEnhanceMode
+    };
+    const action=actions[mode] || activateAgeMode;
+    action();
+    document.getElementById("studio")?.scrollIntoView({behavior:"smooth",block:"start"});
+  }
+
+  document.querySelectorAll("[data-open-tool]").forEach(button=>{
+    button.addEventListener("click",()=>openStudioTool(button.dataset.openTool));
+  });
+
+  if(mobileStudioCta){
+    mobileStudioCta.addEventListener("click",()=>activateAgeMode());
+  }
+
   ctaStartButton.addEventListener("click",function(){
     activateAgeMode();
   });
 
   heroAgeButton.addEventListener("click",function(){
     activateAgeMode();
+  });
+
+
+  uploadBox.addEventListener("keydown",event=>{
+    if(event.key==="Enter" || event.key===" "){
+      event.preventDefault();
+      photoUpload.click();
+    }
   });
 
   chooseSwapVideo.addEventListener("click",()=>swapVideoUpload.click());
