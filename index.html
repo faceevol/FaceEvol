@@ -1142,7 +1142,7 @@
     <div id="signedOutPanel">
       <div class="auth-kicker">FaceEvol Account</div>
       <h3 id="authTitle">Sign in to FaceEvol</h3>
-      <p class="auth-copy" id="authCopy">Explore every demo free. Sign in when you want to buy credits and create with your own photo or video.</p>
+      <p class="auth-copy" id="authCopy">Sign in to buy credits and create with your own photo or video.</p>
 
       <button type="button" class="auth-google" id="googleSignInButton">
         <span aria-hidden="true">G</span>
@@ -1626,7 +1626,7 @@
             <li>✓ 20 FaceEvol credits</li>
             <li>✓ No subscription</li>
             <li>✓ Credits stay with your account</li>
-            <li>✓ Demo gallery remains free</li>
+            <li>✓ Prepared examples included</li>
           </ul>
           <button type="button" class="button button-secondary" data-credit-pack="20">Buy 20 Credits</button>
         </div>
@@ -4069,7 +4069,7 @@
     if(message.includes("60 seconds")||message.includes("upload is too long")){
       return "Please choose an MP4 that is 60 seconds or shorter.";
     }
-    if(message.includes("20 seconds")||message.includes("5 seconds")||message.includes("selected clip")){
+    if(message.includes("seconds")||message.includes("selected clip")){
       return "Please keep the selected enhancement clip at 5 seconds or less.";
     }
     if(message.includes("300")||message.includes("too large")||message.includes("413")){
@@ -4473,7 +4473,7 @@
 
     /*
      * If Vercel's client-token write path is stuck, the browser can sit at
-     * 0% indefinitely. Give it 20 seconds to show real upload progress,
+     * 0% indefinitely. Give it a short moment to show real upload progress,
      * then abort and use FaceEvol's server fallback instead.
      */
     const noProgressTimer=setTimeout(
