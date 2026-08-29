@@ -1702,7 +1702,7 @@
 
     const response=await fetch("/api/predict",{
       method:"POST",
-      headers:{"Content-Type":"application/json"},
+      headers:await faceEvolGenerationHeaders(),
       body:JSON.stringify({image:imageData,target_age:Number(targetAge)})
     });
 
@@ -1965,6 +1965,7 @@
       latestAgeTransformAge=targetAge;
       resultImage.src=result.output;
       ageResult.classList.add("show");
+      await chargeFaceEvolTool("age");
       processingMessage.textContent=`✓ Transformation complete — age ${targetAge}.`;
     }catch(error){
       console.error("FaceEvol age transformation error:",error);
@@ -2267,7 +2268,7 @@
 
       const response=await fetch("/api/photo-faceswap",{
         method:"POST",
-        headers:{"Content-Type":"application/json"},
+        headers:await faceEvolGenerationHeaders(),
         body:JSON.stringify({face:faceData,target:targetData})
       });
 
@@ -2301,6 +2302,7 @@
       latestPhotoSwapOutput=output;
       photoSwapResultImage.src=output;
       photoSwapResult.classList.add("show");
+      await chargeFaceEvolTool("photo_faceswap");
       photoSwapStatus.textContent="✓ Photo face swap complete — your image is ready.";
       photoSwapResult.scrollIntoView({behavior:"smooth",block:"nearest"});
     }catch(error){
@@ -2600,7 +2602,7 @@
 
       const response=await fetch("/api/photo-to-video",{
         method:"POST",
-        headers:{"Content-Type":"application/json"},
+        headers:await faceEvolGenerationHeaders(),
         body:JSON.stringify({
           image:imageData,
           prompt,
@@ -2640,6 +2642,7 @@
       latestPhotoToVideoOutput=output;
       await loadPhotoToVideoResult(output);
       photoToVideoResult.classList.add("show");
+      await chargeFaceEvolTool("photo_to_video");
       photoToVideoStatus.textContent="✓ Your short video is ready.";
       photoToVideoResult.scrollIntoView({behavior:"smooth",block:"nearest"});
 
@@ -2910,7 +2913,7 @@
 
       const response=await fetch("/api/photo-enhance",{
         method:"POST",
-        headers:{"Content-Type":"application/json"},
+        headers:await faceEvolGenerationHeaders(),
         body:JSON.stringify({
           image:imageData,
           scale_factor:scale
@@ -2943,6 +2946,7 @@
       photoEnhanceCompareRange.value="50";
       updatePhotoEnhanceCompare();
       photoEnhanceResult.classList.add("show");
+      await chargeFaceEvolTool("photo_enhance");
       photoEnhanceStatus.textContent=`✓ Photo enhanced successfully at ${scale}x. Drag the slider to compare before and after.`;
 
     }catch(error){
@@ -3999,7 +4003,7 @@
 
       const response=await fetch("/api/video-enhance",{
         method:"POST",
-        headers:{"Content-Type":"application/json"},
+        headers:await faceEvolGenerationHeaders(),
         body:JSON.stringify({
           pathname:uploaded.pathname,
           target_resolution:enhanceResolution.value,
@@ -4050,6 +4054,7 @@
       await loadEnhancedVideoResult(output);
 
       enhanceResult.classList.add("show");
+      await chargeFaceEvolTool("video_enhance");
       enhanceStatus.textContent=`✓ Enhanced ${enhanceResolution.value.toUpperCase()} video is ready.`;
       enhanceResult.scrollIntoView({behavior:"smooth",block:"nearest"});
 
@@ -5154,7 +5159,7 @@
       swapVideoStatus.textContent="5/6 Starting FaceEvol AI...";
       const response=await fetch("/api/faceswap",{
         method:"POST",
-        headers:{"Content-Type":"application/json"},
+        headers:await faceEvolGenerationHeaders(),
         body:JSON.stringify({face:faceBlob.url,video:videoBlob.url})
       });
 
@@ -5220,6 +5225,7 @@
       downloadFaceSwapButton.style.display="inline-flex";
 
       await loadStableResultVideo(output);
+      await chargeFaceEvolTool("video_faceswap");
 
       swapVideoStatus.textContent="✓ Your FaceEvol video is ready.";
       faceSwapResultVideo.play().then(()=>faceSwapResultVideo.pause()).catch(()=>{});
@@ -5248,7 +5254,7 @@
   const FACEVOL_ACCOUNT_CONFIG={
     supabaseUrl:"https://hasffllflyeoitsenlgc.supabase.co",
     supabasePublishableKey:"sb_publishable_r4T07DT0rPGl1v6avJ-Qiw_exZZn30r",
-    requireSignInForGeneration:false
+    requireSignInForGeneration:true
   };
 
   const accountButton=document.getElementById("accountButton");
@@ -5276,6 +5282,113 @@
   let faceEvolSession=null;
   let faceEvolProfile=null;
   let authToastTimer=null;
+
+  /* =========================================================
+     FACEVOL LIVE CREDIT COSTS
+     ---------------------------------------------------------
+     Costs are also enforced inside Supabase SQL. The browser
+     values are for UX only; the database decides the real cost.
+     ========================================================= */
+  const FACEVOL_TOOL_CREDITS=Object.freeze({
+    age:1,
+    photo_faceswap:2,
+    photo_to_video:5,
+    video_faceswap:6,
+    photo_enhance:2,
+    video_enhance:8
+  });
+
+  const FACEVOL_BUTTON_TO_TOOL=Object.freeze({
+    transformButton:"age",
+    startPhotoSwapButton:"photo_faceswap",
+    startPhotoToVideoButton:"photo_to_video",
+    startFaceSwapButton:"video_faceswap",
+    startPhotoEnhanceButton:"photo_enhance",
+    startEnhanceButton:"video_enhance"
+  });
+
+  function faceEvolToolCost(tool){
+    return Number(FACEVOL_TOOL_CREDITS[tool]||0);
+  }
+
+  function faceEvolCreditsAvailable(){
+    return Number.isFinite(Number(faceEvolProfile?.credits))
+      ? Number(faceEvolProfile.credits)
+      : 0;
+  }
+
+  async function faceEvolGenerationHeaders(){
+    const headers={"Content-Type":"application/json"};
+    const accessToken=faceEvolSession?.access_token;
+    if(accessToken) headers.Authorization=`Bearer ${accessToken}`;
+    return headers;
+  }
+
+  async function chargeFaceEvolTool(tool){
+    if(!faceEvolSupabase||!faceEvolSession?.user){
+      openAuthModal("Sign in to use FaceEvol credits.");
+      return false;
+    }
+
+    const cost=faceEvolToolCost(tool);
+    if(!cost) return true;
+
+    const reference=(globalThis.crypto&&typeof globalThis.crypto.randomUUID==="function")
+      ? globalThis.crypto.randomUUID()
+      : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
+    try{
+      const {data,error}=await faceEvolSupabase.rpc(
+        "consume_faceevol_tool_credits",
+        {p_tool:tool,p_reference:reference}
+      );
+
+      if(error) throw error;
+
+      const remaining=Number(data?.credits_remaining);
+      if(Number.isFinite(remaining)){
+        faceEvolProfile={
+          ...(faceEvolProfile||{}),
+          id:faceEvolSession.user.id,
+          email:faceEvolSession.user.email||faceEvolProfile?.email||"",
+          credits:remaining
+        };
+        renderAccountState();
+      }else{
+        await loadFaceEvolProfile();
+      }
+
+      showAuthToast(`${cost} credit${cost===1?"":"s"} used · ${faceEvolCreditsAvailable()} remaining`);
+      return true;
+    }catch(error){
+      const message=String(error?.message||error||"");
+      console.error("FaceEvol credit charge failed:",error);
+
+      if(message.toUpperCase().includes("INSUFFICIENT_CREDITS")){
+        await loadFaceEvolProfile();
+        openAuthModal("You don't have enough credits for this creation.");
+      }else if(message.toUpperCase().includes("AUTH_REQUIRED")){
+        openAuthModal("Please sign in again to continue.");
+      }else{
+        showAuthToast("Your result is ready, but the credit balance could not update. Please refresh your account.");
+      }
+      return false;
+    }
+  }
+
+  function installFaceEvolCreditLabels(){
+    for(const [buttonId,tool] of Object.entries(FACEVOL_BUTTON_TO_TOOL)){
+      const button=document.getElementById(buttonId);
+      if(!button||button.dataset.creditLabelInstalled==="1") continue;
+      button.dataset.creditLabelInstalled="1";
+      const cost=faceEvolToolCost(tool);
+      const note=document.createElement("div");
+      note.className="faceevol-credit-cost";
+      note.textContent=`${cost} credit${cost===1?"":"s"} after a successful result`;
+      note.style.cssText="margin-top:8px;text-align:center;color:#8291a8;font-size:11px;font-weight:750;letter-spacing:.15px";
+      button.insertAdjacentElement("afterend",note);
+    }
+  }
 
   function faceEvolAccountsConfigured(){
     return Boolean(
@@ -5527,14 +5640,28 @@
     if(!FACEVOL_ACCOUNT_CONFIG.requireSignInForGeneration) return;
     const button=event.target.closest("button");
     if(!button||!generationButtonIds.has(button.id)) return;
-    if(faceEvolSession?.user) return;
 
-    event.preventDefault();
-    event.stopPropagation();
-    event.stopImmediatePropagation();
-    openAuthModal("Sign in to start creating with FaceEvol.");
+    if(!faceEvolSession?.user){
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+      openAuthModal("Sign in to start creating with FaceEvol.");
+      return;
+    }
+
+    const tool=FACEVOL_BUTTON_TO_TOOL[button.id];
+    const cost=faceEvolToolCost(tool);
+    const available=faceEvolCreditsAvailable();
+
+    if(cost>0&&available<cost){
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+      openAuthModal(`This creation needs ${cost} credits. You currently have ${available}.`);
+    }
   },true);
 
+  installFaceEvolCreditLabels();
   initializeFaceEvolAccounts();
 
 
