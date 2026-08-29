@@ -922,7 +922,7 @@
       <div class="account-credit-card">
         <small>Available balance</small>
         <div class="account-credit-value"><strong id="accountCreditCount">0</strong><span>credits</span></div>
-        <div class="account-credit-note">During beta, generation remains free while we validate final credit prices. Your account balance is already stored server-side and cannot be edited from this page.</div>
+        <div class="account-credit-note">Credits are enforced server-side when an AI job starts. If FaceEvol receives a verified failed or canceled prediction, the reserved credits are restored automatically.</div>
       </div>
 
       <div class="account-actions">
@@ -1541,7 +1541,19 @@
     }
 
     try{
-      return JSON.parse(text);
+      const parsed=JSON.parse(text);
+      if(typeof applyFaceEvolServerCreditPayload==="function") applyFaceEvolServerCreditPayload(parsed);
+
+      if(parsed&&parsed.code==="AUTH_REQUIRED"&&typeof openAuthModal==="function") {
+        openAuthModal("Please sign in again to continue.");
+      }
+
+      if(parsed&&parsed.code==="INSUFFICIENT_CREDITS") {
+        if(typeof loadFaceEvolProfile==="function") loadFaceEvolProfile().catch(()=>{});
+        if(typeof openAuthModal==="function") openAuthModal("You don't have enough credits for this creation.");
+      }
+
+      return parsed;
     }catch{
       const raw=String(text||"")
         .replace(/\\s+/g," ")
@@ -1683,7 +1695,7 @@
         :"Still creating your transformation... Please keep this page open.";
 
       await wait(2500);
-      const statusResponse=await fetch(`/api/prediction?id=${encodeURIComponent(prediction.id)}`,{cache:"no-store"});
+      const statusResponse=await fetch(`/api/prediction?id=${encodeURIComponent(prediction.id)}`,{cache:"no-store",headers:await faceEvolPredictionHeaders()});
       const statusData=await readJsonResponse(statusResponse);
       if(!statusResponse.ok) throw new Error(statusData.error||"Could not check the age transformation status.");
 
@@ -1728,7 +1740,7 @@
       for(let extra=0;extra<3 && !output;extra++){
         processingMessage.textContent="Finishing your image...";
         await wait(1500);
-        const statusResponse=await fetch(`/api/prediction?id=${encodeURIComponent(prediction.id)}`,{cache:"no-store"});
+        const statusResponse=await fetch(`/api/prediction?id=${encodeURIComponent(prediction.id)}`,{cache:"no-store",headers:await faceEvolPredictionHeaders()});
         const statusData=await readJsonResponse(statusResponse);
         if(statusResponse.ok){
           prediction=statusData.prediction||statusData||prediction;
@@ -1965,7 +1977,6 @@
       latestAgeTransformAge=targetAge;
       resultImage.src=result.output;
       ageResult.classList.add("show");
-      await chargeFaceEvolTool("age");
       processingMessage.textContent=`✓ Transformation complete — age ${targetAge}.`;
     }catch(error){
       console.error("FaceEvol age transformation error:",error);
@@ -2219,7 +2230,7 @@
         :"Still creating your photo... Please keep this page open.";
 
       await wait(2000);
-      const statusResponse=await fetch(`/api/prediction?id=${encodeURIComponent(prediction.id)}`,{cache:"no-store"});
+      const statusResponse=await fetch(`/api/prediction?id=${encodeURIComponent(prediction.id)}`,{cache:"no-store",headers:await faceEvolPredictionHeaders()});
       const statusData=await readJsonResponse(statusResponse);
       if(!statusResponse.ok) throw new Error(statusData.error||"Could not check photo face swap status.");
 
@@ -2302,7 +2313,6 @@
       latestPhotoSwapOutput=output;
       photoSwapResultImage.src=output;
       photoSwapResult.classList.add("show");
-      await chargeFaceEvolTool("photo_faceswap");
       photoSwapStatus.textContent="✓ Photo face swap complete — your image is ready.";
       photoSwapResult.scrollIntoView({behavior:"smooth",block:"nearest"});
     }catch(error){
@@ -2479,7 +2489,7 @@
 
       const statusResponse=await fetch(
         `/api/prediction?id=${encodeURIComponent(prediction.id)}`,
-        {cache:"no-store"}
+        {cache:"no-store",headers:await faceEvolPredictionHeaders()}
       );
       const statusData=await readJsonResponse(statusResponse);
 
@@ -2642,7 +2652,6 @@
       latestPhotoToVideoOutput=output;
       await loadPhotoToVideoResult(output);
       photoToVideoResult.classList.add("show");
-      await chargeFaceEvolTool("photo_to_video");
       photoToVideoStatus.textContent="✓ Your short video is ready.";
       photoToVideoResult.scrollIntoView({behavior:"smooth",block:"nearest"});
 
@@ -2825,7 +2834,7 @@
         :"Still enhancing your photo... Please keep this page open.";
 
       await wait(2000);
-      const statusResponse=await fetch(`/api/prediction?id=${encodeURIComponent(prediction.id)}`,{cache:"no-store"});
+      const statusResponse=await fetch(`/api/prediction?id=${encodeURIComponent(prediction.id)}`,{cache:"no-store",headers:await faceEvolPredictionHeaders()});
       const statusData=await readJsonResponse(statusResponse);
       if(!statusResponse.ok) throw new Error(statusData.error||"Could not check Photo Enhance status.");
 
@@ -2946,7 +2955,6 @@
       photoEnhanceCompareRange.value="50";
       updatePhotoEnhanceCompare();
       photoEnhanceResult.classList.add("show");
-      await chargeFaceEvolTool("photo_enhance");
       photoEnhanceStatus.textContent=`✓ Photo enhanced successfully at ${scale}x. Drag the slider to compare before and after.`;
 
     }catch(error){
@@ -3251,7 +3259,7 @@
 
       const statusResponse=await fetch(
         `/api/prediction?id=${encodeURIComponent(prediction.id)}`,
-        {cache:"no-store"}
+        {cache:"no-store",headers:await faceEvolPredictionHeaders()}
       );
       const statusData=await readJsonResponse(statusResponse);
 
@@ -4054,7 +4062,6 @@
       await loadEnhancedVideoResult(output);
 
       enhanceResult.classList.add("show");
-      await chargeFaceEvolTool("video_enhance");
       enhanceStatus.textContent=`✓ Enhanced ${enhanceResolution.value.toUpperCase()} video is ready.`;
       enhanceResult.scrollIntoView({behavior:"smooth",block:"nearest"});
 
@@ -5190,7 +5197,7 @@
         await new Promise(resolve=>setTimeout(resolve,3000));
 
         try{
-          const statusResponse=await fetch(`/api/prediction?id=${encodeURIComponent(prediction.id)}`,{cache:"no-store"});
+          const statusResponse=await fetch(`/api/prediction?id=${encodeURIComponent(prediction.id)}`,{cache:"no-store",headers:await faceEvolPredictionHeaders()});
           const statusData=await readJsonResponse(statusResponse);
           if(!statusResponse.ok) throw new Error(statusData.error||"Could not check face swap status.");
 
@@ -5225,7 +5232,6 @@
       downloadFaceSwapButton.style.display="inline-flex";
 
       await loadStableResultVideo(output);
-      await chargeFaceEvolTool("video_faceswap");
 
       swapVideoStatus.textContent="✓ Your FaceEvol video is ready.";
       faceSwapResultVideo.play().then(()=>faceSwapResultVideo.pause()).catch(()=>{});
@@ -5317,62 +5323,50 @@
       : 0;
   }
 
+  function faceEvolCreateRequestId(){
+    if(globalThis.crypto&&typeof globalThis.crypto.randomUUID==="function") return globalThis.crypto.randomUUID();
+    return `${Date.now()}-${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`;
+  }
+
   async function faceEvolGenerationHeaders(){
-    const headers={"Content-Type":"application/json"};
+    const headers={
+      "Content-Type":"application/json",
+      "X-FaceEvol-Request-Id":faceEvolCreateRequestId()
+    };
     const accessToken=faceEvolSession?.access_token;
     if(accessToken) headers.Authorization=`Bearer ${accessToken}`;
     return headers;
   }
 
-  async function chargeFaceEvolTool(tool){
-    if(!faceEvolSupabase||!faceEvolSession?.user){
-      openAuthModal("Sign in to use FaceEvol credits.");
-      return false;
+  async function faceEvolPredictionHeaders(){
+    const headers={};
+    const accessToken=faceEvolSession?.access_token;
+    if(accessToken) headers.Authorization=`Bearer ${accessToken}`;
+    return headers;
+  }
+
+  function applyFaceEvolServerCreditPayload(payload){
+    const credit=payload&&typeof payload==="object"?payload.faceevol_credit:null;
+    if(!credit||typeof credit!=="object") return;
+
+    const remaining=Number(credit.credits_remaining);
+    if(Number.isFinite(remaining)&&faceEvolSession?.user){
+      faceEvolProfile={
+        ...(faceEvolProfile||{}),
+        id:faceEvolSession.user.id,
+        email:faceEvolSession.user.email||faceEvolProfile?.email||"",
+        credits:remaining
+      };
+      renderAccountState();
     }
 
-    const cost=faceEvolToolCost(tool);
-    if(!cost) return true;
-
-    const reference=(globalThis.crypto&&typeof globalThis.crypto.randomUUID==="function")
-      ? globalThis.crypto.randomUUID()
-      : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-
-    try{
-      const {data,error}=await faceEvolSupabase.rpc(
-        "consume_faceevol_tool_credits",
-        {p_tool:tool,p_reference:reference}
-      );
-
-      if(error) throw error;
-
-      const remaining=Number(data?.credits_remaining);
-      if(Number.isFinite(remaining)){
-        faceEvolProfile={
-          ...(faceEvolProfile||{}),
-          id:faceEvolSession.user.id,
-          email:faceEvolSession.user.email||faceEvolProfile?.email||"",
-          credits:remaining
-        };
-        renderAccountState();
-      }else{
-        await loadFaceEvolProfile();
+    if(credit.refunded===true){
+      showAuthToast(`Generation failed · ${Number.isFinite(remaining)?remaining:faceEvolCreditsAvailable()} credits available`);
+    }else if(credit.charged&&credit.reserved===true){
+      const used=Number(credit.charged);
+      if(Number.isFinite(used)&&used>0){
+        showAuthToast(`${used} credit${used===1?"":"s"} reserved · ${Number.isFinite(remaining)?remaining:faceEvolCreditsAvailable()} remaining`);
       }
-
-      showAuthToast(`${cost} credit${cost===1?"":"s"} used · ${faceEvolCreditsAvailable()} remaining`);
-      return true;
-    }catch(error){
-      const message=String(error?.message||error||"");
-      console.error("FaceEvol credit charge failed:",error);
-
-      if(message.toUpperCase().includes("INSUFFICIENT_CREDITS")){
-        await loadFaceEvolProfile();
-        openAuthModal("You don't have enough credits for this creation.");
-      }else if(message.toUpperCase().includes("AUTH_REQUIRED")){
-        openAuthModal("Please sign in again to continue.");
-      }else{
-        showAuthToast("Your result is ready, but the credit balance could not update. Please refresh your account.");
-      }
-      return false;
     }
   }
 
@@ -5384,7 +5378,7 @@
       const cost=faceEvolToolCost(tool);
       const note=document.createElement("div");
       note.className="faceevol-credit-cost";
-      note.textContent=`${cost} credit${cost===1?"":"s"} after a successful result`;
+      note.textContent=`${cost} credit${cost===1?"":"s"} per creation · failed jobs are refunded`;
       note.style.cssText="margin-top:8px;text-align:center;color:#8291a8;font-size:11px;font-weight:750;letter-spacing:.15px";
       button.insertAdjacentElement("afterend",note);
     }
@@ -5625,7 +5619,7 @@
    * Optional generation sign-in gate.
    * Keep false during the current free beta.
    * Change requireSignInForGeneration to true only after Supabase is configured.
-   * This is a UX gate; paid-launch API enforcement must also happen server-side.
+   * The UI gate improves UX; the API routes now perform their own Supabase authentication and credit enforcement as well.
    */
   const generationButtonIds=new Set([
     "transformButton",
