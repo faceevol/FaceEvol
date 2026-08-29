@@ -803,7 +803,7 @@
     .auth-modal{position:fixed;inset:0;z-index:5000;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(1,4,12,.74);backdrop-filter:blur(14px)}
     .auth-modal.show{display:flex}
     .auth-card{
-      width:min(100%,440px);position:relative;padding:28px;border-radius:24px;border:1px solid rgba(125,211,252,.14);
+      width:min(100%,500px);max-height:min(90vh,760px);overflow:auto;position:relative;padding:28px;border-radius:24px;border:1px solid rgba(125,211,252,.14);
       background:linear-gradient(160deg,rgba(13,20,38,.985),rgba(5,9,20,.99));box-shadow:0 38px 100px rgba(0,0,0,.58),0 0 0 1px rgba(255,255,255,.018) inset
     }
     .auth-close{position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:11px;border:1px solid rgba(255,255,255,.075);background:rgba(255,255,255,.03);color:#9ba9bf;cursor:pointer;font-size:18px}
@@ -839,6 +839,31 @@
     .account-signout{border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.035);color:#ccd7e7}
     .account-buy{border:1px solid rgba(125,211,252,.15);background:rgba(56,189,248,.07);color:#ccefff}
     .account-buy[disabled]{opacity:.5;cursor:not-allowed}
+
+    /* Stripe credit store + account activity */
+    .account-credit-store{display:none;margin-top:14px;padding:14px;border-radius:16px;background:rgba(56,189,248,.035);border:1px solid rgba(125,211,252,.12)}
+    .account-credit-store.show{display:block}
+    .credit-store-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:11px}
+    .credit-store-head strong{font-size:12px;color:#e7f7ff}.credit-store-head span{font-size:9px;color:#6f829a;font-weight:750}
+    .credit-pack-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+    .credit-pack-button{min-height:76px;padding:10px 6px;border-radius:12px;border:1px solid rgba(255,255,255,.08);background:rgba(4,9,20,.58);color:#eaf7ff;cursor:pointer;font:inherit;text-align:center;transition:.18s ease}
+    .credit-pack-button:hover{transform:translateY(-1px);border-color:rgba(125,211,252,.3);background:rgba(56,189,248,.055)}
+    .credit-pack-button strong{display:block;font-size:15px}.credit-pack-button span{display:block;margin-top:4px;color:#7dd3fc;font-size:11px;font-weight:900}
+    .credit-pack-button small{display:block;margin-top:3px;color:#687a91;font-size:8px;font-weight:750}
+    .credit-pack-button.featured{border-color:rgba(167,139,250,.28);background:linear-gradient(145deg,rgba(124,58,237,.12),rgba(14,165,233,.06))}
+    .credit-pack-button:disabled{opacity:.55;cursor:wait;transform:none}
+    .checkout-status{min-height:16px;margin-top:9px;color:#8da0b8;font-size:9px;line-height:1.5}
+    .checkout-status.error{color:#fda4af}
+
+    .account-history{margin-top:14px;padding-top:13px;border-top:1px solid rgba(255,255,255,.065)}
+    .account-history-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+    .account-history-head strong{font-size:11px;color:#dce8f8}.account-history-head span{font-size:8px;color:#62738a;text-transform:uppercase;letter-spacing:.7px;font-weight:850}
+    .account-history-list{display:grid;gap:6px;max-height:150px;overflow:auto;padding-right:2px}
+    .account-history-empty{padding:10px 0;color:#65768d;font-size:9px;text-align:center}
+    .account-history-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 9px;border-radius:10px;background:rgba(255,255,255,.022);border:1px solid rgba(255,255,255,.045)}
+    .account-history-copy{min-width:0}.account-history-copy strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#bac8d9;font-size:9px}.account-history-copy span{display:block;margin-top:2px;color:#607188;font-size:8px}
+    .account-history-amount{flex:0 0 auto;font-size:10px;font-weight:900;color:#f0f6ff}.account-history-amount.positive{color:#86efac}.account-history-amount.negative{color:#fda4af}
+
     .auth-setup-notice{display:none;margin-top:12px;padding:11px 12px;border-radius:12px;background:rgba(251,191,36,.055);border:1px solid rgba(251,191,36,.12);color:#d8bf78;font-size:10px;line-height:1.55}
     .auth-setup-notice.show{display:block}
     .auth-gate-toast{position:fixed;z-index:5100;left:50%;bottom:28px;transform:translate(-50%,20px);opacity:0;pointer-events:none;padding:11px 15px;border-radius:12px;background:#101827;border:1px solid rgba(125,211,252,.16);box-shadow:0 18px 55px rgba(0,0,0,.42);color:#dcecff;font-size:11px;font-weight:800;transition:.2s ease}
@@ -849,7 +874,7 @@
       .account-nav-button{padding:0 11px}
     }
     @media(max-width:650px){
-      .auth-card{padding:24px 18px;border-radius:21px}.auth-email-row{flex-direction:column}.auth-email-row button{width:100%}
+      .auth-card{padding:24px 18px;border-radius:21px}.auth-email-row{flex-direction:column}.auth-email-row button{width:100%}.credit-pack-grid{grid-template-columns:1fr}
       .credit-balance-chip{display:none!important}
       .nav-links .account-nav-button{min-height:35px;font-size:11px}
     }
@@ -936,8 +961,47 @@
       </div>
 
       <div class="account-actions">
-        <button type="button" class="account-buy" id="buyCreditsButton" disabled title="Payments are the next launch step">Buy credits soon</button>
+        <button type="button" class="account-buy" id="buyCreditsButton">Buy credits</button>
         <button type="button" class="account-signout" id="signOutButton">Sign out</button>
+      </div>
+
+      <div class="account-credit-store" id="accountCreditStore">
+        <div class="credit-store-head">
+          <strong>Buy FaceEvol credits</strong>
+          <span>Secure Stripe Checkout</span>
+        </div>
+
+        <div class="credit-pack-grid">
+          <button type="button" class="credit-pack-button" data-credit-pack="20">
+            <strong>20 credits</strong>
+            <span>€4.99</span>
+            <small>Starter</small>
+          </button>
+
+          <button type="button" class="credit-pack-button featured" data-credit-pack="60">
+            <strong>60 credits</strong>
+            <span>€11.99</span>
+            <small>Best value</small>
+          </button>
+
+          <button type="button" class="credit-pack-button" data-credit-pack="150">
+            <strong>150 credits</strong>
+            <span>€24.99</span>
+            <small>Creator</small>
+          </button>
+        </div>
+
+        <div class="checkout-status" id="checkoutStatus" aria-live="polite"></div>
+      </div>
+
+      <div class="account-history">
+        <div class="account-history-head">
+          <strong>Recent credit activity</strong>
+          <span>Latest 8</span>
+        </div>
+        <div class="account-history-list" id="accountHistoryList">
+          <div class="account-history-empty">Your recent activity will appear here.</div>
+        </div>
       </div>
     </div>
   </div>
@@ -1139,7 +1203,7 @@
         </div>
         <div class="price-card">
           <div class="price-name">FaceEvol Account</div><div class="coming-soon">Account-ready</div>
-          <p class="price-description">Secure sign-in and a server-side credit balance are the foundation for FaceEvol's pay-as-you-create launch.</p>
+          <p class="price-description">Secure sign-in, server-side credits and Stripe Checkout are being tested for FaceEvol's pay-as-you-create launch.</p>
           <ul class="price-features">
             <li>✓ Small free allowance for new users</li>
             <li>✓ Buy more credits when needed</li>
@@ -5291,6 +5355,10 @@
   const accountEmail=document.getElementById("accountEmail");
   const accountCreditCount=document.getElementById("accountCreditCount");
   const signOutButton=document.getElementById("signOutButton");
+  const buyCreditsButton=document.getElementById("buyCreditsButton");
+  const accountCreditStore=document.getElementById("accountCreditStore");
+  const checkoutStatus=document.getElementById("checkoutStatus");
+  const accountHistoryList=document.getElementById("accountHistoryList");
   const pricingAccountButton=document.getElementById("pricingAccountButton");
   const authGateToast=document.getElementById("authGateToast");
 
@@ -5439,6 +5507,217 @@
     return email.includes("@")?email.split("@")[0]:email;
   }
 
+  function setCheckoutStatus(message,type=""){
+    checkoutStatus.textContent=message||"";
+    checkoutStatus.className=`checkout-status${type?` ${type}`:""}`;
+  }
+
+  function faceEvolHistoryLabel(reason){
+    const value=String(reason||"").trim();
+
+    const labels={
+      welcome:"Welcome credits",
+      stripe_purchase:"Credits purchased",
+      age:"Age Transformation",
+      photo_faceswap:"Photo Face Swap",
+      photo_to_video:"Photo to Video",
+      video_faceswap:"Video Face Swap",
+      photo_enhance:"Photo Enhance",
+      video_enhance:"Video Enhance"
+    };
+
+    if(labels[value]) return labels[value];
+    if(value.toLowerCase().includes("refund")) return "Credit refund";
+
+    return value
+      ? value.replace(/[_:-]+/g," ").replace(/\b\w/g,char=>char.toUpperCase())
+      : "Credit activity";
+  }
+
+  function renderFaceEvolHistory(rows=[]){
+    if(!accountHistoryList) return;
+
+    if(!Array.isArray(rows)||!rows.length){
+      accountHistoryList.innerHTML='<div class="account-history-empty">Your recent activity will appear here.</div>';
+      return;
+    }
+
+    accountHistoryList.innerHTML="";
+
+    for(const row of rows){
+      const amount=Number(row?.amount||0);
+      const date=row?.created_at?new Date(row.created_at):null;
+
+      const item=document.createElement("div");
+      item.className="account-history-row";
+
+      const copy=document.createElement("div");
+      copy.className="account-history-copy";
+
+      const title=document.createElement("strong");
+      title.textContent=faceEvolHistoryLabel(row?.reason);
+
+      const meta=document.createElement("span");
+      meta.textContent=[
+        date&&!Number.isNaN(date.getTime())
+          ? date.toLocaleString([],{
+              dateStyle:"medium",
+              timeStyle:"short"
+            })
+          : "",
+        Number.isFinite(Number(row?.balance_after))
+          ? `${Number(row.balance_after)} credits after`
+          : ""
+      ].filter(Boolean).join(" · ");
+
+      copy.append(title,meta);
+
+      const amountNode=document.createElement("div");
+      amountNode.className=`account-history-amount ${amount>0?"positive":amount<0?"negative":""}`;
+      amountNode.textContent=`${amount>0?"+":""}${amount}`;
+
+      item.append(copy,amountNode);
+      accountHistoryList.appendChild(item);
+    }
+  }
+
+  async function loadFaceEvolHistory(){
+    if(!faceEvolSupabase||!faceEvolSession?.user){
+      renderFaceEvolHistory([]);
+      return;
+    }
+
+    const {data,error}=await faceEvolSupabase
+      .from("credit_ledger")
+      .select("amount,balance_after,reason,created_at")
+      .eq("user_id",faceEvolSession.user.id)
+      .order("created_at",{ascending:false})
+      .limit(8);
+
+    if(error){
+      console.warn("FaceEvol credit history read failed:",error.message);
+      renderFaceEvolHistory([]);
+      return;
+    }
+
+    renderFaceEvolHistory(data||[]);
+  }
+
+  async function startFaceEvolCheckout(pack,button=null){
+    if(!faceEvolSession?.user||!faceEvolSession?.access_token){
+      openAuthModal("Sign in to buy FaceEvol credits.");
+      return;
+    }
+
+    const previousText=button?.textContent||"";
+    if(button) button.disabled=true;
+    setCheckoutStatus("Opening secure Stripe Checkout...");
+
+    try{
+      const response=await fetch("/api/stripe",{
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json",
+          Authorization:`Bearer ${faceEvolSession.access_token}`
+        },
+        body:JSON.stringify({
+          action:"checkout",
+          pack:String(pack)
+        })
+      });
+
+      const text=await response.text();
+      let data={};
+
+      try{
+        data=text?JSON.parse(text):{};
+      }catch{
+        data={error:text||"Stripe Checkout returned an invalid response."};
+      }
+
+      if(response.status===401||data?.code==="AUTH_REQUIRED"){
+        openAuthModal("Sign in again to buy FaceEvol credits.");
+        throw new Error(data?.error||"Sign in is required.");
+      }
+
+      if(!response.ok||!data?.url){
+        throw new Error(data?.error||"Could not open Stripe Checkout.");
+      }
+
+      window.location.assign(data.url);
+
+    }catch(error){
+      console.error("FaceEvol Stripe Checkout error:",error);
+      setCheckoutStatus(
+        error instanceof Error?error.message:String(error),
+        "error"
+      );
+    }finally{
+      if(button){
+        button.disabled=false;
+        if(previousText) button.textContent=previousText;
+      }
+    }
+  }
+
+  async function handleFaceEvolPaymentReturn(){
+    const params=new URLSearchParams(window.location.search);
+    const payment=params.get("payment");
+
+    if(!payment) return;
+
+    if(payment==="cancelled"){
+      showAuthToast("Stripe Checkout was canceled. No credits were added.");
+    }
+
+    if(payment==="success"){
+      showAuthToast("Payment received. Updating your FaceEvol credits...");
+
+      /*
+       * Stripe webhooks are authoritative.
+       * Wait until this exact Checkout Session appears in
+       * the RLS-protected purchase ledger, then refresh.
+       */
+      if(faceEvolSession?.user){
+        const sessionId=String(params.get("session_id")||"");
+
+        for(let attempt=0;attempt<12;attempt+=1){
+          await loadFaceEvolProfile();
+          await loadFaceEvolHistory();
+
+          let purchaseArrived=false;
+
+          if(sessionId&&faceEvolSupabase){
+            const {data}=await faceEvolSupabase
+              .from("stripe_credit_purchases")
+              .select("id")
+              .eq("stripe_session_id",sessionId)
+              .maybeSingle();
+
+            purchaseArrived=Boolean(data?.id);
+          }
+
+          if(purchaseArrived) break;
+
+          if(attempt<11){
+            await new Promise(resolve=>setTimeout(resolve,650));
+          }
+        }
+
+        openAuthModal();
+        accountCreditStore.classList.remove("show");
+        showAuthToast(`Credits updated · ${faceEvolCreditsAvailable()} available`);
+      }
+    }
+
+    params.delete("payment");
+    params.delete("session_id");
+
+    const cleanQuery=params.toString();
+    const cleanUrl=`${window.location.pathname}${cleanQuery?`?${cleanQuery}`:""}${window.location.hash||""}`;
+    window.history.replaceState({},document.title,cleanUrl);
+  }
+
   function renderAccountState(){
     const user=faceEvolSession?.user||null;
     const signedIn=Boolean(user);
@@ -5464,6 +5743,9 @@
       headerCreditBalance.classList.remove("show");
       headerCreditCount.textContent="0";
       accountCreditCount.textContent="0";
+      accountCreditStore?.classList.remove("show");
+      setCheckoutStatus("");
+      renderFaceEvolHistory([]);
     }
   }
 
@@ -5502,6 +5784,7 @@
     }
 
     renderAccountState();
+    await loadFaceEvolHistory();
   }
 
   async function initializeFaceEvolAccounts(){
@@ -5613,6 +5896,25 @@
     if(event.key==="Enter") emailSignInButton.click();
   });
 
+  buyCreditsButton?.addEventListener("click",()=>{
+    if(!faceEvolSession?.user){
+      openAuthModal("Sign in to buy FaceEvol credits.");
+      return;
+    }
+
+    accountCreditStore.classList.toggle("show");
+    setCheckoutStatus("");
+  });
+
+  document.querySelectorAll("[data-credit-pack]").forEach(button=>{
+    button.addEventListener("click",()=>{
+      startFaceEvolCheckout(
+        button.dataset.creditPack,
+        button
+      );
+    });
+  });
+
   signOutButton.addEventListener("click",async()=>{
     if(!faceEvolSupabase) return;
     signOutButton.disabled=true;
@@ -5666,7 +5968,9 @@
   },true);
 
   installFaceEvolCreditLabels();
-  initializeFaceEvolAccounts();
+  initializeFaceEvolAccounts()
+    .then(()=>handleFaceEvolPaymentReturn())
+    .catch(error=>console.error("FaceEvol payment return initialization error:",error));
 
 
   /* Open the matching Legal & Support panel when a hash link is used. */
