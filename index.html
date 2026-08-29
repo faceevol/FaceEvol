@@ -768,7 +768,85 @@
     @media(prefers-reduced-motion:reduce){
       html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
     }
+
+
+    /* =========================================================
+       FaceEvol Accounts + Credits UI
+       Supabase-backed account layer. No extra Vercel JS file.
+       ========================================================= */
+    .account-nav-button{
+      min-height:38px;padding:0 14px;border-radius:12px;border:1px solid rgba(125,211,252,.15);
+      background:rgba(125,211,252,.055);color:#dff7ff;font:inherit;font-size:12px;font-weight:850;cursor:pointer;
+      display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:.18s ease;white-space:nowrap
+    }
+    .account-nav-button:hover{border-color:rgba(125,211,252,.32);background:rgba(125,211,252,.09);transform:translateY(-1px)}
+    .account-nav-button.signed-in{background:linear-gradient(135deg,rgba(124,58,237,.15),rgba(14,165,233,.12));border-color:rgba(125,211,252,.22)}
+    .account-dot{width:7px;height:7px;border-radius:50%;background:#38bdf8;box-shadow:0 0 14px rgba(56,189,248,.55)}
+    .account-nav-button.signed-in .account-dot{background:#34d399;box-shadow:0 0 14px rgba(52,211,153,.55)}
+    .credit-balance-chip{
+      display:none;align-items:center;gap:7px;padding:7px 10px;border-radius:999px;background:rgba(52,211,153,.06);
+      border:1px solid rgba(52,211,153,.14);color:#bff8df;font-size:10px;font-weight:850;letter-spacing:.2px
+    }
+    .credit-balance-chip.show{display:inline-flex}
+    .credit-balance-chip strong{font-size:11px;color:#eafff5}
+
+    .auth-modal{position:fixed;inset:0;z-index:5000;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(1,4,12,.74);backdrop-filter:blur(14px)}
+    .auth-modal.show{display:flex}
+    .auth-card{
+      width:min(100%,440px);position:relative;padding:28px;border-radius:24px;border:1px solid rgba(125,211,252,.14);
+      background:linear-gradient(160deg,rgba(13,20,38,.985),rgba(5,9,20,.99));box-shadow:0 38px 100px rgba(0,0,0,.58),0 0 0 1px rgba(255,255,255,.018) inset
+    }
+    .auth-close{position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:11px;border:1px solid rgba(255,255,255,.075);background:rgba(255,255,255,.03);color:#9ba9bf;cursor:pointer;font-size:18px}
+    .auth-close:hover{color:#fff;border-color:rgba(125,211,252,.18)}
+    .auth-kicker{color:#7dd3fc;font-size:10px;font-weight:900;letter-spacing:1.4px;text-transform:uppercase}
+    .auth-card h3{margin:9px 40px 7px 0;font-size:25px;letter-spacing:-.65px}
+    .auth-copy{margin:0 0 20px;color:#91a0b7;font-size:13px;line-height:1.65}
+    .auth-google{
+      width:100%;min-height:48px;border-radius:14px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.045);
+      color:#f0f6ff;font:inherit;font-size:13px;font-weight:850;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px
+    }
+    .auth-google:hover{background:rgba(255,255,255,.07);border-color:rgba(125,211,252,.18)}
+    .auth-divider{display:flex;align-items:center;gap:11px;margin:18px 0;color:#5f6d82;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.8px}
+    .auth-divider::before,.auth-divider::after{content:"";height:1px;flex:1;background:rgba(255,255,255,.065)}
+    .auth-email-row{display:flex;gap:9px}
+    .auth-email-row input{min-width:0;flex:1;height:46px;padding:0 13px;border-radius:13px;border:1px solid rgba(255,255,255,.09);outline:none;background:rgba(2,6,17,.62);color:#f0f6ff;font:inherit;font-size:13px}
+    .auth-email-row input:focus{border-color:rgba(56,189,248,.38);box-shadow:0 0 0 3px rgba(56,189,248,.05)}
+    .auth-email-row button{height:46px;padding:0 14px;border:0;border-radius:13px;background:linear-gradient(90deg,#6d28d9,#0369a1);color:#fff;font:inherit;font-size:12px;font-weight:850;cursor:pointer;white-space:nowrap}
+    .auth-status{min-height:20px;margin-top:12px;color:#93a6bd;font-size:11px;line-height:1.55}
+    .auth-status.error{color:#fda4af}.auth-status.success{color:#86efac}
+    .auth-terms{margin-top:16px;color:#66758b;font-size:9px;line-height:1.55;text-align:center}
+
+    .account-panel{display:none}
+    .account-panel.show{display:block}
+    .account-profile{display:flex;align-items:center;gap:12px;padding:15px;border-radius:16px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.065)}
+    .account-avatar{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(145deg,rgba(124,58,237,.22),rgba(14,165,233,.18));border:1px solid rgba(125,211,252,.12);color:#effaff;font-size:15px;font-weight:900}
+    .account-profile-copy{min-width:0;flex:1}.account-profile-copy strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}.account-profile-copy span{display:block;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#74839a;font-size:10px}
+    .account-credit-card{margin-top:13px;padding:16px;border-radius:17px;background:linear-gradient(145deg,rgba(52,211,153,.065),rgba(14,165,233,.035));border:1px solid rgba(52,211,153,.12)}
+    .account-credit-card small{display:block;color:#78a38f;font-size:9px;font-weight:900;letter-spacing:1px;text-transform:uppercase}
+    .account-credit-value{display:flex;align-items:end;gap:7px;margin-top:5px}.account-credit-value strong{font-size:30px;line-height:1;color:#eafff5}.account-credit-value span{color:#8ecab0;font-size:11px;font-weight:800}
+    .account-credit-note{margin-top:8px;color:#789087;font-size:10px;line-height:1.55}
+    .account-actions{display:flex;gap:9px;margin-top:14px}.account-actions button{flex:1;min-height:42px;border-radius:12px;font:inherit;font-size:11px;font-weight:850;cursor:pointer}
+    .account-signout{border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.035);color:#ccd7e7}
+    .account-buy{border:1px solid rgba(125,211,252,.15);background:rgba(56,189,248,.07);color:#ccefff}
+    .account-buy[disabled]{opacity:.5;cursor:not-allowed}
+    .auth-setup-notice{display:none;margin-top:12px;padding:11px 12px;border-radius:12px;background:rgba(251,191,36,.055);border:1px solid rgba(251,191,36,.12);color:#d8bf78;font-size:10px;line-height:1.55}
+    .auth-setup-notice.show{display:block}
+    .auth-gate-toast{position:fixed;z-index:5100;left:50%;bottom:28px;transform:translate(-50%,20px);opacity:0;pointer-events:none;padding:11px 15px;border-radius:12px;background:#101827;border:1px solid rgba(125,211,252,.16);box-shadow:0 18px 55px rgba(0,0,0,.42);color:#dcecff;font-size:11px;font-weight:800;transition:.2s ease}
+    .auth-gate-toast.show{opacity:1;transform:translate(-50%,0)}
+
+    @media(max-width:850px){
+      .nav-links .account-nav-button{display:inline-flex}
+      .account-nav-button{padding:0 11px}
+    }
+    @media(max-width:650px){
+      .auth-card{padding:24px 18px;border-radius:21px}.auth-email-row{flex-direction:column}.auth-email-row button{width:100%}
+      .credit-balance-chip{display:none!important}
+      .nav-links .account-nav-button{min-height:35px;font-size:11px}
+    }
+
   </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script type="application/ld+json">
   {
@@ -796,9 +874,65 @@
       <a href="#pricing">Pricing</a>
       <a href="#faq">FAQ</a>
       <a href="#studio" class="nav-button">Open Studio</a>
+      <span class="credit-balance-chip" id="headerCreditBalance" aria-label="Credit balance"><span>✦</span><strong id="headerCreditCount">0</strong> credits</span>
+      <button type="button" class="account-nav-button" id="accountButton"><span class="account-dot"></span><span id="accountButtonText">Sign in</span></button>
     </nav>
   </div>
 </header>
+
+<div class="auth-modal" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+  <div class="auth-card">
+    <button type="button" class="auth-close" id="authCloseButton" aria-label="Close account window">×</button>
+
+    <div id="signedOutPanel">
+      <div class="auth-kicker">FaceEvol Account</div>
+      <h3 id="authTitle">Sign in to FaceEvol</h3>
+      <p class="auth-copy" id="authCopy">Keep your credits connected to you and get FaceEvol ready for paid creations.</p>
+
+      <button type="button" class="auth-google" id="googleSignInButton">
+        <span aria-hidden="true">G</span>
+        Continue with Google
+      </button>
+
+      <div class="auth-divider">or use email</div>
+
+      <div class="auth-email-row">
+        <input type="email" id="authEmailInput" autocomplete="email" inputmode="email" placeholder="you@example.com" aria-label="Email address">
+        <button type="button" id="emailSignInButton">Email me a link</button>
+      </div>
+
+      <div class="auth-status" id="authStatus" aria-live="polite"></div>
+      <div class="auth-setup-notice" id="authSetupNotice">Account code is ready. Add your Supabase project URL and publishable key in the FaceEvol account configuration near the bottom of this file to activate sign-in.</div>
+      <p class="auth-terms">By continuing, you agree to the FaceEvol Terms and acknowledge the Privacy Policy.</p>
+    </div>
+
+    <div class="account-panel" id="signedInPanel">
+      <div class="auth-kicker">Your FaceEvol Account</div>
+      <h3>Account &amp; Credits</h3>
+      <p class="auth-copy">Your credit balance is stored securely with your account.</p>
+
+      <div class="account-profile">
+        <div class="account-avatar" id="accountAvatar">F</div>
+        <div class="account-profile-copy">
+          <strong id="accountDisplayName">FaceEvol Creator</strong>
+          <span id="accountEmail">—</span>
+        </div>
+      </div>
+
+      <div class="account-credit-card">
+        <small>Available balance</small>
+        <div class="account-credit-value"><strong id="accountCreditCount">0</strong><span>credits</span></div>
+        <div class="account-credit-note">During beta, generation remains free while we validate final credit prices. Your account balance is already stored server-side and cannot be edited from this page.</div>
+      </div>
+
+      <div class="account-actions">
+        <button type="button" class="account-buy" id="buyCreditsButton" disabled title="Payments are the next launch step">Buy credits soon</button>
+        <button type="button" class="account-signout" id="signOutButton">Sign out</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="auth-gate-toast" id="authGateToast" aria-live="polite">Sign in to start creating.</div>
 
 <main>
   <section class="hero">
@@ -813,7 +947,7 @@
       <div class="hero-trust" aria-label="FaceEvol benefits">
         <span>🔒 Privacy-focused workflow</span>
         <span>🧰 6 focused AI tools</span>
-        <span>💳 Credits planned for launch</span>
+        <span>👤 Secure accounts + credits</span>
         <span>⬇️ Direct downloads</span>
       </div>
 
@@ -979,12 +1113,12 @@
       <div class="section-heading">
         <span class="section-eyebrow">Simple Pricing</span>
         <h2>Try FaceEvol free. <span class="gradient-text">Pay for creations when you need more.</span></h2>
-        <p>FaceEvol is free during beta. The planned launch model is simple: a small free allowance, then flexible credits for additional creations. Photo tools will use fewer credits than more expensive video tools.</p>
+        <p>FaceEvol is free during beta while accounts and credits are being activated. At launch, new accounts will receive a small free allowance, with flexible credits for additional creations. Photo tools will use fewer credits than compute-heavy video tools.</p>
       </div>
       <div class="pricing-grid compact-pricing">
         <div class="price-card featured">
           <div class="popular-label">Available Now</div><div class="price-name">Free Beta</div><div class="price">€0</div>
-          <p class="price-description">Use the current FaceEvol studio while we finish account, credit and payment infrastructure.</p>
+          <p class="price-description">Use the current FaceEvol studio while we activate secure accounts, credits and payment infrastructure.</p>
           <ul class="price-features">
             <li>✓ All six current AI tools</li>
             <li>✓ Photo and short-video workflows</li>
@@ -994,8 +1128,8 @@
           <a href="#studio" class="button button-primary">Open Free Beta</a>
         </div>
         <div class="price-card">
-          <div class="price-name">FaceEvol Credits</div><div class="coming-soon">Coming at launch</div>
-          <p class="price-description">A flexible pay-as-you-create system designed to keep the first experience easy while supporting the cost of AI generation.</p>
+          <div class="price-name">FaceEvol Account</div><div class="coming-soon">Account-ready</div>
+          <p class="price-description">Secure sign-in and a server-side credit balance are the foundation for FaceEvol's pay-as-you-create launch.</p>
           <ul class="price-features">
             <li>✓ Small free allowance for new users</li>
             <li>✓ Buy more credits when needed</li>
@@ -1003,7 +1137,7 @@
             <li>✓ Higher credit cost for video tools</li>
             <li>✓ Account balance visible before generating</li>
           </ul>
-          <span class="button button-secondary future-button" aria-disabled="true">Accounts &amp; Credits Next</span>
+          <button type="button" class="button button-secondary" id="pricingAccountButton">Sign In / Create Account</button>
         </div>
       </div>
     </div>
@@ -1023,8 +1157,8 @@
         <details><summary>What video can I upload?</summary><p>For the beta, use an MP4 source file smaller than 300 MB. You can then select any section up to 20 seconds for processing.</p></details>
         <details><summary>How does Video Enhance work?</summary><p>Upload an MP4 up to 60 seconds, use the trim handles to select any section up to 20 seconds, then choose 1080p or 4K and 30 or 60 FPS. FaceEvol enhances only the selected clip.</p></details>
         <details><summary>Is FaceEvol free?</summary><p>FaceEvol is currently free during beta. At launch, the plan is to include a small free allowance and use credits for additional creations so you can pay for what you actually use.</p></details>
-        <details><summary>Will I need an account?</summary><p>Accounts are planned for the paid launch so your credit balance, purchases and future creation history can stay connected to you. Browsing the site will remain open, while generation may require sign-in once credits are enabled.</p></details>
-        <details><summary>How will FaceEvol credits work?</summary><p>Credits are planned as a simple usage system. Lighter photo tools will use fewer credits, while compute-heavy video tools will use more. Your balance and the credit cost will be shown before you start a paid generation.</p></details>
+        <details><summary>Will I need an account?</summary><p>You can browse FaceEvol without an account. Accounts connect your credit balance and future purchases to you. During beta, generation remains open while the account and payment system is being finalized.</p></details>
+        <details><summary>How will FaceEvol credits work?</summary><p>Your account has a server-side credit balance. At paid launch, lighter photo tools will use fewer credits while compute-heavy video tools will use more. The exact cost will be shown before a paid generation starts.</p></details>
         <details><summary>How does FaceEvol handle my uploads?</summary><p>Your uploads are processed to create the result you request. FaceEvol is designed to minimize unnecessary storage, while third-party hosting and AI providers may process content as needed to provide the service. See the Privacy Policy below for more detail.</p></details>
         <details><summary>Where can I find the legal information?</summary><p>Privacy, Terms, Refunds and Contact information are available in the Legal &amp; Support section at the bottom of this page.</p></details>
       </div>
@@ -4075,6 +4209,7 @@
 
   const startFaceSwapButton=document.createElement("button");
   startFaceSwapButton.type="button";
+  startFaceSwapButton.id="startFaceSwapButton";
   startFaceSwapButton.className="transform-button";
   startFaceSwapButton.textContent="🎬 Start Face Swap";
   startFaceSwapButton.style.display="none";
@@ -5097,6 +5232,308 @@
       startFaceSwapButton.textContent="🎬 Start Face Swap";
     }
   });
+
+
+  /* =========================================================
+     FACEVOL ACCOUNT + CREDIT FOUNDATION
+     ---------------------------------------------------------
+     SETUP REQUIRED ONCE:
+     1. Create a Supabase project.
+     2. Run the supplied supabase-setup.sql in Supabase SQL Editor.
+     3. Paste the Project URL and PUBLISHABLE key below.
+
+     Never paste a service_role / secret key into this HTML file.
+     The publishable key is designed for browser use with RLS.
+     ========================================================= */
+  const FACEVOL_ACCOUNT_CONFIG={
+    supabaseUrl:"PASTE_SUPABASE_PROJECT_URL_HERE",
+    supabasePublishableKey:"PASTE_SUPABASE_PUBLISHABLE_KEY_HERE",
+    requireSignInForGeneration:false
+  };
+
+  const accountButton=document.getElementById("accountButton");
+  const accountButtonText=document.getElementById("accountButtonText");
+  const headerCreditBalance=document.getElementById("headerCreditBalance");
+  const headerCreditCount=document.getElementById("headerCreditCount");
+  const authModal=document.getElementById("authModal");
+  const authCloseButton=document.getElementById("authCloseButton");
+  const signedOutPanel=document.getElementById("signedOutPanel");
+  const signedInPanel=document.getElementById("signedInPanel");
+  const googleSignInButton=document.getElementById("googleSignInButton");
+  const authEmailInput=document.getElementById("authEmailInput");
+  const emailSignInButton=document.getElementById("emailSignInButton");
+  const authStatus=document.getElementById("authStatus");
+  const authSetupNotice=document.getElementById("authSetupNotice");
+  const accountAvatar=document.getElementById("accountAvatar");
+  const accountDisplayName=document.getElementById("accountDisplayName");
+  const accountEmail=document.getElementById("accountEmail");
+  const accountCreditCount=document.getElementById("accountCreditCount");
+  const signOutButton=document.getElementById("signOutButton");
+  const pricingAccountButton=document.getElementById("pricingAccountButton");
+  const authGateToast=document.getElementById("authGateToast");
+
+  let faceEvolSupabase=null;
+  let faceEvolSession=null;
+  let faceEvolProfile=null;
+  let authToastTimer=null;
+
+  function faceEvolAccountsConfigured(){
+    return Boolean(
+      window.supabase &&
+      FACEVOL_ACCOUNT_CONFIG.supabaseUrl &&
+      FACEVOL_ACCOUNT_CONFIG.supabasePublishableKey &&
+      !FACEVOL_ACCOUNT_CONFIG.supabaseUrl.includes("PASTE_") &&
+      !FACEVOL_ACCOUNT_CONFIG.supabasePublishableKey.includes("PASTE_")
+    );
+  }
+
+  function setAuthStatus(message,type=""){
+    authStatus.textContent=message||"";
+    authStatus.className=`auth-status${type?` ${type}`:""}`;
+  }
+
+  function openAuthModal(message=""){
+    authModal.classList.add("show");
+    document.body.style.overflow="hidden";
+    if(message) setAuthStatus(message);
+    setTimeout(()=>{
+      if(!faceEvolSession && faceEvolAccountsConfigured()) authEmailInput.focus();
+    },50);
+  }
+
+  function closeAuthModal(){
+    authModal.classList.remove("show");
+    document.body.style.overflow="";
+    setAuthStatus("");
+  }
+
+  function showAuthToast(message){
+    authGateToast.textContent=message;
+    authGateToast.classList.add("show");
+    clearTimeout(authToastTimer);
+    authToastTimer=setTimeout(()=>authGateToast.classList.remove("show"),2400);
+  }
+
+  function getUserDisplayName(user){
+    const meta=user?.user_metadata||{};
+    const name=meta.full_name||meta.name||meta.display_name;
+    if(typeof name==="string"&&name.trim()) return name.trim();
+    const email=user?.email||"FaceEvol Creator";
+    return email.includes("@")?email.split("@")[0]:email;
+  }
+
+  function renderAccountState(){
+    const user=faceEvolSession?.user||null;
+    const signedIn=Boolean(user);
+    const credits=Number.isFinite(Number(faceEvolProfile?.credits))?Number(faceEvolProfile.credits):0;
+
+    signedOutPanel.style.display=signedIn?"none":"block";
+    signedInPanel.classList.toggle("show",signedIn);
+    accountButton.classList.toggle("signed-in",signedIn);
+
+    if(signedIn){
+      const displayName=getUserDisplayName(user);
+      accountButtonText.textContent=`${credits} credits`;
+      headerCreditCount.textContent=String(credits);
+      headerCreditBalance.classList.add("show");
+      accountDisplayName.textContent=displayName;
+      accountEmail.textContent=user.email||"Signed in";
+      accountCreditCount.textContent=String(credits);
+      accountAvatar.textContent=(displayName.trim().charAt(0)||"F").toUpperCase();
+    }else{
+      accountButtonText.textContent="Sign in";
+      headerCreditBalance.classList.remove("show");
+      headerCreditCount.textContent="0";
+      accountCreditCount.textContent="0";
+    }
+  }
+
+  async function loadFaceEvolProfile(){
+    if(!faceEvolSupabase||!faceEvolSession?.user){
+      faceEvolProfile=null;
+      renderAccountState();
+      return;
+    }
+
+    const user=faceEvolSession.user;
+    const {data,error}=await faceEvolSupabase
+      .from("profiles")
+      .select("id,email,credits,created_at")
+      .eq("id",user.id)
+      .maybeSingle();
+
+    if(error){
+      console.warn("FaceEvol profile read failed:",error.message);
+      faceEvolProfile={id:user.id,email:user.email||"",credits:0};
+    }else if(!data){
+      /*
+       * The SQL trigger normally creates the profile instantly.
+       * A short retry handles the rare case where the auth redirect
+       * arrives before the new profile is visible through the Data API.
+       */
+      await new Promise(resolve=>setTimeout(resolve,450));
+      const retry=await faceEvolSupabase
+        .from("profiles")
+        .select("id,email,credits,created_at")
+        .eq("id",user.id)
+        .maybeSingle();
+      faceEvolProfile=retry.data||{id:user.id,email:user.email||"",credits:0};
+    }else{
+      faceEvolProfile=data;
+    }
+
+    renderAccountState();
+  }
+
+  async function initializeFaceEvolAccounts(){
+    if(!faceEvolAccountsConfigured()){
+      authSetupNotice.classList.add("show");
+      googleSignInButton.disabled=true;
+      emailSignInButton.disabled=true;
+      authEmailInput.disabled=true;
+      renderAccountState();
+      return;
+    }
+
+    authSetupNotice.classList.remove("show");
+
+    try{
+      faceEvolSupabase=window.supabase.createClient(
+        FACEVOL_ACCOUNT_CONFIG.supabaseUrl,
+        FACEVOL_ACCOUNT_CONFIG.supabasePublishableKey,
+        {
+          auth:{
+            persistSession:true,
+            autoRefreshToken:true,
+            detectSessionInUrl:true
+          }
+        }
+      );
+
+      const {data,error}=await faceEvolSupabase.auth.getSession();
+      if(error) console.warn("FaceEvol session check:",error.message);
+      faceEvolSession=data?.session||null;
+      await loadFaceEvolProfile();
+
+      faceEvolSupabase.auth.onAuthStateChange(async(event,session)=>{
+        faceEvolSession=session||null;
+        if(faceEvolSession){
+          await loadFaceEvolProfile();
+          if(event==="SIGNED_IN") closeAuthModal();
+        }else{
+          faceEvolProfile=null;
+          renderAccountState();
+        }
+      });
+    }catch(error){
+      console.error("FaceEvol account initialization error:",error);
+      authSetupNotice.classList.add("show");
+      setAuthStatus("Account service could not initialize. Check the Supabase configuration.","error");
+    }
+  }
+
+  accountButton.addEventListener("click",()=>openAuthModal());
+  pricingAccountButton?.addEventListener("click",()=>openAuthModal());
+  authCloseButton.addEventListener("click",closeAuthModal);
+  authModal.addEventListener("click",event=>{
+    if(event.target===authModal) closeAuthModal();
+  });
+  document.addEventListener("keydown",event=>{
+    if(event.key==="Escape"&&authModal.classList.contains("show")) closeAuthModal();
+  });
+
+  googleSignInButton.addEventListener("click",async()=>{
+    if(!faceEvolSupabase){
+      authSetupNotice.classList.add("show");
+      return;
+    }
+
+    setAuthStatus("Opening Google sign in...");
+    const redirectTo=`${window.location.origin}${window.location.pathname}`;
+    const {error}=await faceEvolSupabase.auth.signInWithOAuth({
+      provider:"google",
+      options:{redirectTo}
+    });
+    if(error) setAuthStatus(error.message,"error");
+  });
+
+  emailSignInButton.addEventListener("click",async()=>{
+    if(!faceEvolSupabase){
+      authSetupNotice.classList.add("show");
+      return;
+    }
+
+    const email=authEmailInput.value.trim();
+    if(!/^\S+@\S+\.\S+$/.test(email)){
+      setAuthStatus("Enter a valid email address.","error");
+      authEmailInput.focus();
+      return;
+    }
+
+    emailSignInButton.disabled=true;
+    setAuthStatus("Sending your secure sign-in link...");
+
+    try{
+      const {error}=await faceEvolSupabase.auth.signInWithOtp({
+        email,
+        options:{
+          emailRedirectTo:`${window.location.origin}${window.location.pathname}`,
+          shouldCreateUser:true
+        }
+      });
+      if(error) throw error;
+      setAuthStatus("Check your email. We sent you a secure FaceEvol sign-in link.","success");
+    }catch(error){
+      setAuthStatus(error?.message||"Could not send the sign-in link.","error");
+    }finally{
+      emailSignInButton.disabled=false;
+    }
+  });
+
+  authEmailInput.addEventListener("keydown",event=>{
+    if(event.key==="Enter") emailSignInButton.click();
+  });
+
+  signOutButton.addEventListener("click",async()=>{
+    if(!faceEvolSupabase) return;
+    signOutButton.disabled=true;
+    try{
+      await faceEvolSupabase.auth.signOut();
+      closeAuthModal();
+      showAuthToast("Signed out of FaceEvol.");
+    }finally{
+      signOutButton.disabled=false;
+    }
+  });
+
+  /*
+   * Optional generation sign-in gate.
+   * Keep false during the current free beta.
+   * Change requireSignInForGeneration to true only after Supabase is configured.
+   * This is a UX gate; paid-launch API enforcement must also happen server-side.
+   */
+  const generationButtonIds=new Set([
+    "transformButton",
+    "startPhotoSwapButton",
+    "startPhotoToVideoButton",
+    "startFaceSwapButton",
+    "startPhotoEnhanceButton",
+    "startEnhanceButton"
+  ]);
+
+  document.addEventListener("click",event=>{
+    if(!FACEVOL_ACCOUNT_CONFIG.requireSignInForGeneration) return;
+    const button=event.target.closest("button");
+    if(!button||!generationButtonIds.has(button.id)) return;
+    if(faceEvolSession?.user) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    openAuthModal("Sign in to start creating with FaceEvol.");
+  },true);
+
+  initializeFaceEvolAccounts();
 
 
   /* Open the matching Legal & Support panel when a hash link is used. */
