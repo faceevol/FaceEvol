@@ -400,13 +400,7 @@
     }
     .photo-video-prompt:focus{border-color:rgba(56,189,248,.45);box-shadow:0 0 0 3px rgba(56,189,248,.05)}
     .photo-video-prompt::placeholder{color:#65738a}
-    .prompt-examples{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
-    .prompt-chip{
-      padding:7px 10px;border-radius:999px;border:1px solid rgba(125,211,252,.14);
-      background:rgba(56,189,248,.035);color:#9fcde0;font-size:10px;font-weight:750;cursor:pointer;
-    }
-    .prompt-chip:hover{border-color:rgba(125,211,252,.34);color:#ddf7ff}
-    .photo-video-settings{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:13px;text-align:left}
+    .photo-video-settings{display:grid;grid-template-columns:1fr;gap:10px;margin-top:13px;text-align:left}
     .photo-video-setting{
       padding:11px 12px;border-radius:11px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);
     }
@@ -2091,12 +2085,6 @@
           placeholder="Example: The person smiles gently, blinks naturally, and the camera slowly moves closer."
         ></textarea>
 
-        <div class="prompt-examples" aria-label="Prompt examples">
-          <button type="button" class="prompt-chip" data-prompt="The person smiles gently and blinks naturally. Subtle realistic movement.">Gentle smile</button>
-          <button type="button" class="prompt-chip" data-prompt="A slow cinematic camera push-in. Natural subtle movement and realistic lighting.">Slow zoom</button>
-          <button type="button" class="prompt-chip" data-prompt="The person turns slightly toward the camera and smiles naturally.">Turn &amp; smile</button>
-          <button type="button" class="prompt-chip" data-prompt="A soft breeze moves the hair and clothing naturally while the subject remains relaxed.">Soft breeze</button>
-        </div>
       </div>
 
       <div class="photo-video-settings">
@@ -2106,10 +2094,6 @@
             <option value="5" selected>5 seconds</option>
             <option value="10">10 seconds</option>
           </select>
-        </div>
-        <div class="photo-video-setting">
-          <label>Generation</label>
-          <div style="color:#e6f5ff;font-size:12px;font-weight:800;padding-top:2px;">Kling 2.5 Turbo Pro</div>
         </div>
       </div>
 
@@ -2279,13 +2263,6 @@
     syncPhotoToVideoReadyState();
   });
 
-  document.querySelectorAll(".prompt-chip").forEach(chip=>{
-    chip.addEventListener("click",()=>{
-      photoToVideoPrompt.value=chip.dataset.prompt||"";
-      photoToVideoPrompt.focus();
-      syncPhotoToVideoReadyState();
-    });
-  });
 
   startPhotoToVideoButton.addEventListener("click",async function(){
     if(!selectedPhotoToVideo){
