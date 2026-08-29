@@ -1,50 +1,46 @@
 /*
  * FaceEvol Video Enhance
- * Save as: /api/video-enhance.js
+ * Save as:
+ * /api/video-enhance.js
  *
  * Model:
- * philz1337x/crystal-video-upscaler
+ * bytedance/video-upscaler
  *
- * Crystal is optimized for:
- * - people
- * - portraits
- * - faces
- * - natural skin detail
- *
- * Existing FaceEvol private Vercel Blob
- * signed-URL flow is preserved.
+ * Test configuration:
+ * - Try PRO first
+ * - Automatically fall back to STANDARD if PRO is unavailable
+ * - Supports 1080p / 2K / 4K
+ * - Optimized for real-person / UGC video
+ * - Keeps FaceEvol private-video proxy flow
  */
 
 const ALLOWED_RESOLUTIONS =
   new Set([
     "1080p",
+    "2k",
     "4k"
   ]);
 
-const SIGNED_URL_LIFETIME_MS =
-  2 * 60 * 60 * 1000;
+const ALLOWED_FPS =
+  new Set([
+    30,
+    60
+  ]);
+
+const ALLOWED_SCENES =
+  new Set([
+    "common",
+    "aigc",
+    "ugc",
+    "short_series",
+    "old_film"
+  ]);
 
 
 /*
- * Convert the existing FaceEvol quality selector
- * into Crystal's scale_factor.
- *
- * 1080p option -> 2x upscale
- * 4K option    -> 4x upscale, capped by Crystal at 4K
+ * Only accept FaceEvol temporary
+ * private video pathnames.
  */
-function getScaleFactor(
-  targetResolution
-) {
-  if (
-    targetResolution === "4k"
-  ) {
-    return 4;
-  }
-
-  return 2;
-}
-
-
 function cleanPathname(value) {
   const pathname =
     typeof value === "string"
@@ -56,9 +52,6 @@ function cleanPathname(value) {
     !pathname.startsWith(
       "faceevol-video-"
     ) ||
-    !pathname
-      .toLowerCase()
-      .endsWith(".mp4") ||
     !/^[a-zA-Z0-9._/-]+$/.test(
       pathname
     )
@@ -102,205 +95,148 @@ function safeDetail(value) {
 }
 
 
-function sendError(
-  res,
-  status,
-  error,
-  details
-) {
-  return res
-    .status(status)
-    .json({
-      error,
-      details:
-        safeDetail(details)
-    });
-}
-
-
 /*
- * Load Vercel Blob's
- * signed/private URL functions.
+ * Start one ByteDance prediction.
  */
-async function loadBlobSignedUrlFunctions() {
-  let blobSdk;
+async function startPrediction({
+  token,
+  videoUrl,
+  processingType,
+  scene,
+  resolution,
+  fps
+}) {
 
-  try {
-    blobSdk =
-      await import(
-        "@vercel/blob"
-      );
-  } catch (error) {
-    throw new Error(
-      `BLOB_SDK_LOAD_FAILED: ${
-        error instanceof Error
-          ? error.message
-          : String(error)
-      }`
+  const response =
+    await fetch(
+      "https://api.replicate.com/v1/models/bytedance/video-upscaler/predictions",
+      {
+        method: "POST",
+
+        headers: {
+          Authorization:
+            `Bearer ${token}`,
+
+          "Content-Type":
+            "application/json",
+
+          /*
+           * Allow long processing on Replicate.
+           *
+           * We intentionally DO NOT use
+           * Prefer: wait=60 here.
+           *
+           * FaceEvol already polls the
+           * prediction endpoint.
+           */
+          "Cancel-After":
+            "30m"
+        },
+
+        body:
+          JSON.stringify({
+            input: {
+              video:
+                videoUrl,
+
+              processing_type:
+                processingType,
+
+              scene,
+
+              target_resolution:
+                resolution,
+
+              target_fps:
+                fps
+            }
+          })
+      }
     );
+
+
+  const responseText =
+    await response.text();
+
+  let prediction = {};
+
+  if (responseText) {
+    try {
+      prediction =
+        JSON.parse(
+          responseText
+        );
+    } catch {
+      prediction = {
+        detail:
+          responseText
+      };
+    }
   }
 
-  const issueSignedToken =
-    blobSdk?.issueSignedToken;
-
-  const presignUrl =
-    blobSdk?.presignUrl;
-
-  if (
-    typeof issueSignedToken !==
-      "function" ||
-    typeof presignUrl !==
-      "function"
-  ) {
-    const exportsFound =
-      blobSdk
-        ? Object.keys(blobSdk)
-            .sort()
-            .join(", ")
-            .slice(0, 1200)
-        : "none";
-
-    throw new Error(
-      `BLOB_SDK_EXPORTS_MISSING: issueSignedToken/presignUrl are unavailable. Exports found: ${exportsFound}`
-    );
-  }
 
   return {
-    issueSignedToken,
-    presignUrl
+    response,
+    prediction
   };
 }
 
 
 /*
- * Create temporary GET-only access
- * to the private uploaded video.
+ * Decide whether failure is specifically
+ * related to PRO access.
  */
-async function createTemporaryVideoReadUrl(
-  pathname
+function shouldFallbackToStandard(
+  response,
+  prediction
 ) {
-  const {
-    issueSignedToken,
-    presignUrl
-  } =
-    await loadBlobSignedUrlFunctions();
-
-  const validUntil =
-    Date.now() +
-    SIGNED_URL_LIFETIME_MS;
-
-  let signedToken;
-
-  try {
-    signedToken =
-      await issueSignedToken({
-        pathname,
-        operations: [
-          "get"
-        ],
-        validUntil
-      });
-  } catch (error) {
-    throw new Error(
-      `BLOB_SIGNED_TOKEN_FAILED: ${
-        error instanceof Error
-          ? error.message
-          : String(error)
-      }`
-    );
-  }
 
   if (
-    !signedToken ||
-    !signedToken.clientSigningToken ||
-    !signedToken.delegationToken
-  ) {
-    throw new Error(
-      "BLOB_SIGNED_TOKEN_FAILED: Vercel Blob did not return signing credentials."
-    );
-  }
-
-  let signed;
-
-  try {
-    signed =
-      await presignUrl(
-        signedToken,
-        {
-          operation:
-            "get",
-
-          pathname,
-
-          access:
-            "private",
-
-          validUntil
-        }
-      );
-  } catch (error) {
-    throw new Error(
-      `BLOB_PRESIGN_FAILED: ${
-        error instanceof Error
-          ? error.message
-          : String(error)
-      }`
-    );
-  }
-
-  const url =
-    signed?.presignedUrl;
-
-  if (
-    typeof url !== "string" ||
-    !url.startsWith(
-      "https://"
+    ![
+      400,
+      403,
+      422
+    ].includes(
+      response.status
     )
   ) {
-    throw new Error(
-      "BLOB_PRESIGN_FAILED: Vercel Blob returned no usable presigned URL."
-    );
+    return false;
   }
 
-  if (
-    url.includes(
-      ".undefined.blob.vercel-storage.com"
-    )
-  ) {
-    throw new Error(
-      "BLOB_PRESIGN_FAILED: Vercel Blob returned an invalid hostname."
-    );
-  }
 
-  if (
-    !url.includes(
-      ".private.blob.vercel-storage.com"
-    )
-  ) {
-    throw new Error(
-      "BLOB_PRESIGN_FAILED: Vercel Blob did not return a private Blob hostname."
-    );
-  }
+  const detail =
+    safeDetail(
+      prediction?.detail ||
+      prediction?.error ||
+      prediction
+    ).toLowerCase();
 
-  return url;
+
+  return (
+    detail.includes("pro") ||
+    detail.includes("allowlist") ||
+    detail.includes("allow list") ||
+    detail.includes("permission") ||
+    detail.includes("processing_type")
+  );
 }
 
 
-/*
- * Main FaceEvol endpoint.
- */
 export default async function handler(
   req,
   res
 ) {
+
   res.setHeader(
     "Cache-Control",
     "no-store"
   );
 
+
   if (
     req.method !== "POST"
   ) {
+
     res.setHeader(
       "Allow",
       "POST"
@@ -314,13 +250,14 @@ export default async function handler(
       });
   }
 
-  const replicateToken =
+
+  const token =
     process.env
       .REPLICATE_API_TOKEN;
 
-  if (
-    !replicateToken
-  ) {
+
+  if (!token) {
+
     return res
       .status(500)
       .json({
@@ -329,37 +266,44 @@ export default async function handler(
       });
   }
 
-  /*
-   * Keep accepting the same frontend
-   * parameters so index.html does not
-   * need to change for this test.
-   *
-   * target_fps is intentionally ignored.
-   * Crystal preserves the source video
-   * instead of generating artificial FPS.
-   */
+
   const {
-    pathname: rawPathname,
-    target_resolution
-  } =
-    req.body || {};
+    pathname:
+      rawPathname,
+
+    target_resolution,
+
+    target_fps,
+
+    scene
+
+  } = req.body || {};
+
 
   const pathname =
     cleanPathname(
       rawPathname
     );
 
-  if (
-    !pathname
-  ) {
+
+  if (!pathname) {
+
     return res
       .status(400)
       .json({
         error:
-          "A valid FaceEvol MP4 upload is required."
+          "A valid FaceEvol video upload is required."
       });
   }
 
+
+  /*
+   * 4K becomes the default for this test.
+   *
+   * If the frontend explicitly sends
+   * 1080p / 2k / 4k, that choice is
+   * still respected.
+   */
   const resolution =
     ALLOWED_RESOLUTIONS.has(
       target_resolution
@@ -367,258 +311,270 @@ export default async function handler(
       ? target_resolution
       : "4k";
 
-  const scaleFactor =
-    getScaleFactor(
-      resolution
+
+  /*
+   * Keep 30 FPS as default.
+   * This gives us a cleaner quality test
+   * without spending processing on
+   * unnecessary frame interpolation.
+   */
+  const requestedFps =
+    Number(
+      target_fps
     );
+
+  const fps =
+    ALLOWED_FPS.has(
+      requestedFps
+    )
+      ? requestedFps
+      : 30;
+
+
+  /*
+   * UGC is our preferred preset
+   * for FaceEvol real-person videos.
+   */
+  const selectedScene =
+    ALLOWED_SCENES.has(
+      scene
+    )
+      ? scene
+      : "ugc";
+
+
+  /*
+   * Keep the original Vercel Blob private.
+   *
+   * Replicate receives only FaceEvol's
+   * controlled streaming URL.
+   */
+  const videoUrl =
+    `https://www.faceevol.com/api/video.mp4?pathname=${encodeURIComponent(
+      pathname
+    )}`;
+
 
   try {
-    /*
-     * Give Replicate temporary
-     * read-only access to this
-     * private video.
-     */
-    const videoUrl =
-      await createTemporaryVideoReadUrl(
-        pathname
-      );
 
     console.log(
-      "FACEVOL CRYSTAL VIDEO INPUT READY:",
-      pathname,
+      "FACEVOL BYTEDANCE TEST:",
       resolution,
-      `${scaleFactor}x`
+      `${fps}fps`,
+      selectedScene
     );
 
+
     /*
-     * Start Crystal asynchronously.
+     * ---------------------------------
+     * ATTEMPT 1:
+     * ByteDance PRO
+     * ---------------------------------
      *
-     * FaceEvol's existing
-     * /api/prediction.js continues
-     * polling the prediction.
+     * PRO is the quality mode we actually
+     * want to test for people / faces.
      */
-    const response =
-      await fetch(
-        "https://api.replicate.com/v1/models/philz1337x/crystal-video-upscaler/predictions",
-        {
-          method:
-            "POST",
+    let {
+      response,
+      prediction
 
-          headers: {
-            Authorization:
-              `Bearer ${replicateToken}`,
+    } =
+      await startPrediction({
+        token,
 
-            "Content-Type":
-              "application/json",
+        videoUrl,
 
-            /*
-             * Video enhancement can
-             * take several minutes.
-             */
-            "Cancel-After":
-              "30m"
-          },
+        processingType:
+          "pro",
 
-          body:
-            JSON.stringify({
-              input: {
-                video:
-                  videoUrl,
+        scene:
+          selectedScene,
 
-                scale_factor:
-                  scaleFactor
-              }
-            })
-        }
+        resolution,
+
+        fps
+      });
+
+
+    let processingType =
+      "pro";
+
+
+    /*
+     * If this Replicate account
+     * cannot access PRO, retry once
+     * using STANDARD.
+     */
+    if (
+      !response.ok &&
+      shouldFallbackToStandard(
+        response,
+        prediction
+      )
+    ) {
+
+      console.warn(
+        "ByteDance PRO unavailable. Retrying with STANDARD."
       );
 
-    const responseText =
-      await response.text();
 
-    let prediction = {};
+      const fallback =
+        await startPrediction({
+          token,
 
-    if (
-      responseText
-    ) {
-      try {
-        prediction =
-          JSON.parse(
-            responseText
-          );
-      } catch {
-        return sendError(
-          res,
-          response.status ||
-            502,
+          videoUrl,
 
-          "Crystal returned a non-JSON response.",
+          processingType:
+            "standard",
 
-          responseText
-        );
-      }
+          scene:
+            selectedScene,
+
+          resolution,
+
+          fps
+        });
+
+
+      response =
+        fallback.response;
+
+      prediction =
+        fallback.prediction;
+
+      processingType =
+        "standard";
     }
 
-    if (
-      !response.ok
-    ) {
+
+    /*
+     * Final API error.
+     */
+    if (!response.ok) {
+
       const details =
-        prediction?.detail ||
-        prediction?.error ||
-        prediction ||
-        `Replicate HTTP ${response.status}`;
+        safeDetail(
+          prediction?.detail ||
+          prediction?.error ||
+          prediction ||
+          `Replicate HTTP ${response.status}`
+        );
+
 
       console.error(
-        "FaceEvol Crystal request failed:",
+        "FaceEvol ByteDance request failed:",
         response.status,
-        safeDetail(
-          details
-        )
-      );
-
-      return sendError(
-        res,
-        response.status,
-
-        "Video enhancement request failed.",
-
         details
       );
+
+
+      return res
+        .status(
+          response.status
+        )
+        .json({
+          error:
+            "Video enhancement request failed.",
+
+          details
+        });
     }
+
 
     if (
       !prediction ||
       typeof prediction !==
         "object"
     ) {
-      return sendError(
-        res,
-        502,
 
-        "Crystal returned an invalid prediction response.",
-
-        prediction
-      );
+      return res
+        .status(502)
+        .json({
+          error:
+            "ByteDance returned an invalid prediction response."
+        });
     }
+
 
     if (
       !prediction.id
     ) {
-      return sendError(
-        res,
-        502,
 
-        "Crystal did not return a prediction ID.",
+      return res
+        .status(502)
+        .json({
+          error:
+            "ByteDance did not return a prediction ID.",
 
-        prediction
-      );
+          details:
+            safeDetail(
+              prediction
+            )
+        });
     }
 
+
     console.log(
-      "FACEVOL CRYSTAL ENHANCEMENT STARTED:",
+      "FACEVOL BYTEDANCE STARTED:",
       prediction.id,
       prediction.status,
+      processingType,
       resolution,
-      `${scaleFactor}x`
+      `${fps}fps`,
+      selectedScene
     );
+
 
     return res
       .status(200)
       .json({
+
         success:
           true,
 
         model:
-          "philz1337x/crystal-video-upscaler",
+          "bytedance/video-upscaler",
 
         settings: {
+          processing_type:
+            processingType,
+
+          scene:
+            selectedScene,
+
           target_resolution:
             resolution,
 
-          scale_factor:
-            scaleFactor
+          target_fps:
+            fps
         },
 
         prediction
       });
 
+
   } catch (error) {
+
     const message =
       error instanceof Error
         ? error.message
         : String(error);
 
+
     console.error(
-      "FaceEvol Crystal enhancement server error:",
+      "FaceEvol ByteDance enhancement server error:",
       message
     );
 
-    if (
-      message.startsWith(
-        "BLOB_SDK_LOAD_FAILED:"
-      )
-    ) {
-      return sendError(
-        res,
-        500,
 
-        "FaceEvol could not load the Vercel Blob SDK.",
+    return res
+      .status(500)
+      .json({
+        error:
+          "Could not start ByteDance video enhancement.",
 
-        message
-      );
-    }
-
-    if (
-      message.startsWith(
-        "BLOB_SDK_EXPORTS_MISSING:"
-      )
-    ) {
-      return sendError(
-        res,
-        500,
-
-        "The deployed Vercel Blob SDK is missing signed-URL support.",
-
-        message
-      );
-    }
-
-    if (
-      message.startsWith(
-        "BLOB_SIGNED_TOKEN_FAILED:"
-      )
-    ) {
-      return sendError(
-        res,
-        500,
-
-        "FaceEvol could not authorize temporary video access.",
-
-        message
-      );
-    }
-
-    if (
-      message.startsWith(
-        "BLOB_PRESIGN_FAILED:"
-      )
-    ) {
-      return sendError(
-        res,
-        500,
-
-        "FaceEvol could not create temporary video access.",
-
-        message
-      );
-    }
-
-    return sendError(
-      res,
-      500,
-
-      "Could not start Crystal video enhancement.",
-
-      message
-    );
+        details:
+          message
+      });
   }
 }
