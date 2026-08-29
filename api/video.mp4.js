@@ -1,147 +1,174 @@
-import { get } from "@vercel/blob";
+import { get, head } from "@vercel/blob";
 import { Readable } from "node:stream";
-import {
-  createHmac,
-  timingSafeEqual
-} from "node:crypto";
 
-function createSignature(pathname, expires, secret) {
-  return createHmac("sha256", secret)
-    .update(`${pathname}:${expires}`)
-    .digest("hex");
-}
-
-function signaturesMatch(received, expected) {
-  if (
-    typeof received !== "string" ||
-    received.length !== expected.length
-  ) {
-    return false;
-  }
-
-  return timingSafeEqual(
-    Buffer.from(received, "utf8"),
-    Buffer.from(expected, "utf8")
-  );
-}
-
-export default async function handler(request, response) {
-  if (request.method !== "GET") {
-    return response.status(405).json({
+export default async function handler(req, res) {
+  if (req.method !== "GET" && req.method !== "HEAD") {
+    res.setHeader("Allow", "GET, HEAD");
+    return res.status(405).json({
       error: "Method not allowed"
     });
   }
 
   try {
-    const secret = process.env.REPLICATE_API_TOKEN;
+    let pathname = req.query.pathname;
 
-    if (!secret) {
-      return response
-        .status(500)
-        .send("Server configuration error");
+    if (Array.isArray(pathname)) {
+      pathname = pathname[0];
     }
-
-    const {
-      pathname,
-      expires,
-      signature
-    } = request.query || {};
 
     if (
       typeof pathname !== "string" ||
-      typeof expires !== "string" ||
-      typeof signature !== "string"
+      !pathname.trim()
     ) {
-      return response
-        .status(400)
-        .send("Missing authorization");
+      return res.status(400).json({
+        error: "Missing pathname"
+      });
     }
 
-    const expiresNumber = Number(expires);
+    pathname = pathname.trim();
 
+    /*
+     * Allow FaceEvol temporary video files.
+     *
+     * Important:
+     * Do NOT use the old strict filename regex here.
+     * Enhancement clips can now have names such as:
+     *
+     * faceevol-video-123-abc-faceevol-enhance-selected-456.mp4
+     */
     if (
-      !Number.isFinite(expiresNumber) ||
-      Date.now() > expiresNumber
+      !pathname.startsWith("faceevol-video-") ||
+      !pathname.toLowerCase().endsWith(".mp4")
     ) {
-      return response
-        .status(403)
-        .send("Link expired");
+      return res.status(400).json({
+        error: "Invalid video pathname"
+      });
     }
 
-    const expectedSignature =
-      createSignature(
-        pathname,
-        expires,
-        secret
+    /*
+     * Block obvious path-manipulation attempts.
+     */
+    if (
+      pathname.includes("..") ||
+      pathname.includes("\\")
+    ) {
+      return res.status(400).json({
+        error: "Invalid video pathname"
+      });
+    }
+
+    /*
+     * HEAD support is useful because external AI services
+     * may inspect the file before downloading it.
+     */
+    if (req.method === "HEAD") {
+      const metadata = await head(pathname);
+
+      res.setHeader(
+        "Content-Type",
+        metadata.contentType || "video/mp4"
       );
 
-    if (
-      !signaturesMatch(
-        signature,
-        expectedSignature
-      )
-    ) {
-      return response
-        .status(403)
-        .send("Unauthorized");
+      if (metadata.size) {
+        res.setHeader(
+          "Content-Length",
+          String(metadata.size)
+        );
+      }
+
+      res.setHeader(
+        "Cache-Control",
+        "private, no-store"
+      );
+
+      res.setHeader(
+        "X-Content-Type-Options",
+        "nosniff"
+      );
+
+      return res.status(200).end();
     }
 
+    /*
+     * Read the private Vercel Blob.
+     */
     const result = await get(pathname, {
-      access: "private"
+      access: "private",
+      useCache: false
     });
 
     if (
       !result ||
-      result.statusCode !== 200
+      result.statusCode !== 200 ||
+      !result.stream
     ) {
-      return response
-        .status(404)
-        .send("Video not found");
+      return res.status(404).json({
+        error: "Video not found"
+      });
     }
 
-    response.setHeader(
+    res.statusCode = 200;
+
+    res.setHeader(
       "Content-Type",
-      result.blob.contentType || "video/mp4"
+      result.blob?.contentType || "video/mp4"
     );
 
-    response.setHeader(
-      "Content-Disposition",
-      'inline; filename="faceevol-video.mp4"'
-    );
-
-    response.setHeader(
-      "Cache-Control",
-      "private, no-store"
-    );
-
-    response.setHeader(
-      "X-Content-Type-Options",
-      "nosniff"
-    );
-
-    if (result.blob.size) {
-      response.setHeader(
+    if (result.blob?.size) {
+      res.setHeader(
         "Content-Length",
         String(result.blob.size)
       );
     }
 
-    Readable
-      .fromWeb(result.stream)
-      .pipe(response);
+    res.setHeader(
+      "Content-Disposition",
+      "inline"
+    );
 
+    res.setHeader(
+      "Cache-Control",
+      "private, no-store"
+    );
+
+    res.setHeader(
+      "X-Content-Type-Options",
+      "nosniff"
+    );
+
+    /*
+     * Let Replicate / ByteDance download the private video
+     * through this FaceEvol endpoint.
+     */
+    const nodeStream =
+      Readable.fromWeb(result.stream);
+
+    nodeStream.on("error", (error) => {
+      console.error(
+        "VIDEO STREAM ERROR:",
+        error
+      );
+
+      if (!res.headersSent) {
+        res.status(500).end();
+      } else {
+        res.destroy(error);
+      }
+    });
+
+    nodeStream.pipe(res);
   } catch (error) {
     console.error(
-      "Private MP4 stream error:",
+      "VIDEO.MP4 ERROR:",
       error
     );
 
-    if (!response.headersSent) {
-      return response
-        .status(500)
-        .send("Video unavailable");
-    }
-
-    response.end();
+    return res.status(500).json({
+      error: "Unable to load video",
+      details:
+        error instanceof Error
+          ? error.message
+          : String(error)
+    });
   }
 }
