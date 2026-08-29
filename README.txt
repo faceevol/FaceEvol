@@ -1,20 +1,56 @@
-FaceEvol favicon replacement
+FACEVOL LAUNCH POLISH UPDATE
+===========================
 
-Upload these files to the ROOT of the FaceEvol project, replacing files with the same names:
+Replace/add these files in your repository:
 
-favicon.ico
-favicon.png
-favicon-16x16.png
-favicon-32x32.png
-favicon-48x48.png
-apple-touch-icon.png
-android-chrome-192x192.png
-android-chrome-512x512.png
-site.webmanifest
+/index.html
+/robots.txt
+/sitemap.xml
+/assets/age-presets/age-05.jpg
+/assets/age-presets/age-15.jpg
+/assets/age-presets/age-30.jpg
+/assets/age-presets/age-50.jpg
+/assets/age-presets/age-75.jpg
 
-No HTML change is required if your current index.html already points to these filenames.
+WHAT CHANGED
+------------
+- Removed public developer/implementation placeholder wording.
+- Empty demo buttons now show "Example coming soon" and are disabled until
+  static demo media is configured.
+- Featured Result is hidden until both featured images are configured.
+- Replaced the main emoji icon set with a consistent inline FaceEvol SVG icon family.
+- Removed visible Beta / Live Beta badges from the creation UI.
+- Legal beta disclosure remains in Terms.
+- Replaced the Supabase configuration failure message with customer-safe wording.
+- Signed-out header never displays a transient 0-credit balance.
+- Starter pricing now says "Use across all 6 AI tools".
+- Video Face Swap wording remains up to 5 seconds.
+- Video Enhance now explicitly says up to 5 seconds.
+- Supabase JS is pinned to 2.112.4 instead of an open @2 range.
+- Five embedded age images were extracted from the HTML into cacheable files.
+- Age preset images lazy-load and decode asynchronously.
+- Added robots.txt and sitemap.xml.
+- Stripe checkout route remains /api/prediction.
+- Video Face Swap remains 3 credits in the frontend.
+- No new Vercel API function was added.
 
-After deployment on Safari/iPad:
-1. Close every FaceEvol Safari tab.
-2. Force-quit Safari.
-3. Reopen https://www.faceevol.com/
+DEMO MEDIA
+----------
+Search index.html for:
+  FACEVOL_DEMO_MEDIA
+
+When you later add static demo files, populate those paths. The View Demo buttons
+automatically become available when the needed media paths are present.
+
+FEATURED RESULT
+---------------
+Set:
+  FACEVOL_DEMO_MEDIA.featured.before
+  FACEVOL_DEMO_MEDIA.featured.after
+
+The Featured Result block is automatically hidden until BOTH paths are set.
+
+IMPORTANT
+---------
+Keep your existing a.png logo in the repository root.
+This package does not replace API routes or backend model code.
