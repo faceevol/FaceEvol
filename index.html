@@ -27,9 +27,10 @@
   <meta property="og:description" content="Transform your age, swap faces, bring a photo to life, and enhance photos or videos in one simple AI studio." />
   <meta property="og:url" content="https://www.faceevol.com/" />
   <meta property="og:image" content="https://www.faceevol.com/a.png" />
-  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="FaceEvol — AI Face Transformation" />
   <meta name="twitter:description" content="Six focused AI tools for face transformation, animation and enhancement." />
+  <meta name="twitter:image" content="https://www.faceevol.com/a.png" />
 
   <!-- Browser-side video trimming. Loaded only by the page; your API routes stay unchanged. -->
   <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
@@ -74,7 +75,7 @@
       box-shadow:0 10px 30px rgba(70,70,220,.22);
     }
 
-    .hero{padding:86px 0 48px;text-align:center}
+    .hero{padding:64px 0 38px;text-align:center}
     .badge{
       display:inline-flex;align-items:center;gap:9px;margin-bottom:22px;padding:9px 15px;border-radius:999px;
       background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.09);color:#d5dcec;font-size:13px;font-weight:650;
@@ -90,7 +91,8 @@
     .button-primary{background:linear-gradient(90deg,#6d28d9,#0369a1);color:white;box-shadow:0 15px 38px rgba(60,90,220,.25)}
     .button-secondary{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.1);color:#edf3ff}
     .button:hover{transform:translateY(-2px)}
-    .hero-trust{margin-top:21px;display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:16px;color:#8592aa;font-size:13px}
+    .hero-trust{margin-top:22px;display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:9px;color:#a9b7cb;font-size:12px;font-weight:650}
+    .hero-trust span{padding:8px 11px;border-radius:999px;border:1px solid rgba(255,255,255,.075);background:rgba(255,255,255,.025);box-shadow:inset 0 1px 0 rgba(255,255,255,.025)}
 
     .studio-wrap{margin-top:50px;position:relative;scroll-margin-top:92px}
     .studio{
@@ -1007,6 +1009,95 @@
       .demo-modal-foot{align-items:stretch;flex-direction:column}.demo-modal-create{width:100%}
     }
 
+  
+    /* =========================================================
+       FACEVOL 9.5 POLISH PASS
+       ========================================================= */
+    .studio-section{padding:18px 0 72px;scroll-margin-top:88px}
+    .studio-section-intro{max-width:720px;margin:0 auto 26px;text-align:center}
+    .studio-section-intro h2{margin-top:8px;font-size:clamp(29px,4vw,43px);letter-spacing:-1.2px}
+    .studio-section-intro p{margin:11px auto 0;max-width:620px;color:#8494aa;font-size:13px;line-height:1.65}
+    .studio-section .studio-wrap{margin-top:0}
+
+    .studio-privacy-note{
+      width:min(100%,560px);margin:-6px auto 18px;padding:10px 12px;display:flex;align-items:flex-start;gap:9px;
+      text-align:left;border-radius:12px;border:1px solid rgba(125,211,252,.09);background:rgba(56,189,248,.025);
+      color:#8091a8
+    }
+    .studio-privacy-note>span{font-size:14px;line-height:1.35}
+    .studio-privacy-note strong{display:block;color:#aebdd0;font-size:9px;letter-spacing:.15px}
+    .studio-privacy-note small{display:block;margin-top:2px;color:#71839a;font-size:8px;line-height:1.45}
+
+    .featured-proof{
+      margin-top:26px;padding:22px;display:grid;grid-template-columns:.72fr 1.28fr;gap:22px;align-items:center;
+      border-radius:24px;border:1px solid rgba(255,255,255,.075);
+      background:
+        radial-gradient(circle at 85% 20%,rgba(14,165,233,.07),transparent 34%),
+        radial-gradient(circle at 5% 85%,rgba(124,58,237,.08),transparent 38%),
+        rgba(255,255,255,.018);
+      box-shadow:0 22px 70px rgba(0,0,0,.12)
+    }
+    .featured-proof-copy{padding:10px 6px}
+    .featured-proof-kicker{
+      color:#67c7f2;font-size:8px;font-weight:900;letter-spacing:1.15px;text-transform:uppercase
+    }
+    .featured-proof-copy h3{margin-top:8px;font-size:clamp(23px,3vw,32px);letter-spacing:-.75px;line-height:1.1}
+    .featured-proof-copy p{margin-top:10px;color:#7f91a9;font-size:11px;line-height:1.65}
+    .featured-proof-points{display:flex;flex-wrap:wrap;gap:7px;margin-top:15px}
+    .featured-proof-points span{
+      padding:6px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.065);
+      background:rgba(255,255,255,.025);color:#879bb2;font-size:8px;font-weight:800
+    }
+    .featured-proof-visual{
+      position:relative;min-height:300px;display:grid;grid-template-columns:1fr 1fr;gap:8px
+    }
+    .featured-proof-slot{
+      position:relative;min-height:300px;overflow:hidden;display:grid;place-items:center;border-radius:17px;
+      border:1px solid rgba(255,255,255,.07);background:rgba(2,6,17,.68)
+    }
+    .featured-proof-slot img{display:block;width:100%;height:100%;min-height:300px;object-fit:cover}
+    .featured-proof-label{
+      position:absolute;z-index:2;left:10px;top:10px;padding:5px 8px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.09);background:rgba(2,6,17,.78);
+      color:#d5e1ef;font-size:8px;font-weight:900
+    }
+    .featured-proof-empty{text-align:center;padding:20px;color:#64778f}
+    .featured-proof-empty>div{font-size:26px}
+    .featured-proof-empty strong{display:block;margin-top:8px;color:#a7b9cc;font-size:10px}
+    .featured-proof-empty small{display:block;margin-top:5px;color:#60748c;font-size:8px}
+    .featured-proof-divider{
+      position:absolute;z-index:3;left:50%;top:50%;transform:translate(-50%,-50%);
+      width:37px;height:37px;display:grid;place-items:center;border-radius:50%;
+      border:1px solid rgba(255,255,255,.12);background:#0b1322;color:#dcecff;
+      box-shadow:0 10px 30px rgba(0,0,0,.28);font-size:13px
+    }
+
+    /* Make the example gallery feel more visual and premium. */
+    .demo-card{min-height:372px}
+    .demo-preview{min-height:205px}
+    .demo-view-button,.demo-create-button{transition:transform .18s ease,background .18s ease,border-color .18s ease}
+    .demo-view-button:hover,.demo-create-button:hover{transform:translateY(-1px)}
+
+    /* Tablet / mobile polish */
+    @media(max-width:980px){
+      .hero{padding-top:54px}
+      .featured-proof{grid-template-columns:1fr}
+      .featured-proof-copy{max-width:620px}
+      .studio-section{padding-top:10px}
+    }
+    @media(max-width:700px){
+      .hero{padding:42px 0 28px}
+      .hero-description{font-size:15px}
+      .hero-trust{gap:7px}
+      .hero-trust span{padding:7px 9px;font-size:10px}
+      .featured-proof{padding:13px;border-radius:19px}
+      .featured-proof-visual{min-height:0;grid-template-columns:1fr}
+      .featured-proof-slot,.featured-proof-slot img{min-height:310px}
+      .featured-proof-divider{left:50%;top:50%}
+      .studio-section{padding-bottom:55px}
+      .studio-privacy-note{margin-top:-3px}
+    }
+
   </style>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1020,7 +1111,7 @@
     "applicationCategory":"MultimediaApplication",
     "operatingSystem":"Web",
     "description":"AI face transformation, face swap, photo-to-video and enhancement tools in one web studio.",
-    "offers":{"@type":"Offer","price":"0","priceCurrency":"EUR","description":"Free beta access"}
+    "offers":{"@type":"AggregateOffer","lowPrice":"4.99","highPrice":"24.99","priceCurrency":"EUR","offerCount":"3"}
   }
   </script>
 </head>
@@ -1162,7 +1253,7 @@
 <main>
   <section class="hero">
     <div class="container">
-      <div class="badge"><span class="badge-dot"></span>6 AI tools · One Face Studio</div>
+      <div class="badge"><span class="badge-dot"></span>6 AI Tools · One Creative Studio</div>
       <h1>AI Face <span class="gradient-text">Transformation</span></h1>
       <p class="hero-description">Transform your age, swap faces, bring a photo to life, and create high-quality AI results in seconds.</p>
       <div class="hero-actions">
@@ -1170,65 +1261,13 @@
         <a href="#demos" class="button button-secondary">▶ View Examples</a>
       </div>
       <div class="hero-trust" aria-label="FaceEvol benefits">
-        <span>🔒 Privacy-focused workflow</span>
-        <span>🧰 6 focused AI tools</span>
-        <span>✨ High-quality AI results</span>
-        <span>⬇️ Direct downloads</span>
+        <span>🔒 Private workflow</span>
+        <span>🧰 6 AI tools</span>
+        <span>✨ High-quality output</span>
+        <span>⬇️ Direct download</span>
       </div>
 
-      <div class="studio-wrap" id="studio">
-        <div class="studio">
-          <div class="studio-head" aria-label="FaceEvol Studio">
-            <div class="studio-head-copy">
-              <div class="studio-brand-icon">✦</div>
-              <div><strong>FaceEvol AI Studio</strong><small>Choose a tool. Add your media. Create your result.</small></div>
-            </div>
-            <span class="studio-current-tool" id="studioCurrentTool">Age Transformation</span>
-          </div>
-          <div class="studio-inner">
-            <div class="studio-sidebar">
-              <div class="studio-label">Create</div>
-              <div class="tool-option active" id="ageOption" role="button" tabindex="0" aria-pressed="true" aria-label="Open Age Transformation">
-                <div class="tool-icon">🕒</div>
-                <div><div class="tool-name">Age Transformation</div><span class="tool-sub">5 presets + custom age</span></div>
-              </div>
-              <div class="tool-option" id="photoFaceSwapOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open Photo Face Swap">
-                <div class="tool-icon">🖼️</div>
-                <div><div class="tool-name">Photo Face Swap</div><span class="tool-sub">Photo → photo</span></div>
-              </div>
-              <div class="tool-option" id="photoToVideoOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open Photo to Video">
-                <div class="tool-icon">🎞️</div>
-                <div><div class="tool-name">Photo to Video</div><span class="tool-sub">Prompt → short video</span></div>
-              </div>
-              <div class="tool-option" id="faceSwapOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open Video Face Swap">
-                <div class="tool-icon">🎬</div>
-                <div><div class="tool-name">Video Face Swap</div><span class="tool-sub">Up to 20 sec</span></div>
-              </div>
-              <div class="tool-option" id="photoEnhanceOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open Photo Enhance">
-                <div class="tool-icon">✨</div>
-                <div><div class="tool-name">Photo Enhance</div><span class="tool-sub">2x · 4x</span></div>
-              </div>
-              <div class="tool-option" id="videoEnhanceOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open Video Enhance">
-                <div class="tool-icon">✨</div>
-                <div><div class="tool-name">Video Enhance</div><span class="tool-sub">1080p · 4K</span></div>
-              </div>
-            </div>
-
-            <div class="studio-main">
-              <h2 class="upload-title">Upload a photo for Age Transformation</h2>
-              <p class="upload-description">Choose a clear face photo, select the age you want, and create your transformation. You can also view prepared examples before uploading.</p>
-
-              <div class="upload-box" id="uploadBox" role="button" tabindex="0" aria-label="Choose a face photo" onclick="document.getElementById('photoUpload').click()">
-                <div class="upload-icon">↑</div>
-                <strong>Drop your face photo here</strong>
-                <small>or tap to choose a JPG, PNG or WebP</small>
-              </div>
-              <input type="file" id="photoUpload" accept="image/*" hidden>
-              <div class="upload-status" id="uploadStatus" aria-live="polite"></div>
-            </div>
-          </div>
-        </div>
-      </div>
+      
     </div>
   </section>
 
@@ -1238,7 +1277,7 @@
       <div class="section-heading">
         <span class="section-eyebrow">FaceEvol Examples</span>
         <h2>See FaceEvol <span class="gradient-text">in action.</span></h2>
-        <p>Preview carefully prepared examples for every FaceEvol tool. These pre-generated samples let visitors understand the look and quality of each experience before uploading their own media.</p>
+        <p>Explore carefully prepared examples for every FaceEvol tool and see the quality before uploading your own media.</p>
       </div>
 
       <div class="demo-intro-note">✓ Pre-generated examples · No upload required</div>
@@ -1358,8 +1397,116 @@
           </div>
         </article>
       </div>
+
+
+      <div class="featured-proof" aria-label="Featured FaceEvol result">
+        <div class="featured-proof-copy">
+          <span class="featured-proof-kicker">Featured Result</span>
+          <h3>See the difference at a glance.</h3>
+          <p>Use one of your strongest final before-and-after examples here. A large visual proof point makes quality easier to understand than another paragraph of marketing copy.</p>
+          <div class="featured-proof-points">
+            <span>✓ Same source</span>
+            <span>✓ Clear comparison</span>
+            <span>✓ Pre-generated preview</span>
+          </div>
+        </div>
+
+        <div class="featured-proof-visual" id="featuredProofVisual">
+          <div class="featured-proof-slot" id="featuredProofBefore">
+            <span class="featured-proof-label">Before</span>
+            <div class="featured-proof-empty">
+              <div>🖼️</div>
+              <strong>Featured before image</strong>
+              <small>Add later in FACEVOL_DEMO_MEDIA.featured.</small>
+            </div>
+          </div>
+
+          <div class="featured-proof-divider" aria-hidden="true">
+            <span>↔</span>
+          </div>
+
+          <div class="featured-proof-slot" id="featuredProofAfter">
+            <span class="featured-proof-label">FaceEvol Result</span>
+            <div class="featured-proof-empty">
+              <div>✨</div>
+              <strong>Featured result image</strong>
+              <small>Add later in FACEVOL_DEMO_MEDIA.featured.</small>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
+
+  <section class="studio-section" aria-labelledby="studioSectionTitle">
+    <div class="container">
+      <div class="studio-section-intro">
+        <span class="section-eyebrow">Create With Your Media</span>
+        <h2 id="studioSectionTitle">Ready to make it <span class="gradient-text">your own?</span></h2>
+        <p>Choose a FaceEvol tool, upload your own photo or video, review the credit cost, and start your creation.</p>
+      </div>
+
+<div class="studio-wrap" id="studio">
+        <div class="studio">
+          <div class="studio-head" aria-label="FaceEvol Studio">
+            <div class="studio-head-copy">
+              <div class="studio-brand-icon">✦</div>
+              <div><strong>FaceEvol AI Studio</strong><small>Choose a tool. Add your media. Create your result.</small></div>
+            </div>
+            <span class="studio-current-tool" id="studioCurrentTool">Age Transformation</span>
+          </div>
+          <div class="studio-inner">
+            <div class="studio-sidebar">
+              <div class="studio-label">Create</div>
+              <div class="tool-option active" id="ageOption" role="button" tabindex="0" aria-pressed="true" aria-label="Open Age Transformation">
+                <div class="tool-icon">🕒</div>
+                <div><div class="tool-name">Age Transformation</div><span class="tool-sub">5 presets + custom age</span></div>
+              </div>
+              <div class="tool-option" id="photoFaceSwapOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open Photo Face Swap">
+                <div class="tool-icon">🖼️</div>
+                <div><div class="tool-name">Photo Face Swap</div><span class="tool-sub">Photo → photo</span></div>
+              </div>
+              <div class="tool-option" id="photoToVideoOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open Photo to Video">
+                <div class="tool-icon">🎞️</div>
+                <div><div class="tool-name">Photo to Video</div><span class="tool-sub">Prompt → short video</span></div>
+              </div>
+              <div class="tool-option" id="faceSwapOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open Video Face Swap">
+                <div class="tool-icon">🎬</div>
+                <div><div class="tool-name">Video Face Swap</div><span class="tool-sub">Up to 5 sec</span></div>
+              </div>
+              <div class="tool-option" id="photoEnhanceOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open Photo Enhance">
+                <div class="tool-icon">✨</div>
+                <div><div class="tool-name">Photo Enhance</div><span class="tool-sub">2x · 4x</span></div>
+              </div>
+              <div class="tool-option" id="videoEnhanceOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open Video Enhance">
+                <div class="tool-icon">✨</div>
+                <div><div class="tool-name">Video Enhance</div><span class="tool-sub">Up to 5 sec · 1080p / 4K</span></div>
+              </div>
+            </div>
+
+            <div class="studio-main">
+              <h2 class="upload-title">Upload a photo for Age Transformation</h2>
+              <p class="upload-description">Choose a clear face photo, select the age you want, and create your transformation. You can also view prepared examples before uploading.</p>
+              <div class="studio-privacy-note">
+                <span>🔒</span>
+                <div><strong>Privacy-focused processing</strong><small>Use media you have permission to upload. FaceEvol is designed around a private, controlled creation workflow.</small></div>
+              </div>
+
+              <div class="upload-box" id="uploadBox" role="button" tabindex="0" aria-label="Choose a face photo" onclick="document.getElementById('photoUpload').click()">
+                <div class="upload-icon">↑</div>
+                <strong>Drop your face photo here</strong>
+                <small>or tap to choose a JPG, PNG or WebP</small>
+              </div>
+              <input type="file" id="photoUpload" accept="image/*" hidden>
+              <div class="upload-status" id="uploadStatus" aria-live="polite"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
 
   <section id="features">
     <div class="container">
@@ -1520,9 +1667,9 @@
         <strong style="color:#b8cbe0">Age 1</strong> ·
         <strong style="color:#b8cbe0">Photo Face Swap 2</strong> ·
         <strong style="color:#b8cbe0">Photo to Video 5</strong> ·
-        <strong style="color:#b8cbe0">Video Face Swap 3</strong> ·
+        <strong style="color:#b8cbe0">Video Face Swap 3 (up to 5s)</strong> ·
         <strong style="color:#b8cbe0">Photo Enhance 2</strong> ·
-        <strong style="color:#b8cbe0">Video Enhance 8</strong> credits
+        <strong style="color:#b8cbe0">Video Enhance 8 (up to 5s)</strong> credits
       </div>
     </div>
   </section>
@@ -1812,6 +1959,11 @@
      ========================================================= */
 
   const FACEVOL_DEMO_MEDIA=Object.freeze({
+    featured:{
+      before:"",
+      after:""
+    },
+
     age:{
       title:"Age Transformation",
       description:"The same person shown across five target ages. These will be pre-generated images stored with FaceEvol.",
@@ -1880,6 +2032,31 @@
   const faceEvolDemoCreate=document.getElementById("faceEvolDemoCreate");
 
   let faceEvolActiveDemoKey="";
+
+
+  function renderFaceEvolFeaturedProof(){
+    const media=FACEVOL_DEMO_MEDIA.featured||{};
+    const before=document.getElementById("featuredProofBefore");
+    const after=document.getElementById("featuredProofAfter");
+
+    function fill(slot,src,label){
+      if(!slot||!src) return;
+      slot.innerHTML="";
+      const badge=document.createElement("span");
+      badge.className="featured-proof-label";
+      badge.textContent=label;
+
+      const img=document.createElement("img");
+      img.src=src;
+      img.alt=`FaceEvol ${label} featured example`;
+      img.loading="lazy";
+
+      slot.append(badge,img);
+    }
+
+    fill(before,media.before,"Before");
+    fill(after,media.after,"FaceEvol Result");
+  }
 
   function faceEvolEmptyDemoSlot(label="Demo media coming soon",icon="✦"){
     const slot=document.createElement("div");
@@ -2023,6 +2200,8 @@
     faceEvolDemoModal.classList.remove("show");
     document.body.style.overflow="";
   }
+
+  renderFaceEvolFeaturedProof();
 
   document.querySelectorAll("[data-demo-key]").forEach(button=>{
     button.addEventListener("click",()=>{
@@ -2564,7 +2743,7 @@
     </div>
 
     <div class="age-summary" id="ageSummary">✨ Selected transformation: <strong>age 30</strong> · Standard output</div>
-    <button class="transform-button" id="transformButton" type="button">✨ Transform to Age 30</button>
+    <button class="transform-button" id="transformButton" type="button">✨ Transform to Age 30 · 1 credit</button>
     <div class="processing-message" id="processingMessage"></div>
     <div class="error-message" id="ageError"></div>
     <div class="age-result" id="ageResult"><img id="resultImage" alt="FaceEvol age transformation result"><button class="handoff-button" id="downloadAgeResult" type="button">⬇️ Download Image</button></div>
@@ -2617,7 +2796,7 @@
       processingMessage.textContent="";
     }
     ageValue.textContent=`${age} years`;
-    transformButton.textContent=`✨ Transform to Age ${age}`;
+    transformButton.textContent=`✨ Transform to Age ${age} · 1 credit`;
     ageSummary.innerHTML=`✨ Selected transformation: <strong>age ${age}</strong> · ${selectedAgeQuality} output`;
     renderAgePresets();
   }
@@ -2676,7 +2855,7 @@
       ageError.textContent=friendlyAgeError(error);
     }finally{
       transformButton.disabled=false;
-      transformButton.textContent=`✨ Transform to Age ${ageSlider.value}`;
+      transformButton.textContent=`✨ Transform to Age ${ageSlider.value} · 1 credit`;
     }
   });
 
@@ -2764,7 +2943,7 @@
         </div>
       </div>
 
-      <button type="button" class="transform-button gated" id="startPhotoSwapButton" disabled>✨ Swap Face</button>
+      <button type="button" class="transform-button gated" id="startPhotoSwapButton" disabled>✨ Swap Face · 2 credits</button>
       <div class="processing-message" id="photoSwapStatus"></div>
       <div class="error-message" id="photoSwapError"></div>
 
@@ -3012,7 +3191,7 @@
       photoSwapError.textContent=friendlyPhotoSwapError(error);
       syncPhotoSwapReadyState();
     }finally{
-      startPhotoSwapButton.textContent="✨ Swap Face";
+      startPhotoSwapButton.textContent="✨ Swap Face · 2 credits";
       startPhotoSwapButton.disabled=!(selectedPhoto&&selectedPhotoSwapTarget);
     }
   });
@@ -3102,7 +3281,7 @@
         </div>
       </div>
 
-      <button type="button" class="transform-button gated" id="startPhotoToVideoButton" disabled>🎞️ Generate Short Video</button>
+      <button type="button" class="transform-button gated" id="startPhotoToVideoButton" disabled>🎞️ Generate Short Video · 5 credits</button>
       <div class="processing-message" id="photoToVideoStatus"></div>
       <div class="error-message" id="photoToVideoError"></div>
 
@@ -3352,7 +3531,7 @@
       photoToVideoStatus.textContent="";
       photoToVideoError.textContent=friendlyPhotoToVideoError(error);
     }finally{
-      startPhotoToVideoButton.textContent="🎞️ Generate Short Video";
+      startPhotoToVideoButton.textContent="🎞️ Generate Short Video · 5 credits";
       syncPhotoToVideoReadyState();
     }
   });
@@ -3433,7 +3612,7 @@
         </div>
       </div>
 
-      <button type="button" class="transform-button gated" id="startPhotoEnhanceButton" disabled>✨ Enhance Photo</button>
+      <button type="button" class="transform-button gated" id="startPhotoEnhanceButton" disabled>✨ Enhance Photo · 2 credits</button>
       <div class="processing-message" id="photoEnhanceStatus"></div>
       <div class="error-message" id="photoEnhanceError"></div>
 
@@ -3655,7 +3834,7 @@
       photoEnhanceStatus.textContent="";
     }finally{
       startPhotoEnhanceButton.disabled=!selectedPhotoEnhance;
-      startPhotoEnhanceButton.textContent="✨ Enhance Photo";
+      startPhotoEnhanceButton.textContent="✨ Enhance Photo · 2 credits";
       syncPhotoEnhanceReadyState();
     }
   });
@@ -3768,7 +3947,7 @@
         </div>
       </div>
 
-      <button type="button" class="transform-button gated" id="startEnhanceButton" disabled>✨ Enhance Video</button>
+      <button type="button" class="transform-button gated" id="startEnhanceButton" disabled>✨ Enhance Video · 8 credits</button>
       <div class="processing-message" id="enhanceStatus"></div>
       <div class="error-message" id="enhanceError"></div>
 
@@ -3890,7 +4069,7 @@
     if(message.includes("60 seconds")||message.includes("upload is too long")){
       return "Please choose an MP4 that is 60 seconds or shorter.";
     }
-    if(message.includes("20 seconds")||message.includes("selected clip")){
+    if(message.includes("20 seconds")||message.includes("5 seconds")||message.includes("selected clip")){
       return "Please keep the selected enhancement clip at 5 seconds or less.";
     }
     if(message.includes("300")||message.includes("too large")||message.includes("413")){
@@ -4122,7 +4301,7 @@
       enhanceTrimEndRange.value=String(enhanceTrimEnd);
 
       enhanceSourceVideoInfo.textContent=
-        `${file.name} · max 20 sec selection`;
+        `${file.name} · max 5 sec selection`;
 
       enhanceSourceVideoDurationLabel.textContent=
         formatTime(duration);
@@ -4795,7 +4974,7 @@
         </div>
       `;
     }finally{
-      startEnhanceButton.textContent="✨ Enhance Video";
+      startEnhanceButton.textContent="✨ Enhance Video · 8 credits";
       syncEnhanceReadyState();
     }
   });
@@ -4915,7 +5094,7 @@
   startFaceSwapButton.type="button";
   startFaceSwapButton.id="startFaceSwapButton";
   startFaceSwapButton.className="transform-button";
-  startFaceSwapButton.textContent="🎬 Start Face Swap";
+  startFaceSwapButton.textContent="🎬 Start Face Swap · 3 credits";
   startFaceSwapButton.style.display="none";
   faceSwapRoot.appendChild(startFaceSwapButton);
 
@@ -5739,7 +5918,7 @@
       updateTrimUI(false);
 
       startFaceSwapButton.style.display="block";
-      startFaceSwapButton.textContent="🎬 Start Face Swap";
+      startFaceSwapButton.textContent="🎬 Start Face Swap · 3 credits";
 
       if(sourceVideoDuration>MAX_TRIM_SECONDS){
         swapVideoStatus.textContent=`✓ Video ready. Choose any section up to ${MAX_TRIM_SECONDS} seconds.`;
@@ -5933,7 +6112,7 @@
     }finally{
       startFaceSwapButton.disabled=false;
       chooseSwapVideo.disabled=false;
-      startFaceSwapButton.textContent="🎬 Start Face Swap";
+      startFaceSwapButton.textContent="🎬 Start Face Swap · 3 credits";
     }
   });
 
@@ -6074,8 +6253,8 @@
       const cost=faceEvolToolCost(tool);
       const note=document.createElement("div");
       note.className="faceevol-credit-cost";
-      note.textContent=`${cost} credit${cost===1?"":"s"} per creation · failed jobs are refunded`;
-      note.style.cssText="margin-top:8px;text-align:center;color:#8291a8;font-size:11px;font-weight:750;letter-spacing:.15px";
+      note.textContent="Verified failed or canceled jobs restore reserved credits automatically.";
+      note.style.cssText="margin:9px auto 0;max-width:460px;text-align:center;color:#73859d;font-size:10px;font-weight:650;line-height:1.45";
       button.insertAdjacentElement("afterend",note);
     }
   }
