@@ -3,29 +3,18 @@
  * Save as: /api/photo-enhance.js
  *
  * Model:
- * topazlabs/image-upscale
+ * nightmareai/real-esrgan
  *
- * Official Topaz Labs image enhancement model on Replicate.
+ * Real-ESRGAN:
+ * - Upscales the complete photo
+ * - GFPGAN face enhancement enabled
+ * - Supports FaceEvol 2x / 4x options
  *
- * The frontend sends:
- * {
- *   image: "...data URI...",
- *   scale_factor: 2 or 4
- * }
- *
+ * Only ONE Photo Enhance API file is required.
  * Existing /api/prediction.js is reused for polling.
  */
 
 const MAX_IMAGE_DATA_URI_CHARS = 3_500_000;
-
-const ALLOWED_SCALE_FACTORS = new Set([
-  2,
-  4,
-  "2",
-  "4",
-  "2x",
-  "4x"
-]);
 
 function isImageDataUri(value) {
   return (
@@ -48,21 +37,37 @@ function safeDetail(value) {
   }
 }
 
-function normalizeScaleFactor(value) {
+function normalizeScale(value) {
   if (
     value === 4 ||
     value === "4" ||
-    value === "4x"
+    value === "4x" ||
+    value === "4X"
   ) {
-    return "4x";
+    return 4;
   }
 
-  return "2x";
+  if (
+    value === 2 ||
+    value === "2" ||
+    value === "2x" ||
+    value === "2X"
+  ) {
+    return 2;
+  }
+
+  return null;
 }
 
 export default async function handler(req, res) {
+  /*
+   * Never cache user photo enhancement requests.
+   */
   res.setHeader("Cache-Control", "no-store");
 
+  /*
+   * POST only.
+   */
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
 
@@ -71,12 +76,14 @@ export default async function handler(req, res) {
     });
   }
 
+  /*
+   * Existing Replicate token from Vercel Environment Variables.
+   */
   const token = process.env.REPLICATE_API_TOKEN;
 
   if (!token) {
     return res.status(500).json({
-      error:
-        "REPLICATE_API_TOKEN is not configured"
+      error: "REPLICATE_API_TOKEN is not configured"
     });
   }
 
@@ -86,7 +93,7 @@ export default async function handler(req, res) {
   } = req.body || {};
 
   /*
-   * Validate photo.
+   * Validate image.
    */
   if (!isImageDataUri(image)) {
     return res.status(400).json({
@@ -96,34 +103,42 @@ export default async function handler(req, res) {
   }
 
   /*
-   * Keep request safely below Vercel body-size limits.
+   * Protect the Vercel function from excessively large
+   * Base64 request bodies.
    */
   if (image.length > MAX_IMAGE_DATA_URI_CHARS) {
     return res.status(413).json({
       error:
-        "The prepared photo is too large. Please try again."
+        "The prepared photo is too large. Please try another photo."
     });
   }
 
   /*
-   * Validate scale.
+   * Convert FaceEvol's frontend value into
+   * Real-ESRGAN's numeric scale value.
+   *
+   * Frontend:
+   * 2 / 2x -> 2
+   * 4 / 4x -> 4
    */
-  if (!ALLOWED_SCALE_FACTORS.has(scale_factor)) {
+  const scale = normalizeScale(scale_factor);
+
+  if (!scale) {
     return res.status(400).json({
       error:
-        "Photo Enhance supports 2x or 4x output."
+        "Photo Enhance supports 2x or 4x enhancement."
     });
   }
 
-  const upscaleFactor =
-    normalizeScaleFactor(scale_factor);
-
   try {
     /*
-     * Official Topaz Labs model.
+     * Start Real-ESRGAN.
+     *
+     * Official Replicate endpoint:
+     * nightmareai/real-esrgan
      */
     const response = await fetch(
-      "https://api.replicate.com/v1/models/topazlabs/image-upscale/predictions",
+      "https://api.replicate.com/v1/models/nightmareai/real-esrgan/predictions",
       {
         method: "POST",
 
@@ -132,86 +147,44 @@ export default async function handler(req, res) {
           "Content-Type": "application/json",
 
           /*
-           * Replicate can keep this request open for
-           * up to 60 seconds.
-           *
-           * If Topaz needs longer, it returns a running
-           * prediction and the existing FaceEvol
-           * /api/prediction endpoint continues polling it.
+           * Wait up to 60 seconds for a synchronous result.
+           * If processing takes longer, Replicate returns the
+           * prediction and FaceEvol continues polling through
+           * the existing /api/prediction.js endpoint.
            */
           Prefer: "wait=60",
 
           /*
-           * Give Topaz enough total processing time,
-           * especially for 4x enhancement.
+           * Prevent abandoned jobs from running indefinitely.
            */
           "Cancel-After": "5m"
         },
 
         body: JSON.stringify({
           input: {
+            /*
+             * High-quality JPEG data URI prepared
+             * by the FaceEvol frontend.
+             */
             image,
+
+            /*
+             * Actual Real-ESRGAN upscale factor.
+             */
+            scale,
 
             /*
              * IMPORTANT:
              *
-             * "Low Resolution V2" means it is designed
-             * for LOW-QUALITY INPUT photos.
+             * Enable GFPGAN face restoration.
              *
-             * It does NOT mean low-resolution output.
-             */
-            enhance_model:
-              "Low Resolution V2",
-
-            /*
-             * FaceEvol UI:
+             * This is the major difference from the
+             * previous simple upscale tests.
              *
-             * 2 -> 2x
-             * 4 -> 4x
+             * It actively reconstructs facial details
+             * instead of only increasing dimensions.
              */
-            upscale_factor:
-              upscaleFactor,
-
-            /*
-             * Use lossless PNG for the result so we
-             * don't introduce additional JPEG compression.
-             */
-            output_format:
-              "png",
-
-            /*
-             * Topaz face enhancement.
-             *
-             * Useful for portraits while keeping the
-             * strength moderate enough to avoid making
-             * people look artificial.
-             */
-            face_enhancement:
-              true,
-
-            /*
-             * Helps Topaz identify the main subject.
-             */
-            subject_detection:
-              "Foreground",
-
-            /*
-             * Sharpen enhanced faces.
-             *
-             * 0.75 gives a visible improvement without
-             * pushing facial detail too aggressively.
-             */
-            face_enhancement_strength:
-              0.75,
-
-            /*
-             * Keep creativity LOW.
-             *
-             * We want enhancement, not a newly invented
-             * version of the person's face.
-             */
-            face_enhancement_creativity:
-              0.15
+            face_enhance: true
           }
         })
       }
@@ -226,7 +199,7 @@ export default async function handler(req, res) {
     }
 
     /*
-     * Replicate / Topaz returned an error.
+     * Replicate returned an error.
      */
     if (!response.ok) {
       const details = safeDetail(
@@ -237,7 +210,7 @@ export default async function handler(req, res) {
       );
 
       console.error(
-        "FACEVOL TOPAZ PHOTO ENHANCE ERROR:",
+        "FACEVOL REAL-ESRGAN ERROR:",
         response.status,
         details
       );
@@ -250,7 +223,7 @@ export default async function handler(req, res) {
     }
 
     /*
-     * Make sure Replicate actually returned a prediction.
+     * Make sure Replicate gave us a valid prediction.
      */
     if (
       !prediction ||
@@ -258,28 +231,32 @@ export default async function handler(req, res) {
     ) {
       return res.status(502).json({
         error:
-          "Topaz Photo Enhance returned an invalid response."
+          "Photo Enhance returned an invalid response."
       });
     }
 
+    /*
+     * Useful Vercel log information.
+     */
     console.log(
-      "FACEVOL TOPAZ PHOTO ENHANCE:",
+      "FACEVOL REAL-ESRGAN PHOTO ENHANCE:",
       {
         id: prediction.id,
         status: prediction.status,
-        upscaleFactor,
-        model: "Low Resolution V2"
+        scale,
+        faceEnhance: true
       }
     );
 
     /*
-     * The frontend can handle:
+     * Return the same structure already expected
+     * by the FaceEvol frontend.
      *
-     * 1. prediction.status === "succeeded"
-     *    -> show result immediately
+     * If prediction.status === "succeeded",
+     * prediction.output contains the enhanced image URL.
      *
-     * 2. starting / processing
-     *    -> continue through /api/prediction
+     * Otherwise the existing /api/prediction.js
+     * endpoint can continue polling it.
      */
     return res.status(200).json({
       success: true,
@@ -288,7 +265,7 @@ export default async function handler(req, res) {
 
   } catch (error) {
     console.error(
-      "FACEVOL TOPAZ PHOTO ENHANCE SERVER ERROR:",
+      "FACEVOL REAL-ESRGAN SERVER ERROR:",
       error
     );
 
