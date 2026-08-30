@@ -6194,15 +6194,15 @@
        portrait                : black-forest-labs/flux-kontext-pro
        face_evolution          : qwen/qwen-image-edit-2511 + kwaivgi/kling-v3-video
        multi photo             : mertguvencli/face-swap-with-indexes
-       multi video             : Replicate-only validation required for true per-person video mapping
+       multi video             : Segmind videofaceswap (indexed, original-video preserving)
      Note: the previous ddvinh1/new-faceswap-video version was disabled on
-     Replicate only. FaceEvol will not send multi-person video jobs to a model unless it can preserve the uploaded clip and map different source identities to different target people.
+     Replicate, so the indexed Segmind Video Faceswap workflow is used instead so the uploaded target video remains the source clip.
      ========================================================= */
   const FACEVOL_NEW_MODEL_PLAN=Object.freeze({
     portrait_creator:"black-forest-labs/flux-kontext-pro",
     face_evolution:"qwen/qwen-image-edit-2511 + kwaivgi/kling-v3-video",
     multi_photo_faceswap:"mertguvencli/face-swap-with-indexes",
-    multi_video_faceswap:"replicate-only / per-person mapping validation"
+    multi_video_faceswap:"segmind/videofaceswap"
   });
 
   const portraitControls=document.createElement("div");
@@ -6556,40 +6556,11 @@
     selectedMultiPhotoTarget=multiPhotoTargetInput.files?.[0]||null;multiPhotoError.textContent="";
     if(selectedMultiPhotoTarget){
       setImageUploadPreview(multiPhotoTargetBox,selectedMultiPhotoTarget,"Target group photo ready");
-      const localUrl=URL.createObjectURL(selectedMultiPhotoTarget);
-      multiPhotoTargetPreview.onload=()=>{renderMultiPhotoFaceOverlay();};
-      multiPhotoTargetPreview.src=localUrl;multiPhotoTargetMap.hidden=false;
+      const url=URL.createObjectURL(selectedMultiPhotoTarget);
+      multiPhotoTargetPreview.onload=()=>{URL.revokeObjectURL(url);renderMultiPhotoFaceOverlay();};
+      multiPhotoTargetPreview.src=url;multiPhotoTargetMap.hidden=false;
       await detectMultiPhotoFaces();
       renderMultiPhotoMappings();
-
-      // Ask the exact Replicate face-index model to draw its own numbered target
-      // faces. This removes browser-dependent guessing and ensures the Person
-      // numbers shown to the user match the indexes used by the swap backend.
-      try{
-        multiPhotoStatus.textContent="Identifying target people...";
-        const targetBlob=await optimizeImageToBlob(selectedMultiPhotoTarget,{maxDimension:1700,maxBytes:430*1024,quality:.92});
-        const target=await blobToDataURL(targetBlob);
-        const indexResponse=await fetch("/api/photo-faceswap",{
-          method:"POST",
-          headers:{"Content-Type":"application/json"},
-          body:JSON.stringify({mode:"index",target})
-        });
-        const indexData=await readJsonResponse(indexResponse);
-        if(indexResponse.ok&&indexData.output){
-          multiPhotoTargetPreview.src=indexData.output;
-          multiPhotoFaceOverlay.innerHTML="";
-          multiPhotoStatus.textContent="✓ Target people numbered. Match each source to the Person number shown on the photo.";
-        }else{
-          multiPhotoStatus.textContent="Target numbering preview unavailable — using the local left-to-right labels.";
-          renderMultiPhotoFaceOverlay();
-        }
-      }catch(error){
-        console.warn("FaceEvol target-index preview unavailable:",error);
-        multiPhotoStatus.textContent="Target numbering preview unavailable — using the local left-to-right labels.";
-        renderMultiPhotoFaceOverlay();
-      }finally{
-        URL.revokeObjectURL(localUrl);
-      }
     }else{multiPhotoTargetMap.hidden=true;}
     startMultiPhotoButton.disabled=!(selectedMultiPhotoFaces.length&&selectedMultiPhotoTarget);
   });
@@ -6744,13 +6715,23 @@
 
   startMultiVideoButton.addEventListener("click",async()=>{
     if(!selectedMultiVideoFaces.length||!selectedMultiVideoFile)return;
-    multiVideoError.textContent="";
-    multiVideoStatus.textContent="";
-    // Replicate-only safeguard: current verified Replicate video face-swap
-    // models preserve the target clip but do not expose a target-person index
-    // for mapping different source identities to different people. Do not run
-    // a wrong model that changes the scene or applies one identity to everyone.
-    multiVideoError.textContent="Multiple Video Face Swap is temporarily paused while FaceEvol validates a Replicate model with true per-person mapping. Your 20-second trim and mapping setup are kept ready, and no credits were used.";
+    startMultiVideoButton.disabled=true;multiVideoError.textContent="";multiVideoStatus.textContent="Preparing your selected clip...";multiVideoResult.classList.remove("show");
+    try{
+      const targetIndexes=getMultiVideoTargetIndexes();
+      if(new Set(targetIndexes).size!==targetIndexes.length) throw new Error("Each source identity must be mapped to a different target person.");
+      const clip=await prepareVideoForPrivateUpload(selectedMultiVideoFile,multiVideoTrimStart,multiVideoTrimEnd);
+      const videoBlob=await uploadFaceEvolPrivate(`faceevol-video-multi-${Date.now()}-${safeFileName(clip.name)}`,clip,{step:"1/4",label:"Uploading selected video clip securely...",timeoutMs:180000,statusNode:multiVideoStatus});
+      const collage=await buildMultiVideoSourceCollage(selectedMultiVideoFaces);
+      const sourceBlob=await uploadFaceEvolPrivate(`faceevol-face-multi-collage-${Date.now()}.jpg`,collage,{step:"2/4",label:"Uploading mapped source identities...",timeoutMs:120000,statusNode:multiVideoStatus});
+      multiVideoStatus.textContent="3/4 Starting indexed multi-person face swap...";
+      const response=await fetch("/api/faceswap",{method:"POST",headers:await faceEvolGenerationHeaders(),body:JSON.stringify({mode:"multi",face:sourceBlob.url,video:videoBlob.url,target_indexes:targetIndexes})});
+      const data=await readJsonResponse(response);applyFaceEvolServerCreditPayload(data);if(!response.ok)throw new Error(data.error||data.details||"Multiple video face swap request failed.");
+      let prediction=data.prediction||data;prediction=await pollNewToolPrediction(prediction,multiVideoStatus,"Swapping only the mapped faces while preserving your source video",450);
+      if(prediction.status!=="succeeded")throw new Error(newToolPredictionError(prediction,"Multiple video face swap failed."));
+      const output=findVideoUrl(prediction.output)||findVideoUrl(prediction);if(!output)throw new Error("No face-swap video was returned.");
+      latestMultiVideoOutput=output;multiVideoResultVideo.src=output;multiVideoResult.classList.add("show");multiVideoStatus.textContent="✓ Your original clip is preserved with the mapped faces swapped.";setNewDownload(downloadMultiVideoButton,output,`faceevol-multi-video-${Date.now()}.mp4`);
+    }catch(error){console.error("FaceEvol multiple video face swap:",error);multiVideoStatus.textContent="";multiVideoError.textContent=error instanceof Error?error.message:String(error);}
+    finally{startMultiVideoButton.disabled=!(selectedMultiVideoFaces.length&&selectedMultiVideoFile);}
   });
 
   function hideNewToolControls(){
