@@ -969,7 +969,7 @@ async function faceEvolStartNamedPrediction(token, model, input, preferWait = fa
   return prediction;
 }
 
-async function faceEvolWaitForPrediction(token, prediction, maxWaitMs = 95000) {
+async function faceEvolWaitForPrediction(token, prediction, maxWaitMs = 240000) {
   let current = prediction;
   const started = Date.now();
   while (current && !["succeeded", "failed", "canceled", "cancelled"].includes(String(current.status || "").toLowerCase())) {
@@ -1068,6 +1068,25 @@ Return one premium finished portrait of the same person.
   }
 }
 
+async function faceEvolImageUrlToDataUrl(url, label) {
+  let lastError = null;
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    try {
+      const response = await fetch(url, { cache: "no-store" });
+      if (!response.ok) throw new Error(`${label} HTTP ${response.status}`);
+      const contentType = String(response.headers.get("content-type") || "").toLowerCase();
+      if (!contentType.startsWith("image/")) throw new Error(`${label} did not return an image`);
+      const bytes = Buffer.from(await response.arrayBuffer());
+      if (!bytes.length || bytes.length > 9_500_000) throw new Error(`${label} image size is invalid`);
+      return `data:${contentType.split(";")[0]};base64,${bytes.toString("base64")}`;
+    } catch (error) {
+      lastError = error;
+      if (attempt < 2) await faceEvolSleep(900 * (attempt + 1));
+    }
+  }
+  throw lastError || new Error(`Could not prepare ${label}`);
+}
+
 function faceEvolEvolutionAgePrompt(age, role) {
   return `
 Create a photorealistic ${role} life-stage portrait of this exact same person at approximately age ${age}.
@@ -1128,6 +1147,13 @@ async function handleFaceEvolEvolutionMode(res, token, body) {
       throw new Error("FaceEvol did not receive usable life-stage images.");
     }
 
+    // Download and validate the temporary Qwen outputs before handing them to Kling.
+    // This avoids provider-to-provider ReadError failures on temporary image URLs.
+    const [youngImage, oldImage] = await Promise.all([
+      faceEvolImageUrlToDataUrl(youngUrl, "young life-stage frame"),
+      faceEvolImageUrlToDataUrl(oldUrl, "older life-stage frame")
+    ]);
+
     const videoPrompt = `
 A beautiful cinematic life journey of the SAME PERSON, smoothly aging from childhood through adolescence, young adulthood, mature adulthood and older age. The identity remains unmistakably consistent at every moment. Show one person only. Transitions are elegant, gradual and emotionally warm, never morph into another identity. Facial anatomy stays stable while age changes naturally.
 
@@ -1142,8 +1168,8 @@ ${customDirection ? `Creative direction: ${customDirection}` : ""}
         mode: "pro",
         prompt: videoPrompt,
         negative_prompt: "identity drift, different person, multiple people, face duplication, facial distortion, deformed eyes, warped mouth, abrupt cuts, flicker, text, logo, watermark",
-        start_image: youngUrl,
-        end_image: oldUrl,
+        start_image: youngImage,
+        end_image: oldImage,
         duration,
         generate_audio: true
       },

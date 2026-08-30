@@ -1136,26 +1136,26 @@ async function cleanupInputs(
 const SINGLE_VIDEO_FACE_SWAP_VERSION =
   "104b4a39315349db50880757bc8c1c996c5309e3aa11286b0a3c84dab81fd440";
 
-const MULTI_VIDEO_FACE_SWAP_MODEL =
-  "prunaai/p-video-replace";
+const SEGMIND_VIDEO_FACE_SWAP_SLUG = "videofaceswap";
 
-function faceEvolSafePlacement(value) {
-  const text = String(value || "")
-    .replace(/[^a-zA-Z0-9 _-]+/g, " ")
-    .replace(/\s+/g, " ")
-    .trim()
-    .slice(0, 80);
-  return text || "the selected target person";
+function faceEvolEncodeSegmindId(requestId) {
+  const clean = String(requestId || "").trim().toLowerCase();
+  if (!/^[0-9a-f-]{32,36}$/.test(clean)) {
+    throw new Error("Segmind returned an invalid request ID");
+  }
+  return `sgm${clean.replace(/-/g, "")}`;
 }
 
-function faceEvolMultiVideoInstruction(mappings, count) {
-  const list = Array.isArray(mappings) ? mappings.slice(0, count) : [];
-  const parts = [];
-  for (let index = 0; index < count; index += 1) {
-    const target = faceEvolSafePlacement(list[index]?.target || `person ${index + 1}`);
-    parts.push(`Use reference image ${index + 1} for ${target}`);
+function faceEvolTargetIndexList(value, count) {
+  const raw = Array.isArray(value) ? value : [];
+  const indexes = raw.slice(0, count).map(Number);
+  if (indexes.length !== count || indexes.some(v => !Number.isInteger(v) || v < 0 || v > 10)) {
+    throw new Error("Choose a valid target person for every source identity.");
   }
-  return `${parts.join(". ")}. Keep every mapped identity distinct and consistent for the full clip. Preserve the source video's motion, timing, camera, scene and natural interactions. Do not duplicate one identity across unassigned people.`;
+  if (new Set(indexes).size !== indexes.length) {
+    throw new Error("Each source identity must map to a different target person.");
+  }
+  return indexes;
 }
 
 /* ============================================================================
@@ -1184,7 +1184,11 @@ export default async function handler(req, res) {
   if (!faceEvolGuard) return;
 
   const replicateToken = process.env.REPLICATE_API_TOKEN;
-  if (!replicateToken) {
+  const segmindToken = process.env.SEGMIND_API_KEY;
+  if (mode === "multi" && !segmindToken) {
+    return res.status(500).json({ error: "SEGMIND_API_KEY is not configured" });
+  }
+  if (mode !== "multi" && !replicateToken) {
     return res.status(500).json({ error: "REPLICATE_API_TOKEN is not configured" });
   }
 
@@ -1195,13 +1199,13 @@ export default async function handler(req, res) {
 
   const isMulti = mode === "multi";
   const faceUrls = isMulti
-    ? (Array.isArray(body.faces) ? body.faces : [body.face]).filter(Boolean).slice(0, 3)
+    ? [body.face].filter(Boolean)
     : [body.face];
 
   if (!faceUrls.length || faceUrls.some(value => typeof value !== "string" || !value.startsWith("https://"))) {
     return res.status(400).json({
       error: isMulti
-        ? "Choose 1 to 3 valid source identity images."
+        ? "A valid combined source-identity image is required."
         : "A valid face image URL is required"
     });
   }
@@ -1231,66 +1235,83 @@ export default async function handler(req, res) {
       imageProxyUrls.length
     );
 
-    const replicateEndpoint = isMulti
-      ? `https://api.replicate.com/v1/models/${MULTI_VIDEO_FACE_SWAP_MODEL}/predictions`
-      : "https://api.replicate.com/v1/predictions";
-
-    const replicatePayload = isMulti
-      ? {
-          input: {
-            no_op: false,
-            turbo: false,
-            video: videoProxyUrl,
-            images: imageProxyUrls,
-            resolution: body.resolution === "1080p" ? "1080p" : "720p",
-            save_audio: true,
-            target_fps: "original",
-            ignore_audio: false,
-            instruction_prompt: faceEvolMultiVideoInstruction(body.mappings, imageProxyUrls.length)
-          }
-        }
-      : {
+    let response;
+    if (isMulti) {
+      const normalizedTargets = Array.isArray(body.target_indexes)
+        ? body.target_indexes.map(Number)
+        : String(body.target_indexes || "").split(",").filter(Boolean).map(Number);
+      if (!normalizedTargets.length || normalizedTargets.length > 3) {
+        throw new Error("Choose 1 to 3 mapped target people.");
+      }
+      const finalTargets = faceEvolTargetIndexList(normalizedTargets, normalizedTargets.length);
+      const sourceIndexes = finalTargets.map((_, index) => index);
+      response = await fetch(`https://api.segmind.com/v2/${SEGMIND_VIDEO_FACE_SWAP_SLUG}`, {
+        method: "POST",
+        headers: {
+          "x-api-key": segmindToken,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          source_img: imageProxyUrls[0],
+          video_input: videoProxyUrl,
+          face_restore: true,
+          input_faces_index: finalTargets.join(","),
+          source_faces_index: sourceIndexes.join(","),
+          face_restore_visibility: 1,
+          codeformer_weight: 0.95,
+          detect_gender_input: "no",
+          detect_gender_source: "no",
+          frame_load_cap: 0,
+          base_64: false
+        })
+      });
+    } else {
+      response = await fetch("https://api.replicate.com/v1/predictions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${replicateToken}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
           version: SINGLE_VIDEO_FACE_SWAP_VERSION,
-          input: {
-            source: videoProxyUrl,
-            target: imageProxyUrls[0]
-          }
-        };
-
-    const response = await fetch(replicateEndpoint, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${replicateToken}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(replicatePayload)
-    });
-
-    let prediction;
-    try { prediction = await response.json(); }
-    catch { prediction = null; }
-
-    if (!response.ok) {
-      console.error("Replicate face swap request failed:", prediction);
-      await cleanupInputs([...facePathnames, videoPathname]);
-      return res.status(response.status).json({
-        error:
-          prediction?.detail ||
-          prediction?.error ||
-          (isMulti
-            ? "Replicate multiple video identity-swap request failed"
-            : "Replicate face swap request failed"),
-        details: prediction
+          input: { source: videoProxyUrl, target: imageProxyUrls[0] }
+        })
       });
     }
 
-    if (!prediction?.id) {
+    let providerData;
+    try { providerData = await response.json(); }
+    catch { providerData = null; }
+
+    if (!response.ok) {
+      console.error(isMulti ? "Segmind multiple video face swap request failed:" : "Replicate face swap request failed:", providerData);
       await cleanupInputs([...facePathnames, videoPathname]);
-      return res.status(502).json({
-        error: isMulti
-          ? "Multiple video face swap service returned an invalid response."
-          : "Face swap service returned an invalid response."
+      return res.status(response.status).json({
+        error: providerData?.detail || providerData?.error || providerData?.message ||
+          (isMulti ? "Multiple video face swap request failed" : "Replicate face swap request failed"),
+        details: providerData
       });
+    }
+
+    let prediction;
+    if (isMulti) {
+      const requestId = providerData?.request_id || providerData?.id;
+      if (!requestId) {
+        await cleanupInputs([...facePathnames, videoPathname]);
+        return res.status(502).json({ error: "Multiple video face swap service returned an invalid response." });
+      }
+      prediction = {
+        id: faceEvolEncodeSegmindId(requestId),
+        status: "processing",
+        provider: "segmind",
+        input: { source_img: imageProxyUrls[0], video_input: videoProxyUrl }
+      };
+    } else {
+      prediction = providerData;
+      if (!prediction?.id) {
+        await cleanupInputs([...facePathnames, videoPathname]);
+        return res.status(502).json({ error: "Face swap service returned an invalid response." });
+      }
     }
 
     return res.status(200).json({ success: true, prediction });
