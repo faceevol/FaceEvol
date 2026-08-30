@@ -1218,6 +1218,9 @@
     .tool-option .tool-name{font-size:12px}.tool-option .tool-sub{font-size:8px;color:#708198}
     .studio-placeholder-tool{opacity:1!important;filter:none!important;color:#98a5bb!important;cursor:default!important}
     .studio-placeholder-tool:hover{background:rgba(255,255,255,.025)!important;color:#cbd7e6!important;transform:none!important}
+    .tool-coming-soon{display:inline-flex;margin-top:5px;padding:3px 6px;border:1px solid rgba(167,139,250,.16);border-radius:999px;background:rgba(167,139,250,.075);color:#ddd4ff;font-size:7px;font-weight:900;letter-spacing:.55px;line-height:1;text-transform:uppercase}
+    .hero-explainer{max-width:720px;margin:10px auto 0;color:#8292aa;font-size:12px;line-height:1.65}
+    .hero-explainer strong{color:#c9d9ea;font-weight:800}
     .future-tool,.tool-option.disabled{opacity:1;filter:none}
     .studio-main{padding:38px 40px}
 
@@ -1471,9 +1474,10 @@
 <main>
   <section class="hero">
     <div class="container">
-      <div class="badge"><span class="badge-dot"></span>AI tools built around faces &amp; portraits</div>
-      <h1><span class="gradient-text">AI Face &amp; Portrait Studio</span></h1>
-      <p class="hero-description"><strong>FaceEvol is the AI Face &amp; Portrait Studio.</strong> Create portraits, explore age, swap faces, bring photos to life and enhance images or video — all in one simple place.</p>
+      <div class="badge"><span class="badge-dot"></span>AI Face &amp; Portrait Studio</div>
+      <h1>Imagine your face.<br><span class="gradient-text">Transform your story.</span></h1>
+      <p class="hero-description">Create, transform and enhance your face with AI. Generate realistic age transformations, swap faces in photos and videos, animate photos into video, and enhance quality — all in one intuitive studio.</p>
+      <p class="hero-explainer"><strong>FaceEvol is an AI Face &amp; Portrait Studio</strong> built to help you create, transform and enhance portraits with professional-quality results.</p>
       <div class="hero-actions">
         <a href="#studio" class="button button-primary" id="heroAgeButton">Start Creating →</a>
         <a href="#face-evolution" class="button button-secondary">See Face Evolution</a>
@@ -1552,12 +1556,12 @@
           <div class="demo-preview">
             <div class="demo-preview-placeholder">
               <div class="demo-preview-icon"><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-age"></use></svg></div>
-              <strong>Age Transform Demo</strong>
+              <strong>Age Transformation Demo</strong>
               <span>Demo preview</span>
             </div>
           </div>
           <div class="demo-card-copy">
-            <div class="demo-card-top"><h3>Age Transform</h3><span class="demo-type">5 images</span></div>
+            <div class="demo-card-top"><h3>Age Transformation</h3><span class="demo-type">5 images</span></div>
             <p>Preview the same face across ages 5, 15, 30, 50 and 75 while preserving a consistent identity.</p>
             <div class="demo-card-actions">
               <button type="button" class="demo-view-button" data-demo-key="age">▶ View Demo</button>
@@ -1708,7 +1712,7 @@
       <div class="studio-section-intro">
         <span class="section-eyebrow">FaceEvol AI Studio</span>
         <h2 id="studioSectionTitle">10 tools. <span class="gradient-text">One simple studio.</span></h2>
-        <p>Choose what you want to do: create, transform or enhance. Every FaceEvol tool is visible here — nothing is hidden behind another menu.</p>
+        <p>Choose what you want to do: create, transform or enhance.</p>
       </div>
 
 <div class="studio-wrap" id="studio">
@@ -1718,18 +1722,18 @@
               <div class="studio-brand-icon">✦</div>
               <div><strong>FaceEvol AI Studio</strong><small>Create · Transform · Enhance</small></div>
             </div>
-            <span class="studio-current-tool" id="studioCurrentTool">Age Transform</span>
+            <span class="studio-current-tool" id="studioCurrentTool">Age Transformation</span>
           </div>
           <div class="studio-inner">
             <div class="studio-sidebar">
               <div class="studio-label">Create</div>
               <div class="tool-option studio-placeholder-tool" data-studio-placeholder="portrait">
                 <div class="tool-icon">◈</div>
-                <div><div class="tool-name">AI Portrait Creator</div><span class="tool-sub">Text or your photo</span></div>
+                <div><div class="tool-name">AI Portrait Creator</div><span class="tool-sub">Text or your photo</span><span class="tool-coming-soon">Coming Soon</span></div>
               </div>
               <div class="tool-option studio-placeholder-tool" data-studio-placeholder="profile-pack">
                 <div class="tool-icon">▦</div>
-                <div><div class="tool-name">AI Profile Photo Pack</div><span class="tool-sub">Polished portrait sets</span></div>
+                <div><div class="tool-name">AI Profile Photo Pack</div><span class="tool-sub">Polished portrait sets</span><span class="tool-coming-soon">Coming Soon</span></div>
               </div>
               <div class="tool-option" id="photoToVideoOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open Photo to Video">
                 <div class="tool-icon"><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-photo-video"></use></svg></div>
@@ -1739,11 +1743,11 @@
               <div class="studio-label studio-label-spaced">Transform</div>
               <div class="tool-option studio-placeholder-tool" data-studio-placeholder="evolution">
                 <div class="tool-icon">∞</div>
-                <div><div class="tool-name">AI Face Evolution</div><span class="tool-sub">Life-stage journey</span></div>
+                <div><div class="tool-name">AI Face Evolution</div><span class="tool-sub">Life-stage journey</span><span class="tool-coming-soon">Coming Soon</span></div>
               </div>
-              <div class="tool-option active" id="ageOption" role="button" tabindex="0" aria-pressed="true" aria-label="Open Age Transform">
+              <div class="tool-option active" id="ageOption" role="button" tabindex="0" aria-pressed="true" aria-label="Open Age Transformation">
                 <div class="tool-icon"><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-age"></use></svg></div>
-                <div><div class="tool-name">Age Transform</div><span class="tool-sub">Age 0–100</span></div>
+                <div><div class="tool-name">Age Transformation</div><span class="tool-sub">Age 0–100</span></div>
               </div>
               <div class="tool-option" id="photoFaceSwapOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open Photo Face Swap">
                 <div class="tool-icon"><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-photo"></use></svg></div>
@@ -1755,7 +1759,7 @@
               </div>
               <div class="tool-option studio-placeholder-tool" data-studio-placeholder="multi-swap">
                 <div class="tool-icon">◎</div>
-                <div><div class="tool-name">Multi-Face Swap</div><span class="tool-sub">Multiple faces</span></div>
+                <div><div class="tool-name">Multi-Face Swap</div><span class="tool-sub">Multiple faces</span><span class="tool-coming-soon">Coming Soon</span></div>
               </div>
 
               <div class="studio-label studio-label-spaced">Enhance</div>
@@ -1770,7 +1774,7 @@
             </div>
 
             <div class="studio-main">
-              <h2 class="upload-title">Upload a photo for Age Transform</h2>
+              <h2 class="upload-title">Upload a photo for Age Transformation</h2>
               <p class="upload-description">Choose a clear face photo, select the age you want, and create your transformation. You can also view prepared examples before uploading.</p>
               <div class="studio-privacy-note">
                 <svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-lock"></use></svg>
@@ -1811,7 +1815,7 @@
           <div class="clean-category-number">02</div>
           <h3>Transform</h3>
           <p>Explore age, identity and face transformations.</p>
-          <div class="clean-tool-list"><span>AI Face Evolution</span><span>Age Transform</span><span>Photo Face Swap</span><span>Video Face Swap</span><span>Multi-Face Swap</span></div>
+          <div class="clean-tool-list"><span>AI Face Evolution</span><span>Age Transformation</span><span>Photo Face Swap</span><span>Video Face Swap</span><span>Multi-Face Swap</span></div>
         </article>
         <article class="clean-category-card">
           <div class="clean-category-number">03</div>
@@ -1945,7 +1949,7 @@
     <div class="container">
       <div class="section-heading"><span class="section-eyebrow">FAQ</span><h2>Questions? <span class="gradient-text">We've got answers.</span></h2></div>
       <div class="faq-list">
-        <details><summary>What can I create with FaceEvol?</summary><p>FaceEvol combines Age Transform, Photo Face Swap, Photo to Video, Video Face Swap, Photo Enhance and Video Enhance. Transform an age, swap a face, animate a still photo, improve a photo, or enhance an existing short video.</p></details>
+        <details><summary>What can I create with FaceEvol?</summary><p>FaceEvol combines Age Transformation, Photo Face Swap, Photo to Video, Video Face Swap, Photo Enhance and Video Enhance. Transform an age, swap a face, animate a still photo, improve a photo, or enhance an existing short video.</p></details>
         <details><summary>What photos work best for face swap?</summary><p>Use a clear, front-facing source face with good lighting and the full face visible. Avoid blur, sunglasses, masks, heavy shadows and extreme side angles. A target photo with a clearly visible face and a similar angle usually gives a more natural result.</p></details>
         <details><summary>Which ages can I choose?</summary><p>The five visual presets are ages 5, 15, 30, 50 and 75. You can also use the custom slider to choose any target age from 0 to 100.</p></details>
         <details><summary>Can I download my age transformation?</summary><p>Yes. When an age transformation finishes, tap “Download Image” below the result to save it to your device.</p></details>
@@ -1968,8 +1972,8 @@
     <div class="container">
       <div class="cta-box">
         <div class="badge">✨ FaceEvol · AI Face &amp; Portrait Studio</div>
-        <h2>Your face. Your portrait.<br><span class="gradient-text">More ways to create.</span></h2>
-        <p>Choose the FaceEvol tool that fits what you want to create, transform or enhance — then upload, generate and download.</p>
+        <h2>Create, transform &amp; enhance<br><span class="gradient-text">your face with AI.</span></h2>
+        <p>Choose the FaceEvol tool that fits your idea, add your photo or video, and turn it into a polished result.</p>
         <div class="hero-actions" style="justify-content:center">
           <a href="#demos" class="button button-primary">View Examples →</a>
           <a href="#studio" class="button button-secondary" id="ctaStartButton">Open Studio</a>
@@ -2232,7 +2236,7 @@
     },
 
     age:{
-      title:"Age Transform",
+      title:"Age Transformation",
       description:"The same person shown across five target ages. These will be pre-generated images stored with FaceEvol.",
       createTool:"age",
       kind:"age",
@@ -3021,7 +3025,7 @@
   ageControls.innerHTML=`
     <div class="panel-top">
       <div>
-        <span class="panel-kicker">Age Transform</span>
+        <span class="panel-kicker">Age Transformation</span>
         <h3 class="panel-title">Choose an age</h3>
         <p class="panel-copy">Pick an example below or use the slider for any age.</p>
       </div>
@@ -6076,7 +6080,7 @@
     activeStudioMode="age";
     document.querySelectorAll(".tool-option").forEach(o=>o.classList.remove("active"));
     ageOption.classList.add("active");
-    syncStudioToolState(ageOption,"Age Transform");
+    syncStudioToolState(ageOption,"Age Transformation");
     faceSwapControls.classList.remove("show");
     photoSwapControls.classList.remove("show");
     photoToVideoControls.classList.remove("show");
@@ -6085,7 +6089,7 @@
     ageControls.classList.add("show");
     setSharedUploadVisible(true);
 
-    document.querySelector(".upload-title").textContent="Upload a photo for Age Transform";
+    document.querySelector(".upload-title").textContent="Upload a photo for Age Transformation";
     document.querySelector(".upload-description").textContent="Choose an example or any age with the slider, then upload a clear face photo when you are ready.";
 
     if(selectedPhoto){
@@ -6619,7 +6623,7 @@
     const labels={
       welcome:"Legacy welcome credits",
       stripe_purchase:"Credits purchased",
-      age:"Age Transform",
+      age:"Age Transformation",
       photo_faceswap:"Photo Face Swap",
       photo_to_video:"Photo to Video",
       video_faceswap:"Video Face Swap",
@@ -7101,7 +7105,7 @@
   window.addEventListener("hashchange",openLegalHashPanel);
   openLegalHashPanel();
 
-  /* Start in Age Transform so the five preset examples are visible immediately, before upload. */
+  /* Start in Age Transformation so the five preset examples are visible immediately, before upload. */
   activateAgeMode();
 </script>
 <!-- trigger vercel deploy -->
