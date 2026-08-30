@@ -487,6 +487,51 @@ async function handleStripeWebhook(req,res,raw){
 }
 
 
+function faceEvolIsSegmindPredictionId(id) {
+  return /^sgm[0-9a-f]{32}$/i.test(String(id || ""));
+}
+
+function faceEvolDecodeSegmindPredictionId(id) {
+  const hex = String(id || "").slice(3).toLowerCase();
+  if (!/^[0-9a-f]{32}$/.test(hex)) throw new Error("Invalid Segmind prediction ID");
+  return `${hex.slice(0,8)}-${hex.slice(8,12)}-${hex.slice(12,16)}-${hex.slice(16,20)}-${hex.slice(20)}`;
+}
+
+function faceEvolSegmindStatus(value) {
+  const status = String(value || "").toUpperCase();
+  if (status === "COMPLETED") return "succeeded";
+  if (status === "FAILED") return "failed";
+  if (status === "CANCELLED" || status === "CANCELED") return "canceled";
+  if (status === "QUEUED" || status === "PROCESSING") return "processing";
+  return "processing";
+}
+
+async function faceEvolGetSegmindPrediction(encodedId) {
+  const apiKey = process.env.SEGMIND_API_KEY || "";
+  if (!apiKey) { const error = new Error("SEGMIND_API_KEY is not configured"); error.status = 500; throw error; }
+  const requestId = faceEvolDecodeSegmindPredictionId(encodedId);
+  const headers = { "x-api-key": apiKey, "Content-Type": "application/json" };
+  const statusResponse = await fetch(`https://api.segmind.com/v2/requests/${requestId}/status`, { headers, cache: "no-store" });
+  const statusData = await faceEvolReadResponse(statusResponse);
+  if (!statusResponse.ok && statusResponse.status !== 422) {
+    const error = new Error(statusData?.detail || statusData?.error || statusData?.message || `Segmind HTTP ${statusResponse.status}`);
+    error.status = statusResponse.status; throw error;
+  }
+  const normalized = faceEvolSegmindStatus(statusData?.status);
+  if (normalized === "succeeded") {
+    const resultResponse = await fetch(`https://api.segmind.com/v2/requests/${requestId}`, { headers, cache: "no-store" });
+    const resultData = await faceEvolReadResponse(resultResponse);
+    if (!resultResponse.ok) {
+      const error = new Error(resultData?.detail || resultData?.error || resultData?.message || `Segmind HTTP ${resultResponse.status}`);
+      error.status = resultResponse.status; throw error;
+    }
+    return { id: encodedId, status: "succeeded", output: resultData?.output ?? resultData?.data ?? resultData, error: null, provider: "segmind" };
+  }
+  if (normalized === "failed" || normalized === "canceled") {
+    return { id: encodedId, status: normalized, output: null, error: statusData?.detail || statusData?.error || statusData?.message || "Segmind video face swap failed", provider: "segmind" };
+  }
+  return { id: encodedId, status: "processing", output: null, error: null, provider: "segmind" };
+}
 
 async function handlePredictionGet(
   req,
@@ -554,20 +599,24 @@ async function handlePredictionGet(
 
 
   try {
-    if (!replicateToken) {
-      return res.status(500).json({ error: "REPLICATE_API_TOKEN is not configured" });
-    }
-    const response = await fetch(
-      `https://api.replicate.com/v1/predictions/${id}`,
-      { method: "GET", headers: { Authorization: `Bearer ${replicateToken}`, "Content-Type": "application/json" } }
-    );
     let prediction;
-    try { prediction = await response.json(); } catch { prediction = null; }
-    if (!response.ok) {
-      return res.status(response.status).json({ error: "Failed to retrieve prediction", details: prediction });
-    }
-    if (!prediction) {
-      return res.status(502).json({ error: "Replicate returned an invalid prediction response" });
+    if (faceEvolIsSegmindPredictionId(id)) {
+      prediction = await faceEvolGetSegmindPrediction(id);
+    } else {
+      if (!replicateToken) {
+        return res.status(500).json({ error: "REPLICATE_API_TOKEN is not configured" });
+      }
+      const response = await fetch(
+        `https://api.replicate.com/v1/predictions/${id}`,
+        { method: "GET", headers: { Authorization: `Bearer ${replicateToken}`, "Content-Type": "application/json" } }
+      );
+      try { prediction = await response.json(); } catch { prediction = null; }
+      if (!response.ok) {
+        return res.status(response.status).json({ error: "Failed to retrieve prediction", details: prediction });
+      }
+      if (!prediction) {
+        return res.status(502).json({ error: "Replicate returned an invalid prediction response" });
+      }
     }
 
 

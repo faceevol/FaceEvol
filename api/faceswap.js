@@ -1136,16 +1136,27 @@ async function cleanupInputs(
 const SINGLE_VIDEO_FACE_SWAP_VERSION =
   "104b4a39315349db50880757bc8c1c996c5309e3aa11286b0a3c84dab81fd440";
 
-/*
- * IMPORTANT — Replicate-only release safeguard
- *
- * FaceEvol keeps Multiple Video Face Swap visible in the studio, but this API
- * will not fabricate a result with a model that cannot map different source
- * identities to different target people. Current verified Replicate video
- * face-swap models accept one source identity and do not expose per-person
- * target indexes. Returning a clear 422 here is safer than changing the scene
- * or applying one face to everyone. No credits are reserved for this response.
- */
+const SEGMIND_VIDEO_FACE_SWAP_SLUG = "videofaceswap";
+
+function faceEvolEncodeSegmindId(requestId) {
+  const clean = String(requestId || "").trim().toLowerCase();
+  if (!/^[0-9a-f-]{32,36}$/.test(clean)) {
+    throw new Error("Segmind returned an invalid request ID");
+  }
+  return `sgm${clean.replace(/-/g, "")}`;
+}
+
+function faceEvolTargetIndexList(value, count) {
+  const raw = Array.isArray(value) ? value : [];
+  const indexes = raw.slice(0, count).map(Number);
+  if (indexes.length !== count || indexes.some(v => !Number.isInteger(v) || v < 0 || v > 10)) {
+    throw new Error("Choose a valid target person for every source identity.");
+  }
+  if (new Set(indexes).size !== indexes.length) {
+    throw new Error("Each source identity must map to a different target person.");
+  }
+  return indexes;
+}
 
 /* ============================================================================
  * FaceEvol Video Face Swap API
@@ -1165,44 +1176,50 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Unsupported video face swap mode" });
   }
 
-  if (mode === "multi") {
-    return res.status(422).json({
-      error: "Multiple Video Face Swap is temporarily paused while FaceEvol validates a Replicate model with true per-person face mapping.",
-      details: "Your uploaded video will not be regenerated or changed with an incorrect model. The 20-second trim and mapping interface are kept ready for the verified model.",
-      code: "MULTI_VIDEO_REPLICATE_MAPPING_UNAVAILABLE"
-    });
-  }
-
-  const faceEvolGuard = await startFaceEvolGenerationGuard(req, res, "video_faceswap");
+  const faceEvolGuard = await startFaceEvolGenerationGuard(
+    req,
+    res,
+    mode === "multi" ? "multi_video_faceswap" : "video_faceswap"
+  );
   if (!faceEvolGuard) return;
 
   const replicateToken = process.env.REPLICATE_API_TOKEN;
-  if (!replicateToken) {
+  const segmindToken = process.env.SEGMIND_API_KEY;
+  if (mode === "multi" && !segmindToken) {
+    return res.status(500).json({ error: "SEGMIND_API_KEY is not configured" });
+  }
+  if (mode !== "multi" && !replicateToken) {
     return res.status(500).json({ error: "REPLICATE_API_TOKEN is not configured" });
   }
 
-  const face = body.face;
   const video = body.video;
-  if (typeof face !== "string" || !face.startsWith("https://")) {
-    return res.status(400).json({ error: "A valid face image URL is required" });
-  }
   if (typeof video !== "string" || !video.startsWith("https://")) {
     return res.status(400).json({ error: "A valid video URL is required" });
   }
 
-  let facePathname = null;
+  const isMulti = mode === "multi";
+  const faceUrls = isMulti
+    ? [body.face].filter(Boolean)
+    : [body.face];
+
+  if (!faceUrls.length || faceUrls.some(value => typeof value !== "string" || !value.startsWith("https://"))) {
+    return res.status(400).json({
+      error: isMulti
+        ? "A valid combined source-identity image is required."
+        : "A valid face image URL is required"
+    });
+  }
+
+  let facePathnames = [];
   let videoPathname = null;
 
   try {
-    facePathname = getBlobPathname(face, "faceevol-face-");
+    facePathnames = faceUrls.map(url => getBlobPathname(url, "faceevol-face-"));
     videoPathname = getBlobPathname(video, "faceevol-video-");
 
     const expires = String(Date.now() + 30 * 60 * 1000);
-    const imageProxyUrl = buildSignedProxyUrl(
-      "/api/image.jpg",
-      facePathname,
-      expires,
-      replicateToken
+    const imageProxyUrls = facePathnames.map(pathname =>
+      buildSignedProxyUrl("/api/image.jpg", pathname, expires, replicateToken)
     );
     const videoProxyUrl = buildSignedProxyUrl(
       "/api/video.mp4",
@@ -1211,40 +1228,96 @@ export default async function handler(req, res) {
       replicateToken
     );
 
-    const response = await fetch("https://api.replicate.com/v1/predictions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${replicateToken}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        version: SINGLE_VIDEO_FACE_SWAP_VERSION,
-        input: { source: videoProxyUrl, target: imageProxyUrl }
-      })
-    });
+    console.log(
+      "Starting FaceEvol prediction",
+      isMulti ? "multi_video_faceswap" : "video_faceswap",
+      "identities:",
+      imageProxyUrls.length
+    );
 
-    let prediction;
-    try { prediction = await response.json(); }
-    catch { prediction = null; }
-
-    if (!response.ok) {
-      console.error("Replicate face swap request failed:", prediction);
-      await cleanupInputs([facePathname, videoPathname]);
-      return res.status(response.status).json({
-        error: prediction?.detail || prediction?.error || "Replicate face swap request failed",
-        details: prediction
+    let response;
+    if (isMulti) {
+      const normalizedTargets = Array.isArray(body.target_indexes)
+        ? body.target_indexes.map(Number)
+        : String(body.target_indexes || "").split(",").filter(Boolean).map(Number);
+      if (!normalizedTargets.length || normalizedTargets.length > 3) {
+        throw new Error("Choose 1 to 3 mapped target people.");
+      }
+      const finalTargets = faceEvolTargetIndexList(normalizedTargets, normalizedTargets.length);
+      const sourceIndexes = finalTargets.map((_, index) => index);
+      response = await fetch(`https://api.segmind.com/v2/${SEGMIND_VIDEO_FACE_SWAP_SLUG}`, {
+        method: "POST",
+        headers: {
+          "x-api-key": segmindToken,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          source_img: imageProxyUrls[0],
+          video_input: videoProxyUrl,
+          face_restore: true,
+          input_faces_index: finalTargets.join(","),
+          source_faces_index: sourceIndexes.join(","),
+          face_restore_visibility: 1,
+          codeformer_weight: 0.95,
+          detect_gender_input: "no",
+          detect_gender_source: "no",
+          frame_load_cap: 0,
+          base_64: false
+        })
+      });
+    } else {
+      response = await fetch("https://api.replicate.com/v1/predictions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${replicateToken}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          version: SINGLE_VIDEO_FACE_SWAP_VERSION,
+          input: { source: videoProxyUrl, target: imageProxyUrls[0] }
+        })
       });
     }
 
-    if (!prediction?.id) {
-      await cleanupInputs([facePathname, videoPathname]);
-      return res.status(502).json({ error: "Face swap service returned an invalid response." });
+    let providerData;
+    try { providerData = await response.json(); }
+    catch { providerData = null; }
+
+    if (!response.ok) {
+      console.error(isMulti ? "Segmind multiple video face swap request failed:" : "Replicate face swap request failed:", providerData);
+      await cleanupInputs([...facePathnames, videoPathname]);
+      return res.status(response.status).json({
+        error: providerData?.detail || providerData?.error || providerData?.message ||
+          (isMulti ? "Multiple video face swap request failed" : "Replicate face swap request failed"),
+        details: providerData
+      });
+    }
+
+    let prediction;
+    if (isMulti) {
+      const requestId = providerData?.request_id || providerData?.id;
+      if (!requestId) {
+        await cleanupInputs([...facePathnames, videoPathname]);
+        return res.status(502).json({ error: "Multiple video face swap service returned an invalid response." });
+      }
+      prediction = {
+        id: faceEvolEncodeSegmindId(requestId),
+        status: "processing",
+        provider: "segmind",
+        input: { source_img: imageProxyUrls[0], video_input: videoProxyUrl }
+      };
+    } else {
+      prediction = providerData;
+      if (!prediction?.id) {
+        await cleanupInputs([...facePathnames, videoPathname]);
+        return res.status(502).json({ error: "Face swap service returned an invalid response." });
+      }
     }
 
     return res.status(200).json({ success: true, prediction });
   } catch (error) {
     console.error("Face swap server error:", error);
-    await cleanupInputs([facePathname, videoPathname]);
+    await cleanupInputs([...facePathnames, videoPathname]);
     return res.status(500).json({
       error: "Server error",
       details: error instanceof Error ? error.message : String(error)
