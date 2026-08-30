@@ -930,6 +930,70 @@ function faceEvolSleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+/*
+ * Kling accepts HTTP URLs or data URLs for file inputs.
+ * Qwen outputs are provider-hosted URLs. To avoid downstream ReadError
+ * failures when Kling tries to fetch an expiring/transient provider URL,
+ * FaceEvol downloads each finished Qwen keyframe server-side, validates it,
+ * and forwards it to Kling as a self-contained data URL.
+ */
+async function faceEvolImageUrlToDataUrl(url, label) {
+  let lastError = null;
+
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Accept: "image/jpeg,image/png,image/webp,image/*;q=0.8,*/*;q=0.1"
+        },
+        redirect: "follow"
+      });
+
+      if (!response.ok) {
+        throw new Error(`${label} keyframe download returned HTTP ${response.status}`);
+      }
+
+      const contentType = String(response.headers.get("content-type") || "")
+        .split(";")[0]
+        .trim()
+        .toLowerCase();
+
+      const allowedTypes = new Set([
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "image/webp"
+      ]);
+
+      if (!allowedTypes.has(contentType)) {
+        throw new Error(`${label} keyframe returned unsupported content type: ${contentType || "unknown"}`);
+      }
+
+      const bytes = Buffer.from(await response.arrayBuffer());
+
+      if (!bytes.length) {
+        throw new Error(`${label} keyframe was empty`);
+      }
+
+      // Kling's documented image input limit is 10 MB. Keep some headroom.
+      if (bytes.length > 9_500_000) {
+        throw new Error(`${label} keyframe is too large for the video model`);
+      }
+
+      const normalizedType = contentType === "image/jpg" ? "image/jpeg" : contentType;
+      return `data:${normalizedType};base64,${bytes.toString("base64")}`;
+    } catch (error) {
+      lastError = error;
+      if (attempt < 2) {
+        await faceEvolSleep(650 * (attempt + 1));
+      }
+    }
+  }
+
+  throw lastError || new Error(`Could not prepare ${label} keyframe`);
+}
+
 async function faceEvolReadJson(response) {
   const text = await response.text();
   if (!text) return null;
@@ -1128,6 +1192,13 @@ async function handleFaceEvolEvolutionMode(res, token, body) {
       throw new Error("FaceEvol did not receive usable life-stage images.");
     }
 
+    // Stabilize the Qwen -> Kling handoff.
+    // Do not make Kling re-fetch temporary Replicate output URLs.
+    const [youngInput, oldInput] = await Promise.all([
+      faceEvolImageUrlToDataUrl(youngUrl, "young"),
+      faceEvolImageUrlToDataUrl(oldUrl, "old")
+    ]);
+
     const videoPrompt = `
 A beautiful cinematic life journey of the SAME PERSON, smoothly aging from childhood through adolescence, young adulthood, mature adulthood and older age. The identity remains unmistakably consistent at every moment. Show one person only. Transitions are elegant, gradual and emotionally warm, never morph into another identity. Facial anatomy stays stable while age changes naturally.
 
@@ -1142,8 +1213,8 @@ ${customDirection ? `Creative direction: ${customDirection}` : ""}
         mode: "pro",
         prompt: videoPrompt,
         negative_prompt: "identity drift, different person, multiple people, face duplication, facial distortion, deformed eyes, warped mouth, abrupt cuts, flicker, text, logo, watermark",
-        start_image: youngUrl,
-        end_image: oldUrl,
+        start_image: youngInput,
+        end_image: oldInput,
         duration,
         generate_audio: true
       },
@@ -1153,13 +1224,20 @@ ${customDirection ? `Creative direction: ${customDirection}` : ""}
     return res.status(200).json({
       success: true,
       prediction,
-      evolution_frames: { young: youngUrl, old: oldUrl }
+      evolution_frames: { young: youngUrl, old: oldUrl },
+      evolution_handoff: "data-url"
     });
   } catch (error) {
     console.error("FaceEvol Face Evolution error:", error);
+
+    const rawDetails = error instanceof Error ? error.message : String(error);
+    const friendlyDetails = /ReadError/i.test(rawDetails)
+      ? "The video model could not read one of the prepared life-stage frames. FaceEvol has protected this handoff; please retry once with a clear JPG or PNG portrait."
+      : rawDetails;
+
     return res.status(error?.status || 500).json({
       error: "Could not create the Face Evolution video",
-      details: error instanceof Error ? error.message : String(error)
+      details: friendlyDetails
     });
   }
 }
