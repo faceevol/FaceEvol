@@ -869,15 +869,21 @@ async function startFaceEvolGenerationGuard(
 
 
 /* ============================================================================
- * FaceEvol consolidated portrait modes
+ * FaceEvol consolidated creative modes
  *
- * Reuses /api/predict.js so Portrait Creator and Profile Photo Pack do not
- * consume additional Vercel Function slots. The existing Age Transformation
- * branch below remains the default when no mode is supplied.
+ * Reuses /api/predict.js so AI Portrait Creator and Face Evolution do not
+ * consume additional Vercel Function slots. The existing Age Transform branch
+ * remains the default when no mode is supplied.
  * ========================================================================== */
 
 const FACEVOL_PORTRAIT_MODEL =
-  "qwen/qwen-image-edit-plus";
+  "black-forest-labs/flux-kontext-pro";
+
+const FACEVOL_AGE_MODEL =
+  "qwen/qwen-image-edit-2511";
+
+const FACEVOL_EVOLUTION_VIDEO_MODEL =
+  "kwaivgi/kling-v3-video";
 
 function faceEvolText(value, maxLength = 500) {
   return String(value || "")
@@ -892,439 +898,309 @@ function faceEvolChoice(value, allowed, fallback) {
   return allowed.has(normalized) ? normalized : fallback;
 }
 
-async function handleFaceEvolPortraitMode(
-  res,
-  token,
-  body,
-  mode
-) {
-  const image = body?.image;
-
-  if (
-    !image ||
-    typeof image !== "string" ||
-    !image.startsWith("data:image/")
-  ) {
-    return res.status(400).json({
-      error: "A valid portrait image is required"
-    });
+function faceEvolFindUrl(value) {
+  if (!value) return null;
+  if (typeof value === "string") {
+    const text = value.trim();
+    return /^https?:\/\//i.test(text) ? text : null;
   }
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      const found = faceEvolFindUrl(item);
+      if (found) return found;
+    }
+    return null;
+  }
+  if (typeof value === "object") {
+    for (const key of ["url", "output", "image", "file", "href", "result"]) {
+      if (value[key] !== undefined) {
+        const found = faceEvolFindUrl(value[key]);
+        if (found) return found;
+      }
+    }
+    for (const item of Object.values(value)) {
+      const found = faceEvolFindUrl(item);
+      if (found) return found;
+    }
+  }
+  return null;
+}
 
+function faceEvolSleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function faceEvolReadJson(response) {
+  const text = await response.text();
+  if (!text) return null;
+  try { return JSON.parse(text); }
+  catch { return { error: text.slice(0, 1200) }; }
+}
+
+async function faceEvolStartNamedPrediction(token, model, input, preferWait = false) {
+  const response = await fetch(
+    `https://api.replicate.com/v1/models/${model}/predictions`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        ...(preferWait ? { Prefer: "wait=60" } : {})
+      },
+      body: JSON.stringify({ input })
+    }
+  );
+
+  const prediction = await faceEvolReadJson(response);
+  if (!response.ok) {
+    const error = new Error(
+      prediction?.detail || prediction?.error ||
+      `${model} request failed with HTTP ${response.status}`
+    );
+    error.status = response.status;
+    error.payload = prediction;
+    throw error;
+  }
+  if (!prediction || typeof prediction !== "object") {
+    const error = new Error(`${model} returned an invalid response`);
+    error.status = 502;
+    throw error;
+  }
+  return prediction;
+}
+
+async function faceEvolWaitForPrediction(token, prediction, maxWaitMs = 95000) {
+  let current = prediction;
+  const started = Date.now();
+  while (current && !["succeeded", "failed", "canceled", "cancelled"].includes(String(current.status || "").toLowerCase())) {
+    if (!current.id || Date.now() - started > maxWaitMs) break;
+    await faceEvolSleep(1400);
+    const response = await fetch(
+      `https://api.replicate.com/v1/predictions/${encodeURIComponent(current.id)}`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    const data = await faceEvolReadJson(response);
+    if (!response.ok) {
+      const error = new Error(data?.detail || data?.error || "Could not read the intermediate FaceEvol prediction");
+      error.status = response.status;
+      throw error;
+    }
+    current = data;
+  }
+  return current;
+}
+
+async function handleFaceEvolPortraitMode(res, token, body) {
+  const image = body?.image;
+  if (!image || typeof image !== "string" || !image.startsWith("data:image/")) {
+    return res.status(400).json({ error: "A valid portrait image is required" });
+  }
   if (image.length > 11_000_000) {
-    return res.status(413).json({
-      error: "Image is too large. Please use an image under 8 MB."
-    });
+    return res.status(413).json({ error: "Image is too large. Please use an image under 8 MB." });
   }
 
   const portraitStyles = new Set([
-    "professional",
-    "cinematic",
-    "editorial",
-    "fashion",
-    "dating",
-    "anime",
-    "fantasy"
+    "professional", "cinematic", "editorial", "fashion", "dating", "anime", "fantasy"
   ]);
-
   const portraitBackgrounds = new Set([
-    "studio",
-    "office",
-    "city",
-    "nature",
-    "dark",
-    "keep"
+    "studio", "office", "city", "nature", "dark", "keep"
   ]);
 
-  const packStyles = new Set([
-    "linkedin",
-    "founder",
-    "creative",
-    "dating",
-    "minimal"
-  ]);
+  const style = faceEvolChoice(body?.style, portraitStyles, "professional");
+  const background = faceEvolChoice(body?.background, portraitBackgrounds, "studio");
+  const direction = faceEvolText(body?.prompt, 500);
 
-  const wardrobes = new Set([
-    "smart",
-    "formal",
-    "minimal",
-    "keep"
-  ]);
+  const styleDirections = {
+    professional: "premium professional headshot, confident and approachable, refined but natural",
+    cinematic: "cinematic portrait photography, dimensional light, tasteful contrast, realistic lens rendering",
+    editorial: "high-end editorial magazine portrait, sophisticated styling and a premium photographic finish",
+    fashion: "polished fashion portrait, contemporary styling, elegant lighting, realistic skin and fabric texture",
+    dating: "warm natural dating-profile portrait, friendly authentic expression and flattering believable light",
+    anime: "high-quality anime portrait interpretation while preserving the recognizable facial identity and proportions",
+    fantasy: "premium fantasy portrait styling while preserving recognizable identity, realistic facial anatomy and refined detail"
+  };
 
-  let finalPrompt = "";
+  const backgroundDirections = {
+    studio: "clean premium studio background",
+    office: "modern softly blurred professional office background",
+    city: "soft cinematic city background with natural depth of field",
+    nature: "tasteful natural outdoor background with soft depth of field",
+    dark: "dark charcoal editorial studio background",
+    keep: "original background preserved as closely as possible"
+  };
 
-  if (mode === "portrait") {
-    const style = faceEvolChoice(
-      body?.style,
-      portraitStyles,
-      "professional"
-    );
+  const prompt = `
+Edit this exact portrait into a ${styleDirections[style]} with a ${backgroundDirections[background]}.
 
-    const background = faceEvolChoice(
-      body?.background,
-      portraitBackgrounds,
-      "studio"
-    );
+IDENTITY LOCK — this must remain unmistakably the SAME PERSON.
+Preserve the exact facial geometry and recognizable likeness: face shape, eye shape and spacing, eye color, eyebrows, nose, mouth, lips, jawline, cheekbones, skin tone, ethnicity, age range, gender presentation, hairline and distinctive traits. Keep natural asymmetry and realistic skin texture. Do not replace the subject with a look-alike and do not apply a beauty-filter identity.
 
-    const direction = faceEvolText(
-      body?.prompt,
-      500
-    );
+Change only the requested styling, wardrobe, lighting and/or background. Keep the pose, camera perspective and subject placement coherent unless the requested portrait style requires a small natural adjustment.
 
-    const styleDirections = {
-      professional:
-        "premium professional headshot, confident and approachable, refined but natural",
-      cinematic:
-        "cinematic portrait photography, dimensional light, tasteful contrast, realistic lens rendering",
-      editorial:
-        "high-end editorial magazine portrait, sophisticated styling, premium photographic finish",
-      fashion:
-        "polished fashion portrait, contemporary styling, elegant lighting, realistic skin and fabric texture",
-      dating:
-        "warm natural dating-profile portrait, friendly authentic expression, flattering but believable light",
-      anime:
-        "high-quality anime portrait interpretation while preserving recognizable facial identity and proportions",
-      fantasy:
-        "premium fantasy portrait styling while preserving recognizable identity, realistic facial anatomy and refined detail"
-    };
+Sharp eyes, realistic hair, realistic skin pores and photographic detail. No plastic skin, warped features, duplicated features, text, logos or watermarks.
+${direction ? `Additional direction: ${direction}` : ""}
 
-    const backgroundDirections = {
-      studio:
-        "clean premium studio background",
-
-      office:
-        "modern softly blurred professional office background",
-
-      city:
-        "soft cinematic city background with natural depth of field",
-
-      nature:
-        "tasteful natural outdoor background with soft depth of field",
-
-      dark:
-        "dark charcoal editorial studio background",
-
-      keep:
-        "preserve the original background as closely as possible"
-    };
-
-    finalPrompt = `
-Restyle this exact photograph into a ${styleDirections[style]}.
-Use a ${backgroundDirections[background]}.
-
-THIS MUST REMAIN THE SAME PERSON.
-Identity is locked. Preserve the person's recognizable face shape, eyes, eye color, eyebrows, nose, mouth, lips, jawline, cheekbones, skin tone, ethnicity, facial proportions, age range and gender presentation.
-Preserve realistic anatomy and natural asymmetry. Do not replace the person with a look-alike. Do not beautify into a different identity.
-
-Keep natural skin texture, sharp eyes, realistic hair detail and photographic facial detail. Avoid plastic skin, excessive smoothing, warped features, duplicated features, text, logos and watermarks.
-
-${direction ? `Additional user direction: ${direction}` : ""}
-
-Produce one polished portrait. The result should look intentional, premium and professionally photographed while the person's identity remains obvious.
+Return one premium finished portrait of the same person.
 `.trim();
-
-  } else {
-    const packStyle = faceEvolChoice(
-      body?.pack_style,
-      packStyles,
-      "linkedin"
-    );
-
-    const wardrobe = faceEvolChoice(
-      body?.wardrobe,
-      wardrobes,
-      "smart"
-    );
-
-    const packDirections = {
-      linkedin:
-        "LinkedIn and business profile photography: clean, credible, polished and approachable",
-
-      founder:
-        "founder and executive profile photography: confident, premium, modern and authoritative without looking stiff",
-
-      creative:
-        "creative-professional profile photography: modern, expressive, tasteful and polished",
-
-      dating:
-        "dating-profile photography: warm, authentic, approachable and naturally flattering",
-
-      minimal:
-        "minimal studio profile photography: clean backgrounds, refined light and understated styling"
-    };
-
-    const wardrobeDirections = {
-      smart:
-        "smart-casual wardrobe",
-
-      formal:
-        "formal professional wardrobe",
-
-      minimal:
-        "minimal black wardrobe",
-
-      keep:
-        "the original wardrobe kept as closely as possible"
-    };
-
-    finalPrompt = `
-Create a premium 2x2 professional profile-photo sheet using the SAME PERSON from the input image in all four panels.
-
-Style direction: ${packDirections[packStyle]}.
-Wardrobe direction: ${wardrobeDirections[wardrobe]}.
-
-IDENTITY IS LOCKED IN ALL FOUR PANELS.
-Preserve face shape, eyes, eye color, eyebrows, nose, mouth, lips, skin tone, ethnicity, jawline, cheekbones, age range, gender presentation and recognizable facial proportions.
-
-Vary only the crop, subtle pose, lighting, professional background and styling appropriate to the selected pack. Keep every panel believable as a real photograph of the same person taken during one premium portrait session.
-
-Natural skin texture. Sharp eyes. Realistic hair and fabric. No plastic skin. No duplicated facial features. No text. No logos. No watermarks. No four different people.
-
-Output exactly one cohesive 2x2 profile-photo sheet containing four clean portrait panels.
-`.trim();
-  }
 
   try {
-    const response = await fetch(
-      `https://api.replicate.com/v1/models/${FACEVOL_PORTRAIT_MODEL}/predictions`,
-      {
-        method: "POST",
-
-        headers: {
-          Authorization:
-            `Bearer ${token}`,
-
-          "Content-Type":
-            "application/json",
-
-          Prefer:
-            "wait=60"
-        },
-
-        body:
-          JSON.stringify({
-            input: {
-              image: [
-                image
-              ],
-
-              prompt:
-                finalPrompt,
-
-              go_fast:
-                false,
-
-              aspect_ratio:
-                "match_input_image",
-
-              output_format:
-                "png",
-
-              output_quality:
-                100
-            }
-          })
-      }
-    );
-
-    let prediction;
-
-    try {
-      prediction =
-        await response.json();
-
-    } catch {
-      prediction =
-        null;
-    }
-
-    if (
-      !response.ok
-    ) {
-      console.error(
-        `FaceEvol ${mode} Qwen request failed:`,
-        prediction
-      );
-
-      return res
-        .status(
-          response.status
-        )
-        .json({
-          error:
-            mode === "portrait"
-              ? "Portrait creation request failed"
-              : "Profile photo pack request failed",
-
-          details:
-            prediction
-        });
-    }
-
-    if (
-      !prediction
-    ) {
-      return res
-        .status(502)
-        .json({
-          error:
-            "Replicate returned an invalid response"
-        });
-    }
-
-    console.log(
-      "FACEVOL PORTRAIT MODEL:",
+    const prediction = await faceEvolStartNamedPrediction(
+      token,
       FACEVOL_PORTRAIT_MODEL,
-      "MODE:",
-      mode
+      {
+        prompt,
+        input_image: image,
+        aspect_ratio: "match_input_image",
+        output_format: "jpg",
+        safety_tolerance: 2,
+        prompt_upsampling: false
+      },
+      true
     );
 
-    return res
-      .status(200)
-      .json({
-        success:
-          true,
-
-        prediction
-      });
-
+    return res.status(200).json({ success: true, prediction });
   } catch (error) {
-    console.error(
-      `FaceEvol ${mode} server error:`,
-      error
-    );
-
-    return res
-      .status(500)
-      .json({
-        error:
-          mode === "portrait"
-            ? "Could not create the portrait"
-            : "Could not create the profile photo pack",
-
-        details:
-          error instanceof Error
-            ? error.message
-            : String(error)
-      });
+    console.error("FaceEvol portrait creator error:", error);
+    return res.status(error?.status || 500).json({
+      error: "Could not create the portrait",
+      details: error instanceof Error ? error.message : String(error)
+    });
   }
 }
 
+function faceEvolEvolutionAgePrompt(age, role) {
+  return `
+Create a photorealistic ${role} life-stage portrait of this exact same person at approximately age ${age}.
+Identity is locked. Preserve the person's recognizable facial structure, ethnicity, skin tone, eye shape, eye color, nose, mouth, jawline, cheekbones, biological sex and gender presentation. This is the SAME PERSON at a different age, not a look-alike.
+
+Keep a calm, warm expression, centered head-and-shoulders framing, the full face visible, similar camera angle and clean cinematic portrait lighting. Use age-appropriate hair and natural facial development only. Keep skin realistic and healthy. No beauty-filter identity, no exaggerated wrinkles, no doll-like child features, no distortion, no text or watermark.
+
+The image will be used as the ${role} frame of a graceful life-journey video, so make the composition stable and cinematic.
+`.trim();
+}
+
+async function handleFaceEvolEvolutionMode(res, token, body) {
+  const image = body?.image;
+  if (!image || typeof image !== "string" || !image.startsWith("data:image/")) {
+    return res.status(400).json({ error: "A valid portrait image is required for Face Evolution" });
+  }
+  if (image.length > 11_000_000) {
+    return res.status(413).json({ error: "Image is too large. Please use an image under 8 MB." });
+  }
+
+  const duration = Math.max(8, Math.min(15, Number(body?.duration) || 12));
+  const customDirection = faceEvolText(body?.prompt, 400);
+
+  try {
+    // Generate the two identity-locked life-stage anchors in parallel.
+    const [youngStart, oldStart] = await Promise.all([
+      faceEvolStartNamedPrediction(token, FACEVOL_AGE_MODEL, {
+        image: [image],
+        prompt: faceEvolEvolutionAgePrompt(8, "young opening"),
+        go_fast: false,
+        aspect_ratio: "match_input_image",
+        output_format: "jpg",
+        output_quality: 96
+      }, true),
+      faceEvolStartNamedPrediction(token, FACEVOL_AGE_MODEL, {
+        image: [image],
+        prompt: faceEvolEvolutionAgePrompt(82, "older closing"),
+        go_fast: false,
+        aspect_ratio: "match_input_image",
+        output_format: "jpg",
+        output_quality: 96
+      }, true)
+    ]);
+
+    const [youngPrediction, oldPrediction] = await Promise.all([
+      faceEvolWaitForPrediction(token, youngStart),
+      faceEvolWaitForPrediction(token, oldStart)
+    ]);
+
+    if (String(youngPrediction?.status || "").toLowerCase() !== "succeeded" ||
+        String(oldPrediction?.status || "").toLowerCase() !== "succeeded") {
+      throw new Error("FaceEvol could not prepare the life-stage keyframes. Please try another clear portrait.");
+    }
+
+    const youngUrl = faceEvolFindUrl(youngPrediction?.output);
+    const oldUrl = faceEvolFindUrl(oldPrediction?.output);
+    if (!youngUrl || !oldUrl) {
+      throw new Error("FaceEvol did not receive usable life-stage images.");
+    }
+
+    const videoPrompt = `
+A beautiful cinematic life journey of the SAME PERSON, smoothly aging from childhood through adolescence, young adulthood, mature adulthood and older age. The identity remains unmistakably consistent at every moment. Show one person only. Transitions are elegant, gradual and emotionally warm, never morph into another identity. Facial anatomy stays stable while age changes naturally.
+
+Let clothing, hairstyle and background evolve tastefully with the life stages: soft childhood light, youthful energy, confident adulthood, warm mature years, then a graceful peaceful senior portrait. Keep the camera centered on the face with smooth subtle movement and premium portrait lighting. End exactly on the supplied older portrait. Generate gentle cinematic ambience/music without speech.
+${customDirection ? `Creative direction: ${customDirection}` : ""}
+`.trim();
+
+    const prediction = await faceEvolStartNamedPrediction(
+      token,
+      FACEVOL_EVOLUTION_VIDEO_MODEL,
+      {
+        mode: "pro",
+        prompt: videoPrompt,
+        negative_prompt: "identity drift, different person, multiple people, face duplication, facial distortion, deformed eyes, warped mouth, abrupt cuts, flicker, text, logo, watermark",
+        start_image: youngUrl,
+        end_image: oldUrl,
+        duration,
+        generate_audio: true
+      },
+      false
+    );
+
+    return res.status(200).json({
+      success: true,
+      prediction,
+      evolution_frames: { young: youngUrl, old: oldUrl }
+    });
+  } catch (error) {
+    console.error("FaceEvol Face Evolution error:", error);
+    return res.status(error?.status || 500).json({
+      error: "Could not create the Face Evolution video",
+      details: error instanceof Error ? error.message : String(error)
+    });
+  }
+}
 
 export default async function handler(
   req,
   res
 ) {
-  if (
-    req.method !==
-      "POST"
-  ) {
-    return res
-      .status(405)
-      .json({
-        error:
-          "Method not allowed"
-      });
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const body =
-    req.body || {};
+  const body = req.body || {};
+  const mode = String(body.mode || "").trim().toLowerCase();
 
-  const mode =
-    String(
-      body.mode || ""
-    )
-      .trim()
-      .toLowerCase();
-
-  if (
-    ![
-      "",
-      "age",
-      "portrait",
-      "profile_pack"
-    ].includes(mode)
-  ) {
-    return res
-      .status(400)
-      .json({
-        error:
-          "Unsupported FaceEvol predict mode"
-      });
+  if (!["", "age", "portrait", "face_evolution"].includes(mode)) {
+    return res.status(400).json({ error: "Unsupported FaceEvol predict mode" });
   }
 
   const creditTool =
     mode === "portrait"
       ? "portrait_creator"
-      : mode === "profile_pack"
-        ? "profile_photo_pack"
+      : mode === "face_evolution"
+        ? "face_evolution"
         : "age";
 
-  /*
-   * One secure endpoint, three tools.
-   * Supabase remains authoritative for
-   * the cost attached to each tool key.
-   */
-  const faceEvolGuard =
-    await startFaceEvolGenerationGuard(
-      req,
-      res,
-      creditTool
-    );
+  const faceEvolGuard = await startFaceEvolGenerationGuard(req, res, creditTool);
+  if (!faceEvolGuard) return;
 
-  if (
-    !faceEvolGuard
-  ) {
-    return;
+  const token = process.env.REPLICATE_API_TOKEN;
+  if (!token) {
+    return res.status(500).json({ error: "REPLICATE_API_TOKEN is not configured" });
   }
 
-  const token =
-    process.env
-      .REPLICATE_API_TOKEN;
-
-  if (
-    !token
-  ) {
-    return res
-      .status(500)
-      .json({
-        error:
-          "REPLICATE_API_TOKEN is not configured"
-      });
+  if (mode === "portrait") {
+    return handleFaceEvolPortraitMode(res, token, body);
   }
 
-  /*
-   * ------------------------------------------------------------
-   * NEW MODES
-   * ------------------------------------------------------------
-   *
-   * mode: "portrait"
-   *   -> AI Portrait Creator
-   *
-   * mode: "profile_pack"
-   *   -> AI Profile Photo Pack
-   *
-   * No mode / mode: "age"
-   *   -> original Age Transformation
-   * ------------------------------------------------------------
-   */
-
-  if (
-    mode === "portrait" ||
-    mode === "profile_pack"
-  ) {
-    return handleFaceEvolPortraitMode(
-      res,
-      token,
-      body,
-      mode
-    );
+  if (mode === "face_evolution") {
+    return handleFaceEvolEvolutionMode(res, token, body);
   }
-
-  /*
-   * ============================================================
-   * EXISTING FACEVOL AGE TRANSFORMATION
-   * ============================================================
-   */
 
   const {
     image,

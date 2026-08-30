@@ -17,7 +17,7 @@ const MODEL_VERSION =
   "codeplugtech/face-swap:278a81e7ebb22db98bcba54de985d22cc1abeead2754eb1f2af717247be69b34";
 
 const MULTI_FACE_MODEL_VERSION =
-  "ddvinh1/inswapper:25bdae46f2713138640b6e8c04dc4ca18625ce95b1863936b053eee42d9ba6db";
+  "mertguvencli/face-swap-with-indexes:518f2116425c40acb5c234031c55daf843c1357eff784370fe9489e57b65c150";
 
 const MAX_IMAGE_DATA_URI_CHARS =
   550_000;
@@ -1040,6 +1040,132 @@ function normalizeFaceIndexes(value) {
 }
 
 
+
+function faceEvolIndexList(value, maxItems = 4) {
+  const raw = String(value ?? "")
+    .split(",")
+    .map(item => Number.parseInt(item.trim(), 10))
+    .filter(item => Number.isInteger(item) && item >= 0 && item <= 100)
+    .slice(0, maxItems);
+  return raw;
+}
+
+function faceEvolFindOutputUrl(value) {
+  if (!value) return null;
+  if (typeof value === "string") {
+    const text = value.trim();
+    return /^https?:\/\//i.test(text) ? text : null;
+  }
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      const found = faceEvolFindOutputUrl(item);
+      if (found) return found;
+    }
+    return null;
+  }
+  if (typeof value === "object") {
+    for (const key of ["output", "url", "image", "file", "href", "result"]) {
+      if (value[key] !== undefined) {
+        const found = faceEvolFindOutputUrl(value[key]);
+        if (found) return found;
+      }
+    }
+  }
+  return null;
+}
+
+async function faceEvolReadReplicateJson(response) {
+  const text = await response.text();
+  if (!text) return null;
+  try { return JSON.parse(text); }
+  catch { return { error: text.slice(0, 1200) }; }
+}
+
+async function faceEvolWaitReplicate(token, prediction, maxWaitMs = 65000) {
+  let current = prediction;
+  const started = Date.now();
+  while (current && !["succeeded", "failed", "canceled", "cancelled"].includes(String(current.status || "").toLowerCase())) {
+    if (!current.id || Date.now() - started > maxWaitMs) break;
+    await new Promise(resolve => setTimeout(resolve, 900));
+    const response = await fetch(
+      `https://api.replicate.com/v1/predictions/${encodeURIComponent(current.id)}`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    const data = await faceEvolReadReplicateJson(response);
+    if (!response.ok) throw new Error(data?.detail || data?.error || "Could not read multiple face-swap prediction");
+    current = data;
+  }
+  return current;
+}
+
+async function handleMappedMultiPhotoSwap(res, token, sourceFaces, target, body) {
+  const requestedTargets = faceEvolIndexList(body.target_indexes, 4);
+  const count = Math.min(requestedTargets.length, sourceFaces.length, 4);
+
+  if (!count) {
+    return res.status(400).json({
+      error: "Choose which target person each source face should replace."
+    });
+  }
+
+  let destination = target;
+  let lastPrediction = null;
+
+  for (let index = 0; index < count; index += 1) {
+    const response = await fetch(
+      "https://api.replicate.com/v1/predictions",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          Prefer: "wait=60"
+        },
+        body: JSON.stringify({
+          version: MULTI_FACE_MODEL_VERSION,
+          input: {
+            source_face_image: sourceFaces[index],
+            destination_image: destination,
+            source_face_index: 0,
+            destination_face_index: requestedTargets[index],
+            execution_type: "face_swap"
+          }
+        })
+      }
+    );
+
+    let prediction = await faceEvolReadReplicateJson(response);
+    if (!response.ok) {
+      return res.status(response.status).json({
+        error: `Multiple photo face swap failed while mapping source ${index + 1}.`,
+        details: prediction
+      });
+    }
+
+    prediction = await faceEvolWaitReplicate(token, prediction);
+    if (String(prediction?.status || "").toLowerCase() !== "succeeded") {
+      return res.status(502).json({
+        error: `Multiple photo face swap could not finish mapping source ${index + 1}.`,
+        details: prediction?.error || prediction?.status || "Unknown model error"
+      });
+    }
+
+    const outputUrl = faceEvolFindOutputUrl(prediction?.output);
+    if (!outputUrl) {
+      return res.status(502).json({ error: "Multiple photo face swap returned no usable image." });
+    }
+
+    destination = outputUrl;
+    lastPrediction = prediction;
+  }
+
+  return res.status(200).json({
+    success: true,
+    prediction: lastPrediction,
+    mapped_faces: count
+  });
+}
+
 /* ============================================================================
  * FaceEvol Photo Face Swap route
  * ========================================================================== */
@@ -1128,136 +1254,61 @@ export default async function handler(
   }
 
 
-  const {
-    face,
-    target
-  } =
-    body;
+  const { face, target } = body;
+  const isMulti = mode === "multi";
+  const multiFaces = isMulti
+    ? (Array.isArray(body.faces) ? body.faces : [face]).filter(Boolean).slice(0, 4)
+    : [];
 
-
-  /*
-   * Validate source face.
-   */
-  if (
-    !isImageDataUri(
-      face
-    )
-  ) {
-    return res
-      .status(400)
-      .json({
-        error:
-          "A valid source face image is required."
-      });
+  if (isMulti) {
+    if (!multiFaces.length || multiFaces.some(value => !isImageDataUri(value))) {
+      return res.status(400).json({ error: "Choose 1 to 4 valid source face images." });
+    }
+  } else if (!isImageDataUri(face)) {
+    return res.status(400).json({ error: "A valid source face image is required." });
   }
 
-
-  /*
-   * Validate target photo.
-   */
-  if (
-    !isImageDataUri(
-      target
-    )
-  ) {
-    return res
-      .status(400)
-      .json({
-        error:
-          "A valid target image is required."
-      });
+  if (!isImageDataUri(target)) {
+    return res.status(400).json({ error: "A valid target image is required." });
   }
 
+  const sourceTotal = isMulti
+    ? multiFaces.reduce((total, value) => total + value.length, 0)
+    : face.length;
+  const maxImageChars = isMulti ? MULTI_MAX_IMAGE_DATA_URI_CHARS : MAX_IMAGE_DATA_URI_CHARS;
+  const maxTotalChars = isMulti ? 3_200_000 : MAX_TOTAL_DATA_URI_CHARS;
 
-  /*
-   * Protect the server from
-   * oversized Base64 requests.
-   */
-  const maxImageChars =
-    mode === "multi"
-      ? MULTI_MAX_IMAGE_DATA_URI_CHARS
-      : MAX_IMAGE_DATA_URI_CHARS;
-
-  const maxTotalChars =
-    mode === "multi"
-      ? MULTI_MAX_TOTAL_DATA_URI_CHARS
-      : MAX_TOTAL_DATA_URI_CHARS;
-
-  if (
-    face.length >
-      maxImageChars ||
-    target.length >
-      maxImageChars ||
-    face.length +
-      target.length >
-      maxTotalChars
-  ) {
-    return res
-      .status(413)
-      .json({
-        error:
-          "The prepared photos are too large for the photo face swap request. Please try again."
-      });
+  if (target.length > maxImageChars ||
+      (isMulti ? multiFaces.some(value => value.length > 650_000) : face.length > maxImageChars) ||
+      sourceTotal + target.length > maxTotalChars) {
+    return res.status(413).json({ error: "The prepared photos are too large for the photo face swap request. Please try again." });
   }
 
+  if (isMulti) {
+    try {
+      return await handleMappedMultiPhotoSwap(
+        res,
+        token,
+        multiFaces,
+        target,
+        body
+      );
+    } catch (error) {
+      console.error("FaceEvol mapped multi-photo face swap server error:", error);
+      return res.status(500).json({
+        error: "Could not complete the mapped multiple photo face swap.",
+        details: error instanceof Error ? error.message : String(error)
+      });
+    }
+  }
 
-  const isMulti =
-    mode === "multi";
-
-  const replicatePayload =
-    isMulti
-      ? {
-          version:
-            MULTI_FACE_MODEL_VERSION,
-
-          input: {
-            source_img:
-              face,
-
-            target_img:
-              target,
-
-            source_indexes:
-              normalizeFaceIndexes(
-                body.source_indexes
-              ),
-
-            target_indexes:
-              normalizeFaceIndexes(
-                body.target_indexes
-              ),
-
-            face_restore:
-              true,
-
-            face_upsample:
-              true,
-
-            background_enhance:
-              false,
-
-            upscale:
-              2,
-
-            codeformer_fidelity:
-              0.65
-          }
-        }
-      : {
-          version:
-            MODEL_VERSION,
-
-          input: {
-            /*
-             * Existing verified single-face schema.
-             */
-            swap_image:
-              face,
-
-            input_image:
-              target
-          }
-        };
+  const replicatePayload = {
+    version: MODEL_VERSION,
+    input: {
+      swap_image: face,
+      input_image: target
+    }
+  };
 
 
   try {

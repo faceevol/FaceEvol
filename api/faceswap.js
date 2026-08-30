@@ -1136,437 +1136,170 @@ async function cleanupInputs(
 const SINGLE_VIDEO_FACE_SWAP_VERSION =
   "104b4a39315349db50880757bc8c1c996c5309e3aa11286b0a3c84dab81fd440";
 
-/*
- * Live multi-face video model on Replicate.
- * This branch stays inside /api/faceswap.js to preserve the Function count.
- */
-const MULTI_VIDEO_FACE_SWAP_VERSION =
-  "skytells-research/deepface:9258be7df5239c1f38c9a667f6e0c9cb3a45e3e6520bbd7400e5c9cf4d697b24";
+const MULTI_VIDEO_FACE_SWAP_MODEL =
+  "prunaai/p-video-replace";
 
+function faceEvolSafePlacement(value) {
+  const text = String(value || "")
+    .replace(/[^a-zA-Z0-9 _-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 80);
+  return text || "the selected target person";
+}
+
+function faceEvolMultiVideoInstruction(mappings, count) {
+  const list = Array.isArray(mappings) ? mappings.slice(0, count) : [];
+  const parts = [];
+  for (let index = 0; index < count; index += 1) {
+    const target = faceEvolSafePlacement(list[index]?.target || `person ${index + 1}`);
+    parts.push(`Use reference image ${index + 1} for ${target}`);
+  }
+  return `${parts.join(". ")}. Keep every mapped identity distinct and consistent for the full clip. Preserve the source video's motion, timing, camera, scene and natural interactions. Do not duplicate one identity across unassigned people.`;
+}
 
 /* ============================================================================
  * FaceEvol Video Face Swap API
  * ========================================================================== */
 
+export default async function handler(req, res) {
+  res.setHeader("Cache-Control", "no-store");
 
-export default async function handler(
-  req,
-  res
-) {
-  res.setHeader(
-    "Cache-Control",
-    "no-store"
-  );
-
-
-  if (
-    req.method !==
-      "POST"
-  ) {
-    res.setHeader(
-      "Allow",
-      "POST"
-    );
-
-
-    return res
-      .status(405)
-      .json({
-        error:
-          "Method not allowed"
-      });
+  if (req.method !== "POST") {
+    res.setHeader("Allow", "POST");
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
+  const body = req.body || {};
+  const mode = String(body.mode || "").trim().toLowerCase();
+  if (!["", "single", "multi"].includes(mode)) {
+    return res.status(400).json({ error: "Unsupported video face swap mode" });
+  }
 
-  const body =
-    req.body || {};
+  const faceEvolGuard = await startFaceEvolGenerationGuard(
+    req,
+    res,
+    mode === "multi" ? "multi_video_faceswap" : "video_faceswap"
+  );
+  if (!faceEvolGuard) return;
 
-  const mode =
-    String(
-      body.mode || ""
-    )
-      .trim()
-      .toLowerCase();
+  const replicateToken = process.env.REPLICATE_API_TOKEN;
+  if (!replicateToken) {
+    return res.status(500).json({ error: "REPLICATE_API_TOKEN is not configured" });
+  }
 
-  if (
-    !["", "single", "multi"].includes(
-      mode
-    )
-  ) {
+  const video = body.video;
+  if (typeof video !== "string" || !video.startsWith("https://")) {
+    return res.status(400).json({ error: "A valid video URL is required" });
+  }
+
+  const isMulti = mode === "multi";
+  const faceUrls = isMulti
+    ? (Array.isArray(body.faces) ? body.faces : [body.face]).filter(Boolean).slice(0, 3)
+    : [body.face];
+
+  if (!faceUrls.length || faceUrls.some(value => typeof value !== "string" || !value.startsWith("https://"))) {
     return res.status(400).json({
-      error:
-        "Unsupported video face swap mode"
+      error: isMulti
+        ? "Choose 1 to 3 valid source identity images."
+        : "A valid face image URL is required"
     });
   }
 
-  /*
-   * One serverless Function now serves both
-   * single and multiple video face swap.
-   */
-  const faceEvolGuard =
-    await startFaceEvolGenerationGuard(
-      req,
-      res,
-      mode === "multi"
-        ? "multi_video_faceswap"
-        : "video_faceswap"
-    );
-
-
-  if (!faceEvolGuard) {
-    return;
-  }
-
-
-  const replicateToken =
-    process.env
-      .REPLICATE_API_TOKEN;
-
-
-  if (!replicateToken) {
-    return res
-      .status(500)
-      .json({
-        error:
-          "REPLICATE_API_TOKEN is not configured"
-      });
-  }
-
-
-  /*
-   * face and video are PRIVATE
-   * Vercel Blob URLs.
-   *
-   * The face is NOT Base64.
-   */
-  const {
-    face,
-    video
-  } =
-    body;
-
-
-  if (
-    typeof face !==
-      "string" ||
-    !face.startsWith(
-      "https://"
-    )
-  ) {
-    return res
-      .status(400)
-      .json({
-        error:
-          "A valid face image URL is required"
-      });
-  }
-
-
-  if (
-    typeof video !==
-      "string" ||
-    !video.startsWith(
-      "https://"
-    )
-  ) {
-    return res
-      .status(400)
-      .json({
-        error:
-          "A valid video URL is required"
-      });
-  }
-
-
-  let facePathname =
-    null;
-
-  let videoPathname =
-    null;
-
+  let facePathnames = [];
+  let videoPathname = null;
 
   try {
-    facePathname =
-      getBlobPathname(
-        face,
-        "faceevol-face-"
-      );
+    facePathnames = faceUrls.map(url => getBlobPathname(url, "faceevol-face-"));
+    videoPathname = getBlobPathname(video, "faceevol-video-");
 
-
-    videoPathname =
-      getBlobPathname(
-        video,
-        "faceevol-video-"
-      );
-
-
-    /*
-     * Replicate gets 30 minutes
-     * to retrieve temporary files.
-     */
-    const expires =
-      String(
-        Date.now() +
-        30 * 60 * 1000
-      );
-
-
-    const imageProxyUrl =
-      buildSignedProxyUrl(
-        "/api/image.jpg",
-        facePathname,
-        expires,
-        replicateToken
-      );
-
-
-    const videoProxyUrl =
-      buildSignedProxyUrl(
-        "/api/video.mp4",
-        videoPathname,
-        expires,
-        replicateToken
-      );
-
+    const expires = String(Date.now() + 30 * 60 * 1000);
+    const imageProxyUrls = facePathnames.map(pathname =>
+      buildSignedProxyUrl("/api/image.jpg", pathname, expires, replicateToken)
+    );
+    const videoProxyUrl = buildSignedProxyUrl(
+      "/api/video.mp4",
+      videoPathname,
+      expires,
+      replicateToken
+    );
 
     console.log(
       "Starting FaceEvol prediction",
-      mode === "multi"
-        ? "multi_video_faceswap"
-        : "video_faceswap"
+      isMulti ? "multi_video_faceswap" : "video_faceswap",
+      "identities:",
+      imageProxyUrls.length
     );
 
+    const replicateEndpoint = isMulti
+      ? `https://api.replicate.com/v1/models/${MULTI_VIDEO_FACE_SWAP_MODEL}/predictions`
+      : "https://api.replicate.com/v1/predictions";
 
-    console.log(
-      "Face input proxy:",
-      imageProxyUrl.replace(
-        /signature=[^&]+/,
-        "signature=HIDDEN"
-      )
-    );
-
-
-    console.log(
-      "Video input proxy:",
-      videoProxyUrl.replace(
-        /signature=[^&]+/,
-        "signature=HIDDEN"
-      )
-    );
-
-
-    /*
-     * Existing working Video Face Swap
-     * model and input schema preserved.
-     */
-    const isMulti =
-      mode === "multi";
-
-
-    const replicatePayload =
-      isMulti
-        ? {
-            version:
-              MULTI_VIDEO_FACE_SWAP_VERSION,
-
-            input: {
-              /*
-               * DeepFace multi-video schema:
-               * source = source face image
-               * target = target video
-               *
-               * /api/prediction.js is updated in this package to
-               * clean either source/target orientation safely.
-               */
-              source:
-                imageProxyUrl,
-
-              target:
-                videoProxyUrl,
-
-              keep_fps:
-                true,
-
-              keep_frames:
-                true,
-
-              enhance_face:
-                false
-            }
+    const replicatePayload = isMulti
+      ? {
+          input: {
+            no_op: false,
+            turbo: false,
+            video: videoProxyUrl,
+            images: imageProxyUrls,
+            resolution: body.resolution === "1080p" ? "1080p" : "720p",
+            save_audio: true,
+            target_fps: "original",
+            ignore_audio: false,
+            instruction_prompt: faceEvolMultiVideoInstruction(body.mappings, imageProxyUrls.length)
           }
-        : {
-            version:
-              SINGLE_VIDEO_FACE_SWAP_VERSION,
-
-            input: {
-              source:
-                videoProxyUrl,
-
-              target:
-                imageProxyUrl
-            }
-          };
-
-
-    const response =
-      await fetch(
-        "https://api.replicate.com/v1/predictions",
-        {
-          method:
-            "POST",
-
-          headers: {
-            Authorization:
-              `Bearer ${replicateToken}`,
-
-            "Content-Type":
-              "application/json"
-          },
-
-          body:
-            JSON.stringify(
-              replicatePayload
-            )
         }
-      );
+      : {
+          version: SINGLE_VIDEO_FACE_SWAP_VERSION,
+          input: {
+            source: videoProxyUrl,
+            target: imageProxyUrls[0]
+          }
+        };
 
+    const response = await fetch(replicateEndpoint, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${replicateToken}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(replicatePayload)
+    });
 
     let prediction;
-
-
-    try {
-      prediction =
-        await response.json();
-
-    } catch {
-      prediction =
-        null;
-    }
-
+    try { prediction = await response.json(); }
+    catch { prediction = null; }
 
     if (!response.ok) {
-      console.error(
-        "Replicate face swap request failed:",
-        prediction
-      );
-
-
-      /*
-       * Replicate did not successfully
-       * start the prediction.
-       *
-       * Remove temporary inputs.
-       *
-       * The security wrapper will also
-       * automatically restore the reserved credits.
-       */
-      await cleanupInputs([
-        facePathname,
-        videoPathname
-      ]);
-
-
-      return res
-        .status(
-          response.status
-        )
-        .json({
-          error:
-            prediction?.detail ||
-            prediction?.error ||
-            (
-              isMulti
-                ? "Replicate multiple video face swap request failed"
-                : "Replicate face swap request failed"
-            ),
-
-          details:
-            prediction
-        });
-    }
-
-
-    if (
-      !prediction?.id
-    ) {
-      console.error(
-        "Replicate returned no prediction ID:",
-        prediction
-      );
-
-
-      await cleanupInputs([
-        facePathname,
-        videoPathname
-      ]);
-
-
-      return res
-        .status(502)
-        .json({
-          error:
-            isMulti
-              ? "Multiple video face swap service returned an invalid response."
-              : "Face swap service returned an invalid response."
-        });
-    }
-
-
-    console.log(
-      "FaceEvol prediction created:",
-      prediction.id
-    );
-
-
-    /*
-     * Security wrapper will now:
-     *
-     * 1. associate prediction ID with user
-     * 2. keep the reserved tool credits
-     * 3. allow secure polling through
-     *    /api/prediction.js
-     */
-    return res
-      .status(200)
-      .json({
-        success:
-          true,
-
-        prediction
-      });
-
-
-  } catch (error) {
-    console.error(
-      "Face swap server error:",
-      error
-    );
-
-
-    /*
-     * If temporary inputs were already
-     * identified, remove them.
-     */
-    await cleanupInputs([
-      facePathname,
-      videoPathname
-    ]);
-
-
-    /*
-     * The response wrapper automatically
-     * restores the reserved tool credits.
-     */
-    return res
-      .status(500)
-      .json({
+      console.error("Replicate face swap request failed:", prediction);
+      await cleanupInputs([...facePathnames, videoPathname]);
+      return res.status(response.status).json({
         error:
-          "Server error",
-
-        details:
-          error instanceof Error
-            ? error.message
-            : String(error)
+          prediction?.detail ||
+          prediction?.error ||
+          (isMulti
+            ? "Replicate multiple video identity-swap request failed"
+            : "Replicate face swap request failed"),
+        details: prediction
       });
+    }
+
+    if (!prediction?.id) {
+      await cleanupInputs([...facePathnames, videoPathname]);
+      return res.status(502).json({
+        error: isMulti
+          ? "Multiple video face swap service returned an invalid response."
+          : "Face swap service returned an invalid response."
+      });
+    }
+
+    return res.status(200).json({ success: true, prediction });
+  } catch (error) {
+    console.error("Face swap server error:", error);
+    await cleanupInputs([...facePathnames, videoPathname]);
+    return res.status(500).json({
+      error: "Server error",
+      details: error instanceof Error ? error.message : String(error)
+    });
   }
 }

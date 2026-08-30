@@ -332,88 +332,39 @@ function extractTemporaryPathname(
 async function cleanupPredictionInputs(
   prediction
 ) {
-  /*
-   * Different FaceEvol providers use different names/orientations:
-   * - current single video swap: source=video, target=face
-   * - DeepFace multi-video: source=face, target=video
-   * - video enhancement: video=video
-   *
-   * Check both source and target for each trusted FaceEvol prefix. The
-   * extractor still requires the exact FaceEvol proxy route or private
-   * Vercel Blob hostname + expected prefix, so this does not broaden
-   * deletion to arbitrary URLs.
-   */
-  const candidateInputs = [
+  /* Collect every temporary FaceEvol input, including arrays used by mapped multi-person video. */
+  const rawCandidates = [
     prediction?.input?.source,
     prediction?.input?.target,
     prediction?.input?.source_image,
     prediction?.input?.target_video,
-    prediction?.input?.video
+    prediction?.input?.video,
+    prediction?.input?.images
   ];
 
-  const facePathname =
-    candidateInputs
-      .map(value =>
-        extractTemporaryPathname(
-          value,
-          "/api/image.jpg",
-          "faceevol-face-"
-        )
-      )
-      .find(Boolean) ||
-    null;
+  const candidateInputs = rawCandidates.flatMap(value => Array.isArray(value) ? value : [value]);
+  const pathnames = [];
 
-  const videoPathname =
-    candidateInputs
-      .map(value =>
-        extractTemporaryPathname(
-          value,
-          "/api/video.mp4",
-          "faceevol-video-"
-        )
-      )
-      .find(Boolean) ||
-    null;
+  for (const value of candidateInputs) {
+    const facePathname = extractTemporaryPathname(value, "/api/image.jpg", "faceevol-face-");
+    const videoPathname = extractTemporaryPathname(value, "/api/video.mp4", "faceevol-video-");
+    if (facePathname) pathnames.push(facePathname);
+    if (videoPathname) pathnames.push(videoPathname);
+  }
 
-  const pathnames =
-    [
-      ...new Set([
-        facePathname,
-        videoPathname
-      ].filter(Boolean))
-    ];
-
-  if (!pathnames.length) {
-    console.warn(
-      "No temporary FaceEvol inputs found for cleanup."
-    );
-
+  const safePathnames = [...new Set(pathnames.filter(Boolean))];
+  if (!safePathnames.length) {
+    console.warn("No temporary FaceEvol inputs found for cleanup.");
     return;
   }
 
   try {
-    await del(
-      pathnames
-    );
-
-    console.log(
-      "Deleted temporary FaceEvol inputs:",
-      pathnames
-    );
-
+    await del(safePathnames);
+    console.log("Deleted temporary FaceEvol inputs:", safePathnames);
   } catch (error) {
-    /*
-     * Cleanup failure must never hide a successful AI result.
-     */
-    console.warn(
-      "Temporary Blob cleanup failed:",
-      error instanceof Error
-        ? error.message
-        : String(error)
-    );
+    console.warn("Temporary Blob cleanup failed:", error instanceof Error ? error.message : String(error));
   }
 }
-
 
 
 async function faceEvolReadRawBody(req,maxBytes=1000000){
@@ -811,3 +762,4 @@ export default async function handler(req,res){
   res.setHeader("Allow","GET, POST");
   return res.status(405).json({error:"Method not allowed"});
 }
+
