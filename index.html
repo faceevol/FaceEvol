@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FaceEvol — AI Face &amp; Portrait Studio</title>
-  <meta name="description" content="FaceEvol is an AI Face &amp; Portrait Studio for creating, transforming and enhancing portraits with age transformation, face swap, photo-to-video and AI enhancement." />
+  <meta name="description" content="FaceEvol is an AI Face &amp; Portrait Studio with 10 focused tools for portrait creation, profile photos, age transformation, single and multi-face swaps, photo-to-video and AI enhancement." />
   <meta name="theme-color" content="#070b17" />
   <meta name="color-scheme" content="dark" />
   <meta name="robots" content="index,follow" />
@@ -24,12 +24,12 @@
 <meta property="og:type" content="website" />
   <meta property="og:site_name" content="FaceEvol" />
   <meta property="og:title" content="FaceEvol — AI Face &amp; Portrait Studio" />
-  <meta property="og:description" content="Create, transform and enhance portraits in one focused AI studio — with age transformation, face swap, photo-to-video and AI enhancement." />
+  <meta property="og:description" content="Create, transform and enhance portraits in one focused AI studio — with 10 tools for portraits, age transformation, face swap, motion and enhancement." />
   <meta property="og:url" content="https://www.faceevol.com/" />
   <meta property="og:image" content="https://www.faceevol.com/a.png" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="FaceEvol — AI Face &amp; Portrait Studio" />
-  <meta name="twitter:description" content="FaceEvol is an AI Face &amp; Portrait Studio for portraits, face transformation, animation and enhancement." />
+  <meta name="twitter:description" content="FaceEvol is an AI Face &amp; Portrait Studio with 10 focused portrait, face-swap, motion and enhancement experiences." />
   <meta name="twitter:image" content="https://www.faceevol.com/a.png" />
 
   <!-- Browser-side video trimming. Loaded only by the page; your API routes stay unchanged. -->
@@ -1281,6 +1281,49 @@
       .clean-category-card:hover,.step-card:hover,.privacy-card:hover,.price-card:hover,.tool-option:not(.studio-placeholder-tool):hover{transform:none}
     }
 
+  
+
+    /* =========================================================
+       FACEVOL FINAL 10-TOOL PREMIUM INTERFACES · 2026-08-30
+       Four new workflows reuse existing API routes through a `mode` field,
+       so no additional Vercel Function file is required.
+       ========================================================= */
+    .tool-new-pill{display:inline-flex;margin-top:5px;padding:3px 6px;border-radius:999px;border:1px solid rgba(74,222,176,.18);background:rgba(74,222,176,.07);color:#baf6dc;font-size:7px;font-weight:900;letter-spacing:.6px;line-height:1;text-transform:uppercase}
+    .new-tool-option{border-color:rgba(74,222,176,.07);background:linear-gradient(90deg,rgba(74,222,176,.025),transparent)}
+    .new-tool-option .tool-icon{border:1px solid rgba(125,211,252,.08);background:linear-gradient(145deg,rgba(124,58,237,.13),rgba(14,165,233,.09));color:#d9f6ff}
+    .overview-new{border-color:rgba(74,222,176,.12)!important;background:rgba(74,222,176,.035)!important;color:#b9ddcf!important}
+    .overview-new::after{content:"New";margin-left:6px;color:#6ee7b7;font-size:7px;font-weight:900;letter-spacing:.45px;text-transform:uppercase}
+    .demo-card-new{border-color:rgba(74,222,176,.075)}
+    .demo-card-new .demo-type{color:#a7f3d0;border-color:rgba(74,222,176,.13);background:rgba(74,222,176,.045)}
+
+    .model-tool-controls{width:100%;text-align:left}
+    .model-ready-note{margin-top:12px;padding:11px 13px;border-radius:12px;border:1px solid rgba(125,211,252,.10);background:linear-gradient(90deg,rgba(124,58,237,.055),rgba(14,165,233,.035));color:#91a6bd;font-size:10px;line-height:1.55}
+    .model-ready-note strong{color:#d9f3ff}
+    .new-tool-upload-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:16px}
+    .new-tool-upload{min-height:142px;padding:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px dashed rgba(148,163,184,.25);border-radius:14px;background:rgba(255,255,255,.018);cursor:pointer;text-align:center;transition:.18s ease}
+    .new-tool-upload:hover,.new-tool-upload:focus{outline:none;border-color:rgba(56,189,248,.42);background:rgba(56,189,248,.025)}
+    .new-tool-upload strong{font-size:12px;color:#e7f3ff}.new-tool-upload small{margin-top:5px;color:#72829a;font-size:9px;line-height:1.45}
+    .new-tool-upload-preview{width:112px;height:112px;object-fit:contain;margin-bottom:9px;border-radius:12px;border:1px solid rgba(255,255,255,.10);background:#050914}
+    .new-tool-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:13px}
+    .new-tool-field{padding:11px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.065);background:rgba(255,255,255,.018)}
+    .new-tool-field.full{grid-column:1/-1}.new-tool-field label{display:block;margin-bottom:7px;color:#7f8da4;font-size:9px;font-weight:850;letter-spacing:.65px;text-transform:uppercase}
+    .new-tool-field select,.new-tool-field input,.new-tool-field textarea{width:100%;border:0;outline:none;background:transparent;color:#e7f3ff;font:inherit;font-size:12px;line-height:1.55}
+    .new-tool-field select option{background:#0a1120;color:#e7f3ff}.new-tool-field textarea{min-height:86px;resize:vertical}
+    .new-tool-help{margin-top:10px;color:#71839a;font-size:9px;line-height:1.55}
+    .multi-source-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+    .multi-source-chip{min-height:84px;display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:11px;border:1px solid rgba(255,255,255,.065);background:#060b16;color:#6d7f97;font-size:9px;text-align:center}
+    .multi-source-chip img{width:100%;height:84px;object-fit:cover;display:block}
+    .new-tool-result{display:none;margin-top:17px}.new-tool-result.show{display:block}
+    .new-tool-result img,.new-tool-result video{width:100%;max-height:560px;object-fit:contain;display:block;border-radius:16px;border:1px solid rgba(255,255,255,.08);background:#02040a}
+    .new-tool-result .download-button{display:flex}
+    .new-feature-status{margin-top:12px;color:#7dd3fc;font-size:11px;font-weight:700;line-height:1.5;text-align:center}
+    .new-feature-error{margin-top:10px;color:#fda4af;font-size:11px;line-height:1.5;text-align:center}
+    .model-badge{flex:0 0 auto;padding:6px 9px;border-radius:999px;border:1px solid rgba(74,222,176,.16);background:rgba(74,222,176,.05);color:#c3f9e2;font-size:8px;font-weight:900;letter-spacing:.6px;text-transform:uppercase}
+    .backend-contract{margin-top:10px;padding:10px 12px;border-radius:10px;border:1px solid rgba(251,191,36,.10);background:rgba(251,191,36,.035);color:#b7a879;font-size:9px;line-height:1.5}
+    .backend-contract strong{color:#e8dca8}
+    @media(max-width:850px){.demo-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:650px){.demo-grid{grid-template-columns:1fr}.new-tool-upload-grid,.new-tool-fields{grid-template-columns:1fr}.new-tool-field.full{grid-column:auto}.multi-source-grid{grid-template-columns:repeat(2,1fr)}}
+
   </style>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4"></script>
@@ -1515,8 +1558,8 @@
     <div class="container">
       <div class="badge"><span class="badge-dot"></span>AI Face &amp; Portrait Studio</div>
       <h1>Imagine your face.<br><span class="gradient-text">Transform your story.</span></h1>
-      <p class="hero-description">Create, transform and enhance portraits with AI. Explore realistic age transformations, face swaps, photo-to-video motion and quality enhancement — all in one focused studio.</p>
-      <p class="hero-explainer"><strong>FaceEvol is an AI Face &amp; Portrait Studio</strong> for creating, transforming and enhancing portraits with a simple workflow and polished results.</p>
+      <p class="hero-description">Create, transform and enhance portraits with AI. From professional portrait creation and profile-photo packs to age transformation, single and multi-face swaps, photo-to-video motion and enhancement — it all lives in one focused studio.</p>
+      <p class="hero-explainer"><strong>FaceEvol is an AI Face &amp; Portrait Studio</strong> built around 10 focused experiences, with one carefully selected AI model behind each workflow.</p>
       <div class="hero-actions">
         <a href="#studio" class="button button-primary" id="heroAgeButton">Open AI Studio →</a>
         <a href="#demos" class="button button-secondary">View Examples</a>
@@ -1536,49 +1579,6 @@
       </div>
     </div>
   </section>
-
-  <section class="evolution-section" id="face-evolution" aria-labelledby="faceEvolutionTitle">
-    <div class="container">
-      <div class="evolution-shell">
-        <div class="evolution-copy">
-          <div class="roadmap-pill"><span>✦</span> Signature FaceEvol Experience · Coming Soon</div>
-          <span class="section-eyebrow">AI Face Evolution</span>
-          <h2 id="faceEvolutionTitle">See one face evolve through <span class="gradient-text">a lifetime.</span></h2>
-          <p>Turn one portrait into a smooth visual journey through life — from childhood to later years — while keeping identity, framing and expression consistent.</p>
-          <div class="evolution-points">
-            <span>Consistent identity</span><span>Smooth age transitions</span><span>Short cinematic sequence</span>
-          </div>
-          <div class="evolution-actions">
-            <a href="#studio" class="button button-primary">Explore Live Tools →</a>
-          </div>
-        </div>
-
-        <div class="evolution-visual" aria-label="Placeholder for the future AI Face Evolution animation">
-          <div class="evolution-stage">
-            <div class="evolution-orbit evolution-orbit-one"></div>
-            <div class="evolution-orbit evolution-orbit-two"></div>
-            <div class="evolution-portrait-placeholder">
-              <div class="evolution-face-mark">FE</div>
-              <strong>Face Evolution Demo</strong>
-              <span>Signature animation</span>
-            </div>
-            <div class="evolution-play">▶</div>
-          </div>
-          <div class="age-journey" aria-hidden="true">
-            <span><b>5</b><small>Child</small></span>
-            <i></i><span><b>15</b><small>Teen</small></span>
-            <i></i><span><b>28</b><small>Young</small></span>
-            <i></i><span><b>40</b><small>Adult</small></span>
-            <i></i><span><b>55</b><small>Mature</small></span>
-            <i></i><span><b>70</b><small>Senior</small></span>
-            <i></i><span><b>85</b><small>Later</small></span>
-          </div>
-          <div class="evolution-caption">One face. One lifetime. A signature FaceEvol experience.</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
 
   <section class="demo-section" id="demos">
     <div class="container">
@@ -1704,6 +1704,83 @@
             <div class="demo-cost-note"><strong>Preview only</strong> · stored demo media</div>
           </div>
         </article>
+    
+
+        <article class="demo-card demo-card-new">
+          <div class="demo-preview">
+            <div class="demo-preview-placeholder">
+              <div class="demo-preview-icon">◈</div>
+              <strong>AI Portrait Creator Demo</strong>
+              <span>Prepared portrait example</span>
+            </div>
+          </div>
+          <div class="demo-card-copy">
+            <div class="demo-card-top"><h3>AI Portrait Creator</h3><span class="demo-type">New</span></div>
+            <p>Preview a polished portrait restyle with identity, skin texture and facial character kept recognizable.</p>
+            <div class="demo-card-actions">
+              <button type="button" class="demo-view-button" data-demo-key="portraitCreator">▶ View Demo</button>
+              <button type="button" class="demo-create-button" data-demo-create="portrait">Create Your Own</button>
+            </div>
+            <div class="demo-cost-note"><strong>Preview only</strong> · stored demo media</div>
+          </div>
+        </article>
+
+        <article class="demo-card demo-card-new">
+          <div class="demo-preview">
+            <div class="demo-preview-placeholder">
+              <div class="demo-preview-icon">▦</div>
+              <strong>Profile Photo Pack Demo</strong>
+              <span>Prepared profile set</span>
+            </div>
+          </div>
+          <div class="demo-card-copy">
+            <div class="demo-card-top"><h3>AI Profile Photo Pack</h3><span class="demo-type">New</span></div>
+            <p>See a coordinated professional profile set built from one portrait with consistent identity and presentation.</p>
+            <div class="demo-card-actions">
+              <button type="button" class="demo-view-button" data-demo-key="profilePack">▶ View Demo</button>
+              <button type="button" class="demo-create-button" data-demo-create="profile-pack">Create Your Own</button>
+            </div>
+            <div class="demo-cost-note"><strong>Preview only</strong> · stored demo media</div>
+          </div>
+        </article>
+
+        <article class="demo-card demo-card-new">
+          <div class="demo-preview">
+            <div class="demo-preview-placeholder">
+              <div class="demo-preview-icon">◎</div>
+              <strong>Multiple Photo Face Swap Demo</strong>
+              <span>Group photo example</span>
+            </div>
+          </div>
+          <div class="demo-card-copy">
+            <div class="demo-card-top"><h3>Multiple Photo Face Swap</h3><span class="demo-type">New</span></div>
+            <p>Preview multiple source identities swapped into one group photo while preserving the target composition.</p>
+            <div class="demo-card-actions">
+              <button type="button" class="demo-view-button" data-demo-key="multiPhotoSwap">▶ View Demo</button>
+              <button type="button" class="demo-create-button" data-demo-create="multi-photo">Create Your Own</button>
+            </div>
+            <div class="demo-cost-note"><strong>Preview only</strong> · stored demo media</div>
+          </div>
+        </article>
+
+        <article class="demo-card demo-card-new">
+          <div class="demo-preview">
+            <div class="demo-preview-placeholder">
+              <div class="demo-preview-icon">◉</div>
+              <strong>Multiple Video Face Swap Demo</strong>
+              <span>Multi-face video example</span>
+            </div>
+          </div>
+          <div class="demo-card-copy">
+            <div class="demo-card-top"><h3>Multiple Video Face Swap</h3><span class="demo-type">New</span></div>
+            <p>Apply one selected source identity across all detected faces in a video clip with a single workflow.</p>
+            <div class="demo-card-actions">
+              <button type="button" class="demo-view-button" data-demo-key="multiVideoSwap">▶ View Demo</button>
+              <button type="button" class="demo-create-button" data-demo-create="multi-video">Create Your Own</button>
+            </div>
+            <div class="demo-cost-note"><strong>Preview only</strong> · stored demo media</div>
+          </div>
+        </article>
       </div>
 
 
@@ -1750,9 +1827,9 @@
     <div class="container">
       <div class="studio-section-intro">
         <span class="section-eyebrow">FaceEvol AI Studio</span>
-        <h2 id="studioSectionTitle">6 live tools. <span class="gradient-text">4 coming next.</span></h2>
-        <p>Choose your direction — create, transform or enhance — then open the tool that fits your idea.</p>
-        <div class="studio-status-line" aria-label="FaceEvol tool availability"><span class="studio-status-pill live"><i></i>6 live now</span><span class="studio-status-pill soon">4 coming soon</span></div>
+        <h2 id="studioSectionTitle">10 live tools. <span class="gradient-text">One premium studio.</span></h2>
+        <p>Choose your direction — create, transform or enhance — with ten focused FaceEvol experiences in one consistent workspace.</p>
+        <div class="studio-status-line" aria-label="FaceEvol tool lineup"><span class="studio-status-pill live"><i></i>10 tools available</span><span class="studio-status-pill soon">Create · Transform · Enhance</span></div>
       </div>
 
 <div class="studio-wrap" id="studio">
@@ -1767,13 +1844,13 @@
           <div class="studio-inner">
             <div class="studio-sidebar">
               <div class="studio-label">Create</div>
-              <div class="tool-option studio-placeholder-tool" data-studio-placeholder="portrait">
+              <div class="tool-option new-tool-option" id="portraitCreatorOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open AI Portrait Creator">
                 <div class="tool-icon">◈</div>
-                <div><div class="tool-name">AI Portrait Creator</div><span class="tool-sub">Text or your photo</span><span class="tool-coming-soon">Coming Soon</span></div>
+                <div><div class="tool-name">AI Portrait Creator</div><span class="tool-sub">Restyle your portrait</span><span class="tool-new-pill">New</span></div>
               </div>
-              <div class="tool-option studio-placeholder-tool" data-studio-placeholder="profile-pack">
+              <div class="tool-option new-tool-option" id="profilePackOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open AI Profile Photo Pack">
                 <div class="tool-icon">▦</div>
-                <div><div class="tool-name">AI Profile Photo Pack</div><span class="tool-sub">Polished portrait sets</span><span class="tool-coming-soon">Coming Soon</span></div>
+                <div><div class="tool-name">AI Profile Photo Pack</div><span class="tool-sub">Professional portrait set</span><span class="tool-new-pill">New</span></div>
               </div>
               <div class="tool-option" id="photoToVideoOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open Photo to Video">
                 <div class="tool-icon"><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-photo-video"></use></svg></div>
@@ -1781,25 +1858,25 @@
               </div>
 
               <div class="studio-label studio-label-spaced">Transform</div>
-              <div class="tool-option studio-placeholder-tool" data-studio-placeholder="evolution">
-                <div class="tool-icon">∞</div>
-                <div><div class="tool-name">AI Face Evolution</div><span class="tool-sub">Life-stage journey</span><span class="tool-coming-soon">Coming Soon</span></div>
-              </div>
               <div class="tool-option active" id="ageOption" role="button" tabindex="0" aria-pressed="true" aria-label="Open Age Transformation">
                 <div class="tool-icon"><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-age"></use></svg></div>
                 <div><div class="tool-name">Age Transformation</div><span class="tool-sub">Age 0–100</span></div>
               </div>
               <div class="tool-option" id="photoFaceSwapOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open Photo Face Swap">
                 <div class="tool-icon"><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-photo"></use></svg></div>
-                <div><div class="tool-name">Photo Face Swap</div><span class="tool-sub">Photo → photo</span></div>
+                <div><div class="tool-name">Photo Face Swap</div><span class="tool-sub">One face · photo</span></div>
               </div>
               <div class="tool-option" id="faceSwapOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open Video Face Swap">
                 <div class="tool-icon"><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-video-swap"></use></svg></div>
-                <div><div class="tool-name">Video Face Swap</div><span class="tool-sub">Video → video</span></div>
+                <div><div class="tool-name">Video Face Swap</div><span class="tool-sub">One face · video</span></div>
               </div>
-              <div class="tool-option studio-placeholder-tool" data-studio-placeholder="multi-swap">
+              <div class="tool-option new-tool-option" id="multiPhotoSwapOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open Multiple Photo Face Swap">
                 <div class="tool-icon">◎</div>
-                <div><div class="tool-name">Multi-Face Swap</div><span class="tool-sub">Multiple faces</span><span class="tool-coming-soon">Coming Soon</span></div>
+                <div><div class="tool-name">Multiple Photo Face Swap</div><span class="tool-sub">Several faces · photo</span><span class="tool-new-pill">New</span></div>
+              </div>
+              <div class="tool-option new-tool-option" id="multiVideoSwapOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open Multiple Video Face Swap">
+                <div class="tool-icon">◉</div>
+                <div><div class="tool-name">Multiple Video Face Swap</div><span class="tool-sub">All detected faces · video</span><span class="tool-new-pill">New</span></div>
               </div>
 
               <div class="studio-label studio-label-spaced">Enhance</div>
@@ -1849,13 +1926,13 @@
           <div class="clean-category-number">01</div>
           <h3>Create</h3>
           <p>Build a new portrait or bring a still image to life.</p>
-          <div class="clean-tool-list"><span class="overview-coming">AI Portrait Creator</span><span class="overview-coming">AI Profile Photo Pack</span><span>Photo to Video</span></div>
+          <div class="clean-tool-list"><span class="overview-new" data-open-tool="portrait" role="button" tabindex="0">AI Portrait Creator</span><span class="overview-new" data-open-tool="profile-pack" role="button" tabindex="0">AI Profile Photo Pack</span><span>Photo to Video</span></div>
         </article>
         <article class="clean-category-card">
           <div class="clean-category-number">02</div>
           <h3>Transform</h3>
           <p>Explore age, identity and face transformations.</p>
-          <div class="clean-tool-list"><span class="overview-coming">AI Face Evolution</span><span>Age Transformation</span><span>Photo Face Swap</span><span>Video Face Swap</span><span class="overview-coming">Multi-Face Swap</span></div>
+          <div class="clean-tool-list"><span>Age Transformation</span><span>Photo Face Swap</span><span>Video Face Swap</span><span class="overview-new" data-open-tool="multi-photo" role="button" tabindex="0">Multiple Photo Face Swap</span><span class="overview-new" data-open-tool="multi-video" role="button" tabindex="0">Multiple Video Face Swap</span></div>
         </article>
         <article class="clean-category-card">
           <div class="clean-category-number">03</div>
@@ -2042,7 +2119,7 @@
           </summary>
           <div class="legal-content">
             <h3>FaceEvol Privacy Policy</h3>
-            <p>This Privacy Policy explains how FaceEvol handles information when you use its AI age transformation, photo face swap, Photo to Video, video face swap, photo enhancement and video enhancement features.</p>
+            <p>This Privacy Policy explains how FaceEvol handles information when you use its AI portrait creation, profile-photo, age transformation, single- and multi-face photo/video swap, Photo to Video, photo enhancement and video enhancement features.</p>
 
             <h4>1. Information you provide</h4>
             <p>When you use FaceEvol, you may provide photos, videos and other content needed to create the result you request. You may also provide information when contacting support.</p>
@@ -2099,7 +2176,7 @@
             <p>These Terms govern your use of FaceEvol. By using the service, you agree to use it lawfully and responsibly.</p>
 
             <h4>1. The service</h4>
-            <p>FaceEvol provides AI-powered age transformation, photo face swap, Photo to Video, video face swap, photo enhancement and video enhancement tools. Features, processing limits, supported formats, models and availability may change as the service develops.</p>
+            <p>FaceEvol provides AI-powered portrait creation, profile-photo, age transformation, single- and multi-face photo/video swap, Photo to Video, photo enhancement and video enhancement tools. Features, processing limits, supported formats, models and availability may change as the service develops.</p>
 
             <h4>2. Beta status</h4>
             <p>FaceEvol is currently offered as a beta service. Beta features may contain errors, change without notice, become temporarily unavailable or produce unexpected results.</p>
@@ -2265,6 +2342,15 @@
        /demos/video-enhance-before.mp4
        /demos/video-enhance-after.mp4
 
+       /demos/portrait-before.webp
+       /demos/portrait-after.webp
+       /demos/profile-pack-before.webp
+       /demos/profile-pack-after.webp
+       /demos/multi-photo-before.webp
+       /demos/multi-photo-after.webp
+       /demos/multi-video-before.mp4
+       /demos/multi-video-after.mp4
+
      Nothing else in the interface needs to be rebuilt when
      those files are ready — just fill these source strings.
      ========================================================= */
@@ -2329,6 +2415,42 @@
       title:"Video Enhance",
       description:"Original and enhanced clips stored side by side so visitors can compare clarity and detail.",
       createTool:"enhance",
+      kind:"compareVideo",
+      before:"",
+      after:""
+    },
+
+    portraitCreator:{
+      title:"AI Portrait Creator",
+      description:"A prepared original/result portrait pair showing a polished identity-preserving restyle.",
+      createTool:"portrait",
+      kind:"compareImage",
+      before:"",
+      after:""
+    },
+
+    profilePack:{
+      title:"AI Profile Photo Pack",
+      description:"A prepared professional profile-photo pack generated from one portrait.",
+      createTool:"profile-pack",
+      kind:"compareImage",
+      before:"",
+      after:""
+    },
+
+    multiPhotoSwap:{
+      title:"Multiple Photo Face Swap",
+      description:"A stored group-photo comparison showing several face replacements in one result.",
+      createTool:"multi-photo",
+      kind:"compareImage",
+      before:"",
+      after:""
+    },
+
+    multiVideoSwap:{
+      title:"Multiple Video Face Swap",
+      description:"A stored clip comparison showing one source identity applied to all detected faces in the target video.",
+      createTool:"multi-video",
       kind:"compareVideo",
       before:"",
       after:""
@@ -2612,6 +2734,10 @@
   const photoEnhanceOption = document.getElementById("photoEnhanceOption");
   const videoEnhanceOption = document.getElementById("videoEnhanceOption");
   const ageOption = document.getElementById("ageOption");
+  const portraitCreatorOption = document.getElementById("portraitCreatorOption");
+  const profilePackOption = document.getElementById("profilePackOption");
+  const multiPhotoSwapOption = document.getElementById("multiPhotoSwapOption");
+  const multiVideoSwapOption = document.getElementById("multiVideoSwapOption");
   const ctaStartButton = document.getElementById("ctaStartButton");
   const heroAgeButton = document.getElementById("heroAgeButton");
   const mobileStudioCta = document.getElementById("mobileStudioCta");
@@ -6010,6 +6136,424 @@
   }
 
 
+
+  /* =========================================================
+     FACEVOL NEW 10-TOOL WORKFLOWS
+     ---------------------------------------------------------
+     These four interfaces deliberately reuse existing routes:
+       /api/predict        -> age | portrait | profile_pack
+       /api/photo-faceswap -> single | multi
+       /api/faceswap       -> single | multi
+     This preserves the Vercel Function count. The server must route by
+     req.body.mode and keep the default/single branches unchanged.
+
+     Finalized new-model plan (server-side only; never expose API tokens):
+       portrait / profile_pack : qwen/qwen-image-edit-plus
+       multi photo             : ddvinh1/inswapper
+       multi video             : skytells-research/deepface
+     Note: the previous ddvinh1/new-faceswap-video version was disabled on
+     Replicate, so the live DeepFace multi-video model is used instead.
+     ========================================================= */
+  const FACEVOL_NEW_MODEL_PLAN=Object.freeze({
+    portrait_creator:"qwen/qwen-image-edit-plus",
+    profile_photo_pack:"qwen/qwen-image-edit-plus",
+    multi_photo_faceswap:"ddvinh1/inswapper",
+    multi_video_faceswap:"skytells-research/deepface"
+  });
+
+  const portraitControls=document.createElement("div");
+  portraitControls.className="age-controls model-tool-controls";
+  portraitControls.innerHTML=`
+    <div class="panel-top">
+      <div><span class="panel-kicker">AI Portrait Creator</span><h3 class="panel-title">Create a polished portrait from your photo</h3><p class="panel-copy">Keep your identity recognizable while changing styling, wardrobe, lighting and background.</p></div>
+      <span class="model-badge">New</span>
+    </div>
+    <div class="model-ready-note"><strong>One-model workflow.</strong> FaceEvol automatically uses the portrait model selected for this feature — there is no model picker.</div>
+    <div class="new-tool-upload-grid" style="grid-template-columns:1fr">
+      <div class="new-tool-upload" id="portraitUploadBox" role="button" tabindex="0"><div style="font-size:26px;margin-bottom:7px">◈</div><strong>Choose your portrait</strong><small>Clear JPG, PNG or WebP · one person works best</small></div>
+      <input type="file" id="portraitUpload" accept="image/*" hidden>
+    </div>
+    <div class="new-tool-fields">
+      <div class="new-tool-field"><label>Portrait style</label><select id="portraitStyle"><option value="professional">Professional Headshot</option><option value="cinematic">Cinematic Portrait</option><option value="editorial">Editorial / Magazine</option><option value="fashion">Fashion Portrait</option><option value="dating">Dating Profile</option><option value="anime">Anime Portrait</option><option value="fantasy">Fantasy Portrait</option></select></div>
+      <div class="new-tool-field"><label>Background</label><select id="portraitBackground"><option value="studio">Clean Studio</option><option value="office">Modern Office</option><option value="city">Soft City</option><option value="nature">Natural Outdoor</option><option value="dark">Dark Editorial</option><option value="keep">Keep Original</option></select></div>
+      <div class="new-tool-field full"><label>Optional direction</label><textarea id="portraitPrompt" maxlength="500" placeholder="Example: dark charcoal background, black crew neck, soft studio lighting, natural skin texture..."></textarea></div>
+    </div>
+    <div class="new-tool-help">Tip: use a front-facing or three-quarter portrait with the full face visible. FaceEvol asks the model to preserve facial identity, skin tone and natural texture.</div>
+    <button type="button" class="transform-button gated" id="startPortraitButton" disabled>✦ Create Portrait</button>
+    <div class="new-feature-status" id="portraitStatus"></div><div class="new-feature-error" id="portraitError"></div>
+    <div class="new-tool-result" id="portraitResult"><img id="portraitResultImage" alt="FaceEvol AI Portrait Creator result"><button type="button" class="download-button" id="downloadPortraitButton">⬇️ Download Portrait</button></div>
+  `;
+  studioMain.appendChild(portraitControls);
+
+  const profilePackControls=document.createElement("div");
+  profilePackControls.className="age-controls model-tool-controls";
+  profilePackControls.innerHTML=`
+    <div class="panel-top">
+      <div><span class="panel-kicker">AI Profile Photo Pack</span><h3 class="panel-title">Build a coordinated profile-photo set</h3><p class="panel-copy">Turn one clear portrait into a premium 2×2 profile-photo sheet with consistent identity and varied professional looks.</p></div>
+      <span class="model-badge">New</span>
+    </div>
+    <div class="model-ready-note"><strong>Consistent identity first.</strong> The pack uses the same portrait model as Portrait Creator with a specialized profile-pack prompt.</div>
+    <div class="new-tool-upload-grid" style="grid-template-columns:1fr">
+      <div class="new-tool-upload" id="profilePackUploadBox" role="button" tabindex="0"><div style="font-size:26px;margin-bottom:7px">▦</div><strong>Choose one portrait</strong><small>Face clearly visible · simple lighting recommended</small></div>
+      <input type="file" id="profilePackUpload" accept="image/*" hidden>
+    </div>
+    <div class="new-tool-fields">
+      <div class="new-tool-field"><label>Pack type</label><select id="profilePackStyle"><option value="linkedin">LinkedIn / Business</option><option value="founder">Founder / Executive</option><option value="creative">Creative Professional</option><option value="dating">Dating Profile</option><option value="minimal">Minimal Studio</option></select></div>
+      <div class="new-tool-field"><label>Wardrobe</label><select id="profilePackWardrobe"><option value="smart">Smart Casual</option><option value="formal">Formal</option><option value="minimal">Minimal Black</option><option value="keep">Keep Original</option></select></div>
+    </div>
+    <div class="new-tool-help">The output is a single high-quality 2×2 pack image, keeping the deployment simple and avoiding extra serverless endpoints.</div>
+    <button type="button" class="transform-button gated" id="startProfilePackButton" disabled>▦ Create Profile Pack</button>
+    <div class="new-feature-status" id="profilePackStatus"></div><div class="new-feature-error" id="profilePackError"></div>
+    <div class="new-tool-result" id="profilePackResult"><img id="profilePackResultImage" alt="FaceEvol AI Profile Photo Pack result"><button type="button" class="download-button" id="downloadProfilePackButton">⬇️ Download Profile Pack</button></div>
+  `;
+  studioMain.appendChild(profilePackControls);
+
+  const multiPhotoControls=document.createElement("div");
+  multiPhotoControls.className="age-controls model-tool-controls";
+  multiPhotoControls.innerHTML=`
+    <div class="panel-top">
+      <div><span class="panel-kicker">Multiple Photo Face Swap</span><h3 class="panel-title">Swap several faces in one group photo</h3><p class="panel-copy">Add up to four source faces, choose one target photo, then let FaceEvol map the selected identities across detected target faces.</p></div>
+      <span class="model-badge">New</span>
+    </div>
+    <div class="model-ready-note"><strong>Designed for groups.</strong> Use one clear source image per person. FaceEvol combines the selected sources into one private source sheet, then the consolidated photo-swap route maps detected faces automatically.</div>
+    <div class="new-tool-upload-grid">
+      <div class="new-tool-upload" id="multiPhotoFacesBox" role="button" tabindex="0"><div style="font-size:25px;margin-bottom:7px">◎</div><strong>Choose source faces</strong><small>1–4 images · one clear face per image</small></div>
+      <div class="new-tool-upload" id="multiPhotoTargetBox" role="button" tabindex="0"><div style="font-size:25px;margin-bottom:7px">🖼️</div><strong>Choose target group photo</strong><small>Photo containing the faces to replace</small></div>
+      <input type="file" id="multiPhotoFacesInput" accept="image/*" multiple hidden>
+      <input type="file" id="multiPhotoTargetInput" accept="image/*" hidden>
+    </div>
+    <div class="multi-source-grid" id="multiPhotoSourceGrid"><div class="multi-source-chip">Source 1</div><div class="multi-source-chip">Source 2</div><div class="multi-source-chip">Source 3</div><div class="multi-source-chip">Source 4</div></div>
+    <div class="new-tool-fields">
+      <div class="new-tool-field"><label>Face mapping</label><select id="multiPhotoMapping"><option value="auto">Auto · detected order</option><option value="custom">Custom target indexes</option></select></div>
+      <div class="new-tool-field"><label>Target indexes</label><input id="multiPhotoTargetIndexes" value="-1" placeholder="Example: 0,1,2" disabled></div>
+    </div>
+    <div class="new-tool-help">Use only photos you have permission to edit. For custom mapping, indexes are passed to the server/model; Auto is recommended for the first version.</div>
+    <button type="button" class="transform-button gated" id="startMultiPhotoButton" disabled>◎ Swap Multiple Faces</button>
+    <div class="new-feature-status" id="multiPhotoStatus"></div><div class="new-feature-error" id="multiPhotoError"></div>
+    <div class="new-tool-result" id="multiPhotoResult"><img id="multiPhotoResultImage" alt="FaceEvol multiple photo face swap result"><button type="button" class="download-button" id="downloadMultiPhotoButton">⬇️ Download Image</button></div>
+  `;
+  studioMain.appendChild(multiPhotoControls);
+
+  const multiVideoControls=document.createElement("div");
+  multiVideoControls.className="age-controls model-tool-controls";
+  multiVideoControls.innerHTML=`
+    <div class="panel-top">
+      <div><span class="panel-kicker">Multiple Video Face Swap</span><h3 class="panel-title">Apply one face across every detected face in a clip</h3><p class="panel-copy">Choose one source identity and one MP4. FaceEvol applies that source identity to all detected faces throughout the selected clip.</p></div>
+      <span class="model-badge">New</span>
+    </div>
+    <div class="model-ready-note"><strong>Multi-face video workflow.</strong> FaceEvol uses one source identity and a target clip, then processes detected faces through the dedicated multi-video model. Different source identities per person can be added later if a reliable model exposes explicit face mapping.</div>
+    <div class="new-tool-upload-grid">
+      <div class="new-tool-upload" id="multiVideoFaceBox" role="button" tabindex="0"><div style="font-size:25px;margin-bottom:7px">👤</div><strong>Choose source face</strong><small>Clear JPG, PNG or WebP</small></div>
+      <div class="new-tool-upload" id="multiVideoFileBox" role="button" tabindex="0"><div style="font-size:25px;margin-bottom:7px">▶</div><strong>Choose target MP4</strong><small>Up to 300 MB · first 20 seconds used if longer</small></div>
+      <input type="file" id="multiVideoFaceInput" accept="image/*" hidden>
+      <input type="file" id="multiVideoFileInput" accept="video/mp4,.mp4" hidden>
+    </div>
+    <div class="new-tool-result" id="multiVideoSourcePreviewWrap"><video id="multiVideoSourcePreview" controls playsinline preload="metadata"></video></div>
+    <div class="new-tool-help">For this version, “multiple” means the same selected source identity is applied across detected faces in the target video.</div>
+    <button type="button" class="transform-button gated" id="startMultiVideoButton" disabled>◉ Swap All Detected Faces</button>
+    <div class="new-feature-status" id="multiVideoStatus"></div><div class="new-feature-error" id="multiVideoError"></div>
+    <div class="new-tool-result" id="multiVideoResult"><video id="multiVideoResultVideo" controls playsinline preload="metadata"></video><button type="button" class="download-button" id="downloadMultiVideoButton">⬇️ Download Video</button></div>
+  `;
+  studioMain.appendChild(multiVideoControls);
+
+  let selectedPortraitFile=null;
+  let selectedProfilePackFile=null;
+  let selectedMultiPhotoFaces=[];
+  let selectedMultiPhotoTarget=null;
+  let selectedMultiVideoFace=null;
+  let selectedMultiVideoFile=null;
+  let multiVideoPreviewUrl=null;
+  let latestPortraitOutput=null;
+  let latestProfilePackOutput=null;
+  let latestMultiPhotoOutput=null;
+  let latestMultiVideoOutput=null;
+
+  const portraitUploadBox=document.getElementById("portraitUploadBox");
+  const portraitUpload=document.getElementById("portraitUpload");
+  const portraitStyle=document.getElementById("portraitStyle");
+  const portraitBackground=document.getElementById("portraitBackground");
+  const portraitPrompt=document.getElementById("portraitPrompt");
+  const startPortraitButton=document.getElementById("startPortraitButton");
+  const portraitStatus=document.getElementById("portraitStatus");
+  const portraitError=document.getElementById("portraitError");
+  const portraitResult=document.getElementById("portraitResult");
+  const portraitResultImage=document.getElementById("portraitResultImage");
+  const downloadPortraitButton=document.getElementById("downloadPortraitButton");
+
+  const profilePackUploadBox=document.getElementById("profilePackUploadBox");
+  const profilePackUpload=document.getElementById("profilePackUpload");
+  const profilePackStyle=document.getElementById("profilePackStyle");
+  const profilePackWardrobe=document.getElementById("profilePackWardrobe");
+  const startProfilePackButton=document.getElementById("startProfilePackButton");
+  const profilePackStatus=document.getElementById("profilePackStatus");
+  const profilePackError=document.getElementById("profilePackError");
+  const profilePackResult=document.getElementById("profilePackResult");
+  const profilePackResultImage=document.getElementById("profilePackResultImage");
+  const downloadProfilePackButton=document.getElementById("downloadProfilePackButton");
+
+  const multiPhotoFacesBox=document.getElementById("multiPhotoFacesBox");
+  const multiPhotoTargetBox=document.getElementById("multiPhotoTargetBox");
+  const multiPhotoFacesInput=document.getElementById("multiPhotoFacesInput");
+  const multiPhotoTargetInput=document.getElementById("multiPhotoTargetInput");
+  const multiPhotoSourceGrid=document.getElementById("multiPhotoSourceGrid");
+  const multiPhotoMapping=document.getElementById("multiPhotoMapping");
+  const multiPhotoTargetIndexes=document.getElementById("multiPhotoTargetIndexes");
+  const startMultiPhotoButton=document.getElementById("startMultiPhotoButton");
+  const multiPhotoStatus=document.getElementById("multiPhotoStatus");
+  const multiPhotoError=document.getElementById("multiPhotoError");
+  const multiPhotoResult=document.getElementById("multiPhotoResult");
+  const multiPhotoResultImage=document.getElementById("multiPhotoResultImage");
+  const downloadMultiPhotoButton=document.getElementById("downloadMultiPhotoButton");
+
+  const multiVideoFaceBox=document.getElementById("multiVideoFaceBox");
+  const multiVideoFileBox=document.getElementById("multiVideoFileBox");
+  const multiVideoFaceInput=document.getElementById("multiVideoFaceInput");
+  const multiVideoFileInput=document.getElementById("multiVideoFileInput");
+  const multiVideoSourcePreviewWrap=document.getElementById("multiVideoSourcePreviewWrap");
+  const multiVideoSourcePreview=document.getElementById("multiVideoSourcePreview");
+  const startMultiVideoButton=document.getElementById("startMultiVideoButton");
+  const multiVideoStatus=document.getElementById("multiVideoStatus");
+  const multiVideoError=document.getElementById("multiVideoError");
+  const multiVideoResult=document.getElementById("multiVideoResult");
+  const multiVideoResultVideo=document.getElementById("multiVideoResultVideo");
+  const downloadMultiVideoButton=document.getElementById("downloadMultiVideoButton");
+
+  function setImageUploadPreview(box,file,label){
+    if(!box||!file) return;
+    const old=box.querySelector("img");
+    if(old&&old.dataset.objectUrl){try{URL.revokeObjectURL(old.dataset.objectUrl);}catch{}}
+    const url=URL.createObjectURL(file);
+    box.innerHTML=`<img class="new-tool-upload-preview" src="${url}" alt="${label}"><strong>${label}</strong><small>${file.name}</small>`;
+    const img=box.querySelector("img"); if(img) img.dataset.objectUrl=url;
+  }
+
+
+  async function createMultiFaceSourceSheet(files){
+    const chosen=files.slice(0,4);
+    const size=900;
+    const canvas=document.createElement("canvas");canvas.width=size;canvas.height=size;
+    const ctx=canvas.getContext("2d");if(!ctx)throw new Error("Your browser could not prepare the source faces.");
+    ctx.fillStyle="#111827";ctx.fillRect(0,0,size,size);
+    const cells=chosen.length<=1?[[0,0,size,size]]:chosen.length===2?[[0,0,size/2,size],[size/2,0,size/2,size]]:[[0,0,size/2,size/2],[size/2,0,size/2,size/2],[0,size/2,size/2,size/2],[size/2,size/2,size/2,size/2]];
+    for(let i=0;i<chosen.length;i++){
+      const file=chosen[i];const url=URL.createObjectURL(file);
+      try{
+        const img=await new Promise((resolve,reject)=>{const node=new Image();node.onload=()=>resolve(node);node.onerror=()=>reject(new Error("Could not read one of the source faces."));node.src=url;});
+        const [x,y,w,h]=cells[i];const scale=Math.max(w/img.naturalWidth,h/img.naturalHeight);const sw=w/scale,sh=h/scale;const sx=(img.naturalWidth-sw)/2,sy=(img.naturalHeight-sh)/2;
+        ctx.drawImage(img,sx,sy,sw,sh,x,y,w,h);
+      }finally{URL.revokeObjectURL(url);}
+    }
+    const blob=await canvasToBlob(canvas,"image/jpeg",.91);
+    return await blobToDataURL(blob);
+  }
+
+  function setNewDownload(button,url,filename){
+    button.onclick=async()=>{
+      if(!url) return;
+      button.disabled=true;
+      try{
+        const response=await fetch(url,{cache:"no-store"});
+        if(!response.ok) throw new Error("download");
+        const blob=await response.blob();
+        const objectUrl=URL.createObjectURL(blob);
+        const a=document.createElement("a");a.href=objectUrl;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(objectUrl),1800);
+      }catch{
+        const a=document.createElement("a");a.href=url;a.target="_blank";a.rel="noopener";document.body.appendChild(a);a.click();a.remove();
+      }finally{button.disabled=false;}
+    };
+  }
+
+  async function pollNewToolPrediction(prediction,statusNode,label){
+    let current=prediction;
+    if(!current?.id||isTerminalPredictionStatus(current.status)) return current;
+    for(let attempt=0;attempt<75;attempt++){
+      statusNode.textContent=attempt<10?`${label}...`:`Still ${label.toLowerCase()} — please keep this page open.`;
+      await wait(2000);
+      const response=await fetch(`/api/prediction?id=${encodeURIComponent(current.id)}`,{cache:"no-store",headers:await faceEvolPredictionHeaders()});
+      const data=await readJsonResponse(response);
+      applyFaceEvolServerCreditPayload(data);
+      if(!response.ok) throw new Error(data.error||"Could not check generation status.");
+      current=data.prediction||data;
+      if(isTerminalPredictionStatus(current.status)) return current;
+    }
+    throw new Error("The generation took longer than expected. Please try again.");
+  }
+
+  function newToolPredictionError(prediction,fallback){
+    if(!prediction) return fallback;
+    if(typeof prediction.error==="string"&&prediction.error) return prediction.error;
+    if(prediction.error) return JSON.stringify(prediction.error);
+    return fallback;
+  }
+
+  async function readVideoDuration(file){
+    const url=URL.createObjectURL(file);
+    try{
+      return await new Promise((resolve,reject)=>{
+        const video=document.createElement("video");
+        video.preload="metadata";
+        video.onloadedmetadata=()=>Number.isFinite(video.duration)?resolve(video.duration):reject(new Error("Could not read video duration."));
+        video.onerror=()=>reject(new Error("Could not read this MP4 video."));
+        video.src=url;
+      });
+    }finally{URL.revokeObjectURL(url);}
+  }
+
+  portraitUploadBox.addEventListener("click",()=>portraitUpload.click());
+  portraitUploadBox.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();portraitUpload.click();}});
+  portraitUpload.addEventListener("change",()=>{
+    const file=portraitUpload.files?.[0]||null;selectedPortraitFile=file;portraitError.textContent="";portraitResult.classList.remove("show");startPortraitButton.disabled=!file;
+    if(file) setImageUploadPreview(portraitUploadBox,file,"Portrait ready");
+  });
+
+  profilePackUploadBox.addEventListener("click",()=>profilePackUpload.click());
+  profilePackUploadBox.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();profilePackUpload.click();}});
+  profilePackUpload.addEventListener("change",()=>{
+    const file=profilePackUpload.files?.[0]||null;selectedProfilePackFile=file;profilePackError.textContent="";profilePackResult.classList.remove("show");startProfilePackButton.disabled=!file;
+    if(file) setImageUploadPreview(profilePackUploadBox,file,"Portrait ready");
+  });
+
+  multiPhotoFacesBox.addEventListener("click",()=>multiPhotoFacesInput.click());
+  multiPhotoFacesBox.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();multiPhotoFacesInput.click();}});
+  multiPhotoTargetBox.addEventListener("click",()=>multiPhotoTargetInput.click());
+  multiPhotoTargetBox.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();multiPhotoTargetInput.click();}});
+  multiPhotoFacesInput.addEventListener("change",()=>{
+    const files=[...(multiPhotoFacesInput.files||[])].slice(0,4);selectedMultiPhotoFaces=files;multiPhotoError.textContent="";
+    multiPhotoSourceGrid.innerHTML="";
+    for(let i=0;i<4;i++){
+      const chip=document.createElement("div");chip.className="multi-source-chip";
+      if(files[i]){const url=URL.createObjectURL(files[i]);chip.innerHTML=`<img src="${url}" alt="Source face ${i+1}">`;chip.querySelector("img").onload=()=>setTimeout(()=>URL.revokeObjectURL(url),1000);}else chip.textContent=`Source ${i+1}`;
+      multiPhotoSourceGrid.appendChild(chip);
+    }
+    multiPhotoFacesBox.querySelector("strong").textContent=files.length?`${files.length} source face${files.length===1?"":"s"} selected`:"Choose source faces";
+    startMultiPhotoButton.disabled=!(selectedMultiPhotoFaces.length&&selectedMultiPhotoTarget);
+  });
+  multiPhotoTargetInput.addEventListener("change",()=>{
+    selectedMultiPhotoTarget=multiPhotoTargetInput.files?.[0]||null;multiPhotoError.textContent="";
+    if(selectedMultiPhotoTarget) setImageUploadPreview(multiPhotoTargetBox,selectedMultiPhotoTarget,"Target group photo ready");
+    startMultiPhotoButton.disabled=!(selectedMultiPhotoFaces.length&&selectedMultiPhotoTarget);
+  });
+  multiPhotoMapping.addEventListener("change",()=>{multiPhotoTargetIndexes.disabled=multiPhotoMapping.value!=="custom";if(multiPhotoMapping.value!=="custom")multiPhotoTargetIndexes.value="-1";});
+
+  multiVideoFaceBox.addEventListener("click",()=>multiVideoFaceInput.click());
+  multiVideoFaceBox.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();multiVideoFaceInput.click();}});
+  multiVideoFileBox.addEventListener("click",()=>multiVideoFileInput.click());
+  multiVideoFileBox.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();multiVideoFileInput.click();}});
+  multiVideoFaceInput.addEventListener("change",()=>{
+    selectedMultiVideoFace=multiVideoFaceInput.files?.[0]||null;multiVideoError.textContent="";
+    if(selectedMultiVideoFace) setImageUploadPreview(multiVideoFaceBox,selectedMultiVideoFace,"Source face ready");
+    startMultiVideoButton.disabled=!(selectedMultiVideoFace&&selectedMultiVideoFile);
+  });
+  multiVideoFileInput.addEventListener("change",()=>{
+    const file=multiVideoFileInput.files?.[0]||null;
+    if(file&&!isMp4(file)){selectedMultiVideoFile=null;multiVideoFileInput.value="";multiVideoError.textContent="Please choose an MP4 video.";startMultiVideoButton.disabled=true;return;}
+    if(file&&file.size>MAX_VIDEO_BYTES){selectedMultiVideoFile=null;multiVideoFileInput.value="";multiVideoError.textContent="Please choose an MP4 smaller than 300 MB.";startMultiVideoButton.disabled=true;return;}
+    selectedMultiVideoFile=file;multiVideoError.textContent="";
+    if(multiVideoPreviewUrl){try{URL.revokeObjectURL(multiVideoPreviewUrl);}catch{}}
+    if(file){multiVideoPreviewUrl=URL.createObjectURL(file);multiVideoSourcePreview.src=multiVideoPreviewUrl;multiVideoSourcePreviewWrap.classList.add("show");multiVideoFileBox.querySelector("strong").textContent="Target MP4 ready";multiVideoFileBox.querySelector("small").textContent=file.name;}
+    startMultiVideoButton.disabled=!(selectedMultiVideoFace&&selectedMultiVideoFile);
+  });
+
+  startPortraitButton.addEventListener("click",async()=>{
+    if(!selectedPortraitFile)return;
+    startPortraitButton.disabled=true;portraitError.textContent="";portraitStatus.textContent="Preparing portrait...";portraitResult.classList.remove("show");
+    try{
+      const blob=await optimizeImageToBlob(selectedPortraitFile,{maxDimension:1800,maxBytes:700*1024,quality:.94});
+      const image=await blobToDataURL(blob);
+      const custom=portraitPrompt.value.trim();
+      const response=await fetch("/api/predict",{method:"POST",headers:await faceEvolGenerationHeaders(),body:JSON.stringify({mode:"portrait",image,style:portraitStyle.value,background:portraitBackground.value,prompt:custom})});
+      const data=await readJsonResponse(response);applyFaceEvolServerCreditPayload(data);if(!response.ok)throw new Error(data.error||"Portrait request failed.");
+      let prediction=data.prediction||data;prediction=await pollNewToolPrediction(prediction,portraitStatus,"Creating your portrait");
+      if(prediction.status!=="succeeded")throw new Error(newToolPredictionError(prediction,"Portrait creation failed."));
+      const output=findImageUrl(prediction.output)||findImageUrl(prediction);if(!output)throw new Error("No portrait image was returned.");
+      latestPortraitOutput=output;portraitResultImage.src=output;portraitResult.classList.add("show");portraitStatus.textContent="✓ Your portrait is ready.";setNewDownload(downloadPortraitButton,output,`faceevol-portrait-${Date.now()}.png`);
+    }catch(error){console.error("FaceEvol portrait creator:",error);portraitStatus.textContent="";portraitError.textContent=error instanceof Error?error.message:String(error);}
+    finally{startPortraitButton.disabled=!selectedPortraitFile;}
+  });
+
+  startProfilePackButton.addEventListener("click",async()=>{
+    if(!selectedProfilePackFile)return;
+    startProfilePackButton.disabled=true;profilePackError.textContent="";profilePackStatus.textContent="Preparing profile pack...";profilePackResult.classList.remove("show");
+    try{
+      const blob=await optimizeImageToBlob(selectedProfilePackFile,{maxDimension:1800,maxBytes:700*1024,quality:.94});
+      const image=await blobToDataURL(blob);
+      const response=await fetch("/api/predict",{method:"POST",headers:await faceEvolGenerationHeaders(),body:JSON.stringify({mode:"profile_pack",image,pack_style:profilePackStyle.value,wardrobe:profilePackWardrobe.value,layout:"2x2"})});
+      const data=await readJsonResponse(response);applyFaceEvolServerCreditPayload(data);if(!response.ok)throw new Error(data.error||"Profile pack request failed.");
+      let prediction=data.prediction||data;prediction=await pollNewToolPrediction(prediction,profilePackStatus,"Creating your profile pack");
+      if(prediction.status!=="succeeded")throw new Error(newToolPredictionError(prediction,"Profile pack creation failed."));
+      const output=findImageUrl(prediction.output)||findImageUrl(prediction);if(!output)throw new Error("No profile pack image was returned.");
+      latestProfilePackOutput=output;profilePackResultImage.src=output;profilePackResult.classList.add("show");profilePackStatus.textContent="✓ Your profile pack is ready.";setNewDownload(downloadProfilePackButton,output,`faceevol-profile-pack-${Date.now()}.png`);
+    }catch(error){console.error("FaceEvol profile pack:",error);profilePackStatus.textContent="";profilePackError.textContent=error instanceof Error?error.message:String(error);}
+    finally{startProfilePackButton.disabled=!selectedProfilePackFile;}
+  });
+
+  startMultiPhotoButton.addEventListener("click",async()=>{
+    if(!selectedMultiPhotoFaces.length||!selectedMultiPhotoTarget)return;
+    startMultiPhotoButton.disabled=true;multiPhotoError.textContent="";multiPhotoStatus.textContent="Preparing group photo...";multiPhotoResult.classList.remove("show");
+    try{
+      const source=await createMultiFaceSourceSheet(selectedMultiPhotoFaces);
+      const targetBlob=await optimizeImageToBlob(selectedMultiPhotoTarget,{maxDimension:1700,maxBytes:430*1024,quality:.92});
+      const target=await blobToDataURL(targetBlob);
+      const response=await fetch("/api/photo-faceswap",{method:"POST",headers:await faceEvolGenerationHeaders(),body:JSON.stringify({mode:"multi",face:source,target,source_indexes:"-1",target_indexes:multiPhotoTargetIndexes.value||"-1"})});
+      const data=await readJsonResponse(response);applyFaceEvolServerCreditPayload(data);if(!response.ok)throw new Error(data.error||"Multiple photo face swap request failed.");
+      let prediction=data.prediction||data;prediction=await pollNewToolPrediction(prediction,multiPhotoStatus,"Swapping multiple faces");
+      if(prediction.status!=="succeeded")throw new Error(newToolPredictionError(prediction,"Multiple photo face swap failed."));
+      const output=findImageUrl(prediction.output)||findImageUrl(prediction);if(!output)throw new Error("No face-swap image was returned.");
+      latestMultiPhotoOutput=output;multiPhotoResultImage.src=output;multiPhotoResult.classList.add("show");multiPhotoStatus.textContent="✓ Multiple face swap ready.";setNewDownload(downloadMultiPhotoButton,output,`faceevol-multi-photo-${Date.now()}.png`);
+    }catch(error){console.error("FaceEvol multiple photo face swap:",error);multiPhotoStatus.textContent="";multiPhotoError.textContent=error instanceof Error?error.message:String(error);}
+    finally{startMultiPhotoButton.disabled=!(selectedMultiPhotoFaces.length&&selectedMultiPhotoTarget);}
+  });
+
+  startMultiVideoButton.addEventListener("click",async()=>{
+    if(!selectedMultiVideoFace||!selectedMultiVideoFile)return;
+    startMultiVideoButton.disabled=true;multiVideoError.textContent="";multiVideoStatus.textContent="Preparing video clip...";multiVideoResult.classList.remove("show");
+    try{
+      const duration=await readVideoDuration(selectedMultiVideoFile);
+      const end=Math.min(duration,MAX_TRIM_SECONDS);
+      const clip=await prepareVideoForPrivateUpload(selectedMultiVideoFile,0,end);
+      const face=await optimizeImageToBlob(selectedMultiVideoFace,{maxDimension:1600,maxBytes:TARGET_FACE_UPLOAD_BYTES,quality:.92});
+      const videoBlob=await uploadFaceEvolPrivate(`faceevol-video-multi-${Date.now()}-${safeFileName(clip.name)}`,clip,{step:"2/5",label:"Uploading video securely...",timeoutMs:180000,statusNode:multiVideoStatus});
+      const faceBlob=await uploadFaceEvolPrivate(`faceevol-face-multi-${Date.now()}.jpg`,face,{step:"3/5",label:"Uploading face securely...",timeoutMs:120000,statusNode:multiVideoStatus});
+      multiVideoStatus.textContent="4/5 Starting multiple video face swap...";
+      const response=await fetch("/api/faceswap",{method:"POST",headers:await faceEvolGenerationHeaders(),body:JSON.stringify({mode:"multi",face:faceBlob.url,video:videoBlob.url,swap_all_faces:true})});
+      const data=await readJsonResponse(response);applyFaceEvolServerCreditPayload(data);if(!response.ok)throw new Error(data.error||"Multiple video face swap request failed.");
+      let prediction=data.prediction||data;prediction=await pollNewToolPrediction(prediction,multiVideoStatus,"Swapping all detected faces");
+      if(prediction.status!=="succeeded")throw new Error(newToolPredictionError(prediction,"Multiple video face swap failed."));
+      const output=findVideoUrl(prediction.output)||findVideoUrl(prediction);if(!output)throw new Error("No face-swap video was returned.");
+      latestMultiVideoOutput=output;multiVideoResultVideo.src=output;multiVideoResult.classList.add("show");multiVideoStatus.textContent="✓ Multiple video face swap ready.";setNewDownload(downloadMultiVideoButton,output,`faceevol-multi-video-${Date.now()}.mp4`);
+    }catch(error){console.error("FaceEvol multiple video face swap:",error);multiVideoStatus.textContent="";multiVideoError.textContent=error instanceof Error?error.message:String(error);}
+    finally{startMultiVideoButton.disabled=!(selectedMultiVideoFace&&selectedMultiVideoFile);}
+  });
+
+  function hideNewToolControls(){
+    portraitControls.classList.remove("show");
+    profilePackControls.classList.remove("show");
+    multiPhotoControls.classList.remove("show");
+    multiVideoControls.classList.remove("show");
+  }
+
+  function hideExistingToolControls(){
+    ageControls.classList.remove("show");
+    photoSwapControls.classList.remove("show");
+    photoToVideoControls.classList.remove("show");
+    photoEnhanceControls.classList.remove("show");
+    videoEnhanceControls.classList.remove("show");
+    faceSwapControls.classList.remove("show");
+  }
+
+  function activatePortraitCreatorMode(){
+    faceSwapMode=false;activeStudioMode="portrait";document.querySelectorAll(".tool-option").forEach(o=>o.classList.remove("active"));portraitCreatorOption.classList.add("active");syncStudioToolState(portraitCreatorOption,"AI Portrait Creator");hideExistingToolControls();hideNewToolControls();portraitControls.classList.add("show");setSharedUploadVisible(false);
+  }
+  function activateProfilePackMode(){
+    faceSwapMode=false;activeStudioMode="profile-pack";document.querySelectorAll(".tool-option").forEach(o=>o.classList.remove("active"));profilePackOption.classList.add("active");syncStudioToolState(profilePackOption,"AI Profile Photo Pack");hideExistingToolControls();hideNewToolControls();profilePackControls.classList.add("show");setSharedUploadVisible(false);
+  }
+  function activateMultiPhotoMode(){
+    faceSwapMode=false;activeStudioMode="multi-photo";document.querySelectorAll(".tool-option").forEach(o=>o.classList.remove("active"));multiPhotoSwapOption.classList.add("active");syncStudioToolState(multiPhotoSwapOption,"Multiple Photo Face Swap");hideExistingToolControls();hideNewToolControls();multiPhotoControls.classList.add("show");setSharedUploadVisible(false);
+  }
+  function activateMultiVideoMode(){
+    faceSwapMode=false;activeStudioMode="multi-video";document.querySelectorAll(".tool-option").forEach(o=>o.classList.remove("active"));multiVideoSwapOption.classList.add("active");syncStudioToolState(multiVideoSwapOption,"Multiple Video Face Swap");hideExistingToolControls();hideNewToolControls();multiVideoControls.classList.add("show");setSharedUploadVisible(false);
+  }
+
   function syncStudioToolState(activeElement, label){
     document.querySelectorAll(".tool-option").forEach(option=>{
       option.setAttribute("aria-pressed", option===activeElement ? "true" : "false");
@@ -6028,6 +6572,7 @@
   }
 
   function activateFaceSwapMode(){
+    hideNewToolControls();
     faceSwapMode=true;
     activeStudioMode="video";
     document.querySelectorAll(".tool-option").forEach(o=>o.classList.remove("active"));
@@ -6050,6 +6595,7 @@
   }
 
   function activatePhotoFaceSwapMode(){
+    hideNewToolControls();
     faceSwapMode=true;
     activeStudioMode="photo";
     document.querySelectorAll(".tool-option").forEach(o=>o.classList.remove("active"));
@@ -6067,6 +6613,7 @@
   }
 
   function activatePhotoToVideoMode(){
+    hideNewToolControls();
     faceSwapMode=false;
     activeStudioMode="photo-video";
     document.querySelectorAll(".tool-option").forEach(o=>o.classList.remove("active"));
@@ -6084,6 +6631,7 @@
 
 
   function activatePhotoEnhanceMode(){
+    hideNewToolControls();
     faceSwapMode=false;
     activeStudioMode="photo-enhance";
     document.querySelectorAll(".tool-option").forEach(o=>o.classList.remove("active"));
@@ -6100,6 +6648,7 @@
   }
 
   function activateVideoEnhanceMode(){
+    hideNewToolControls();
     faceSwapMode=false;
     activeStudioMode="enhance";
     document.querySelectorAll(".tool-option").forEach(o=>o.classList.remove("active"));
@@ -6116,6 +6665,7 @@
   }
 
   function activateAgeMode(){
+    hideNewToolControls();
     faceSwapMode=false;
     activeStudioMode="age";
     document.querySelectorAll(".tool-option").forEach(o=>o.classList.remove("active"));
@@ -6145,6 +6695,10 @@
   photoEnhanceOption.addEventListener("click",activatePhotoEnhanceMode);
   videoEnhanceOption.addEventListener("click",activateVideoEnhanceMode);
   ageOption.addEventListener("click",activateAgeMode);
+  portraitCreatorOption.addEventListener("click",activatePortraitCreatorMode);
+  profilePackOption.addEventListener("click",activateProfilePackMode);
+  multiPhotoSwapOption.addEventListener("click",activateMultiPhotoMode);
+  multiVideoSwapOption.addEventListener("click",activateMultiVideoMode);
 
 
   const studioToolActions = new Map([
@@ -6153,7 +6707,11 @@
     [photoToVideoOption,activatePhotoToVideoMode],
     [faceSwapOption,activateFaceSwapMode],
     [photoEnhanceOption,activatePhotoEnhanceMode],
-    [videoEnhanceOption,activateVideoEnhanceMode]
+    [videoEnhanceOption,activateVideoEnhanceMode],
+    [portraitCreatorOption,activatePortraitCreatorMode],
+    [profilePackOption,activateProfilePackMode],
+    [multiPhotoSwapOption,activateMultiPhotoMode],
+    [multiVideoSwapOption,activateMultiVideoMode]
   ]);
 
   studioToolActions.forEach((action,option)=>{
@@ -6172,7 +6730,11 @@
       "photo-video":activatePhotoToVideoMode,
       video:activateFaceSwapMode,
       "photo-enhance":activatePhotoEnhanceMode,
-      enhance:activateVideoEnhanceMode
+      enhance:activateVideoEnhanceMode,
+      portrait:activatePortraitCreatorMode,
+      "profile-pack":activateProfilePackMode,
+      "multi-photo":activateMultiPhotoMode,
+      "multi-video":activateMultiVideoMode
     };
     const action=actions[mode] || activateAgeMode;
     action();
@@ -6524,7 +7086,12 @@
     photo_to_video:5,
     video_faceswap:3,
     photo_enhance:2,
-    video_enhance:8
+    video_enhance:8,
+    /* Launch defaults. Supabase remains authoritative. */
+    portrait_creator:1,
+    profile_photo_pack:2,
+    multi_photo_faceswap:2,
+    multi_video_faceswap:4
   });
 
   const FACEVOL_BUTTON_TO_TOOL=Object.freeze({
@@ -6533,7 +7100,11 @@
     startPhotoToVideoButton:"photo_to_video",
     startFaceSwapButton:"video_faceswap",
     startPhotoEnhanceButton:"photo_enhance",
-    startEnhanceButton:"video_enhance"
+    startEnhanceButton:"video_enhance",
+    startPortraitButton:"portrait_creator",
+    startProfilePackButton:"profile_photo_pack",
+    startMultiPhotoButton:"multi_photo_faceswap",
+    startMultiVideoButton:"multi_video_faceswap"
   });
 
   function faceEvolToolCost(tool){
@@ -6668,7 +7239,11 @@
       photo_to_video:"Photo to Video",
       video_faceswap:"Video Face Swap",
       photo_enhance:"Photo Enhance",
-      video_enhance:"Video Enhance"
+      video_enhance:"Video Enhance",
+      portrait_creator:"AI Portrait Creator",
+      profile_photo_pack:"AI Profile Photo Pack",
+      multi_photo_faceswap:"Multiple Photo Face Swap",
+      multi_video_faceswap:"Multiple Video Face Swap"
     };
 
     if(labels[value]) return labels[value];
@@ -7084,7 +7659,11 @@
     "startPhotoToVideoButton",
     "startFaceSwapButton",
     "startPhotoEnhanceButton",
-    "startEnhanceButton"
+    "startEnhanceButton",
+    "startPortraitButton",
+    "startProfilePackButton",
+    "startMultiPhotoButton",
+    "startMultiVideoButton"
   ]);
 
   document.addEventListener("click",event=>{
@@ -7149,5 +7728,14 @@
   activateAgeMode();
 </script>
 <!-- trigger vercel deploy -->
+
+<!--
+FaceEvol 10-tool backend consolidation contract (2026-08-30)
+NO NEW SERVERLESS FILES REQUIRED:
+  /api/predict.js: default/age stays unchanged; mode=portrait and mode=profile_pack use qwen/qwen-image-edit-plus.
+  /api/photo-faceswap.js: default/single stays unchanged; mode=multi uses ddvinh1/inswapper.
+  /api/faceswap.js: default/single stays unchanged; mode=multi uses ddvinh1/new-faceswap-video with swap_all_faces=true.
+Keep REPLICATE_API_TOKEN and Supabase secret keys server-side only.
+-->
 </body>
 </html>
