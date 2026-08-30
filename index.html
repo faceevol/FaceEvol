@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FaceEvol — AI Face &amp; Portrait Studio</title>
-  <meta name="description" content="FaceEvol is an AI Face &amp; Portrait Studio with 10 focused tools for identity-preserving portrait creation, Face Evolution, age transform, mapped face swaps, photo-to-video and AI enhancement." />
+  <meta name="description" content="FaceEvol is an AI Face &amp; Portrait Studio with 10 focused tools for identity-preserving portrait creation, AI Face Evolution, age transform, mapped face swaps, photo-to-video and AI enhancement." />
   <meta name="theme-color" content="#070b17" />
   <meta name="color-scheme" content="dark" />
   <meta name="robots" content="index,follow" />
@@ -1331,7 +1331,14 @@
     @media(max-width:850px){.demo-grid{grid-template-columns:repeat(2,1fr)}}
     @media(max-width:650px){.demo-grid{grid-template-columns:1fr}.new-tool-upload-grid,.new-tool-fields{grid-template-columns:1fr}.new-tool-field.full{grid-column:auto}.multi-source-grid{grid-template-columns:repeat(2,1fr)}}
 
-  </style>
+  
+    .multi-target-map{position:relative;margin:15px 0;border-radius:16px;overflow:hidden;background:#050914;border:1px solid rgba(255,255,255,.09)}
+    .multi-target-map img{display:block;width:100%;max-height:520px;object-fit:contain}
+    .multi-face-overlay{position:absolute;inset:0;pointer-events:none}
+    .multi-face-badge{position:absolute;transform:translate(-50%,-50%);pointer-events:auto;min-width:38px;height:38px;padding:0 10px;border-radius:999px;border:2px solid rgba(255,255,255,.92);background:rgba(5,9,20,.86);color:#fff;font-weight:900;font-size:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(0,0,0,.4);cursor:pointer}
+    .multi-face-badge.active{box-shadow:0 0 0 4px rgba(56,189,248,.28),0 8px 24px rgba(0,0,0,.45)}
+    .multi-video-trim{margin-top:14px;padding:14px;border-radius:14px;background:rgba(255,255,255,.018);border:1px solid rgba(255,255,255,.07)}
+</style>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4"></script>
 
@@ -1565,7 +1572,7 @@
     <div class="container">
       <div class="badge"><span class="badge-dot"></span>AI Face &amp; Portrait Studio</div>
       <h1>Imagine your face.<br><span class="gradient-text">Transform your story.</span></h1>
-      <p class="hero-description">Create, transform and enhance portraits with AI. From identity-preserving portraits and Face Evolution life journeys to Age Transform, precise single and mapped multi-person swaps, photo-to-video motion and enhancement — it all lives in one focused studio.</p>
+      <p class="hero-description">Create, transform and enhance portraits with AI. From identity-preserving portraits and AI Face Evolution life journeys to Age Transform, precise single and mapped multi-person swaps, photo-to-video motion and enhancement — it all lives in one focused studio.</p>
       <p class="hero-explainer"><strong>FaceEvol is an AI Face &amp; Portrait Studio</strong> built around 10 focused experiences, each powered by a carefully selected AI model or purpose-built pipeline.</p>
       <div class="hero-actions">
         <a href="#studio" class="button button-primary" id="heroAgeButton">Open AI Studio →</a>
@@ -1592,10 +1599,10 @@
       <div class="evolution-shell">
         <div class="evolution-copy">
           <span class="section-eyebrow">FaceEvol Signature Experience</span>
-          <h2 id="evolutionTitle">A lifetime, beautifully told. <span class="gradient-text">Face Evolution.</span></h2>
+          <h2 id="evolutionTitle">A lifetime, beautifully told. <span class="gradient-text">AI Face Evolution.</span></h2>
           <p>Start with one portrait and create a graceful cinematic journey from childhood to older age. FaceEvol prepares identity-consistent life-stage anchors, then turns them into one smooth, emotional short film with changing atmosphere and gentle sound.</p>
           <div class="evolution-points"><span>Same identity through every stage</span><span>Child → adult → senior</span><span>Cinematic 1080p journey</span><span>Native ambience / music</span></div>
-          <div class="evolution-actions"><button type="button" class="button button-primary" data-open-tool="face-evolution">Create Face Evolution →</button><a href="#demos" class="button button-secondary">See Demo Placeholder</a></div>
+          <div class="evolution-actions"><button type="button" class="button button-primary" data-open-tool="face-evolution">Create AI Face Evolution →</button><a href="#demos" class="button button-secondary">See Demo Placeholder</a></div>
         </div>
         <div class="evolution-visual">
           <div class="evolution-stage">
@@ -1604,7 +1611,7 @@
             <div class="evolution-play">▶</div>
           </div>
           <div class="age-journey"><span><b>8</b><small>Child</small></span><i></i><span><b>18</b><small>Youth</small></span><i></i><span><b>30</b><small>Adult</small></span><i></i><span><b>50</b><small>Mature</small></span><i></i><span><b>65</b><small>Later</small></span><i></i><span><b>82</b><small>Senior</small></span></div>
-          <div class="evolution-caption">Demo space is intentionally reserved for the final pre-generated Face Evolution example.</div>
+          <div class="evolution-caption">Demo space is intentionally reserved for the final pre-generated AI Face Evolution example.</div>
         </div>
       </div>
     </div>
@@ -1701,12 +1708,12 @@
           <div class="demo-preview">
             <div class="demo-preview-placeholder">
               <div class="demo-preview-icon"><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-enhance"></use></svg></div>
-              <strong>Photo Enhancement Demo</strong>
+              <strong>Photo Enhance Demo</strong>
               <span>Demo preview</span>
             </div>
           </div>
           <div class="demo-card-copy">
-            <div class="demo-card-top"><h3>Photo Enhancement</h3><span class="demo-type">Before / After</span></div>
+            <div class="demo-card-top"><h3>Photo Enhance</h3><span class="demo-type">Before / After</span></div>
             <p>Compare original and enhanced detail, clarity and natural-looking facial texture.</p>
             <div class="demo-card-actions">
               <button type="button" class="demo-view-button" data-demo-key="photoEnhance">▶ View Demo</button>
@@ -1759,12 +1766,12 @@
           <div class="demo-preview">
             <div class="demo-preview-placeholder">
               <div class="demo-preview-icon">✦</div>
-              <strong>Face Evolution Demo</strong>
+              <strong>AI Face Evolution Demo</strong>
               <span>Life journey video placeholder</span>
             </div>
           </div>
           <div class="demo-card-copy">
-            <div class="demo-card-top"><h3>Face Evolution</h3><span class="demo-type">New</span></div>
+            <div class="demo-card-top"><h3>AI Face Evolution</h3><span class="demo-type">New</span></div>
             <p>Preview a graceful stored life-journey video showing the same identity evolving from childhood to older age.</p>
             <div class="demo-card-actions">
               <button type="button" class="demo-view-button" data-demo-key="faceEvolution">▶ View Demo</button>
@@ -1878,9 +1885,9 @@
                 <div class="tool-icon">◈</div>
                 <div><div class="tool-name">AI Portrait Creator</div><span class="tool-sub">Restyle your portrait</span><span class="tool-new-pill">New</span></div>
               </div>
-              <div class="tool-option new-tool-option" id="faceEvolutionOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open Face Evolution">
+              <div class="tool-option new-tool-option" id="faceEvolutionOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open AI Face Evolution">
                 <div class="tool-icon">▦</div>
-                <div><div class="tool-name">Face Evolution</div><span class="tool-sub">Life journey · video</span><span class="tool-new-pill">Signature</span></div>
+                <div><div class="tool-name">AI Face Evolution</div><span class="tool-sub">Life journey · video</span><span class="tool-new-pill">Signature</span></div>
               </div>
               <div class="tool-option" id="photoToVideoOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open Photo to Video">
                 <div class="tool-icon"><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-photo-video"></use></svg></div>
@@ -1910,9 +1917,9 @@
               </div>
 
               <div class="studio-label studio-label-spaced">Enhance</div>
-              <div class="tool-option" id="photoEnhanceOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open Photo Enhancement">
+              <div class="tool-option" id="photoEnhanceOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open Photo Enhance">
                 <div class="tool-icon"><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-enhance"></use></svg></div>
-                <div><div class="tool-name">Photo Enhancement</div><span class="tool-sub">2× · 4×</span></div>
+                <div><div class="tool-name">Photo Enhance</div><span class="tool-sub">2× · 4×</span></div>
               </div>
               <div class="tool-option" id="videoEnhanceOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open Video Enhance">
                 <div class="tool-icon"><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-video-enhance"></use></svg></div>
@@ -1956,7 +1963,7 @@
           <div class="clean-category-number">01</div>
           <h3>Create</h3>
           <p>Create a new portrait, animate a still image or tell a complete face-evolution story.</p>
-          <div class="clean-tool-list"><span class="overview-new" data-open-tool="portrait" role="button" tabindex="0">AI Portrait Creator</span><span>Photo to Video</span><span class="overview-new" data-open-tool="face-evolution" role="button" tabindex="0">Face Evolution</span></div>
+          <div class="clean-tool-list"><span class="overview-new" data-open-tool="portrait" role="button" tabindex="0">AI Portrait Creator</span><span>Photo to Video</span><span class="overview-new" data-open-tool="face-evolution" role="button" tabindex="0">AI Face Evolution</span></div>
         </article>
         <article class="clean-category-card">
           <div class="clean-category-number">02</div>
@@ -1968,7 +1975,7 @@
           <div class="clean-category-number">03</div>
           <h3>Enhance</h3>
           <p>Improve detail, clarity and resolution.</p>
-          <div class="clean-tool-list"><span>Photo Enhancement</span><span>Video Enhance</span></div>
+          <div class="clean-tool-list"><span>Photo Enhance</span><span>Video Enhance</span></div>
         </article>
       </div>
     </div>
@@ -1995,7 +2002,7 @@
         <div class="quality-content">
           <span class="section-eyebrow">Quality &amp; Detail</span>
           <h2>Enhance detail. <span class="gradient-text">Increase resolution.</span></h2>
-          <p>Photo Enhancement improves clarity and detail with 2× or 4× output. Video Enhance lets you select a short clip and export it at a higher resolution while keeping the workflow simple.</p>
+          <p>Photo Enhance improves clarity and detail with 2× or 4× output. Video Enhance lets you select a short clip and export it at a higher resolution while keeping the workflow simple.</p>
           <div class="quality-list">
             <div class="quality-item"><span class="check">✓</span>Natural-looking facial restoration for photos</div>
             <div class="quality-item"><span class="check">✓</span>2× and 4× photo enhancement options</div>
@@ -2089,9 +2096,9 @@
         <strong style="color:#b8cbe0">Video Face Swap 3</strong> ·
         <strong style="color:#b8cbe0">Multiple Photo Face Swap 2</strong> ·
         <strong style="color:#b8cbe0">Multiple Video Face Swap 4</strong> ·
-        <strong style="color:#b8cbe0">Photo Enhancement 2</strong> ·
+        <strong style="color:#b8cbe0">Photo Enhance 2</strong> ·
         <strong style="color:#b8cbe0">Video Enhance 8</strong> ·
-        <strong style="color:#b8cbe0">Face Evolution 15</strong> credits
+        <strong style="color:#b8cbe0">AI Face Evolution 15</strong> credits
       </div>
     </div>
   </section>
@@ -2100,15 +2107,15 @@
     <div class="container">
       <div class="section-heading"><span class="section-eyebrow">FAQ</span><h2>Questions? <span class="gradient-text">We've got answers.</span></h2></div>
       <div class="faq-list">
-        <details><summary>What can I create with FaceEvol?</summary><p>FaceEvol includes 10 focused experiences: AI Portrait Creator, Photo to Video, Age Transform, Photo Face Swap, Video Face Swap, Multiple Photo Face Swap, Multiple Video Face Swap, Photo Enhancement, Video Enhance and the signature Face Evolution life-journey video.</p></details>
+        <details><summary>What can I create with FaceEvol?</summary><p>FaceEvol includes 10 focused experiences: AI Portrait Creator, Photo to Video, Age Transform, Photo Face Swap, Video Face Swap, Multiple Photo Face Swap, Multiple Video Face Swap, Photo Enhance, Video Enhance and the signature AI Face Evolution life-journey video.</p></details>
         <details><summary>What photos work best for face swap?</summary><p>Use a clear, front-facing source face with good lighting and the full face visible. Avoid blur, sunglasses, masks, heavy shadows and extreme side angles. A target photo with a clearly visible face and a similar angle usually gives a more natural result.</p></details>
-        <details><summary>How is Face Evolution different from Age Transform?</summary><p>Age Transform creates one still image at a chosen age. Face Evolution creates a short cinematic life journey that moves from childhood through adulthood to older age while keeping the same identity recognizable.</p></details>
-        <details><summary>How do multiple face swaps work?</summary><p>Multiple Photo Face Swap lets you assign each uploaded source identity to a specific target face index. Multiple Video Face Swap accepts up to three different identity references and lets you map them to distinct people in the clip instead of applying one face to everyone.</p></details>
+        <details><summary>How is AI Face Evolution different from Age Transform?</summary><p>Age Transform creates one still image at a chosen age. AI Face Evolution creates a short cinematic life journey that moves from childhood through adulthood to older age while keeping the same identity recognizable.</p></details>
+        <details><summary>How do multiple face swaps work?</summary><p>Multiple Photo Face Swap labels target people left to right so you can choose exactly who each source replaces. Multiple Video Face Swap uses the same left-to-right mapping, preserves the uploaded source clip, and swaps only the selected faces.</p></details>
         <details><summary>Which ages can I choose?</summary><p>The five visual presets are ages 5, 15, 30, 50 and 75. You can also use the custom slider to choose any target age from 0 to 100.</p></details>
         <details><summary>Can I download my Age Transform result?</summary><p>Yes. When an Age Transform finishes, tap “Download Image” below the result to save it to your device.</p></details>
         <details><summary>Can I download my photo face swap?</summary><p>Yes. When the photo face swap is complete, tap “Download Image” below the result to save it directly to your device.</p></details>
         <details><summary>How does Photo to Video work?</summary><p>Upload a JPG, PNG or WebP photo, type a short description of the motion you want, then tap “Generate Short Video.” FaceEvol creates a short clip that you can preview and download.</p></details>
-        <details><summary>How does Photo Enhancement work?</summary><p>Upload a JPG, PNG or WebP photo, choose 2x or 4x enhancement, then tap “Enhance Photo.” FaceEvol creates a clearer higher-resolution result that you can compare with the original and download.</p></details>
+        <details><summary>How does Photo Enhance work?</summary><p>Upload a JPG, PNG or WebP photo, choose 2x or 4x enhancement, then tap “Enhance Photo.” FaceEvol creates a clearer higher-resolution result that you can compare with the original and download.</p></details>
         <details><summary>What video can I upload?</summary><p>Use an MP4 source file smaller than 300 MB. Video Face Swap supports a selected section up to 20 seconds. Video Enhance supports a selected section up to 5 seconds.</p></details>
         <details><summary>How does Video Enhance work?</summary><p>Upload an MP4 up to 60 seconds, use the trim handles to select any section up to 5 seconds, then choose 1080p or 4K and 30 or 60 FPS. FaceEvol enhances only the selected clip.</p></details>
         <details><summary>Do the demos call the AI models?</summary><p>No. Demo mode loads only pre-generated sample images and videos stored for the website. Opening, replaying or comparing a demo does not contact the generation APIs and does not consume FaceEvol credits.</p></details>
@@ -2155,7 +2162,7 @@
           </summary>
           <div class="legal-content">
             <h3>FaceEvol Privacy Policy</h3>
-            <p>This Privacy Policy explains how FaceEvol handles information when you use its AI portrait creation, Face Evolution, age transform, single- and multi-person photo/video face swap, Photo to Video, photo enhancement and video enhancement features.</p>
+            <p>This Privacy Policy explains how FaceEvol handles information when you use its AI portrait creation, AI Face Evolution, age transform, single- and multi-person photo/video face swap, Photo to Video, photo enhancement and video enhancement features.</p>
 
             <h4>1. Information you provide</h4>
             <p>When you use FaceEvol, you may provide photos, videos and other content needed to create the result you request. You may also provide information when contacting support.</p>
@@ -2212,7 +2219,7 @@
             <p>These Terms govern your use of FaceEvol. By using the service, you agree to use it lawfully and responsibly.</p>
 
             <h4>1. The service</h4>
-            <p>FaceEvol provides AI-powered portrait creation, Face Evolution, age transform, single- and multi-person photo/video face swap, Photo to Video, photo enhancement and video enhancement tools. Features, processing limits, supported formats, models and availability may change as the service develops.</p>
+            <p>FaceEvol provides AI-powered portrait creation, AI Face Evolution, age transform, single- and multi-person photo/video face swap, Photo to Video, photo enhancement and video enhancement tools. Features, processing limits, supported formats, models and availability may change as the service develops.</p>
 
             <h4>2. Beta status</h4>
             <p>FaceEvol is currently offered as a beta service. Beta features may contain errors, change without notice, become temporarily unavailable or produce unexpected results.</p>
@@ -2439,7 +2446,7 @@
     },
 
     photoEnhance:{
-      title:"Photo Enhancement",
+      title:"Photo Enhance",
       description:"Original and enhanced images stored side by side for a clear detail comparison.",
       createTool:"photo-enhance",
       kind:"compareImage",
@@ -2466,7 +2473,7 @@
     },
 
     faceEvolution:{
-      title:"Face Evolution",
+      title:"AI Face Evolution",
       description:"A stored cinematic life-journey video showing one identity aging gracefully from childhood to older age.",
       createTool:"face-evolution",
       kind:"singleVideo",
@@ -4092,7 +4099,7 @@
     <div style="text-align:center;">
       <div class="panel-top">
         <div>
-          <span class="panel-kicker">Photo Enhancement</span>
+          <span class="panel-kicker">Photo Enhance</span>
           <h3 class="panel-title">Make your photo clearer</h3>
           <p class="panel-copy">Upload a photo and FaceEvol will enhance detail, clarity and resolution while keeping the result close to the original.</p>
         </div>
@@ -4217,14 +4224,14 @@
       await wait(2000);
       const statusResponse=await fetch(`/api/prediction?id=${encodeURIComponent(prediction.id)}`,{cache:"no-store",headers:await faceEvolPredictionHeaders()});
       const statusData=await readJsonResponse(statusResponse);
-      if(!statusResponse.ok) throw new Error(statusData.error||"Could not check Photo Enhancement status.");
+      if(!statusResponse.ok) throw new Error(statusData.error||"Could not check Photo Enhance status.");
 
       prediction=statusData.prediction||statusData;
-      if(!prediction) throw new Error("No Photo Enhancement prediction status was returned.");
+      if(!prediction) throw new Error("No Photo Enhance prediction status was returned.");
       if(isTerminalPredictionStatus(prediction.status)) return prediction;
     }
 
-    throw new Error("Photo Enhancement timed out.");
+    throw new Error("Photo Enhance timed out.");
   }
 
   photoEnhanceUploadBox.addEventListener("click",()=>photoEnhanceUpload.click());
@@ -4313,22 +4320,22 @@
       const data=await readJsonResponse(response);
       if(!response.ok){
         const details=data.details?` ${data.details}`:"";
-        throw new Error(`${data.error||"Photo Enhancement request failed."}${details}`);
+        throw new Error(`${data.error||"Photo Enhance request failed."}${details}`);
       }
 
       let prediction=data.prediction||data;
-      if(!prediction) throw new Error("No Photo Enhancement prediction was returned.");
+      if(!prediction) throw new Error("No Photo Enhance prediction was returned.");
 
       if(prediction.id&&!isTerminalPredictionStatus(prediction.status)){
         prediction=await pollPhotoEnhancePrediction(prediction);
       }
 
       if(prediction.status==="failed"||prediction.status==="canceled"||prediction.error){
-        throw new Error(prediction.error||"Photo Enhancement failed.");
+        throw new Error(prediction.error||"Photo Enhance failed.");
       }
 
       const output=findImageUrl(prediction.output)||findImageUrl(prediction);
-      if(!output) throw new Error("Photo Enhancement returned no usable image.");
+      if(!output) throw new Error("Photo Enhance returned no usable image.");
 
       latestPhotoEnhanceOutput=output;
       photoEnhanceAfter.src=output;
@@ -4339,7 +4346,7 @@
       photoEnhanceStatus.textContent=`✓ Photo enhanced successfully at ${scale}x. Drag the slider to compare before and after.`;
 
     }catch(error){
-      console.error("FaceEvol Photo Enhancement error:",error);
+      console.error("FaceEvol Photo Enhance error:",error);
       photoEnhanceError.textContent=friendlyPhotoEnhanceError(error);
       photoEnhanceStatus.textContent="";
     }finally{
@@ -6187,15 +6194,15 @@
        portrait                : black-forest-labs/flux-kontext-pro
        face_evolution          : qwen/qwen-image-edit-2511 + kwaivgi/kling-v3-video
        multi photo             : mertguvencli/face-swap-with-indexes
-       multi video             : prunaai/p-video-replace
+       multi video             : Segmind videofaceswap (indexed, original-video preserving)
      Note: the previous ddvinh1/new-faceswap-video version was disabled on
-     Replicate, so the live DeepFace multi-video model is used instead.
+     Replicate, so the indexed Segmind Video Faceswap workflow is used instead so the uploaded target video remains the source clip.
      ========================================================= */
   const FACEVOL_NEW_MODEL_PLAN=Object.freeze({
     portrait_creator:"black-forest-labs/flux-kontext-pro",
     face_evolution:"qwen/qwen-image-edit-2511 + kwaivgi/kling-v3-video",
     multi_photo_faceswap:"mertguvencli/face-swap-with-indexes",
-    multi_video_faceswap:"prunaai/p-video-replace"
+    multi_video_faceswap:"segmind/videofaceswap"
   });
 
   const portraitControls=document.createElement("div");
@@ -6226,7 +6233,7 @@
   faceEvolutionControls.className="age-controls model-tool-controls";
   faceEvolutionControls.innerHTML=`
     <div class="panel-top">
-      <div><span class="panel-kicker">Face Evolution</span><h3 class="panel-title">Turn one portrait into a graceful life journey</h3><p class="panel-copy">Upload one clear portrait. FaceEvol prepares identity-locked young and older life stages, then creates a cinematic aging journey from childhood to later life.</p></div>
+      <div><span class="panel-kicker">AI Face Evolution</span><h3 class="panel-title">Turn one portrait into a graceful life journey</h3><p class="panel-copy">Upload one clear portrait. FaceEvol prepares identity-locked young and older life stages, then creates a cinematic aging journey from childhood to later life.</p></div>
       <span class="model-badge">Signature</span>
     </div>
     <div class="model-ready-note"><strong>One-click experience.</strong> The Qwen age-stage preparation and Kling 3.0 life-journey video pipeline run behind the scenes — the user only chooses a portrait and creates.</div>
@@ -6239,8 +6246,8 @@
       <div class="new-tool-field"><label>Sound</label><select id="faceEvolutionAudio" disabled><option>Gentle cinematic ambience · automatic</option></select></div>
       <div class="new-tool-field full"><label>Optional mood</label><textarea id="faceEvolutionPrompt" maxlength="400" placeholder="Example: warm family-film feeling, elegant changing backgrounds, soft golden light..."></textarea></div>
     </div>
-    <div class="new-tool-help">Face Evolution is intentionally separate from Photo to Video: this workflow is specifically designed around the same person's life stages, identity continuity and graceful aging.</div>
-    <button type="button" class="transform-button gated" id="startFaceEvolutionButton" disabled>✦ Create Face Evolution</button>
+    <div class="new-tool-help">AI Face Evolution is intentionally separate from Photo to Video: this workflow is specifically designed around the same person's life stages, identity continuity and graceful aging.</div>
+    <button type="button" class="transform-button gated" id="startFaceEvolutionButton" disabled>✦ Create AI Face Evolution</button>
     <div class="new-feature-status" id="faceEvolutionStatus"></div><div class="new-feature-error" id="faceEvolutionError"></div>
     <div class="new-tool-result" id="faceEvolutionResult"><video id="faceEvolutionResultVideo" controls playsinline preload="metadata"></video><button type="button" class="download-button" id="downloadFaceEvolutionButton">⬇️ Download Life Journey</button></div>
   `;
@@ -6253,15 +6260,16 @@
       <div><span class="panel-kicker">Multiple Photo Face Swap</span><h3 class="panel-title">Choose exactly who replaces whom</h3><p class="panel-copy">Upload up to four source faces and one group photo. Each source gets its own target-person selector, so FaceEvol never has to guess which person you want to replace.</p></div>
       <span class="model-badge">Mapped</span>
     </div>
-    <div class="model-ready-note"><strong>Explicit face mapping.</strong> The dedicated indexed face-swap model processes the mappings one by one. Target face 0 is the first detected face, then 1, 2 and so on.</div>
+    <div class="model-ready-note"><strong>Tap-to-map people.</strong> After you choose the group photo, FaceEvol labels detected people from left to right as Person 1, Person 2, Person 3 and Person 4. Tap a person badge or use the selector under each source face.</div>
     <div class="new-tool-upload-grid">
       <div class="new-tool-upload" id="multiPhotoFacesBox" role="button" tabindex="0"><div style="font-size:25px;margin-bottom:7px">◎</div><strong>Choose source faces</strong><small>1–4 images · one clear face per image</small></div>
       <div class="new-tool-upload" id="multiPhotoTargetBox" role="button" tabindex="0"><div style="font-size:25px;margin-bottom:7px">🖼️</div><strong>Choose target group photo</strong><small>Photo containing the people to replace</small></div>
       <input type="file" id="multiPhotoFacesInput" accept="image/*" multiple hidden>
       <input type="file" id="multiPhotoTargetInput" accept="image/*" hidden>
     </div>
+    <div class="multi-target-map" id="multiPhotoTargetMap" hidden><img id="multiPhotoTargetPreview" alt="Target group photo"><div id="multiPhotoFaceOverlay" class="multi-face-overlay"></div></div>
     <div class="multi-source-grid" id="multiPhotoSourceGrid"><div class="multi-source-chip">Source 1</div><div class="multi-source-chip">Source 2</div><div class="multi-source-chip">Source 3</div><div class="multi-source-chip">Source 4</div></div>
-    <div class="new-tool-help"><strong>Mapping:</strong> after choosing source faces, use the selector below each source to choose Target face 0, 1, 2, etc. Use clear, separated faces in the group photo for the most predictable detection order.</div>
+    <div class="new-tool-help"><strong>Mapping:</strong> Person 1 is the leftmost detected person, then Person 2, Person 3 and Person 4 moving left to right. Tap a numbered person on the photo, then choose which source face should replace that person.</div>
     <button type="button" class="transform-button gated" id="startMultiPhotoButton" disabled>◎ Swap Mapped Faces</button>
     <div class="new-feature-status" id="multiPhotoStatus"></div><div class="new-feature-error" id="multiPhotoError"></div>
     <div class="new-tool-result" id="multiPhotoResult"><img id="multiPhotoResultImage" alt="FaceEvol multiple photo face swap result"><button type="button" class="download-button" id="downloadMultiPhotoButton">⬇️ Download Image</button></div>
@@ -6283,9 +6291,14 @@
       <input type="file" id="multiVideoFileInput" accept="video/mp4,.mp4" hidden>
     </div>
     <div class="multi-source-grid" id="multiVideoSourceGrid"><div class="multi-source-chip">Identity 1</div><div class="multi-source-chip">Identity 2</div><div class="multi-source-chip">Identity 3</div></div>
-    <div class="new-tool-fields"><div class="new-tool-field"><label>Output resolution</label><select id="multiVideoResolution"><option value="720p">720p · faster</option><option value="1080p">1080p · premium</option></select></div></div>
     <div class="new-tool-result" id="multiVideoSourcePreviewWrap"><video id="multiVideoSourcePreview" controls playsinline preload="metadata"></video></div>
-    <div class="new-tool-help">Assign each identity to the leftmost, center, rightmost or numbered person using the selector below its preview. This is an identity-aware multi-person replacement workflow rather than “one face on everybody.”</div>
+    <div class="multi-video-trim" id="multiVideoTrimWrap" hidden>
+      <div class="trim-header"><strong>Select clip</strong><span class="trim-duration" id="multiVideoTrimDurationLabel">20.0 sec selected</span></div>
+      <div class="trim-ruler-labels"><span>Start</span><span>Maximum 20 seconds</span><span>End</span></div>
+      <div class="trim-timeline"><div class="trim-base"></div><div class="trim-selected" id="multiVideoTrimSelected"></div><input class="trim-range" id="multiVideoTrimStartRange" type="range" min="0" max="20" value="0" step="0.1" aria-label="Multiple video trim start"><input class="trim-range" id="multiVideoTrimEndRange" type="range" min="0" max="20" value="20" step="0.1" aria-label="Multiple video trim end"></div>
+      <div class="trim-readout"><div class="trim-time-box"><span>Starts at</span><strong id="multiVideoTrimStartLabel">0:00.0</strong></div><div class="trim-time-box"><span>Ends at</span><strong id="multiVideoTrimEndLabel">0:20.0</strong></div></div>
+    </div>
+    <div class="new-tool-help">The source video is preserved. Person 1 means the leftmost face in the target clip, then Person 2 and Person 3 moving left to right. Choose up to 20 seconds with the trim ruler, then map each source identity to a different target person.</div>
     <button type="button" class="transform-button gated" id="startMultiVideoButton" disabled>◉ Create Mapped Video Swap</button>
     <div class="new-feature-status" id="multiVideoStatus"></div><div class="new-feature-error" id="multiVideoError"></div>
     <div class="new-tool-result" id="multiVideoResult"><video id="multiVideoResultVideo" controls playsinline preload="metadata"></video><button type="button" class="download-button" id="downloadMultiVideoButton">⬇️ Download Video</button></div>
@@ -6299,6 +6312,11 @@
   let selectedMultiVideoFaces=[];
   let selectedMultiVideoFile=null;
   let multiVideoPreviewUrl=null;
+  let multiVideoDuration=0;
+  let multiVideoTrimStart=0;
+  let multiVideoTrimEnd=0;
+  let detectedMultiPhotoFaces=[];
+  let activeMultiPhotoSourceIndex=0;
   let latestPortraitOutput=null;
   let latestFaceEvolutionOutput=null;
   let latestMultiPhotoOutput=null;
@@ -6332,6 +6350,9 @@
   const multiPhotoFacesInput=document.getElementById("multiPhotoFacesInput");
   const multiPhotoTargetInput=document.getElementById("multiPhotoTargetInput");
   const multiPhotoSourceGrid=document.getElementById("multiPhotoSourceGrid");
+  const multiPhotoTargetMap=document.getElementById("multiPhotoTargetMap");
+  const multiPhotoTargetPreview=document.getElementById("multiPhotoTargetPreview");
+  const multiPhotoFaceOverlay=document.getElementById("multiPhotoFaceOverlay");
   const startMultiPhotoButton=document.getElementById("startMultiPhotoButton");
   const multiPhotoStatus=document.getElementById("multiPhotoStatus");
   const multiPhotoError=document.getElementById("multiPhotoError");
@@ -6344,7 +6365,13 @@
   const multiVideoFacesInput=document.getElementById("multiVideoFacesInput");
   const multiVideoFileInput=document.getElementById("multiVideoFileInput");
   const multiVideoSourceGrid=document.getElementById("multiVideoSourceGrid");
-  const multiVideoResolution=document.getElementById("multiVideoResolution");
+  const multiVideoTrimWrap=document.getElementById("multiVideoTrimWrap");
+  const multiVideoTrimStartRange=document.getElementById("multiVideoTrimStartRange");
+  const multiVideoTrimEndRange=document.getElementById("multiVideoTrimEndRange");
+  const multiVideoTrimSelected=document.getElementById("multiVideoTrimSelected");
+  const multiVideoTrimStartLabel=document.getElementById("multiVideoTrimStartLabel");
+  const multiVideoTrimEndLabel=document.getElementById("multiVideoTrimEndLabel");
+  const multiVideoTrimDurationLabel=document.getElementById("multiVideoTrimDurationLabel");
   const multiVideoSourcePreviewWrap=document.getElementById("multiVideoSourcePreviewWrap");
   const multiVideoSourcePreview=document.getElementById("multiVideoSourcePreview");
   const startMultiVideoButton=document.getElementById("startMultiVideoButton");
@@ -6399,11 +6426,14 @@
     };
   }
 
-  async function pollNewToolPrediction(prediction,statusNode,label,maxAttempts=75){
+  async function pollNewToolPrediction(prediction,statusNode,label,maxAttempts=120){
     let current=prediction;
     if(!current?.id||isTerminalPredictionStatus(current.status)) return current;
-    for(let attempt=0;attempt<75;attempt++){
-      statusNode.textContent=attempt<10?`${label}...`:`Still ${label.toLowerCase()} — please keep this page open.`;
+    const attempts=Math.max(1,Number(maxAttempts)||120);
+    for(let attempt=0;attempt<attempts;attempt++){
+      if(attempt<8) statusNode.textContent=`${label}...`;
+      else if(attempt<40) statusNode.textContent=`${label} — this can take a few minutes.`;
+      else statusNode.textContent=`Still ${label.toLowerCase()} — your job is still running. Keep this page open.`;
       await wait(2000);
       const response=await fetch(`/api/prediction?id=${encodeURIComponent(current.id)}`,{cache:"no-store",headers:await faceEvolPredictionHeaders()});
       const data=await readJsonResponse(response);
@@ -6412,7 +6442,7 @@
       current=data.prediction||data;
       if(isTerminalPredictionStatus(current.status)) return current;
     }
-    throw new Error("The generation took longer than expected. Please try again.");
+    throw new Error("This AI job is still processing longer than usual. Please keep the page open and try checking again shortly.");
   }
 
   function newToolPredictionError(prediction,fallback){
@@ -6451,21 +6481,66 @@
 
   function renderMultiPhotoMappings(){
     multiPhotoSourceGrid.innerHTML="";
+    const personCount=Math.max(4,detectedMultiPhotoFaces.length||0);
     for(let i=0;i<4;i++){
       const chip=document.createElement("div");chip.className="multi-source-chip";
       const file=selectedMultiPhotoFaces[i];
       if(file){
         chip.classList.add("mapping-chip");
         const url=URL.createObjectURL(file);
-        chip.innerHTML=`<img src="${url}" alt="Source face ${i+1}"><div class="multi-source-map"><strong>Source ${i+1}</strong><small>Replace:</small><select class="multi-photo-target-select" data-source-index="${i}">${Array.from({length:8},(_,target)=>`<option value="${target}" ${target===i?"selected":""}>Target face ${target}</option>`).join("")}</select></div>`;
+        const currentTarget=Math.min(i,Math.max(0,personCount-1));
+        chip.innerHTML=`<img src="${url}" alt="Source face ${i+1}"><div class="multi-source-map"><strong>Source ${i+1}</strong><small>Replace:</small><select class="multi-photo-target-select" data-source-index="${i}">${Array.from({length:personCount},(_,target)=>`<option value="${target}" ${target===currentTarget?"selected":""}>Person ${target+1}</option>`).join("")}</select></div>`;
+        chip.addEventListener("click",()=>{activeMultiPhotoSourceIndex=i;renderMultiPhotoFaceOverlay();});
         chip.querySelector("img").onload=()=>setTimeout(()=>URL.revokeObjectURL(url),1200);
       }else chip.textContent=`Source ${i+1}`;
       multiPhotoSourceGrid.appendChild(chip);
     }
+    multiPhotoSourceGrid.querySelectorAll(".multi-photo-target-select").forEach(select=>select.addEventListener("change",()=>renderMultiPhotoFaceOverlay()));
+    renderMultiPhotoFaceOverlay();
   }
 
   function getMultiPhotoTargetIndexes(){
     return [...multiPhotoSourceGrid.querySelectorAll(".multi-photo-target-select")].map(select=>Number(select.value));
+  }
+
+  async function detectMultiPhotoFaces(){
+    detectedMultiPhotoFaces=[];
+    if(!selectedMultiPhotoTarget||!("FaceDetector" in window)) return;
+    try{
+      const bitmap=await createImageBitmap(selectedMultiPhotoTarget);
+      const detector=new FaceDetector({fastMode:false,maxDetectedFaces:8});
+      const faces=await detector.detect(bitmap);
+      bitmap.close?.();
+      detectedMultiPhotoFaces=faces.map(face=>face.boundingBox).sort((a,b)=>a.x-b.x);
+    }catch(error){
+      console.warn("Local face detection unavailable; using left-to-right person mapping.",error);
+      detectedMultiPhotoFaces=[];
+    }
+  }
+
+  function renderMultiPhotoFaceOverlay(){
+    if(!multiPhotoFaceOverlay||!multiPhotoTargetPreview) return;
+    multiPhotoFaceOverlay.innerHTML="";
+    if(!selectedMultiPhotoTarget) return;
+    const count=Math.max(selectedMultiPhotoFaces.length,detectedMultiPhotoFaces.length,1);
+    const selectedTargets=getMultiPhotoTargetIndexes();
+    const rect=multiPhotoTargetPreview.getBoundingClientRect();
+    const naturalW=multiPhotoTargetPreview.naturalWidth||1,naturalH=multiPhotoTargetPreview.naturalHeight||1;
+    const scale=Math.min(rect.width/naturalW,rect.height/naturalH);
+    const drawnW=naturalW*scale,drawnH=naturalH*scale;
+    const offsetX=(rect.width-drawnW)/2,offsetY=(rect.height-drawnH)/2;
+    for(let i=0;i<count;i++){
+      let x=(i+.5)/count*rect.width,y=rect.height*.3;
+      const box=detectedMultiPhotoFaces[i];
+      if(box){x=offsetX+(box.x+box.width/2)*scale;y=offsetY+(box.y+box.height/2)*scale;}
+      const badge=document.createElement("button");badge.type="button";badge.className="multi-face-badge";badge.textContent=`Person ${i+1}`;badge.style.left=`${x}px`;badge.style.top=`${y}px`;
+      if(selectedTargets[activeMultiPhotoSourceIndex]===i) badge.classList.add("active");
+      badge.addEventListener("click",()=>{
+        const select=multiPhotoSourceGrid.querySelector(`.multi-photo-target-select[data-source-index="${activeMultiPhotoSourceIndex}"]`);
+        if(select){select.value=String(i);renderMultiPhotoFaceOverlay();}
+      });
+      multiPhotoFaceOverlay.appendChild(badge);
+    }
   }
 
   multiPhotoFacesBox.addEventListener("click",()=>multiPhotoFacesInput.click());
@@ -6477,31 +6552,86 @@
     multiPhotoFacesBox.querySelector("strong").textContent=selectedMultiPhotoFaces.length?`${selectedMultiPhotoFaces.length} source face${selectedMultiPhotoFaces.length===1?"":"s"} selected`:"Choose source faces";
     startMultiPhotoButton.disabled=!(selectedMultiPhotoFaces.length&&selectedMultiPhotoTarget);
   });
-  multiPhotoTargetInput.addEventListener("change",()=>{
+  multiPhotoTargetInput.addEventListener("change",async()=>{
     selectedMultiPhotoTarget=multiPhotoTargetInput.files?.[0]||null;multiPhotoError.textContent="";
-    if(selectedMultiPhotoTarget) setImageUploadPreview(multiPhotoTargetBox,selectedMultiPhotoTarget,"Target group photo ready");
+    if(selectedMultiPhotoTarget){
+      setImageUploadPreview(multiPhotoTargetBox,selectedMultiPhotoTarget,"Target group photo ready");
+      const url=URL.createObjectURL(selectedMultiPhotoTarget);
+      multiPhotoTargetPreview.onload=()=>{URL.revokeObjectURL(url);renderMultiPhotoFaceOverlay();};
+      multiPhotoTargetPreview.src=url;multiPhotoTargetMap.hidden=false;
+      await detectMultiPhotoFaces();
+      renderMultiPhotoMappings();
+    }else{multiPhotoTargetMap.hidden=true;}
     startMultiPhotoButton.disabled=!(selectedMultiPhotoFaces.length&&selectedMultiPhotoTarget);
   });
+  window.addEventListener("resize",()=>{if(selectedMultiPhotoTarget)renderMultiPhotoFaceOverlay();});
 
   function renderMultiVideoMappings(){
     multiVideoSourceGrid.innerHTML="";
-    const targets=["leftmost person","center person","rightmost person","person 1","person 2","person 3"];
+    const count=Math.max(1,selectedMultiVideoFaces.length);
+    const targets=Array.from({length:Math.max(3,count)},(_,i)=>`Person ${i+1}`);
     for(let i=0;i<3;i++){
       const chip=document.createElement("div");chip.className="multi-source-chip";
       const file=selectedMultiVideoFaces[i];
       if(file){
         chip.classList.add("mapping-chip");
         const url=URL.createObjectURL(file);
-        chip.innerHTML=`<img src="${url}" alt="Source identity ${i+1}"><div class="multi-source-map"><strong>Identity ${i+1}</strong><small>Place on:</small><select class="multi-video-target-select" data-source-index="${i}">${targets.map((target,index)=>`<option value="${target}" ${index===i?"selected":""}>${target}</option>`).join("")}</select></div>`;
+        chip.innerHTML=`<img src="${url}" alt="Source identity ${i+1}"><div class="multi-source-map"><strong>Identity ${i+1}</strong><small>Replace:</small><select class="multi-video-target-select" data-source-index="${i}">${targets.map((target,index)=>`<option value="${index}" ${index===i?"selected":""}>${target}${index===0?" · leftmost":""}</option>`).join("")}</select></div>`;
         chip.querySelector("img").onload=()=>setTimeout(()=>URL.revokeObjectURL(url),1200);
       }else chip.textContent=`Identity ${i+1}`;
       multiVideoSourceGrid.appendChild(chip);
     }
   }
 
-  function getMultiVideoMappings(){
-    return [...multiVideoSourceGrid.querySelectorAll(".multi-video-target-select")].map((select,index)=>({source:index+1,target:select.value}));
+  function getMultiVideoTargetIndexes(){
+    return [...multiVideoSourceGrid.querySelectorAll(".multi-video-target-select")].map(select=>Number(select.value));
   }
+
+  async function buildMultiVideoSourceCollage(files){
+    const prepared=[];
+    for(const file of files){
+      const blob=await optimizeImageToBlob(file,{maxDimension:900,maxBytes:350*1024,quality:.92});
+      if("createImageBitmap" in window){prepared.push(await createImageBitmap(blob));continue;}
+      const url=URL.createObjectURL(blob);
+      const img=await new Promise((resolve,reject)=>{const node=new Image();node.onload=()=>resolve(node);node.onerror=()=>reject(new Error("Could not read a source identity."));node.src=url;});
+      URL.revokeObjectURL(url);prepared.push(img);
+    }
+    const cell=700;
+    const canvas=document.createElement("canvas");canvas.width=cell*prepared.length;canvas.height=cell;
+    const ctx=canvas.getContext("2d");ctx.fillStyle="#111";ctx.fillRect(0,0,canvas.width,canvas.height);
+    prepared.forEach((img,i)=>{
+      const width=img.width||img.naturalWidth,height=img.height||img.naturalHeight;
+      const scale=Math.max(cell/width,cell/height);
+      const w=width*scale,h=height*scale;
+      ctx.drawImage(img,i*cell+(cell-w)/2,(cell-h)/2,w,h);
+      img.close?.();
+    });
+    return await new Promise((resolve,reject)=>canvas.toBlob(blob=>blob?resolve(new File([blob],`faceevol-multi-source-${Date.now()}.jpg`,{type:"image/jpeg"})):reject(new Error("Could not prepare source identities.")),"image/jpeg",.94));
+  }
+
+  function updateMultiVideoTrimUI(){
+    if(!multiVideoDuration)return;
+    let start=Math.max(0,Math.min(Number(multiVideoTrimStartRange.value)||0,multiVideoDuration));
+    let end=Math.max(start+.1,Math.min(Number(multiVideoTrimEndRange.value)||multiVideoDuration,multiVideoDuration));
+    if(end-start>MAX_TRIM_SECONDS) end=start+MAX_TRIM_SECONDS;
+    multiVideoTrimStart=start;multiVideoTrimEnd=end;
+    multiVideoTrimStartRange.value=String(start);multiVideoTrimEndRange.value=String(end);
+    const left=start/multiVideoDuration*100,right=end/multiVideoDuration*100;
+    multiVideoTrimSelected.style.left=`${left}%`;multiVideoTrimSelected.style.width=`${Math.max(0,right-left)}%`;
+    multiVideoTrimStartLabel.textContent=formatTime(start);multiVideoTrimEndLabel.textContent=formatTime(end);multiVideoTrimDurationLabel.textContent=`${(end-start).toFixed(1)} sec selected`;
+  }
+  multiVideoTrimStartRange.addEventListener("input",()=>{
+    let start=Number(multiVideoTrimStartRange.value),end=Number(multiVideoTrimEndRange.value);
+    if(end-start>MAX_TRIM_SECONDS) multiVideoTrimEndRange.value=String(Math.min(multiVideoDuration,start+MAX_TRIM_SECONDS));
+    if(start>=Number(multiVideoTrimEndRange.value)) multiVideoTrimStartRange.value=String(Math.max(0,Number(multiVideoTrimEndRange.value)-.1));
+    updateMultiVideoTrimUI();
+  });
+  multiVideoTrimEndRange.addEventListener("input",()=>{
+    let end=Number(multiVideoTrimEndRange.value),start=Number(multiVideoTrimStartRange.value);
+    if(end-start>MAX_TRIM_SECONDS) multiVideoTrimStartRange.value=String(Math.max(0,end-MAX_TRIM_SECONDS));
+    if(end<=Number(multiVideoTrimStartRange.value)) multiVideoTrimEndRange.value=String(Math.min(multiVideoDuration,Number(multiVideoTrimStartRange.value)+.1));
+    updateMultiVideoTrimUI();
+  });
 
   multiVideoFacesBox.addEventListener("click",()=>multiVideoFacesInput.click());
   multiVideoFacesBox.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();multiVideoFacesInput.click();}});
@@ -6512,13 +6642,17 @@
     multiVideoFacesBox.querySelector("strong").textContent=selectedMultiVideoFaces.length?`${selectedMultiVideoFaces.length} identit${selectedMultiVideoFaces.length===1?"y":"ies"} selected`:"Choose source identities";
     startMultiVideoButton.disabled=!(selectedMultiVideoFaces.length&&selectedMultiVideoFile);
   });
-  multiVideoFileInput.addEventListener("change",()=>{
+  multiVideoFileInput.addEventListener("change",async()=>{
     const file=multiVideoFileInput.files?.[0]||null;
     if(file&&!isMp4(file)){selectedMultiVideoFile=null;multiVideoFileInput.value="";multiVideoError.textContent="Please choose an MP4 video.";startMultiVideoButton.disabled=true;return;}
     if(file&&file.size>MAX_VIDEO_BYTES){selectedMultiVideoFile=null;multiVideoFileInput.value="";multiVideoError.textContent="Please choose an MP4 smaller than 300 MB.";startMultiVideoButton.disabled=true;return;}
     selectedMultiVideoFile=file;multiVideoError.textContent="";
     if(multiVideoPreviewUrl){try{URL.revokeObjectURL(multiVideoPreviewUrl);}catch{}}
-    if(file){multiVideoPreviewUrl=URL.createObjectURL(file);multiVideoSourcePreview.src=multiVideoPreviewUrl;multiVideoSourcePreviewWrap.classList.add("show");multiVideoFileBox.querySelector("strong").textContent="Target MP4 ready";multiVideoFileBox.querySelector("small").textContent=file.name;}
+    if(file){
+      multiVideoPreviewUrl=URL.createObjectURL(file);multiVideoSourcePreview.src=multiVideoPreviewUrl;multiVideoSourcePreviewWrap.classList.add("show");multiVideoFileBox.querySelector("strong").textContent="Target MP4 ready";multiVideoFileBox.querySelector("small").textContent=file.name;
+      multiVideoDuration=await readVideoDuration(file);multiVideoTrimStart=0;multiVideoTrimEnd=Math.min(MAX_TRIM_SECONDS,multiVideoDuration);
+      multiVideoTrimStartRange.max=String(multiVideoDuration);multiVideoTrimEndRange.max=String(multiVideoDuration);multiVideoTrimStartRange.value="0";multiVideoTrimEndRange.value=String(multiVideoTrimEnd);multiVideoTrimWrap.hidden=false;updateMultiVideoTrimUI();
+    }
     startMultiVideoButton.disabled=!(selectedMultiVideoFaces.length&&selectedMultiVideoFile);
   });
 
@@ -6546,12 +6680,12 @@
       const blob=await optimizeImageToBlob(selectedFaceEvolutionFile,{maxDimension:1800,maxBytes:700*1024,quality:.94});
       const image=await blobToDataURL(blob);
       const response=await fetch("/api/predict",{method:"POST",headers:await faceEvolGenerationHeaders(),body:JSON.stringify({mode:"face_evolution",image,duration:Number(faceEvolutionDuration.value)||12,prompt:faceEvolutionPrompt.value.trim()})});
-      const data=await readJsonResponse(response);applyFaceEvolServerCreditPayload(data);if(!response.ok)throw new Error(data.error||data.details||"Face Evolution request failed.");
-      let prediction=data.prediction||data;prediction=await pollNewToolPrediction(prediction,faceEvolutionStatus,"Creating your Face Evolution journey",600);
-      if(prediction.status!=="succeeded")throw new Error(newToolPredictionError(prediction,"Face Evolution creation failed."));
-      const output=findVideoUrl(prediction.output)||findVideoUrl(prediction);if(!output)throw new Error("No Face Evolution video was returned.");
-      latestFaceEvolutionOutput=output;faceEvolutionResultVideo.src=output;faceEvolutionResult.classList.add("show");faceEvolutionStatus.textContent="✓ Your Face Evolution journey is ready.";setNewDownload(downloadFaceEvolutionButton,output,`faceevol-life-journey-${Date.now()}.mp4`);
-    }catch(error){console.error("FaceEvol Face Evolution:",error);faceEvolutionStatus.textContent="";faceEvolutionError.textContent=error instanceof Error?error.message:String(error);}
+      const data=await readJsonResponse(response);applyFaceEvolServerCreditPayload(data);if(!response.ok)throw new Error(data.error||data.details||"AI Face Evolution request failed.");
+      let prediction=data.prediction||data;prediction=await pollNewToolPrediction(prediction,faceEvolutionStatus,"Creating your AI Face Evolution journey",300);
+      if(prediction.status!=="succeeded")throw new Error(newToolPredictionError(prediction,"AI Face Evolution creation failed."));
+      const output=findVideoUrl(prediction.output)||findVideoUrl(prediction);if(!output)throw new Error("No AI Face Evolution video was returned.");
+      latestFaceEvolutionOutput=output;faceEvolutionResultVideo.src=output;faceEvolutionResult.classList.add("show");faceEvolutionStatus.textContent="✓ Your AI Face Evolution journey is ready.";setNewDownload(downloadFaceEvolutionButton,output,`faceevol-life-journey-${Date.now()}.mp4`);
+    }catch(error){console.error("FaceEvol AI Face Evolution:",error);faceEvolutionStatus.textContent="";faceEvolutionError.textContent=error instanceof Error?error.message:String(error);}
     finally{startFaceEvolutionButton.disabled=!selectedFaceEvolutionFile;}
   });
 
@@ -6581,26 +6715,21 @@
 
   startMultiVideoButton.addEventListener("click",async()=>{
     if(!selectedMultiVideoFaces.length||!selectedMultiVideoFile)return;
-    startMultiVideoButton.disabled=true;multiVideoError.textContent="";multiVideoStatus.textContent="Preparing mapped video clip...";multiVideoResult.classList.remove("show");
+    startMultiVideoButton.disabled=true;multiVideoError.textContent="";multiVideoStatus.textContent="Preparing your selected clip...";multiVideoResult.classList.remove("show");
     try{
-      const mappings=getMultiVideoMappings();
-      const duration=await readVideoDuration(selectedMultiVideoFile);
-      const end=Math.min(duration,MAX_TRIM_SECONDS);
-      const clip=await prepareVideoForPrivateUpload(selectedMultiVideoFile,0,end);
-      const videoBlob=await uploadFaceEvolPrivate(`faceevol-video-multi-${Date.now()}-${safeFileName(clip.name)}`,clip,{step:"1/4",label:"Uploading video securely...",timeoutMs:180000,statusNode:multiVideoStatus});
-      const faceUrls=[];
-      for(let i=0;i<selectedMultiVideoFaces.length;i++){
-        const face=await optimizeImageToBlob(selectedMultiVideoFaces[i],{maxDimension:1600,maxBytes:TARGET_FACE_UPLOAD_BYTES,quality:.92});
-        const uploaded=await uploadFaceEvolPrivate(`faceevol-face-multi-${Date.now()}-${i+1}.jpg`,face,{step:"2/4",label:`Uploading identity ${i+1} of ${selectedMultiVideoFaces.length}...`,timeoutMs:120000,statusNode:multiVideoStatus});
-        faceUrls.push(uploaded.url);
-      }
-      multiVideoStatus.textContent="3/4 Starting mapped multi-person video swap...";
-      const response=await fetch("/api/faceswap",{method:"POST",headers:await faceEvolGenerationHeaders(),body:JSON.stringify({mode:"multi",faces:faceUrls,video:videoBlob.url,mappings,resolution:multiVideoResolution.value})});
+      const targetIndexes=getMultiVideoTargetIndexes();
+      if(new Set(targetIndexes).size!==targetIndexes.length) throw new Error("Each source identity must be mapped to a different target person.");
+      const clip=await prepareVideoForPrivateUpload(selectedMultiVideoFile,multiVideoTrimStart,multiVideoTrimEnd);
+      const videoBlob=await uploadFaceEvolPrivate(`faceevol-video-multi-${Date.now()}-${safeFileName(clip.name)}`,clip,{step:"1/4",label:"Uploading selected video clip securely...",timeoutMs:180000,statusNode:multiVideoStatus});
+      const collage=await buildMultiVideoSourceCollage(selectedMultiVideoFaces);
+      const sourceBlob=await uploadFaceEvolPrivate(`faceevol-face-multi-collage-${Date.now()}.jpg`,collage,{step:"2/4",label:"Uploading mapped source identities...",timeoutMs:120000,statusNode:multiVideoStatus});
+      multiVideoStatus.textContent="3/4 Starting indexed multi-person face swap...";
+      const response=await fetch("/api/faceswap",{method:"POST",headers:await faceEvolGenerationHeaders(),body:JSON.stringify({mode:"multi",face:sourceBlob.url,video:videoBlob.url,target_indexes:targetIndexes})});
       const data=await readJsonResponse(response);applyFaceEvolServerCreditPayload(data);if(!response.ok)throw new Error(data.error||data.details||"Multiple video face swap request failed.");
-      let prediction=data.prediction||data;prediction=await pollNewToolPrediction(prediction,multiVideoStatus,"Keeping each mapped identity consistent");
+      let prediction=data.prediction||data;prediction=await pollNewToolPrediction(prediction,multiVideoStatus,"Swapping only the mapped faces while preserving your source video",450);
       if(prediction.status!=="succeeded")throw new Error(newToolPredictionError(prediction,"Multiple video face swap failed."));
       const output=findVideoUrl(prediction.output)||findVideoUrl(prediction);if(!output)throw new Error("No face-swap video was returned.");
-      latestMultiVideoOutput=output;multiVideoResultVideo.src=output;multiVideoResult.classList.add("show");multiVideoStatus.textContent="✓ Your mapped multi-person video is ready.";setNewDownload(downloadMultiVideoButton,output,`faceevol-multi-video-${Date.now()}.mp4`);
+      latestMultiVideoOutput=output;multiVideoResultVideo.src=output;multiVideoResult.classList.add("show");multiVideoStatus.textContent="✓ Your original clip is preserved with the mapped faces swapped.";setNewDownload(downloadMultiVideoButton,output,`faceevol-multi-video-${Date.now()}.mp4`);
     }catch(error){console.error("FaceEvol multiple video face swap:",error);multiVideoStatus.textContent="";multiVideoError.textContent=error instanceof Error?error.message:String(error);}
     finally{startMultiVideoButton.disabled=!(selectedMultiVideoFaces.length&&selectedMultiVideoFile);}
   });
@@ -6625,7 +6754,7 @@
     faceSwapMode=false;activeStudioMode="portrait";document.querySelectorAll(".tool-option").forEach(o=>o.classList.remove("active"));portraitCreatorOption.classList.add("active");syncStudioToolState(portraitCreatorOption,"AI Portrait Creator");hideExistingToolControls();hideNewToolControls();portraitControls.classList.add("show");setSharedUploadVisible(false);
   }
   function activateFaceEvolutionMode(){
-    faceSwapMode=false;activeStudioMode="face-evolution";document.querySelectorAll(".tool-option").forEach(o=>o.classList.remove("active"));faceEvolutionOption.classList.add("active");syncStudioToolState(faceEvolutionOption,"Face Evolution");hideExistingToolControls();hideNewToolControls();faceEvolutionControls.classList.add("show");setSharedUploadVisible(false);
+    faceSwapMode=false;activeStudioMode="face-evolution";document.querySelectorAll(".tool-option").forEach(o=>o.classList.remove("active"));faceEvolutionOption.classList.add("active");syncStudioToolState(faceEvolutionOption,"AI Face Evolution");hideExistingToolControls();hideNewToolControls();faceEvolutionControls.classList.add("show");setSharedUploadVisible(false);
   }
   function activateMultiPhotoMode(){
     faceSwapMode=false;activeStudioMode="multi-photo";document.querySelectorAll(".tool-option").forEach(o=>o.classList.remove("active"));multiPhotoSwapOption.classList.add("active");syncStudioToolState(multiPhotoSwapOption,"Multiple Photo Face Swap");hideExistingToolControls();hideNewToolControls();multiPhotoControls.classList.add("show");setSharedUploadVisible(false);
@@ -6716,7 +6845,7 @@
     activeStudioMode="photo-enhance";
     document.querySelectorAll(".tool-option").forEach(o=>o.classList.remove("active"));
     photoEnhanceOption.classList.add("active");
-    syncStudioToolState(photoEnhanceOption,"Photo Enhancement");
+    syncStudioToolState(photoEnhanceOption,"Photo Enhance");
     ageControls.classList.remove("show");
     photoSwapControls.classList.remove("show");
     photoToVideoControls.classList.remove("show");
@@ -7318,10 +7447,10 @@
       photo_faceswap:"Photo Face Swap",
       photo_to_video:"Photo to Video",
       video_faceswap:"Video Face Swap",
-      photo_enhance:"Photo Enhancement",
+      photo_enhance:"Photo Enhance",
       video_enhance:"Video Enhance",
       portrait_creator:"AI Portrait Creator",
-      face_evolution:"Face Evolution",
+      face_evolution:"AI Face Evolution",
       multi_photo_faceswap:"Multiple Photo Face Swap",
       multi_video_faceswap:"Multiple Video Face Swap"
     };
