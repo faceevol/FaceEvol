@@ -4,8 +4,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FaceEvol — AI Face Transformation</title>
-  <meta name="description" content="Transform your age, swap faces, bring a photo to life and enhance photos or videos with FaceEvol. Simple, private and built for high-quality AI results." />
+  <title>FaceEvol — AI Face &amp; Portrait Studio</title>
+  <meta name="description" content="Create, transform and enhance faces and portraits with FaceEvol — an AI face and portrait studio for age transformation, face swap, photo animation and enhancement." />
   <meta name="theme-color" content="#070b17" />
   <meta name="color-scheme" content="dark" />
   <meta name="robots" content="index,follow" />
@@ -23,13 +23,13 @@
   <meta name="apple-mobile-web-app-title" content="FaceEvol" />
 <meta property="og:type" content="website" />
   <meta property="og:site_name" content="FaceEvol" />
-  <meta property="og:title" content="FaceEvol — AI Face Transformation" />
-  <meta property="og:description" content="Transform your age, swap faces, bring a photo to life, and enhance photos or videos in one simple AI studio." />
+  <meta property="og:title" content="FaceEvol — AI Face &amp; Portrait Studio" />
+  <meta property="og:description" content="Create, transform and enhance faces and portraits in one focused AI studio — with Face Evolution, face swap, portrait creation, animation and enhancement." />
   <meta property="og:url" content="https://www.faceevol.com/" />
   <meta property="og:image" content="https://www.faceevol.com/a.png" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="FaceEvol — AI Face Transformation" />
-  <meta name="twitter:description" content="Six focused AI tools for face transformation, animation and enhancement." />
+  <meta name="twitter:title" content="FaceEvol — AI Face &amp; Portrait Studio" />
+  <meta name="twitter:description" content="FaceEvol is an AI Face &amp; Portrait Studio with six live tools and four focused experiences in development." />
   <meta name="twitter:image" content="https://www.faceevol.com/a.png" />
 
   <!-- Browser-side video trimming. Loaded only by the page; your API routes stay unchanged. -->
@@ -1125,6 +1125,60 @@
       border-color:rgba(255,255,255,.06);transform:none!important
     }
 
+
+    /* FaceEvol 10-tool restructure · 2026-08-30 */
+    .evolution-section{padding:36px 0 78px}
+    .evolution-shell{position:relative;overflow:hidden;display:grid;grid-template-columns:.92fr 1.08fr;gap:46px;align-items:center;padding:46px;border:1px solid rgba(255,255,255,.09);border-radius:30px;background:linear-gradient(145deg,rgba(124,58,237,.10),rgba(14,165,233,.045) 58%,rgba(255,255,255,.018));box-shadow:0 32px 90px rgba(0,0,0,.28)}
+    .evolution-shell::before{content:"";position:absolute;width:430px;height:430px;border-radius:50%;right:-150px;top:-190px;background:radial-gradient(circle,rgba(56,189,248,.18),transparent 68%);pointer-events:none}
+    .evolution-copy{position:relative;z-index:2}
+    .roadmap-pill{width:max-content;max-width:100%;margin-bottom:22px;padding:8px 12px;border-radius:999px;border:1px solid rgba(167,139,250,.18);background:rgba(167,139,250,.06);color:#cfc5ff;font-size:10px;font-weight:850;letter-spacing:.55px;text-transform:uppercase}
+    .roadmap-pill span{color:#7dd3fc;margin-right:5px}
+    .evolution-copy h2{max-width:570px;margin-top:4px;font-size:clamp(34px,4.6vw,54px);line-height:1.06;letter-spacing:-1.8px;text-wrap:balance}
+    .evolution-copy>p{max-width:600px;margin-top:18px;color:#9aa9bf;font-size:15px;line-height:1.75}
+    .evolution-points{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+    .evolution-points span{padding:7px 10px;border-radius:999px;border:1px solid rgba(125,211,252,.10);background:rgba(125,211,252,.035);color:#a9bed0;font-size:10px;font-weight:750}
+    .evolution-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:25px}
+    .evolution-actions .button{min-height:47px;padding:0 18px;font-size:13px}
+    .evolution-visual{position:relative;z-index:2;padding:13px;border-radius:24px;border:1px solid rgba(255,255,255,.07);background:rgba(3,7,18,.55);box-shadow:0 22px 55px rgba(0,0,0,.22)}
+    .evolution-stage{position:relative;min-height:345px;display:grid;place-items:center;overflow:hidden;border-radius:18px;background:radial-gradient(circle at 50% 34%,rgba(125,211,252,.12),transparent 28%),radial-gradient(circle at 50% 62%,rgba(124,58,237,.18),transparent 43%),linear-gradient(145deg,#111827,#070b16)}
+    .evolution-orbit{position:absolute;border:1px solid rgba(125,211,252,.08);border-radius:50%}
+    .evolution-orbit-one{width:310px;height:310px}.evolution-orbit-two{width:235px;height:235px;border-color:rgba(167,139,250,.12)}
+    .evolution-portrait-placeholder{position:relative;z-index:2;width:190px;height:238px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:24px 16px;border-radius:94px 94px 24px 24px;border:1px solid rgba(255,255,255,.13);background:linear-gradient(180deg,rgba(255,255,255,.11),rgba(255,255,255,.025));box-shadow:0 28px 70px rgba(0,0,0,.34)}
+    .evolution-face-mark{position:absolute;top:50px;width:88px;height:108px;display:grid;place-items:center;border-radius:48% 48% 44% 44%;background:linear-gradient(145deg,rgba(196,181,253,.38),rgba(125,211,252,.24));color:#eef7ff;font-size:23px;font-weight:900;letter-spacing:-1px;box-shadow:0 -12px 0 rgba(10,15,28,.75)}
+    .evolution-portrait-placeholder strong{font-size:12px}.evolution-portrait-placeholder span{margin-top:4px;color:#8290a8;font-size:9px}
+    .evolution-play{position:absolute;z-index:4;right:18px;bottom:17px;width:42px;height:42px;display:grid;place-items:center;border-radius:50%;background:rgba(7,12,25,.82);border:1px solid rgba(125,211,252,.20);color:#dff7ff;font-size:12px;box-shadow:0 10px 25px rgba(0,0,0,.3)}
+    .age-journey{display:flex;align-items:flex-start;justify-content:space-between;gap:4px;padding:14px 8px 5px}
+    .age-journey span{min-width:34px;text-align:center}.age-journey b{display:block;color:#dcefff;font-size:11px}.age-journey small{display:block;margin-top:2px;color:#65758d;font-size:7px;text-transform:uppercase;letter-spacing:.45px}
+    .age-journey i{flex:1;height:1px;margin-top:7px;background:linear-gradient(90deg,rgba(167,139,250,.35),rgba(56,189,248,.35))}
+    .evolution-caption{padding:8px 8px 4px;text-align:center;color:#718096;font-size:9px}
+
+    .tool-universe-section{position:relative;padding-top:82px}
+    .tool-universe-heading{margin-bottom:50px}
+    .tool-category{padding:27px 0 34px;border-top:1px solid rgba(255,255,255,.065)}
+    .tool-category:first-of-type{border-top:0}
+    .tool-category-head{display:grid;grid-template-columns:.78fr 1.22fr;gap:30px;align-items:end;margin-bottom:22px}
+    .tool-category-head>div{display:flex;align-items:center;gap:13px}.tool-category-index{color:#52637b;font-size:10px;font-weight:900;letter-spacing:1px}.tool-category-head h3{font-size:clamp(27px,3vw,36px);letter-spacing:-1px}.tool-category-head p{max-width:590px;color:#8190a8;font-size:13px;line-height:1.65}
+    .premium-tool-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:15px}
+    .premium-tool-card{position:relative;overflow:hidden;min-height:270px;padding:24px;border-radius:20px;border:1px solid rgba(255,255,255,.075);background:linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,255,255,.015));box-shadow:0 16px 40px rgba(0,0,0,.10);transition:transform .2s ease,border-color .2s ease,background .2s ease}
+    .premium-tool-card:hover{transform:translateY(-3px);border-color:rgba(125,211,252,.18);background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.018))}
+    .premium-tool-card::after{content:"";position:absolute;right:-58px;bottom:-78px;width:170px;height:170px;border-radius:50%;background:radial-gradient(circle,rgba(56,189,248,.07),transparent 68%);pointer-events:none}
+    .create-grid .premium-tool-card{grid-column:span 4}.transform-grid .premium-tool-card{grid-column:span 4}.enhance-grid .premium-tool-card{grid-column:span 6}
+    .premium-tool-card.flagship{grid-column:span 6;background:linear-gradient(145deg,rgba(124,58,237,.105),rgba(14,165,233,.035))}
+    .transform-grid .evolution-card{grid-column:span 8}
+    .tool-status{position:absolute;right:16px;top:16px;padding:5px 8px;border-radius:999px;font-size:8px;font-weight:900;letter-spacing:.7px;text-transform:uppercase}
+    .tool-status.live{color:#caffec;background:rgba(74,222,176,.07);border:1px solid rgba(74,222,176,.18)}
+    .tool-status.soon{color:#ddd4ff;background:rgba(167,139,250,.075);border:1px solid rgba(167,139,250,.16)}
+    .tool-status.signature{color:#dff8ff;background:linear-gradient(90deg,rgba(124,58,237,.13),rgba(14,165,233,.11));border:1px solid rgba(125,211,252,.16)}
+    .premium-tool-icon{width:49px;height:49px;margin-bottom:27px;display:grid;place-items:center;border-radius:14px;border:1px solid rgba(125,211,252,.10);background:linear-gradient(145deg,rgba(124,58,237,.18),rgba(14,165,233,.10));color:#d9f5ff;font-size:17px;font-weight:900}.premium-tool-icon .fe-icon{width:22px;height:22px}
+    .premium-tool-kicker{margin-bottom:7px;color:#70819a;font-size:9px;font-weight:850;letter-spacing:.9px;text-transform:uppercase}.premium-tool-card h4{margin-bottom:9px;font-size:20px;letter-spacing:-.35px}.premium-tool-card p{max-width:540px;color:#8f9db2;font-size:12px;line-height:1.67}
+    .tool-mode-row{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}.tool-mode-row span{padding:6px 8px;border-radius:8px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);color:#aebacd;font-size:9px;font-weight:750}
+    .premium-tool-action,.future-action{position:absolute;left:24px;right:24px;bottom:20px;min-height:39px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;border-radius:10px;border:1px solid rgba(125,211,252,.12);background:rgba(56,189,248,.045);color:#ccefff;font-size:10px;font-weight:850;cursor:pointer;text-decoration:none}.premium-tool-action:hover{border-color:rgba(125,211,252,.30);background:rgba(56,189,248,.07)}.premium-tool-action.ghost{background:rgba(167,139,250,.045);border-color:rgba(167,139,250,.13)}
+    .future-action{cursor:default;color:#687a93;background:rgba(255,255,255,.018);border-color:rgba(255,255,255,.05);justify-content:flex-start}
+    .roadmap-summary{max-width:720px;margin:34px auto 0;padding:17px 22px;display:flex;align-items:center;justify-content:center;gap:26px;border-radius:17px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.02);text-align:center}.roadmap-summary div:not(.roadmap-divider){min-width:110px}.roadmap-summary strong{display:block;color:#eaf6ff;font-size:25px}.roadmap-summary span{display:block;margin-top:3px;color:#74839a;font-size:9px;text-transform:uppercase;letter-spacing:.7px;font-weight:800}.roadmap-divider{width:1px;height:34px;background:rgba(255,255,255,.075)}
+
+    @media(max-width:1000px){.evolution-shell{grid-template-columns:1fr;gap:32px}.create-grid .premium-tool-card,.transform-grid .premium-tool-card{grid-column:span 6}.premium-tool-card.flagship,.transform-grid .evolution-card{grid-column:span 12}.enhance-grid .premium-tool-card{grid-column:span 6}}
+    @media(max-width:650px){.evolution-section{padding:18px 0 56px}.evolution-shell{padding:24px 18px;border-radius:23px}.evolution-copy h2{font-size:36px}.evolution-stage{min-height:290px}.evolution-portrait-placeholder{width:165px;height:210px}.evolution-face-mark{top:42px;width:76px;height:94px}.age-journey span:nth-of-type(2),.age-journey span:nth-of-type(4),.age-journey span:nth-of-type(6),.age-journey i:nth-of-type(2n){display:none}.tool-category-head{grid-template-columns:1fr;gap:8px}.premium-tool-grid{grid-template-columns:1fr}.create-grid .premium-tool-card,.transform-grid .premium-tool-card,.enhance-grid .premium-tool-card,.premium-tool-card.flagship,.transform-grid .evolution-card{grid-column:1}.premium-tool-card{min-height:260px}.roadmap-summary{gap:13px;padding:15px 10px}.roadmap-summary div:not(.roadmap-divider){min-width:0;flex:1}.roadmap-summary strong{font-size:21px}}
+
   </style>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4"></script>
@@ -1137,7 +1191,7 @@
     "url":"https://www.faceevol.com/",
     "applicationCategory":"MultimediaApplication",
     "operatingSystem":"Web",
-    "description":"AI face transformation, face swap, photo-to-video and enhancement tools in one web studio.",
+    "description":"AI face and portrait creation, transformation, animation and enhancement tools in one focused web studio.",
     "offers":{"@type":"AggregateOffer","lowPrice":"4.99","highPrice":"24.99","priceCurrency":"EUR","offerCount":"3"}
   }
   </script>
@@ -1227,7 +1281,7 @@
     <a href="#" class="logo"><img src="a.png" alt="FaceEvol"></a>
     <nav class="nav-links" aria-label="Primary navigation">
       <a href="#demos">Demos</a>
-      <a href="#features">Features</a>
+      <a href="#features">Tools</a>
       <a href="#how-it-works">How It Works</a>
       <a href="#quality">Quality</a>
       <a href="#pricing">Pricing</a>
@@ -1357,21 +1411,62 @@
 <main>
   <section class="hero">
     <div class="container">
-      <div class="badge"><span class="badge-dot"></span>6 AI Tools · One Creative Studio</div>
-      <h1>AI Face <span class="gradient-text">Transformation</span></h1>
-      <p class="hero-description">Transform your age, swap faces, bring a photo to life, and create high-quality AI results in seconds.</p>
+      <div class="badge"><span class="badge-dot"></span>6 Live Tools · 4 Experiences Coming Next</div>
+      <h1>AI Face &amp; <span class="gradient-text">Portrait Studio</span></h1>
+      <p class="hero-description">Create portraits, transform age, swap faces, bring photos to life and enhance your best moments — all in one focused AI studio.</p>
       <div class="hero-actions">
         <a href="#studio" class="button button-primary" id="heroAgeButton">✨ Start Creating</a>
-        <a href="#demos" class="button button-secondary">▶ View Examples</a>
+        <a href="#face-evolution" class="button button-secondary">▶ Discover Face Evolution</a>
       </div>
       <div class="hero-trust" aria-label="FaceEvol benefits">
-        <span><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-lock"></use></svg> Private workflow</span>
-        <span><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-grid"></use></svg> 6 AI tools</span>
+        <span><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-lock"></use></svg> Privacy-focused workflow</span>
+        <span><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-grid"></use></svg> Face &amp; portrait focused</span>
         <span><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-enhance"></use></svg> High-quality output</span>
         <span><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-download"></use></svg> Direct download</span>
       </div>
+    </div>
+  </section>
 
-      
+  <section class="evolution-section" id="face-evolution" aria-labelledby="faceEvolutionTitle">
+    <div class="container">
+      <div class="evolution-shell">
+        <div class="evolution-copy">
+          <div class="roadmap-pill"><span>✦</span> Signature FaceEvol Experience · In Development</div>
+          <span class="section-eyebrow">AI Face Evolution</span>
+          <h2 id="faceEvolutionTitle">See one face evolve through <span class="gradient-text">a lifetime.</span></h2>
+          <p>Our signature experience is designed to turn a single portrait into a smooth, cinematic age journey — from childhood through adulthood and into later life while keeping the person recognizable.</p>
+          <div class="evolution-points">
+            <span>Consistent identity</span><span>Smooth age transitions</span><span>Short cinematic sequence</span>
+          </div>
+          <div class="evolution-actions">
+            <a href="#demos" class="button button-secondary">See Current Examples</a>
+            <a href="#studio" class="button button-primary">Try Age Transform Now →</a>
+          </div>
+        </div>
+
+        <div class="evolution-visual" aria-label="Placeholder for the future AI Face Evolution animation">
+          <div class="evolution-stage">
+            <div class="evolution-orbit evolution-orbit-one"></div>
+            <div class="evolution-orbit evolution-orbit-two"></div>
+            <div class="evolution-portrait-placeholder">
+              <div class="evolution-face-mark">FE</div>
+              <strong>Face Evolution Demo</strong>
+              <span>Future animation slot</span>
+            </div>
+            <div class="evolution-play">▶</div>
+          </div>
+          <div class="age-journey" aria-hidden="true">
+            <span><b>5</b><small>Child</small></span>
+            <i></i><span><b>15</b><small>Teen</small></span>
+            <i></i><span><b>28</b><small>Young</small></span>
+            <i></i><span><b>40</b><small>Adult</small></span>
+            <i></i><span><b>55</b><small>Mature</small></span>
+            <i></i><span><b>70</b><small>Senior</small></span>
+            <i></i><span><b>85</b><small>Later</small></span>
+          </div>
+          <div class="evolution-caption">Placeholder ready for the final FaceEvol signature animation.</div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -1379,12 +1474,12 @@
   <section class="demo-section" id="demos">
     <div class="container">
       <div class="section-heading">
-        <span class="section-eyebrow">FaceEvol Examples</span>
-        <h2>See FaceEvol <span class="gradient-text">in action.</span></h2>
-        <p>Explore carefully prepared examples for every FaceEvol tool and see the quality before uploading your own media.</p>
+        <span class="section-eyebrow">See Before You Create</span>
+        <h2>Real results make the <span class="gradient-text">difference.</span></h2>
+        <p>This area is ready for FaceEvol’s strongest prepared examples. Replace each placeholder with polished, original demo media as the library is completed.</p>
       </div>
 
-      <div class="demo-intro-note">✓ Pre-generated examples · No upload required</div>
+      <div class="demo-intro-note">✓ Prepared examples are free to view · Your own generations use credits</div>
 
       <div class="demo-grid">
         <article class="demo-card">
@@ -1545,9 +1640,9 @@
   <section class="studio-section" aria-labelledby="studioSectionTitle">
     <div class="container">
       <div class="studio-section-intro">
-        <span class="section-eyebrow">Create With Your Media</span>
-        <h2 id="studioSectionTitle">Ready to make it <span class="gradient-text">your own?</span></h2>
-        <p>Choose a FaceEvol tool, upload your own photo or video, review the credit cost, and start your creation.</p>
+        <span class="section-eyebrow">FaceEvol Studio · Live Now</span>
+        <h2 id="studioSectionTitle">Choose a tool and make it <span class="gradient-text">your own.</span></h2>
+        <p>The six tools below are available now. Future FaceEvol experiences are shown in the roadmap section further down the page.</p>
       </div>
 
 <div class="studio-wrap" id="studio">
@@ -1612,50 +1707,135 @@
 
 
 
-  <section id="features">
+  <section id="features" class="tool-universe-section">
     <div class="container">
-      <div class="section-heading">
-        <span class="section-eyebrow">Six Focused Tools · One Studio</span>
-        <h2>Everything you need for <span class="gradient-text">face transformation.</span></h2>
-        <p>Transform age, swap faces, animate photos, and enhance images or video from one clean FaceEvol workflow.</p>
+      <div class="section-heading tool-universe-heading">
+        <span class="section-eyebrow">The FaceEvol Studio</span>
+        <h2>One focused studio. <span class="gradient-text">Three clear ways to create.</span></h2>
+        <p>FaceEvol stays centered on faces and portraits. Six tools are live today, with four carefully chosen experiences reserved for the next stages of the product.</p>
       </div>
-      <div class="feature-grid">
-        <div class="feature-card core">
-          <div class="feature-icon"><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-age"></use></svg></div><h3>Age Transform</h3>
-          <p>Explore younger or older versions of a face with five visual presets or any custom age from 0 to 100.</p>
-          <span class="feature-tag">AGE 0 → 100</span>
-          <button type="button" class="feature-action" data-open-tool="age" aria-label="Open Age Transform">Open Age Transform <span>→</span></button>
+
+      <div class="tool-category">
+        <div class="tool-category-head">
+          <div><span class="tool-category-index">01</span><h3>Create</h3></div>
+          <p>Generate new portrait experiences and bring still images to life.</p>
         </div>
-        <div class="feature-card core">
-          <div class="feature-icon"><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-photo"></use></svg></div><h3>Photo Face Swap</h3>
-          <p>Choose a source face and a target photo, then create a natural-looking photo face swap in a few steps.</p>
-          <span class="feature-tag">PHOTO → PHOTO</span>
-          <button type="button" class="feature-action" data-open-tool="photo" aria-label="Open Photo Face Swap">Open Photo Face Swap <span>→</span></button>
+        <div class="premium-tool-grid create-grid">
+          <article class="premium-tool-card future flagship">
+            <div class="tool-status soon">Coming Soon</div>
+            <div class="premium-tool-icon">✦</div>
+            <div class="premium-tool-kicker">Two creation modes</div>
+            <h4>AI Portrait Creator</h4>
+            <p>Create an original portrait from a prompt, or upload your own photo and restyle it with portrait-focused looks, outfits and backgrounds.</p>
+            <div class="tool-mode-row"><span>Create from Text</span><span>Use My Photo</span></div>
+            <div class="future-action">Reserved for development</div>
+          </article>
+
+          <article class="premium-tool-card future">
+            <div class="tool-status soon">Coming Soon</div>
+            <div class="premium-tool-icon">▦</div>
+            <div class="premium-tool-kicker">Ready-made portrait sets</div>
+            <h4>AI Profile Photo Pack</h4>
+            <p>Turn one good portrait into a curated set of polished profile images for professional, social and personal use.</p>
+            <div class="future-action">Reserved for development</div>
+          </article>
+
+          <article class="premium-tool-card live">
+            <div class="tool-status live">Live</div>
+            <div class="premium-tool-icon"><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-photo-video"></use></svg></div>
+            <div class="premium-tool-kicker">Image → motion</div>
+            <h4>Photo to Video</h4>
+            <p>Upload a still image, describe the movement you want and turn it into a short AI-generated video.</p>
+            <button type="button" class="premium-tool-action" data-open-tool="photo-video">Open Photo to Video <span>→</span></button>
+          </article>
         </div>
-        <div class="feature-card core">
-          <div class="feature-icon"><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-photo-video"></use></svg></div><h3>Photo to Video</h3>
-          <p>Upload a still photo, describe the motion you want, and turn it into a short AI-generated video.</p>
-          <span class="feature-tag">IMAGE → VIDEO</span>
-          <button type="button" class="feature-action" data-open-tool="photo-video" aria-label="Open Photo to Video">Open Photo to Video <span>→</span></button>
+      </div>
+
+      <div class="tool-category">
+        <div class="tool-category-head">
+          <div><span class="tool-category-index">02</span><h3>Transform</h3></div>
+          <p>Explore identity, age and face transformations across photos and video.</p>
         </div>
-        <div class="feature-card core">
-          <div class="feature-icon"><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-video-swap"></use></svg></div><h3>Video Face Swap</h3>
-          <p>Use a clear source face and select up to 20 seconds of an MP4 video for your face swap.</p>
-          <span class="feature-tag">VIDEO</span>
-          <button type="button" class="feature-action" data-open-tool="video" aria-label="Open Video Face Swap">Open Video Face Swap <span>→</span></button>
+        <div class="premium-tool-grid transform-grid">
+          <article class="premium-tool-card future flagship evolution-card">
+            <div class="tool-status signature">Signature · Coming Soon</div>
+            <div class="premium-tool-icon">∞</div>
+            <div class="premium-tool-kicker">The idea behind FaceEvol</div>
+            <h4>AI Face Evolution</h4>
+            <p>Transform one portrait into a smooth life-stage sequence, designed to preserve identity as the face evolves through age.</p>
+            <a class="premium-tool-action ghost" href="#face-evolution">View Concept <span>→</span></a>
+          </article>
+
+          <article class="premium-tool-card live">
+            <div class="tool-status live">Live</div>
+            <div class="premium-tool-icon"><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-age"></use></svg></div>
+            <div class="premium-tool-kicker">Age 0 → 100</div>
+            <h4>AI Age Transformation</h4>
+            <p>Explore younger or older versions of a face with visual presets or a custom target age.</p>
+            <button type="button" class="premium-tool-action" data-open-tool="age">Open Age Transform <span>→</span></button>
+          </article>
+
+          <article class="premium-tool-card live">
+            <div class="tool-status live">Live</div>
+            <div class="premium-tool-icon"><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-photo"></use></svg></div>
+            <div class="premium-tool-kicker">Photo → photo</div>
+            <h4>Photo Face Swap</h4>
+            <p>Use a source face and target image to create a natural-looking face swap in a clear, guided workflow.</p>
+            <button type="button" class="premium-tool-action" data-open-tool="photo">Open Photo Face Swap <span>→</span></button>
+          </article>
+
+          <article class="premium-tool-card live">
+            <div class="tool-status live">Live</div>
+            <div class="premium-tool-icon"><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-video-swap"></use></svg></div>
+            <div class="premium-tool-kicker">Short-form video</div>
+            <h4>Video Face Swap</h4>
+            <p>Use a clear source face and a selected MP4 segment to create a video face swap.</p>
+            <button type="button" class="premium-tool-action" data-open-tool="video">Open Video Face Swap <span>→</span></button>
+          </article>
+
+          <article class="premium-tool-card future">
+            <div class="tool-status soon">Coming Soon</div>
+            <div class="premium-tool-icon">◎◎</div>
+            <div class="premium-tool-kicker">More than one face</div>
+            <h4>Multi-Face Swap</h4>
+            <p>Detect and replace multiple faces in the same scene while giving users clear control over who is changed.</p>
+            <div class="future-action">Reserved for development</div>
+          </article>
         </div>
-        <div class="feature-card core">
-          <div class="feature-icon"><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-enhance"></use></svg></div><h3>Photo Enhance</h3>
-          <p>Restore detail and improve clarity while keeping faces natural, with 2× and 4× enhancement options.</p>
-          <span class="feature-tag">2× · 4×</span>
-          <button type="button" class="feature-action" data-open-tool="photo-enhance" aria-label="Open Photo Enhance">Open Photo Enhance <span>→</span></button>
+      </div>
+
+      <div class="tool-category">
+        <div class="tool-category-head">
+          <div><span class="tool-category-index">03</span><h3>Enhance</h3></div>
+          <p>Improve clarity and resolution without turning FaceEvol into a generic editing suite.</p>
         </div>
-        <div class="feature-card core">
-          <div class="feature-icon"><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-video-enhance"></use></svg></div><h3>Video Enhance</h3>
-          <p>Enhance up to 5 seconds of video and export at higher resolution with flexible frame-rate options.</p>
-          <span class="feature-tag">UP TO 5 SEC · 1080P / 4K</span>
-          <button type="button" class="feature-action" data-open-tool="enhance" aria-label="Open Video Enhance">Open Video Enhance <span>→</span></button>
+        <div class="premium-tool-grid enhance-grid">
+          <article class="premium-tool-card live">
+            <div class="tool-status live">Live</div>
+            <div class="premium-tool-icon"><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-enhance"></use></svg></div>
+            <div class="premium-tool-kicker">2× · 4×</div>
+            <h4>Photo Enhance</h4>
+            <p>Restore detail and improve clarity while keeping faces and portrait texture looking natural.</p>
+            <button type="button" class="premium-tool-action" data-open-tool="photo-enhance">Open Photo Enhance <span>→</span></button>
+          </article>
+
+          <article class="premium-tool-card live">
+            <div class="tool-status live">Live</div>
+            <div class="premium-tool-icon"><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-video-enhance"></use></svg></div>
+            <div class="premium-tool-kicker">1080p · 4K options</div>
+            <h4>Video Enhance</h4>
+            <p>Enhance a selected video segment and export it at higher resolution with a simple preview-and-download flow.</p>
+            <button type="button" class="premium-tool-action" data-open-tool="enhance">Open Video Enhance <span>→</span></button>
+          </article>
         </div>
+      </div>
+
+      <div class="roadmap-summary">
+        <div><strong>6</strong><span>Available now</span></div>
+        <div class="roadmap-divider"></div>
+        <div><strong>4</strong><span>Planned next</span></div>
+        <div class="roadmap-divider"></div>
+        <div><strong>10</strong><span>Focused FaceEvol tools</span></div>
       </div>
     </div>
   </section>
@@ -1664,13 +1844,13 @@
     <div class="container">
       <div class="section-heading">
         <span class="section-eyebrow">Simple From Start to Finish</span>
-        <h2>Preview. Create. <span class="gradient-text">Download.</span></h2>
-        <p>FaceEvol keeps the experience clear: explore an example, choose your tool, then create with your own photo or video.</p>
+        <h2>Choose. Create. <span class="gradient-text">Download.</span></h2>
+        <p>FaceEvol keeps the experience direct: choose a tool, add your media, review the credit cost and create your result.</p>
       </div>
       <div class="steps">
-        <div class="step-card"><div class="step-number">1</div><h3>Explore an example</h3><p>See prepared FaceEvol results for the tools that interest you before uploading anything.</p></div>
-        <div class="step-card"><div class="step-number">2</div><h3>Choose your tool</h3><p>Upload your photo or video, select the transformation or enhancement you want, and review the credit cost.</p></div>
-        <div class="step-card"><div class="step-number">3</div><h3>Create &amp; download</h3><p>Start the AI creation, preview the finished result, and download it directly when it is ready.</p></div>
+        <div class="step-card"><div class="step-number">1</div><h3>Choose your tool</h3><p>Start with the face or portrait experience that matches what you want to make.</p></div>
+        <div class="step-card"><div class="step-number">2</div><h3>Add your media</h3><p>Upload your photo or video, choose the available options and review the credit cost before processing.</p></div>
+        <div class="step-card"><div class="step-number">3</div><h3>Create &amp; download</h3><p>Generate the result, preview it on the page and download it directly when it is ready.</p></div>
       </div>
     </div>
   </section>
@@ -1804,9 +1984,9 @@
   <section class="cta" id="start">
     <div class="container">
       <div class="cta-box">
-        <div class="badge">✨ FaceEvol AI Studio</div>
-        <h2>See what is possible.<br><span class="gradient-text">Create your own transformation.</span></h2>
-        <p>Explore polished examples across all six tools, then bring your own photo or video into FaceEvol when you are ready.</p>
+        <div class="badge">✨ FaceEvol · AI Face &amp; Portrait Studio</div>
+        <h2>Your face. Your portrait.<br><span class="gradient-text">More ways to create.</span></h2>
+        <p>Start with the six live tools today, then grow with FaceEvol as Portrait Creator, Multi-Face Swap, Profile Photo Packs and AI Face Evolution arrive.</p>
         <div class="hero-actions" style="justify-content:center">
           <a href="#demos" class="button button-primary">View Examples →</a>
           <a href="#studio" class="button button-secondary" id="ctaStartButton">Open Studio</a>
@@ -2014,7 +2194,7 @@
   <div class="container">
     <div class="footer-main">
       <a href="#" class="footer-logo"><img src="a.png" alt="FaceEvol"></a>
-      <div class="footer-links"><a href="#demos">Demos</a><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a><a href="#privacy-policy">Privacy</a><a href="#terms">Terms</a><a href="#refunds">Refunds</a><a href="#contact">Contact</a></div>
+      <div class="footer-links"><a href="#demos">Demos</a><a href="#features">Tools</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a><a href="#privacy-policy">Privacy</a><a href="#terms">Terms</a><a href="#refunds">Refunds</a><a href="#contact">Contact</a></div>
     </div>
     <div class="footer-bottom"><div>© 2026 FaceEvol. All rights reserved.</div><div>One studio for AI face transformation, animation and enhancement.</div></div>
   </div>
