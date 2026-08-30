@@ -1098,6 +1098,22 @@ async function faceEvolWaitReplicate(token, prediction, maxWaitMs = 65000) {
   return current;
 }
 
+async function faceEvolImageUrlToDataUrlForSwap(url, label) {
+  const response = await fetch(url, { cache: "no-store" });
+  if (!response.ok) {
+    throw new Error(`${label} HTTP ${response.status}`);
+  }
+  const contentType = String(response.headers.get("content-type") || "").toLowerCase();
+  if (!contentType.startsWith("image/")) {
+    throw new Error(`${label} did not return an image`);
+  }
+  const bytes = Buffer.from(await response.arrayBuffer());
+  if (!bytes.length || bytes.length > 8_000_000) {
+    throw new Error(`${label} image size is invalid`);
+  }
+  return `data:${contentType.split(";")[0]};base64,${bytes.toString("base64")}`;
+}
+
 async function handleMappedMultiPhotoSwap(res, token, sourceFaces, target, body) {
   const requestedTargets = faceEvolIndexList(body.target_indexes, 4);
   const count = Math.min(requestedTargets.length, sourceFaces.length, 4);
@@ -1155,7 +1171,13 @@ async function handleMappedMultiPhotoSwap(res, token, sourceFaces, target, body)
       return res.status(502).json({ error: "Multiple photo face swap returned no usable image." });
     }
 
-    destination = outputUrl;
+    // Replicate delivery URLs can occasionally fail when immediately reused by
+    // another cold model. Download each completed intermediate result and pass
+    // the next step a self-contained data URI instead. This keeps the exact
+    // edited group photo while avoiding provider-to-provider "Load failed".
+    destination = index < count - 1
+      ? await faceEvolImageUrlToDataUrlForSwap(outputUrl, `mapped face ${index + 1} result`)
+      : outputUrl;
     lastPrediction = prediction;
   }
 
@@ -1209,7 +1231,7 @@ export default async function handler(
       .toLowerCase();
 
   if (
-    !["", "single", "multi"].includes(
+    !["", "single", "multi", "index"].includes(
       mode
     )
   ) {
@@ -1217,6 +1239,69 @@ export default async function handler(
       error:
         "Unsupported photo face swap mode"
     });
+  }
+
+  /*
+   * Free target-index preview. The same Replicate model that performs the swap
+   * draws its own face indexes, so the user sees the exact Person numbers the
+   * backend will use. No FaceEvol credits are reserved for this preview.
+   */
+  if (mode === "index") {
+    const token = process.env.REPLICATE_API_TOKEN;
+    if (!token) {
+      return res.status(500).json({ error: "REPLICATE_API_TOKEN is not configured" });
+    }
+    const target = body.target;
+    if (!isImageDataUri(target)) {
+      return res.status(400).json({ error: "A valid target group photo is required." });
+    }
+    if (target.length > MULTI_MAX_IMAGE_DATA_URI_CHARS) {
+      return res.status(413).json({ error: "The target group photo is too large. Please try again." });
+    }
+    try {
+      const response = await fetch("https://api.replicate.com/v1/predictions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          Prefer: "wait=60"
+        },
+        body: JSON.stringify({
+          version: MULTI_FACE_MODEL_VERSION,
+          input: {
+            source_face_image: target,
+            destination_image: target,
+            source_face_index: 0,
+            destination_face_index: 0,
+            execution_type: "face_index"
+          }
+        })
+      });
+      let prediction = await faceEvolReadReplicateJson(response);
+      if (!response.ok) {
+        return res.status(response.status).json({
+          error: "Could not identify the people in this group photo.",
+          details: prediction
+        });
+      }
+      prediction = await faceEvolWaitReplicate(token, prediction);
+      if (String(prediction?.status || "").toLowerCase() !== "succeeded") {
+        return res.status(502).json({
+          error: "Could not finish identifying the target people.",
+          details: prediction?.error || prediction?.status || "Unknown model error"
+        });
+      }
+      const output = faceEvolFindOutputUrl(prediction?.output);
+      if (!output) {
+        return res.status(502).json({ error: "No numbered target preview was returned." });
+      }
+      return res.status(200).json({ success: true, output });
+    } catch (error) {
+      return res.status(500).json({
+        error: "Could not identify target people.",
+        details: error instanceof Error ? error.message : String(error)
+      });
+    }
   }
 
   /*

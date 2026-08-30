@@ -1,3 +1,5 @@
+export const config = { maxDuration: 300 };
+
 /* ============================================================================
  * FaceEvol API security guard
  *
@@ -1101,7 +1103,7 @@ The image will be used as the ${role} frame of a graceful life-journey video, so
 async function handleFaceEvolEvolutionMode(res, token, body) {
   const image = body?.image;
   if (!image || typeof image !== "string" || !image.startsWith("data:image/")) {
-    return res.status(400).json({ error: "A valid portrait image is required for Face Evolution" });
+    return res.status(400).json({ error: "A valid portrait image is required for AI Face Evolution" });
   }
   if (image.length > 11_000_000) {
     return res.status(413).json({ error: "Image is too large. Please use an image under 8 MB." });
@@ -1182,9 +1184,9 @@ ${customDirection ? `Creative direction: ${customDirection}` : ""}
       evolution_frames: { young: youngUrl, old: oldUrl }
     });
   } catch (error) {
-    console.error("FaceEvol Face Evolution error:", error);
+    console.error("FaceEvol AI Face Evolution error:", error);
     return res.status(error?.status || 500).json({
-      error: "Could not create the Face Evolution video",
+      error: "Could not create the AI Face Evolution video",
       details: error instanceof Error ? error.message : String(error)
     });
   }
