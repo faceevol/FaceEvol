@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- FaceEvol · cleaner hero + direct Age / Photo / Video entry points + image downloads · 2026-08-28 -->
+<!-- FaceEvol · premium 7-tool release · 2026-08-31 -->
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FaceEvol — AI Face &amp; Portrait Studio</title>
-  <meta name="description" content="FaceEvol is an AI Face &amp; Portrait Studio with 10 focused tools for identity-preserving portrait creation, AI Face Evolution, age transform, mapped face swaps, photo-to-video and AI enhancement." />
+  <meta name="description" content="FaceEvol is an AI Face &amp; Portrait Studio for polished portraits, age transforms, photo and video face swaps, photo-to-video creation, and media enhancement." />
   <meta name="theme-color" content="#070b17" />
   <meta name="color-scheme" content="dark" />
   <meta name="robots" content="index,follow" />
@@ -24,12 +24,12 @@
 <meta property="og:type" content="website" />
   <meta property="og:site_name" content="FaceEvol" />
   <meta property="og:title" content="FaceEvol — AI Face &amp; Portrait Studio" />
-  <meta property="og:description" content="Create, transform and enhance portraits in one focused AI studio — with 10 tools for portraits, age transformation, face swap, motion and enhancement." />
+  <meta property="og:description" content="Create polished portraits, transform age, swap faces, animate photos, and enhance photos or videos in one focused AI studio." />
   <meta property="og:url" content="https://www.faceevol.com/" />
   <meta property="og:image" content="https://www.faceevol.com/a.png" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="FaceEvol — AI Face &amp; Portrait Studio" />
-  <meta name="twitter:description" content="FaceEvol is an AI Face &amp; Portrait Studio with 10 focused portrait, face-swap, motion and enhancement experiences." />
+  <meta name="twitter:description" content="FaceEvol is an AI Face &amp; Portrait Studio with seven focused portrait, face-swap, motion and enhancement tools." />
   <meta name="twitter:image" content="https://www.faceevol.com/a.png" />
 
   <!-- Browser-side video trimming. Loaded only by the page; your API routes stay unchanged. -->
@@ -1131,7 +1131,7 @@
     }
 
 
-    /* FaceEvol 10-tool restructure · 2026-08-30 */
+    /* FaceEvol premium 7-tool restructure · 2026-08-31 */
     .evolution-section{padding:36px 0 78px}
     .evolution-shell{position:relative;overflow:hidden;display:grid;grid-template-columns:.92fr 1.08fr;gap:46px;align-items:center;padding:46px;border:1px solid rgba(255,255,255,.09);border-radius:30px;background:linear-gradient(145deg,rgba(124,58,237,.10),rgba(14,165,233,.045) 58%,rgba(255,255,255,.018));box-shadow:0 32px 90px rgba(0,0,0,.28)}
     .evolution-shell::before{content:"";position:absolute;width:430px;height:430px;border-radius:50%;right:-150px;top:-190px;background:radial-gradient(circle,rgba(56,189,248,.18),transparent 68%);pointer-events:none}
@@ -1338,6 +1338,51 @@
     .multi-face-badge{position:absolute;transform:translate(-50%,-50%);pointer-events:auto;min-width:38px;height:38px;padding:0 10px;border-radius:999px;border:2px solid rgba(255,255,255,.92);background:rgba(5,9,20,.86);color:#fff;font-weight:900;font-size:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(0,0,0,.4);cursor:pointer}
     .multi-face-badge.active{box-shadow:0 0 0 4px rgba(56,189,248,.28),0 8px 24px rgba(0,0,0,.45)}
     .multi-video-trim{margin-top:14px;padding:14px;border-radius:14px;background:rgba(255,255,255,.018);border:1px solid rgba(255,255,255,.07)}
+
+    /* FaceEvol premium 7-tool release · 2026-08-31 */
+    .retired-section,
+    .retired-demo,
+    #faceEvolutionOption,
+    #multiPhotoSwapOption,
+    #multiVideoSwapOption{display:none!important}
+
+    .hero{padding-top:92px;padding-bottom:58px}
+    .hero .container{max-width:900px}
+    .hero h1{
+      max-width:880px;
+      margin:0 auto;
+      font-size:clamp(48px,8vw,82px);
+      line-height:.98;
+      letter-spacing:-3.8px
+    }
+    .hero-description{
+      max-width:720px;
+      margin:24px auto 0;
+      font-size:clamp(16px,2vw,19px);
+      line-height:1.7;
+      color:#a9b7cb
+    }
+    .hero-actions{margin-top:30px}
+    .hero-minimal-trust{
+      margin:20px auto 0;
+      color:#7f90a8;
+      font-size:11px;
+      font-weight:700;
+      letter-spacing:.02em
+    }
+    .hero-minimal-trust span{color:#b5c5d9}
+    .demo-card:has([data-demo-key="portraitCreator"]){order:-1}
+    .studio-section-intro{max-width:850px}
+    .studio-section-intro p{max-width:680px;margin-left:auto;margin-right:auto}
+    .studio-status-line{justify-content:center}
+    .clean-category-card{min-height:250px}
+    @media(max-width:650px){
+      .hero{padding-top:58px;padding-bottom:42px}
+      .hero h1{font-size:clamp(42px,13vw,58px);letter-spacing:-2.4px}
+      .hero-description{font-size:15px;line-height:1.65}
+      .hero-minimal-trust{font-size:10px;line-height:1.65;padding:0 14px}
+    }
+
 </style>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4"></script>
@@ -1570,31 +1615,17 @@
 <main>
   <section class="hero">
     <div class="container">
-      <div class="badge"><span class="badge-dot"></span>AI Face &amp; Portrait Studio</div>
-      <h1>Imagine your face.<br><span class="gradient-text">Transform your story.</span></h1>
-      <p class="hero-description">Create, transform and enhance portraits with AI. From identity-preserving portraits and AI Face Evolution life journeys to Age Transform, precise single and mapped multi-person swaps, photo-to-video motion and enhancement — it all lives in one focused studio.</p>
-      <p class="hero-explainer"><strong>FaceEvol is an AI Face &amp; Portrait Studio</strong> built around 10 focused experiences, each powered by a carefully selected AI model or purpose-built pipeline.</p>
+      <h1>AI Face &amp; <span class="gradient-text">Portrait Studio</span></h1>
+      <p class="hero-description">Create polished portraits, transform age, swap faces, animate photos, and enhance photos or videos — all in one focused studio.</p>
       <div class="hero-actions">
-        <a href="#studio" class="button button-primary" id="heroAgeButton">Open AI Studio →</a>
-        <a href="#demos" class="button button-secondary">View Examples</a>
+        <a href="#studio" class="button button-primary" id="heroAgeButton">Start Creating →</a>
+        <a href="#demos" class="button button-secondary">View Demos</a>
       </div>
-      <div class="hero-purpose" aria-label="FaceEvol categories">
-        <span><b>Create</b> portraits &amp; motion</span>
-        <i aria-hidden="true"></i>
-        <span><b>Transform</b> faces &amp; age</span>
-        <i aria-hidden="true"></i>
-        <span><b>Enhance</b> photos &amp; video</span>
-      </div>
-      <div class="hero-trust" aria-label="FaceEvol benefits">
-        <span><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-lock"></use></svg> Privacy-focused workflow</span>
-        <span><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-grid"></use></svg> Face &amp; portrait focused</span>
-        <span><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-enhance"></use></svg> High-quality output</span>
-        <span><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-download"></use></svg> Direct download</span>
-      </div>
+      <div class="hero-minimal-trust"><span>Private uploads</span> · Premium AI results · Download ready</div>
     </div>
   </section>
 
-  <section class="evolution-section" aria-labelledby="evolutionTitle">
+  <section class="evolution-section retired-section" aria-labelledby="evolutionTitle" hidden>
     <div class="container">
       <div class="evolution-shell">
         <div class="evolution-copy">
@@ -1747,12 +1778,12 @@
           <div class="demo-preview">
             <div class="demo-preview-placeholder">
               <div class="demo-preview-icon">◈</div>
-              <strong>AI Portrait Creator Demo</strong>
+              <strong>Portrait Creator Demo</strong>
               <span>Prepared portrait example</span>
             </div>
           </div>
           <div class="demo-card-copy">
-            <div class="demo-card-top"><h3>AI Portrait Creator</h3><span class="demo-type">New</span></div>
+            <div class="demo-card-top"><h3>Portrait Creator</h3><span class="demo-type">New</span></div>
             <p>Preview a polished portrait restyle with identity, skin texture and facial character kept recognizable.</p>
             <div class="demo-card-actions">
               <button type="button" class="demo-view-button" data-demo-key="portraitCreator">▶ View Demo</button>
@@ -1762,7 +1793,7 @@
           </div>
         </article>
 
-        <article class="demo-card demo-card-new">
+        <article class="demo-card demo-card-new retired-demo" hidden>
           <div class="demo-preview">
             <div class="demo-preview-placeholder">
               <div class="demo-preview-icon">✦</div>
@@ -1781,7 +1812,7 @@
           </div>
         </article>
 
-        <article class="demo-card demo-card-new">
+        <article class="demo-card demo-card-new retired-demo" hidden>
           <div class="demo-preview">
             <div class="demo-preview-placeholder">
               <div class="demo-preview-icon">◎</div>
@@ -1800,7 +1831,7 @@
           </div>
         </article>
 
-        <article class="demo-card demo-card-new">
+        <article class="demo-card demo-card-new retired-demo" hidden>
           <div class="demo-preview">
             <div class="demo-preview-placeholder">
               <div class="demo-preview-icon">◉</div>
@@ -1864,9 +1895,9 @@
     <div class="container">
       <div class="studio-section-intro">
         <span class="section-eyebrow">FaceEvol AI Studio</span>
-        <h2 id="studioSectionTitle">10 live tools. <span class="gradient-text">One premium studio.</span></h2>
-        <p>Choose your direction — create, transform or enhance — with ten focused FaceEvol experiences in one consistent workspace.</p>
-        <div class="studio-status-line" aria-label="FaceEvol tool lineup"><span class="studio-status-pill live"><i></i>10 tools available</span><span class="studio-status-pill soon">Create · Transform · Enhance</span></div>
+        <h2 id="studioSectionTitle">7 focused tools. <span class="gradient-text">One premium studio.</span></h2>
+        <p>Choose exactly what you want to do — create, transform or enhance — without clutter, duplicate tools or confusing model choices.</p>
+        <div class="studio-status-line" aria-label="FaceEvol tool lineup"><span class="studio-status-pill live"><i></i>7 tools available</span><span class="studio-status-pill soon">Create · Transform · Enhance</span></div>
       </div>
 
 <div class="studio-wrap" id="studio">
@@ -1881,11 +1912,11 @@
           <div class="studio-inner">
             <div class="studio-sidebar">
               <div class="studio-label">Create</div>
-              <div class="tool-option new-tool-option" id="portraitCreatorOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open AI Portrait Creator">
+              <div class="tool-option new-tool-option" id="portraitCreatorOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open Portrait Creator">
                 <div class="tool-icon">◈</div>
-                <div><div class="tool-name">AI Portrait Creator</div><span class="tool-sub">Restyle your portrait</span><span class="tool-new-pill">New</span></div>
+                <div><div class="tool-name">Portrait Creator</div><span class="tool-sub">Restyle your portrait</span><span class="tool-new-pill">New</span></div>
               </div>
-              <div class="tool-option new-tool-option" id="faceEvolutionOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open AI Face Evolution">
+              <div class="tool-option new-tool-option" id="faceEvolutionOption" hidden role="button" tabindex="0" aria-pressed="false" aria-label="Open AI Face Evolution">
                 <div class="tool-icon">▦</div>
                 <div><div class="tool-name">AI Face Evolution</div><span class="tool-sub">Life journey · video</span><span class="tool-new-pill">Signature</span></div>
               </div>
@@ -1907,11 +1938,11 @@
                 <div class="tool-icon"><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-video-swap"></use></svg></div>
                 <div><div class="tool-name">Video Face Swap</div><span class="tool-sub">One face · video</span></div>
               </div>
-              <div class="tool-option new-tool-option" id="multiPhotoSwapOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open Multiple Photo Face Swap">
+              <div class="tool-option new-tool-option" id="multiPhotoSwapOption" hidden role="button" tabindex="0" aria-pressed="false" aria-label="Open Multiple Photo Face Swap">
                 <div class="tool-icon">◎</div>
                 <div><div class="tool-name">Multiple Photo Face Swap</div><span class="tool-sub">Several faces · photo</span><span class="tool-new-pill">New</span></div>
               </div>
-              <div class="tool-option new-tool-option" id="multiVideoSwapOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open Multiple Video Face Swap">
+              <div class="tool-option new-tool-option" id="multiVideoSwapOption" hidden role="button" tabindex="0" aria-pressed="false" aria-label="Open Multiple Video Face Swap">
                 <div class="tool-icon">◉</div>
                 <div><div class="tool-name">Multiple Video Face Swap</div><span class="tool-sub">Mapped identities · video</span><span class="tool-new-pill">New</span></div>
               </div>
@@ -1962,14 +1993,14 @@
         <article class="clean-category-card">
           <div class="clean-category-number">01</div>
           <h3>Create</h3>
-          <p>Create a new portrait, animate a still image or tell a complete face-evolution story.</p>
-          <div class="clean-tool-list"><span class="overview-new" data-open-tool="portrait" role="button" tabindex="0">AI Portrait Creator</span><span>Photo to Video</span><span class="overview-new" data-open-tool="face-evolution" role="button" tabindex="0">AI Face Evolution</span></div>
+          <p>Create a polished portrait or bring a still image to life.</p>
+          <div class="clean-tool-list"><span class="overview-new" data-open-tool="portrait" role="button" tabindex="0">Portrait Creator</span><span>Photo to Video</span></div>
         </article>
         <article class="clean-category-card">
           <div class="clean-category-number">02</div>
           <h3>Transform</h3>
           <p>Explore age, identity and face transformations.</p>
-          <div class="clean-tool-list"><span>Age Transform</span><span>Photo Face Swap</span><span>Video Face Swap</span><span class="overview-new" data-open-tool="multi-photo" role="button" tabindex="0">Multiple Photo Face Swap</span><span class="overview-new" data-open-tool="multi-video" role="button" tabindex="0">Multiple Video Face Swap</span></div>
+          <div class="clean-tool-list"><span>Age Transform</span><span>Photo Face Swap</span><span>Video Face Swap</span></div>
         </article>
         <article class="clean-category-card">
           <div class="clean-category-number">03</div>
@@ -2089,16 +2120,13 @@
       </div>
       <div class="pricing-cost-guide" style="margin:16px auto 0;max-width:900px;padding:13px 15px;border:1px solid rgba(255,255,255,.065);border-radius:14px;background:rgba(255,255,255,.022);text-align:center;color:#778aa2;font-size:9px;line-height:1.7">
         Current studio costs:
-        <strong style="color:#b8cbe0">AI Portrait Creator 1</strong> ·
-        <strong style="color:#b8cbe0">Photo to Video 5</strong> ·
+        <strong style="color:#b8cbe0">Portrait Creator 1</strong> ·
         <strong style="color:#b8cbe0">Age Transform 1</strong> ·
         <strong style="color:#b8cbe0">Photo Face Swap 2</strong> ·
         <strong style="color:#b8cbe0">Video Face Swap 3</strong> ·
-        <strong style="color:#b8cbe0">Multiple Photo Face Swap 2</strong> ·
-        <strong style="color:#b8cbe0">Multiple Video Face Swap 4</strong> ·
+        <strong style="color:#b8cbe0">Photo to Video 5</strong> ·
         <strong style="color:#b8cbe0">Photo Enhance 2</strong> ·
-        <strong style="color:#b8cbe0">Video Enhance 8</strong> ·
-        <strong style="color:#b8cbe0">AI Face Evolution 15</strong> credits
+        <strong style="color:#b8cbe0">Video Enhance 8</strong> credits
       </div>
     </div>
   </section>
@@ -2107,10 +2135,8 @@
     <div class="container">
       <div class="section-heading"><span class="section-eyebrow">FAQ</span><h2>Questions? <span class="gradient-text">We've got answers.</span></h2></div>
       <div class="faq-list">
-        <details><summary>What can I create with FaceEvol?</summary><p>FaceEvol includes 10 focused experiences: AI Portrait Creator, Photo to Video, Age Transform, Photo Face Swap, Video Face Swap, Multiple Photo Face Swap, Multiple Video Face Swap, Photo Enhance, Video Enhance and the signature AI Face Evolution life-journey video.</p></details>
+        <details><summary>What can I create with FaceEvol?</summary><p>FaceEvol includes seven focused tools: Portrait Creator, Age Transform, Photo Face Swap, Video Face Swap, Photo to Video, Photo Enhance and Video Enhance.</p></details>
         <details><summary>What photos work best for face swap?</summary><p>Use a clear, front-facing source face with good lighting and the full face visible. Avoid blur, sunglasses, masks, heavy shadows and extreme side angles. A target photo with a clearly visible face and a similar angle usually gives a more natural result.</p></details>
-        <details><summary>How is AI Face Evolution different from Age Transform?</summary><p>Age Transform creates one still image at a chosen age. AI Face Evolution creates a short cinematic life journey that moves from childhood through adulthood to older age while keeping the same identity recognizable.</p></details>
-        <details><summary>How do multiple face swaps work?</summary><p>Multiple Photo Face Swap labels target people left to right so you can choose exactly who each source replaces. Multiple Video Face Swap uses the same left-to-right mapping, preserves the uploaded source clip, and swaps only the selected faces.</p></details>
         <details><summary>Which ages can I choose?</summary><p>The five visual presets are ages 5, 15, 30, 50 and 75. You can also use the custom slider to choose any target age from 0 to 100.</p></details>
         <details><summary>Can I download my Age Transform result?</summary><p>Yes. When an Age Transform finishes, tap “Download Image” below the result to save it to your device.</p></details>
         <details><summary>Can I download my photo face swap?</summary><p>Yes. When the photo face swap is complete, tap “Download Image” below the result to save it directly to your device.</p></details>
@@ -2162,7 +2188,7 @@
           </summary>
           <div class="legal-content">
             <h3>FaceEvol Privacy Policy</h3>
-            <p>This Privacy Policy explains how FaceEvol handles information when you use its AI portrait creation, AI Face Evolution, age transform, single- and multi-person photo/video face swap, Photo to Video, photo enhancement and video enhancement features.</p>
+            <p>This Privacy Policy explains how FaceEvol handles information when you use its portrait creation, age transform, photo and video face swap, Photo to Video, Photo Enhance and Video Enhance features.</p>
 
             <h4>1. Information you provide</h4>
             <p>When you use FaceEvol, you may provide photos, videos and other content needed to create the result you request. You may also provide information when contacting support.</p>
@@ -2219,7 +2245,7 @@
             <p>These Terms govern your use of FaceEvol. By using the service, you agree to use it lawfully and responsibly.</p>
 
             <h4>1. The service</h4>
-            <p>FaceEvol provides AI-powered portrait creation, AI Face Evolution, age transform, single- and multi-person photo/video face swap, Photo to Video, photo enhancement and video enhancement tools. Features, processing limits, supported formats, models and availability may change as the service develops.</p>
+            <p>FaceEvol provides AI-powered portrait creation, age transform, photo and video face swap, Photo to Video, Photo Enhance and Video Enhance tools. Features, processing limits, supported formats, models and availability may change as the service develops.</p>
 
             <h4>2. Beta status</h4>
             <p>FaceEvol is currently offered as a beta service. Beta features may contain errors, change without notice, become temporarily unavailable or produce unexpected results.</p>
@@ -2464,7 +2490,7 @@
     },
 
     portraitCreator:{
-      title:"AI Portrait Creator",
+      title:"Portrait Creator",
       description:"A prepared original/result portrait pair showing a polished identity-preserving restyle.",
       createTool:"portrait",
       kind:"compareImage",
@@ -2473,7 +2499,7 @@
     },
 
     faceEvolution:{
-      title:"AI Face Evolution",
+      title:"Retired Face Evolution",
       description:"A stored cinematic life-journey video showing one identity aging gracefully from childhood to older age.",
       createTool:"face-evolution",
       kind:"singleVideo",
@@ -2482,7 +2508,7 @@
     },
 
     multiPhotoSwap:{
-      title:"Multiple Photo Face Swap",
+      title:"Retired Multiple Photo Face Swap",
       description:"A stored group-photo comparison showing several face replacements in one result.",
       createTool:"multi-photo",
       kind:"compareImage",
@@ -2491,7 +2517,7 @@
     },
 
     multiVideoSwap:{
-      title:"Multiple Video Face Swap",
+      title:"Retired Multiple Video Face Swap",
       description:"A stored multi-person video example showing different reference identities mapped to different people in the target clip.",
       createTool:"multi-video",
       kind:"compareVideo",
@@ -6209,7 +6235,7 @@
   portraitControls.className="age-controls model-tool-controls";
   portraitControls.innerHTML=`
     <div class="panel-top">
-      <div><span class="panel-kicker">AI Portrait Creator</span><h3 class="panel-title">Create a polished portrait from your photo</h3><p class="panel-copy">Keep your identity recognizable while changing styling, wardrobe, lighting and background.</p></div>
+      <div><span class="panel-kicker">Portrait Creator</span><h3 class="panel-title">Create a polished portrait from your photo</h3><p class="panel-copy">Keep your identity recognizable while changing styling, wardrobe, lighting and background.</p></div>
       <span class="model-badge">New</span>
     </div>
     <div class="model-ready-note"><strong>One-model workflow.</strong> FaceEvol automatically uses the portrait model selected for this feature — there is no model picker.</div>
@@ -6225,7 +6251,7 @@
     <div class="new-tool-help">Tip: use a front-facing or three-quarter portrait with the full face visible. FaceEvol asks the model to preserve facial identity, skin tone and natural texture.</div>
     <button type="button" class="transform-button gated" id="startPortraitButton" disabled>✦ Create Portrait</button>
     <div class="new-feature-status" id="portraitStatus"></div><div class="new-feature-error" id="portraitError"></div>
-    <div class="new-tool-result" id="portraitResult"><img id="portraitResultImage" alt="FaceEvol AI Portrait Creator result"><button type="button" class="download-button" id="downloadPortraitButton">⬇️ Download Portrait</button></div>
+    <div class="new-tool-result" id="portraitResult"><img id="portraitResultImage" alt="FaceEvol Portrait Creator result"><button type="button" class="download-button" id="downloadPortraitButton">⬇️ Download Portrait</button></div>
   `;
   studioMain.appendChild(portraitControls);
 
@@ -6751,7 +6777,7 @@
   }
 
   function activatePortraitCreatorMode(){
-    faceSwapMode=false;activeStudioMode="portrait";document.querySelectorAll(".tool-option").forEach(o=>o.classList.remove("active"));portraitCreatorOption.classList.add("active");syncStudioToolState(portraitCreatorOption,"AI Portrait Creator");hideExistingToolControls();hideNewToolControls();portraitControls.classList.add("show");setSharedUploadVisible(false);
+    faceSwapMode=false;activeStudioMode="portrait";document.querySelectorAll(".tool-option").forEach(o=>o.classList.remove("active"));portraitCreatorOption.classList.add("active");syncStudioToolState(portraitCreatorOption,"Portrait Creator");hideExistingToolControls();hideNewToolControls();portraitControls.classList.add("show");setSharedUploadVisible(false);
   }
   function activateFaceEvolutionMode(){
     faceSwapMode=false;activeStudioMode="face-evolution";document.querySelectorAll(".tool-option").forEach(o=>o.classList.remove("active"));faceEvolutionOption.classList.add("active");syncStudioToolState(faceEvolutionOption,"AI Face Evolution");hideExistingToolControls();hideNewToolControls();faceEvolutionControls.classList.add("show");setSharedUploadVisible(false);
@@ -6955,15 +6981,15 @@
   });
 
   if(mobileStudioCta){
-    mobileStudioCta.addEventListener("click",()=>activateAgeMode());
+    mobileStudioCta.addEventListener("click",()=>activatePortraitMode());
   }
 
   ctaStartButton.addEventListener("click",function(){
-    activateAgeMode();
+    activatePortraitMode();
   });
 
   heroAgeButton.addEventListener("click",function(){
-    activateAgeMode();
+    activatePortraitMode();
   });
 
 
@@ -7449,7 +7475,7 @@
       video_faceswap:"Video Face Swap",
       photo_enhance:"Photo Enhance",
       video_enhance:"Video Enhance",
-      portrait_creator:"AI Portrait Creator",
+      portrait_creator:"Portrait Creator",
       face_evolution:"AI Face Evolution",
       multi_photo_faceswap:"Multiple Photo Face Swap",
       multi_video_faceswap:"Multiple Video Face Swap"
@@ -7933,17 +7959,18 @@
   window.addEventListener("hashchange",openLegalHashPanel);
   openLegalHashPanel();
 
-  /* Start in Age Transform so the five preset examples are visible immediately, before upload. */
-  activateAgeMode();
+  /* Start in Portrait Creator: it best matches the AI Face & Portrait Studio positioning. */
+  activatePortraitMode();
 </script>
 <!-- trigger vercel deploy -->
 
 <!--
-FaceEvol 10-tool backend consolidation contract (2026-08-30)
+FaceEvol 7-tool launch contract (2026-08-31)
 NO NEW SERVERLESS FILES REQUIRED:
-  /api/predict.js: default/age stays unchanged; mode=portrait uses FLUX Kontext Pro; mode=face_evolution orchestrates Qwen Image Edit 2511 life-stage anchors and Kling 3.0 video.
-  /api/photo-faceswap.js: default/single stays unchanged; mode=multi uses mertguvencli/face-swap-with-indexes for explicit source-to-target mapping.
-  /api/faceswap.js: default/single stays unchanged; mode=multi uses ddvinh1/new-faceswap-video with swap_all_faces=true.
+  /api/predict.js: default/age = Age Transform; mode=portrait = Portrait Creator.
+  /api/photo-faceswap.js: default/single = Photo Face Swap; retired multi mode is rejected.
+  /api/faceswap.js: default/single = Video Face Swap; retired multi mode is rejected.
+  Existing Photo to Video, Photo Enhance and Video Enhance routes stay unchanged.
 Keep REPLICATE_API_TOKEN and Supabase secret keys server-side only.
 -->
 </body>
