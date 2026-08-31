@@ -869,11 +869,11 @@ async function startFaceEvolGenerationGuard(
 
 
 /* ============================================================================
- * FaceEvol consolidated creative modes
+ * FaceEvol launch creative modes
  *
- * Reuses /api/predict.js so AI Portrait Creator and Face Evolution do not
- * consume additional Vercel Function slots. The existing Age Transform branch
- * remains the default when no mode is supplied.
+ * Reuses /api/predict.js for Portrait Creator and Age Transform so no
+ * additional Vercel Function slot is required. Retired experimental modes are
+ * rejected at the handler before any credit reservation.
  * ========================================================================== */
 
 const FACEVOL_PORTRAIT_MODEL =
@@ -1201,16 +1201,14 @@ export default async function handler(
   const body = req.body || {};
   const mode = String(body.mode || "").trim().toLowerCase();
 
-  if (!["", "age", "portrait", "face_evolution"].includes(mode)) {
+  if (!["", "age", "portrait"].includes(mode)) {
     return res.status(400).json({ error: "Unsupported FaceEvol predict mode" });
   }
 
   const creditTool =
     mode === "portrait"
       ? "portrait_creator"
-      : mode === "face_evolution"
-        ? "face_evolution"
-        : "age";
+      : "age";
 
   const faceEvolGuard = await startFaceEvolGenerationGuard(req, res, creditTool);
   if (!faceEvolGuard) return;
@@ -1222,10 +1220,6 @@ export default async function handler(
 
   if (mode === "portrait") {
     return handleFaceEvolPortraitMode(res, token, body);
-  }
-
-  if (mode === "face_evolution") {
-    return handleFaceEvolEvolutionMode(res, token, body);
   }
 
   const {

@@ -1172,23 +1172,20 @@ export default async function handler(req, res) {
 
   const body = req.body || {};
   const mode = String(body.mode || "").trim().toLowerCase();
-  if (!["", "single", "multi"].includes(mode)) {
+  if (!["", "single"].includes(mode)) {
     return res.status(400).json({ error: "Unsupported video face swap mode" });
   }
 
   const faceEvolGuard = await startFaceEvolGenerationGuard(
     req,
     res,
-    mode === "multi" ? "multi_video_faceswap" : "video_faceswap"
+    "video_faceswap"
   );
   if (!faceEvolGuard) return;
 
   const replicateToken = process.env.REPLICATE_API_TOKEN;
   const segmindToken = process.env.SEGMIND_API_KEY;
-  if (mode === "multi" && !segmindToken) {
-    return res.status(500).json({ error: "SEGMIND_API_KEY is not configured" });
-  }
-  if (mode !== "multi" && !replicateToken) {
+  if (!replicateToken) {
     return res.status(500).json({ error: "REPLICATE_API_TOKEN is not configured" });
   }
 

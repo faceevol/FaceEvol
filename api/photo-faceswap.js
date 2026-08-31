@@ -1209,7 +1209,7 @@ export default async function handler(
       .toLowerCase();
 
   if (
-    !["", "single", "multi"].includes(
+    !["", "single"].includes(
       mode
     )
   ) {
@@ -1220,16 +1220,14 @@ export default async function handler(
   }
 
   /*
-   * Keep both single and multi-photo face swap
-   * inside this existing Function slot.
+   * Launch route: single Photo Face Swap only.
+   * Retired multi-face requests are rejected above before credits are reserved.
    */
   const faceEvolGuard =
     await startFaceEvolGenerationGuard(
       req,
       res,
-      mode === "multi"
-        ? "multi_photo_faceswap"
-        : "photo_faceswap"
+      "photo_faceswap"
     );
 
   if (
