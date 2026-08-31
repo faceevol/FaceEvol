@@ -1399,6 +1399,41 @@
     "offers":{"@type":"AggregateOffer","lowPrice":"4.99","highPrice":"24.99","priceCurrency":"EUR","offerCount":"3"}
   }
   </script>
+
+  <style id="faceevol-7-tool-final-polish">
+    /* FaceEvol final 7-tool public polish · 2026-08-31 */
+    .hero .container{max-width:1180px}
+    .hero h1.hero-title-nowrap{
+      width:100%;
+      max-width:none;
+      white-space:nowrap;
+      text-wrap:nowrap;
+      font-size:clamp(42px,6.1vw,72px);
+      line-height:1.02;
+      letter-spacing:-.055em;
+    }
+    .hero-description{max-width:690px;margin-top:21px}
+    .hero-actions{margin-top:27px}
+    .hero-minimal-trust{margin-top:17px}
+    .demo-grid{align-items:stretch}
+    .demo-card{height:100%}
+    .studio-section-intro .section-eyebrow{letter-spacing:.12em}
+    @media(max-width:650px){
+      .hero{padding-top:54px;padding-bottom:38px}
+      .hero .container{padding-left:14px;padding-right:14px}
+      .hero h1.hero-title-nowrap{
+        font-size:clamp(20px,6.25vw,28px);
+        letter-spacing:-.045em;
+      }
+      .hero-description{max-width:520px;margin-top:17px;font-size:14px;line-height:1.6}
+      .hero-actions{margin-top:23px}
+      .hero-minimal-trust{margin-top:15px}
+    }
+    @media(max-width:360px){
+      .hero h1.hero-title-nowrap{font-size:clamp(19px,6.25vw,22px)}
+    }
+  </style>
+
 </head>
 
 <body>
@@ -1479,7 +1514,7 @@
   </symbol>
 </svg>
 
-<a class="skip-link" href="#studio">Skip to AI Studio</a>
+<a class="skip-link" href="#studio">Skip to Studio</a>
 <header>
   <div class="container nav">
     <a href="#" class="logo"><img src="a.png" alt="FaceEvol"></a>
@@ -1605,7 +1640,7 @@
 
     <div class="demo-modal-foot">
       <div class="demo-modal-foot-copy">
-        <strong>Preview only.</strong> Final demo media will load instantly from stored FaceEvol example files.
+        <strong>Preview only.</strong> Demo viewing never uses credits.
       </div>
       <button type="button" class="demo-modal-create" id="faceEvolDemoCreate">Create Your Own →</button>
     </div>
@@ -1615,50 +1650,46 @@
 <main>
   <section class="hero">
     <div class="container">
-      <h1>AI Face &amp; <span class="gradient-text">Portrait Studio</span></h1>
-      <p class="hero-description">Create polished portraits, transform age, swap faces, animate photos, and enhance photos or videos — all in one focused studio.</p>
+      <h1 class="hero-title-nowrap">AI Face &amp; <span class="gradient-text">Portrait Studio</span></h1>
+      <p class="hero-description">Create polished portraits, transform age, swap faces, animate photos, and enhance media — in one focused studio.</p>
       <div class="hero-actions">
         <a href="#studio" class="button button-primary" id="heroAgeButton">Start Creating →</a>
         <a href="#demos" class="button button-secondary">View Demos</a>
       </div>
-      <div class="hero-minimal-trust"><span>Private uploads</span> · Premium AI results · Download ready</div>
+      <div class="hero-minimal-trust"><span>Private uploads</span> · Free demos · Download-ready results</div>
     </div>
   </section>
 
-  <section class="evolution-section retired-section" aria-labelledby="evolutionTitle" hidden>
-    <div class="container">
-      <div class="evolution-shell">
-        <div class="evolution-copy">
-          <span class="section-eyebrow">FaceEvol Signature Experience</span>
-          <h2 id="evolutionTitle">A lifetime, beautifully told. <span class="gradient-text">AI Face Evolution.</span></h2>
-          <p>Start with one portrait and create a graceful cinematic journey from childhood to older age. FaceEvol prepares identity-consistent life-stage anchors, then turns them into one smooth, emotional short film with changing atmosphere and gentle sound.</p>
-          <div class="evolution-points"><span>Same identity through every stage</span><span>Child → adult → senior</span><span>Cinematic 1080p journey</span><span>Native ambience / music</span></div>
-          <div class="evolution-actions"><button type="button" class="button button-primary" data-open-tool="face-evolution">Create AI Face Evolution →</button><a href="#demos" class="button button-secondary">See Demo Placeholder</a></div>
-        </div>
-        <div class="evolution-visual">
-          <div class="evolution-stage">
-            <div class="evolution-orbit evolution-orbit-one"></div><div class="evolution-orbit evolution-orbit-two"></div>
-            <div class="evolution-portrait-placeholder"><div class="evolution-face-mark">8 → 82</div><strong>Life Journey Demo</strong><span>Future demo video placeholder</span></div>
-            <div class="evolution-play">▶</div>
-          </div>
-          <div class="age-journey"><span><b>8</b><small>Child</small></span><i></i><span><b>18</b><small>Youth</small></span><i></i><span><b>30</b><small>Adult</small></span><i></i><span><b>50</b><small>Mature</small></span><i></i><span><b>65</b><small>Later</small></span><i></i><span><b>82</b><small>Senior</small></span></div>
-          <div class="evolution-caption">Demo space is intentionally reserved for the final pre-generated AI Face Evolution example.</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="demo-section" id="demos">
+<section class="demo-section" id="demos">
     <div class="container">
       <div class="section-heading">
         <span class="section-eyebrow">See Before You Create</span>
         <h2>Real results make the <span class="gradient-text">difference.</span></h2>
-        <p>This area is ready for FaceEvol’s strongest prepared examples. Replace each placeholder with polished, original demo media as the library is completed.</p>
+        <p>Preview each FaceEvol experience before you create. Demo viewing is free and never uses credits.</p>
       </div>
 
       <div class="demo-intro-note">✓ Prepared examples are free to view · Your own generations use credits</div>
 
       <div class="demo-grid">
+        <article class="demo-card demo-card-new">
+          <div class="demo-preview">
+            <div class="demo-preview-placeholder">
+              <div class="demo-preview-icon">◈</div>
+              <strong>Portrait Creator Demo</strong>
+              <span>Prepared portrait example</span>
+            </div>
+          </div>
+          <div class="demo-card-copy">
+            <div class="demo-card-top"><h3>Portrait Creator</h3><span class="demo-type">New</span></div>
+            <p>Preview a polished portrait restyle with identity, skin texture and facial character kept recognizable.</p>
+            <div class="demo-card-actions">
+              <button type="button" class="demo-view-button" data-demo-key="portraitCreator">▶ View Demo</button>
+              <button type="button" class="demo-create-button" data-demo-create="portrait">Create Your Own</button>
+            </div>
+            <div class="demo-cost-note"><strong>Preview only</strong> · stored demo media</div>
+          </div>
+        </article>
+
         <article class="demo-card">
           <div class="demo-preview">
             <div class="demo-preview-placeholder">
@@ -1700,25 +1731,6 @@
         <article class="demo-card">
           <div class="demo-preview">
             <div class="demo-preview-placeholder">
-              <div class="demo-preview-icon"><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-photo-video"></use></svg></div>
-              <strong>Photo to Video Demo</strong>
-              <span>Demo preview</span>
-            </div>
-          </div>
-          <div class="demo-card-copy">
-            <div class="demo-card-top"><h3>Photo to Video</h3><span class="demo-type">Short video</span></div>
-            <p>See how a still portrait can become a short, natural-looking moving clip.</p>
-            <div class="demo-card-actions">
-              <button type="button" class="demo-view-button" data-demo-key="photoToVideo">▶ View Demo</button>
-              <button type="button" class="demo-create-button" data-demo-create="photo-video">Create Your Own</button>
-            </div>
-            <div class="demo-cost-note"><strong>Preview only</strong> · stored demo media</div>
-          </div>
-        </article>
-
-        <article class="demo-card">
-          <div class="demo-preview">
-            <div class="demo-preview-placeholder">
               <div class="demo-preview-icon"><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-video-swap"></use></svg></div>
               <strong>Video Face Swap Demo</strong>
               <span>Demo preview</span>
@@ -1730,6 +1742,25 @@
             <div class="demo-card-actions">
               <button type="button" class="demo-view-button" data-demo-key="videoFaceSwap">▶ View Demo</button>
               <button type="button" class="demo-create-button" data-demo-create="video">Create Your Own</button>
+            </div>
+            <div class="demo-cost-note"><strong>Preview only</strong> · stored demo media</div>
+          </div>
+        </article>
+
+        <article class="demo-card">
+          <div class="demo-preview">
+            <div class="demo-preview-placeholder">
+              <div class="demo-preview-icon"><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-photo-video"></use></svg></div>
+              <strong>Photo to Video Demo</strong>
+              <span>Demo preview</span>
+            </div>
+          </div>
+          <div class="demo-card-copy">
+            <div class="demo-card-top"><h3>Photo to Video</h3><span class="demo-type">Short video</span></div>
+            <p>See how a still portrait can become a short, natural-looking moving clip.</p>
+            <div class="demo-card-actions">
+              <button type="button" class="demo-view-button" data-demo-key="photoToVideo">▶ View Demo</button>
+              <button type="button" class="demo-create-button" data-demo-create="photo-video">Create Your Own</button>
             </div>
             <div class="demo-cost-note"><strong>Preview only</strong> · stored demo media</div>
           </div>
@@ -1768,83 +1799,6 @@
             <div class="demo-card-actions">
               <button type="button" class="demo-view-button" data-demo-key="videoEnhance">▶ View Demo</button>
               <button type="button" class="demo-create-button" data-demo-create="enhance">Create Your Own</button>
-            </div>
-            <div class="demo-cost-note"><strong>Preview only</strong> · stored demo media</div>
-          </div>
-        </article>
-    
-
-        <article class="demo-card demo-card-new">
-          <div class="demo-preview">
-            <div class="demo-preview-placeholder">
-              <div class="demo-preview-icon">◈</div>
-              <strong>Portrait Creator Demo</strong>
-              <span>Prepared portrait example</span>
-            </div>
-          </div>
-          <div class="demo-card-copy">
-            <div class="demo-card-top"><h3>Portrait Creator</h3><span class="demo-type">New</span></div>
-            <p>Preview a polished portrait restyle with identity, skin texture and facial character kept recognizable.</p>
-            <div class="demo-card-actions">
-              <button type="button" class="demo-view-button" data-demo-key="portraitCreator">▶ View Demo</button>
-              <button type="button" class="demo-create-button" data-demo-create="portrait">Create Your Own</button>
-            </div>
-            <div class="demo-cost-note"><strong>Preview only</strong> · stored demo media</div>
-          </div>
-        </article>
-
-        <article class="demo-card demo-card-new retired-demo" hidden>
-          <div class="demo-preview">
-            <div class="demo-preview-placeholder">
-              <div class="demo-preview-icon">✦</div>
-              <strong>AI Face Evolution Demo</strong>
-              <span>Life journey video placeholder</span>
-            </div>
-          </div>
-          <div class="demo-card-copy">
-            <div class="demo-card-top"><h3>AI Face Evolution</h3><span class="demo-type">New</span></div>
-            <p>Preview a graceful stored life-journey video showing the same identity evolving from childhood to older age.</p>
-            <div class="demo-card-actions">
-              <button type="button" class="demo-view-button" data-demo-key="faceEvolution">▶ View Demo</button>
-              <button type="button" class="demo-create-button" data-demo-create="face-evolution">Create Your Own</button>
-            </div>
-            <div class="demo-cost-note"><strong>Preview only</strong> · stored demo media</div>
-          </div>
-        </article>
-
-        <article class="demo-card demo-card-new retired-demo" hidden>
-          <div class="demo-preview">
-            <div class="demo-preview-placeholder">
-              <div class="demo-preview-icon">◎</div>
-              <strong>Multiple Photo Face Swap Demo</strong>
-              <span>Group photo example</span>
-            </div>
-          </div>
-          <div class="demo-card-copy">
-            <div class="demo-card-top"><h3>Multiple Photo Face Swap</h3><span class="demo-type">New</span></div>
-            <p>Preview multiple source identities swapped into one group photo while preserving the target composition.</p>
-            <div class="demo-card-actions">
-              <button type="button" class="demo-view-button" data-demo-key="multiPhotoSwap">▶ View Demo</button>
-              <button type="button" class="demo-create-button" data-demo-create="multi-photo">Create Your Own</button>
-            </div>
-            <div class="demo-cost-note"><strong>Preview only</strong> · stored demo media</div>
-          </div>
-        </article>
-
-        <article class="demo-card demo-card-new retired-demo" hidden>
-          <div class="demo-preview">
-            <div class="demo-preview-placeholder">
-              <div class="demo-preview-icon">◉</div>
-              <strong>Multiple Video Face Swap Demo</strong>
-              <span>Multi-face video example</span>
-            </div>
-          </div>
-          <div class="demo-card-copy">
-            <div class="demo-card-top"><h3>Multiple Video Face Swap</h3><span class="demo-type">New</span></div>
-            <p>Preview different source identities mapped to different people while the original video motion, timing and scene are preserved.</p>
-            <div class="demo-card-actions">
-              <button type="button" class="demo-view-button" data-demo-key="multiVideoSwap">▶ View Demo</button>
-              <button type="button" class="demo-create-button" data-demo-create="multi-video">Create Your Own</button>
             </div>
             <div class="demo-cost-note"><strong>Preview only</strong> · stored demo media</div>
           </div>
@@ -1894,7 +1848,7 @@
   <section class="studio-section" aria-labelledby="studioSectionTitle">
     <div class="container">
       <div class="studio-section-intro">
-        <span class="section-eyebrow">FaceEvol AI Studio</span>
+        <span class="section-eyebrow">FaceEvol Studio</span>
         <h2 id="studioSectionTitle">7 focused tools. <span class="gradient-text">One premium studio.</span></h2>
         <p>Choose exactly what you want to do — create, transform or enhance — without clutter, duplicate tools or confusing model choices.</p>
         <div class="studio-status-line" aria-label="FaceEvol tool lineup"><span class="studio-status-pill live"><i></i>7 tools available</span><span class="studio-status-pill soon">Create · Transform · Enhance</span></div>
@@ -1905,7 +1859,7 @@
           <div class="studio-head" aria-label="FaceEvol Studio">
             <div class="studio-head-copy">
               <div class="studio-brand-icon">✦</div>
-              <div><strong>FaceEvol AI Studio</strong><small>Create · Transform · Enhance</small></div>
+              <div><strong>FaceEvol Studio</strong><small>Create · Transform · Enhance</small></div>
             </div>
             <span class="studio-current-tool" id="studioCurrentTool">Age Transform</span>
           </div>
@@ -1916,10 +1870,7 @@
                 <div class="tool-icon">◈</div>
                 <div><div class="tool-name">Portrait Creator</div><span class="tool-sub">Restyle your portrait</span><span class="tool-new-pill">New</span></div>
               </div>
-              <div class="tool-option new-tool-option" id="faceEvolutionOption" hidden role="button" tabindex="0" aria-pressed="false" aria-label="Open AI Face Evolution">
-                <div class="tool-icon">▦</div>
-                <div><div class="tool-name">AI Face Evolution</div><span class="tool-sub">Life journey · video</span><span class="tool-new-pill">Signature</span></div>
-              </div>
+              <div id="faceEvolutionOption" hidden></div>
               <div class="tool-option" id="photoToVideoOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open Photo to Video">
                 <div class="tool-icon"><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-photo-video"></use></svg></div>
                 <div><div class="tool-name">Photo to Video</div><span class="tool-sub">Image → motion</span></div>
@@ -1938,14 +1889,8 @@
                 <div class="tool-icon"><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-video-swap"></use></svg></div>
                 <div><div class="tool-name">Video Face Swap</div><span class="tool-sub">One face · video</span></div>
               </div>
-              <div class="tool-option new-tool-option" id="multiPhotoSwapOption" hidden role="button" tabindex="0" aria-pressed="false" aria-label="Open Multiple Photo Face Swap">
-                <div class="tool-icon">◎</div>
-                <div><div class="tool-name">Multiple Photo Face Swap</div><span class="tool-sub">Several faces · photo</span><span class="tool-new-pill">New</span></div>
-              </div>
-              <div class="tool-option new-tool-option" id="multiVideoSwapOption" hidden role="button" tabindex="0" aria-pressed="false" aria-label="Open Multiple Video Face Swap">
-                <div class="tool-icon">◉</div>
-                <div><div class="tool-name">Multiple Video Face Swap</div><span class="tool-sub">Mapped identities · video</span><span class="tool-new-pill">New</span></div>
-              </div>
+              <div id="multiPhotoSwapOption" hidden></div>
+              <div id="multiVideoSwapOption" hidden></div>
 
               <div class="studio-label studio-label-spaced">Enhance</div>
               <div class="tool-option" id="photoEnhanceOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open Photo Enhance">
@@ -2082,7 +2027,7 @@
             <li>✓ 20 FaceEvol credits</li>
             <li>✓ No subscription</li>
             <li>✓ Credits stay with your account</li>
-            <li>✓ Use across FaceEvol AI tools</li>
+            <li>✓ Use across FaceEvol tools</li>
           </ul>
           <button type="button" class="button button-secondary" data-credit-pack="20">Buy 20 Credits</button>
         </div>
@@ -2108,7 +2053,7 @@
           <ul class="price-features">
             <li>✓ 150 FaceEvol credits</li>
             <li>✓ No subscription</li>
-            <li>✓ Use across FaceEvol AI tools</li>
+            <li>✓ Use across FaceEvol tools</li>
             <li>✓ Account activity history</li>
           </ul>
           <button type="button" class="button button-secondary" data-credit-pack="150">Buy 150 Credits</button>
@@ -2161,7 +2106,7 @@
         <h2>Create, transform &amp; enhance<br><span class="gradient-text">your face with AI.</span></h2>
         <p>Choose a live tool, add your photo or video, and create a result you can preview and download directly.</p>
         <div class="hero-actions" style="justify-content:center">
-          <a href="#studio" class="button button-primary" id="ctaStartButton">Open AI Studio →</a>
+          <a href="#studio" class="button button-primary" id="ctaStartButton">Open Studio →</a>
           <a href="#demos" class="button button-secondary">View Examples</a>
         </div>
       </div>
@@ -2413,12 +2358,6 @@
 
        /demos/portrait-before.webp
        /demos/portrait-after.webp
-       /demos/face-evolution-before.webp
-       /demos/face-evolution.mp4
-       /demos/multi-photo-before.webp
-       /demos/multi-photo-after.webp
-       /demos/multi-video-before.mp4
-       /demos/multi-video-after.mp4
 
      Nothing else in the interface needs to be rebuilt when
      those files are ready — just fill these source strings.
@@ -2496,34 +2435,8 @@
       kind:"compareImage",
       before:"",
       after:""
-    },
-
-    faceEvolution:{
-      title:"Retired Face Evolution",
-      description:"A stored cinematic life-journey video showing one identity aging gracefully from childhood to older age.",
-      createTool:"face-evolution",
-      kind:"singleVideo",
-      video:"",
-      poster:""
-    },
-
-    multiPhotoSwap:{
-      title:"Retired Multiple Photo Face Swap",
-      description:"A stored group-photo comparison showing several face replacements in one result.",
-      createTool:"multi-photo",
-      kind:"compareImage",
-      before:"",
-      after:""
-    },
-
-    multiVideoSwap:{
-      title:"Retired Multiple Video Face Swap",
-      description:"A stored multi-person video example showing different reference identities mapped to different people in the target clip.",
-      createTool:"multi-video",
-      kind:"compareVideo",
-      before:"",
-      after:""
     }
+
   });
 
   const faceEvolDemoModal=document.getElementById("faceEvolDemoModal");
@@ -2561,7 +2474,7 @@
 
       button.disabled=!ready;
       button.classList.toggle("demo-unavailable",!ready);
-      button.textContent=ready?"▶ View Demo":"Demo preview";
+      button.textContent=ready?"▶ View Demo":"Demo Coming Soon";
       button.setAttribute("aria-disabled",ready?"false":"true");
     });
   }
@@ -2601,7 +2514,7 @@
 
     const empty=document.createElement("div");
     empty.className="demo-empty-slot";
-    empty.innerHTML=`<div>${icon}</div><strong>${label}</strong><span>A polished FaceEvol example will appear here soon.</span>`;
+    empty.innerHTML=`<div>${icon}</div><strong>${label}</strong><span>A prepared FaceEvol example is coming soon.</span>`;
 
     slot.appendChild(empty);
     return slot;
@@ -6981,15 +6894,15 @@
   });
 
   if(mobileStudioCta){
-    mobileStudioCta.addEventListener("click",()=>activatePortraitMode());
+    mobileStudioCta.addEventListener("click",()=>activatePortraitCreatorMode());
   }
 
   ctaStartButton.addEventListener("click",function(){
-    activatePortraitMode();
+    activatePortraitCreatorMode();
   });
 
   heroAgeButton.addEventListener("click",function(){
-    activatePortraitMode();
+    activatePortraitCreatorMode();
   });
 
 
@@ -7960,7 +7873,7 @@
   openLegalHashPanel();
 
   /* Start in Portrait Creator: it best matches the AI Face & Portrait Studio positioning. */
-  activatePortraitMode();
+  activatePortraitCreatorMode();
 </script>
 <!-- trigger vercel deploy -->
 
