@@ -20,32 +20,30 @@ const FACEVOL_SUPABASE_SECRET_KEY =
   process.env.SUPABASE_SERVICE_ROLE_KEY ||
   "";
 
-const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || "";
-const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || "";
-const FACEVOL_STRIPE_MODE = String(process.env.FACEVOL_STRIPE_MODE || "live").trim().toLowerCase();
+const FASTSPRING_API_USERNAME =
+  String(process.env.FASTSPRING_API_USERNAME || "").trim();
 
-/*
- * Production pricing is intentionally fail-closed.
- * There are NO sandbox Price ID fallbacks in this launch file.
- * Create the three LIVE Stripe prices and add their price_... IDs in Vercel.
- */
-const FACEVOL_STRIPE_PACKS = Object.freeze({
-  "20": { credits:20, amount:499, currency:"eur", priceId:String(process.env.STRIPE_PRICE_20 || "").trim() },
-  "60": { credits:60, amount:1199, currency:"eur", priceId:String(process.env.STRIPE_PRICE_60 || "").trim() },
-  "150": { credits:150, amount:2499, currency:"eur", priceId:String(process.env.STRIPE_PRICE_150 || "").trim() }
+const FASTSPRING_API_PASSWORD =
+  String(process.env.FASTSPRING_API_PASSWORD || "").trim();
+
+const FASTSPRING_WEBHOOK_SECRET =
+  String(process.env.FASTSPRING_WEBHOOK_SECRET || "");
+
+const FASTSPRING_MODE =
+  String(process.env.FASTSPRING_MODE || "test").trim().toLowerCase() === "live"
+    ? "live"
+    : "test";
+
+const FASTSPRING_STOREFRONT =
+  String(process.env.FASTSPRING_STOREFRONT || "faceevol")
+    .trim()
+    .replace(/[^a-zA-Z0-9_-]/g, "") || "faceevol";
+
+const FACEVOL_FASTSPRING_PACKS = Object.freeze({
+  "20":  { credits:20,  product:"faceevol-starter-20" },
+  "60":  { credits:60,  product:"faceevol-creator-60" },
+  "150": { credits:150, product:"faceevol-studio-150" }
 });
-
-function faceEvolAssertStripeConfiguration(){
-  if(!STRIPE_SECRET_KEY){ const e=new Error("STRIPE_NOT_CONFIGURED"); e.status=503; throw e; }
-  if(!STRIPE_WEBHOOK_SECRET){ const e=new Error("STRIPE_WEBHOOK_NOT_CONFIGURED"); e.status=503; throw e; }
-  if(FACEVOL_STRIPE_MODE!=="live" && FACEVOL_STRIPE_MODE!=="test"){ const e=new Error("STRIPE_MODE_INVALID"); e.status=503; throw e; }
-  if(FACEVOL_STRIPE_MODE==="live" && !STRIPE_SECRET_KEY.startsWith("sk_live_")){ const e=new Error("STRIPE_LIVE_KEY_REQUIRED"); e.status=503; throw e; }
-  if(FACEVOL_STRIPE_MODE==="test" && !STRIPE_SECRET_KEY.startsWith("sk_test_")){ const e=new Error("STRIPE_TEST_KEY_REQUIRED"); e.status=503; throw e; }
-  for(const [key,pack] of Object.entries(FACEVOL_STRIPE_PACKS)){
-    if(!/^price_[A-Za-z0-9]+$/.test(pack.priceId)){ const e=new Error(`STRIPE_PRICE_${key}_REQUIRED`); e.status=503; throw e; }
-  }
-}
-
 
 function faceEvolBearerToken(req) {
   const header = String(
@@ -349,39 +347,88 @@ function extractTemporaryPathname(
 async function cleanupPredictionInputs(
   prediction
 ) {
-  /* Collect every temporary FaceEvol input, including arrays used by mapped multi-person video. */
-  const rawCandidates = [
+  /*
+   * Different FaceEvol providers use different names/orientations:
+   * - current single video swap: source=video, target=face
+   * - DeepFace multi-video: source=face, target=video
+   * - video enhancement: video=video
+   *
+   * Check both source and target for each trusted FaceEvol prefix. The
+   * extractor still requires the exact FaceEvol proxy route or private
+   * Vercel Blob hostname + expected prefix, so this does not broaden
+   * deletion to arbitrary URLs.
+   */
+  const candidateInputs = [
     prediction?.input?.source,
     prediction?.input?.target,
     prediction?.input?.source_image,
     prediction?.input?.target_video,
-    prediction?.input?.video,
-    prediction?.input?.images
+    prediction?.input?.video
   ];
 
-  const candidateInputs = rawCandidates.flatMap(value => Array.isArray(value) ? value : [value]);
-  const pathnames = [];
+  const facePathname =
+    candidateInputs
+      .map(value =>
+        extractTemporaryPathname(
+          value,
+          "/api/image.jpg",
+          "faceevol-face-"
+        )
+      )
+      .find(Boolean) ||
+    null;
 
-  for (const value of candidateInputs) {
-    const facePathname = extractTemporaryPathname(value, "/api/image.jpg", "faceevol-face-");
-    const videoPathname = extractTemporaryPathname(value, "/api/video.mp4", "faceevol-video-");
-    if (facePathname) pathnames.push(facePathname);
-    if (videoPathname) pathnames.push(videoPathname);
-  }
+  const videoPathname =
+    candidateInputs
+      .map(value =>
+        extractTemporaryPathname(
+          value,
+          "/api/video.mp4",
+          "faceevol-video-"
+        )
+      )
+      .find(Boolean) ||
+    null;
 
-  const safePathnames = [...new Set(pathnames.filter(Boolean))];
-  if (!safePathnames.length) {
-    console.warn("No temporary FaceEvol inputs found for cleanup.");
+  const pathnames =
+    [
+      ...new Set([
+        facePathname,
+        videoPathname
+      ].filter(Boolean))
+    ];
+
+  if (!pathnames.length) {
+    console.warn(
+      "No temporary FaceEvol inputs found for cleanup."
+    );
+
     return;
   }
 
   try {
-    await del(safePathnames);
-    console.log("Deleted temporary FaceEvol inputs:", safePathnames);
+    await del(
+      pathnames
+    );
+
+    console.log(
+      "Deleted temporary FaceEvol inputs:",
+      pathnames
+    );
+
   } catch (error) {
-    console.warn("Temporary Blob cleanup failed:", error instanceof Error ? error.message : String(error));
+    /*
+     * Cleanup failure must never hide a successful AI result.
+     */
+    console.warn(
+      "Temporary Blob cleanup failed:",
+      error instanceof Error
+        ? error.message
+        : String(error)
+    );
   }
 }
+
 
 
 async function faceEvolReadRawBody(req,maxBytes=1000000){
@@ -398,159 +445,238 @@ function faceEvolSafeJson(raw){
   try{return JSON.parse(raw.toString("utf8"));}catch{return null;}
 }
 
-function faceEvolEnforceStripeTester(user){
-  if(!STRIPE_SECRET_KEY.startsWith("sk_test_")) return;
-  const email=String(process.env.STRIPE_TEST_EMAIL||"").trim().toLowerCase();
-  const uid=String(process.env.STRIPE_TEST_USER_ID||"").trim();
-  if(!email&&!uid){ const e=new Error("STRIPE_TEST_ACCESS_NOT_CONFIGURED"); e.status=503; throw e; }
-  const ok=(email&&String(user?.email||"").trim().toLowerCase()===email)||(uid&&String(user?.id||"")===uid);
-  if(!ok){ const e=new Error("STRIPE_TEST_ACCESS_DENIED"); e.status=403; throw e; }
+function faceEvolEnforceFastSpringTester(user){
+  if(FASTSPRING_MODE==="live") return;
+
+  const allowedEmail=String(process.env.FASTSPRING_TEST_EMAIL||"").trim().toLowerCase();
+  const allowedUserId=String(process.env.FASTSPRING_TEST_USER_ID||"").trim();
+
+  if(!allowedEmail&&!allowedUserId){
+    throw new Error("FASTSPRING_TEST_ACCESS_NOT_CONFIGURED");
+  }
+
+  const emailMatches=
+    allowedEmail &&
+    String(user?.email||"").trim().toLowerCase()===allowedEmail;
+
+  const userMatches=
+    allowedUserId &&
+    String(user?.id||"")===allowedUserId;
+
+  if(!emailMatches&&!userMatches){
+    throw new Error("FASTSPRING_TEST_ACCESS_DENIED");
+  }
 }
 
-async function faceEvolStripeRequest(pathname,form){
-  const response=await fetch(`https://api.stripe.com${pathname}`,{
+function faceEvolFastSpringAuth(){
+  if(!FASTSPRING_API_USERNAME||!FASTSPRING_API_PASSWORD){
+    throw new Error("FastSpring API credentials are not configured");
+  }
+
+  return `Basic ${Buffer.from(
+    `${FASTSPRING_API_USERNAME}:${FASTSPRING_API_PASSWORD}`,
+    "utf8"
+  ).toString("base64")}`;
+}
+
+async function faceEvolFastSpringRequest(pathname,body){
+  const response=await fetch(`https://api.fastspring.com${pathname}`,{
     method:"POST",
-    headers:{Authorization:`Bearer ${STRIPE_SECRET_KEY}`,"Content-Type":"application/x-www-form-urlencoded"},
-    body:form.toString()
+    headers:{
+      Authorization:faceEvolFastSpringAuth(),
+      "Content-Type":"application/json",
+      Accept:"application/json"
+    },
+    body:JSON.stringify(body)
   });
-  const text=await response.text(); let data=null;
-  try{data=text?JSON.parse(text):null;}catch{data={error:{message:text.slice(0,1000)}};}
-  if(!response.ok){ const e=new Error(data?.error?.message||`Stripe HTTP ${response.status}`); e.status=response.status; throw e; }
+
+  const text=await response.text();
+  let data=null;
+
+  try{ data=text?JSON.parse(text):null; }
+  catch{ data={raw:text.slice(0,1200)}; }
+
+  if(!response.ok){
+    const error=new Error(
+      data?.message ||
+      data?.error?.message ||
+      data?.error ||
+      `FastSpring HTTP ${response.status}`
+    );
+    error.status=response.status;
+    throw error;
+  }
+
   return data;
 }
 
-function faceEvolVerifyStripeWebhook(raw,header){
-  if(!STRIPE_WEBHOOK_SECRET) throw new Error("STRIPE_WEBHOOK_SECRET is not configured");
-  let t=null; const sigs=[];
-  for(const part of String(header||"").split(",")){
-    const i=part.indexOf("="); if(i<1) continue;
-    const k=part.slice(0,i).trim(), v=part.slice(i+1).trim();
-    if(k==="t") t=v; if(k==="v1") sigs.push(v);
+function faceEvolVerifyFastSpringWebhook(raw,header){
+  if(!FASTSPRING_WEBHOOK_SECRET){
+    throw new Error("FASTSPRING_WEBHOOK_SECRET is not configured");
   }
-  const ts=Number(t); if(!Number.isFinite(ts)||!sigs.length) throw new Error("Invalid Stripe signature header");
-  if(Math.abs(Math.floor(Date.now()/1000)-ts)>300) throw new Error("Stripe webhook timestamp is outside tolerance");
-  const expected=createHmac("sha256",STRIPE_WEBHOOK_SECRET).update(`${ts}.${raw.toString("utf8")}`,"utf8").digest("hex");
-  const expectedBuf=Buffer.from(expected,"hex");
-  const ok=sigs.some(sig=>{
-    if(!/^[0-9a-f]+$/i.test(sig)) return false;
-    const actual=Buffer.from(sig,"hex");
-    return actual.length===expectedBuf.length&&timingSafeEqual(actual,expectedBuf);
-  });
-  if(!ok) throw new Error("Invalid Stripe webhook signature");
+
+  const expected=createHmac("sha256",FASTSPRING_WEBHOOK_SECRET)
+    .update(raw)
+    .digest("base64");
+
+  let expectedBuf, actualBuf;
+  try{
+    expectedBuf=Buffer.from(expected,"base64");
+    actualBuf=Buffer.from(String(header||""),"base64");
+  }catch{
+    throw new Error("Invalid FastSpring webhook signature");
+  }
+
+  if(
+    !actualBuf.length ||
+    expectedBuf.length!==actualBuf.length ||
+    !timingSafeEqual(expectedBuf,actualBuf)
+  ){
+    throw new Error("Invalid FastSpring webhook signature");
+  }
 }
 
-async function handleStripeCheckout(req,res,raw){
-  faceEvolAssertStripeConfiguration();
-  const auth=await faceEvolRequireUser(req,res); if(!auth) return;
-  faceEvolEnforceStripeTester(auth.user);
+async function handleFastSpringCheckout(req,res,raw){
+  const auth=await faceEvolRequireUser(req,res);
+  if(!auth) return;
+
+  faceEvolEnforceFastSpringTester(auth.user);
+
   const body=faceEvolSafeJson(raw)||{};
-  if(body.action!=="checkout") return res.status(400).json({error:"Invalid Stripe action."});
-  const key=String(body.pack||""); const pack=FACEVOL_STRIPE_PACKS[key];
-  if(!pack) return res.status(400).json({error:"Invalid FaceEvol credit pack."});
-  const origin="https://www.faceevol.com";
-  const form=new URLSearchParams();
-  form.set("mode","payment");
-  form.set("success_url",`${origin}/?payment=success&session_id={CHECKOUT_SESSION_ID}#pricing`);
-  form.set("cancel_url",`${origin}/?payment=cancelled#pricing`);
-  form.set("line_items[0][price]",pack.priceId);
-  form.set("line_items[0][quantity]","1");
-  form.set("client_reference_id",auth.user.id);
-  if(auth.user.email) form.set("customer_email",auth.user.email);
-  form.set("metadata[purpose]","faceevol_credits");
-  form.set("metadata[user_id]",auth.user.id);
-  form.set("metadata[credits]",String(pack.credits));
-  form.set("metadata[pack]",key);
-  form.set("metadata[price_id]",pack.priceId);
-  const session=await faceEvolStripeRequest("/v1/checkout/sessions",form);
-  if(!session?.id||!session?.url) throw new Error("Stripe returned an invalid Checkout Session.");
-  return res.status(200).json({success:true,checkout_session_id:session.id,url:session.url});
+  if(body.action!=="checkout"){
+    return res.status(400).json({error:"Invalid FastSpring action."});
+  }
+
+  const key=String(body.pack||"");
+  const pack=FACEVOL_FASTSPRING_PACKS[key];
+
+  if(!pack){
+    return res.status(400).json({error:"Invalid FaceEvol credit pack."});
+  }
+
+  const session=await faceEvolFastSpringRequest("/sessions",{
+    contact:auth.user.email?{email:String(auth.user.email)}:undefined,
+    tags:{
+      purpose:"faceevol_credits",
+      faceevol_user_id:String(auth.user.id),
+      faceevol_pack:key,
+      faceevol_credits:String(pack.credits),
+      faceevol_product:pack.product
+    },
+    items:[{
+      product:pack.product,
+      quantity:1
+    }]
+  });
+
+  const sessionId=String(
+    session?.id ||
+    session?.session ||
+    session?.sessionId ||
+    ""
+  ).trim();
+
+  if(!sessionId){
+    throw new Error("FastSpring returned an invalid Checkout Session.");
+  }
+
+  const host=
+    FASTSPRING_MODE==="live"
+      ? `${FASTSPRING_STOREFRONT}.onfastspring.com`
+      : `${FASTSPRING_STOREFRONT}.test.onfastspring.com`;
+
+  return res.status(200).json({
+    success:true,
+    checkout_session_id:sessionId,
+    url:`https://${host}/session/${encodeURIComponent(sessionId)}`
+  });
 }
 
-async function faceEvolApplyStripeCredits(session){
-  const m=session?.metadata||{};
-  if(m.purpose!=="faceevol_credits") return {ignored:true};
-  const userId=String(m.user_id||session?.client_reference_id||"").trim();
-  const credits=Number(m.credits); const key=String(m.pack||credits||""); const pack=FACEVOL_STRIPE_PACKS[key];
-  const amount=Number(session?.amount_total); const currency=String(session?.currency||"").toLowerCase();
-  if(!userId||!Number.isInteger(credits)||!pack||pack.credits!==credits||m.price_id!==pack.priceId||amount!==pack.amount||currency!==pack.currency){
-    throw new Error("Invalid FaceEvol Stripe purchase metadata");
+async function faceEvolApplyFastSpringCredits(event){
+  const order=
+    event?.data?.order && typeof event.data.order==="object"
+      ? event.data.order
+      : event?.data;
+
+  if(!order||typeof order!=="object"){
+    throw new Error("FastSpring order data is missing");
   }
-  return faceEvolAdminRpc("apply_faceevol_stripe_purchase_admin",{
+
+  const tags=order?.tags&&typeof order.tags==="object"?order.tags:{};
+  if(tags.purpose!=="faceevol_credits") return {ignored:true};
+
+  const orderId=String(order?.id||order?.order||"").trim();
+  const userId=String(tags.faceevol_user_id||"").trim();
+  const key=String(tags.faceevol_pack||"").trim();
+  const credits=Number(tags.faceevol_credits);
+  const productPath=String(tags.faceevol_product||"").trim();
+  const pack=FACEVOL_FASTSPRING_PACKS[key];
+
+  const items=Array.isArray(order?.items)?order.items:[];
+  const item=items[0]||null;
+
+  if(
+    !orderId ||
+    !/^[0-9a-f-]{36}$/i.test(userId) ||
+    !pack ||
+    pack.credits!==credits ||
+    pack.product!==productPath ||
+    items.length!==1 ||
+    String(item?.product||"").trim()!==pack.product ||
+    Number(item?.quantity)!==1
+  ){
+    throw new Error("Invalid FaceEvol FastSpring order metadata");
+  }
+
+  if(FASTSPRING_MODE==="live"&&event?.live===false){
+    throw new Error("Test FastSpring event rejected in live mode");
+  }
+
+  if(FASTSPRING_MODE==="test"&&event?.live===true){
+    throw new Error("Live FastSpring event rejected in test mode");
+  }
+
+  return faceEvolAdminRpc("apply_faceevol_fastspring_purchase_admin",{
     p_user_id:userId,
     p_credits:credits,
-    p_stripe_session_id:String(session.id),
-    p_stripe_payment_intent:session?.payment_intent?String(session.payment_intent):null,
-    p_amount_total:amount,
-    p_currency:currency
+    p_fastspring_order_id:orderId,
+    p_fastspring_order_reference:order?.reference?String(order.reference):null,
+    p_fastspring_event_id:event?.id?String(event.id):null,
+    p_product_path:productPath,
+    p_amount_total:Number.isFinite(Number(order?.total))?Number(order.total):null,
+    p_currency:order?.currency?String(order.currency).toLowerCase():null,
+    p_live:event?.live===true||order?.live===true
   });
 }
 
-async function handleStripeWebhook(req,res,raw){
+async function handleFastSpringWebhook(req,res,raw){
   try{
-    faceEvolAssertStripeConfiguration();
-    faceEvolVerifyStripeWebhook(raw,req.headers?.["stripe-signature"]);
+    faceEvolVerifyFastSpringWebhook(raw,req.headers?.["x-fs-signature"]);
   }catch(error){
-    console.error("FaceEvol Stripe webhook verification failed:",error instanceof Error?error.message:String(error));
+    console.error(
+      "FaceEvol FastSpring webhook verification failed:",
+      error instanceof Error?error.message:String(error)
+    );
     return res.status(400).json({error:"Invalid webhook signature."});
   }
-  const event=faceEvolSafeJson(raw); if(!event) return res.status(400).json({error:"Invalid webhook payload."});
-  if(event.type==="checkout.session.completed"||event.type==="checkout.session.async_payment_succeeded"){
-    const session=event?.data?.object;
-    if(session?.mode==="payment"&&session?.payment_status==="paid"){
-      try{await faceEvolApplyStripeCredits(session);}catch(error){
-        console.error("FaceEvol Stripe credit delivery failed:",error);
-        return res.status(500).json({error:"Credit delivery failed."});
-      }
+
+  const payload=faceEvolSafeJson(raw);
+  if(!payload||!Array.isArray(payload.events)){
+    return res.status(400).json({error:"Invalid FastSpring webhook payload."});
+  }
+
+  for(const event of payload.events){
+    if(event?.type!=="order.completed") continue;
+
+    try{
+      await faceEvolApplyFastSpringCredits(event);
+    }catch(error){
+      console.error("FaceEvol FastSpring credit delivery failed:",error);
+      return res.status(500).json({error:"Credit delivery failed."});
     }
   }
+
   return res.status(200).json({received:true});
-}
-
-
-function faceEvolIsSegmindPredictionId(id) {
-  return /^sgm[0-9a-f]{32}$/i.test(String(id || ""));
-}
-
-function faceEvolDecodeSegmindPredictionId(id) {
-  const hex = String(id || "").slice(3).toLowerCase();
-  if (!/^[0-9a-f]{32}$/.test(hex)) throw new Error("Invalid Segmind prediction ID");
-  return `${hex.slice(0,8)}-${hex.slice(8,12)}-${hex.slice(12,16)}-${hex.slice(16,20)}-${hex.slice(20)}`;
-}
-
-function faceEvolSegmindStatus(value) {
-  const status = String(value || "").toUpperCase();
-  if (status === "COMPLETED") return "succeeded";
-  if (status === "FAILED") return "failed";
-  if (status === "CANCELLED" || status === "CANCELED") return "canceled";
-  if (status === "QUEUED" || status === "PROCESSING") return "processing";
-  return "processing";
-}
-
-async function faceEvolGetSegmindPrediction(encodedId) {
-  const apiKey = process.env.SEGMIND_API_KEY || "";
-  if (!apiKey) { const error = new Error("SEGMIND_API_KEY is not configured"); error.status = 500; throw error; }
-  const requestId = faceEvolDecodeSegmindPredictionId(encodedId);
-  const headers = { "x-api-key": apiKey, "Content-Type": "application/json" };
-  const statusResponse = await fetch(`https://api.segmind.com/v2/requests/${requestId}/status`, { headers, cache: "no-store" });
-  const statusData = await faceEvolReadResponse(statusResponse);
-  if (!statusResponse.ok && statusResponse.status !== 422) {
-    const error = new Error(statusData?.detail || statusData?.error || statusData?.message || `Segmind HTTP ${statusResponse.status}`);
-    error.status = statusResponse.status; throw error;
-  }
-  const normalized = faceEvolSegmindStatus(statusData?.status);
-  if (normalized === "succeeded") {
-    const resultResponse = await fetch(`https://api.segmind.com/v2/requests/${requestId}`, { headers, cache: "no-store" });
-    const resultData = await faceEvolReadResponse(resultResponse);
-    if (!resultResponse.ok) {
-      const error = new Error(resultData?.detail || resultData?.error || resultData?.message || `Segmind HTTP ${resultResponse.status}`);
-      error.status = resultResponse.status; throw error;
-    }
-    return { id: encodedId, status: "succeeded", output: resultData?.output ?? resultData?.data ?? resultData, error: null, provider: "segmind" };
-  }
-  if (normalized === "failed" || normalized === "canceled") {
-    return { id: encodedId, status: normalized, output: null, error: statusData?.detail || statusData?.error || statusData?.message || "Segmind video face swap failed", provider: "segmind" };
-  }
-  return { id: encodedId, status: "processing", output: null, error: null, provider: "segmind" };
 }
 
 async function handlePredictionGet(
@@ -568,9 +694,23 @@ async function handlePredictionGet(
   }
 
 
-  const replicateToken = process.env.REPLICATE_API_TOKEN;
+  const replicateToken =
+    process.env
+      .REPLICATE_API_TOKEN;
 
-  const { id } = req.query || {};
+
+  if (!replicateToken) {
+    return res.status(500).json({
+      error:
+        "REPLICATE_API_TOKEN is not configured"
+    });
+  }
+
+
+  const {
+    id
+  } =
+    req.query || {};
 
 
   if (
@@ -619,24 +759,54 @@ async function handlePredictionGet(
 
 
   try {
-    let prediction;
-    if (faceEvolIsSegmindPredictionId(id)) {
-      prediction = await faceEvolGetSegmindPrediction(id);
-    } else {
-      if (!replicateToken) {
-        return res.status(500).json({ error: "REPLICATE_API_TOKEN is not configured" });
-      }
-      const response = await fetch(
+    const response =
+      await fetch(
         `https://api.replicate.com/v1/predictions/${id}`,
-        { method: "GET", headers: { Authorization: `Bearer ${replicateToken}`, "Content-Type": "application/json" } }
+        {
+          method: "GET",
+
+          headers: {
+            Authorization:
+              `Bearer ${replicateToken}`,
+
+            "Content-Type":
+              "application/json"
+          }
+        }
       );
-      try { prediction = await response.json(); } catch { prediction = null; }
-      if (!response.ok) {
-        return res.status(response.status).json({ error: "Failed to retrieve prediction", details: prediction });
-      }
-      if (!prediction) {
-        return res.status(502).json({ error: "Replicate returned an invalid prediction response" });
-      }
+
+
+    let prediction;
+
+
+    try {
+      prediction =
+        await response.json();
+    } catch {
+      prediction = null;
+    }
+
+
+    if (!response.ok) {
+      return res
+        .status(
+          response.status
+        )
+        .json({
+          error:
+            "Failed to retrieve prediction",
+
+          details:
+            prediction
+        });
+    }
+
+
+    if (!prediction) {
+      return res.status(502).json({
+        error:
+          "Replicate returned an invalid prediction response"
+      });
     }
 
 
@@ -765,27 +935,44 @@ export default async function handler(req,res){
 
   if(req.method==="POST"){
     let raw;
-    try{raw=await faceEvolReadRawBody(req);}catch{return res.status(413).json({error:"Request body is too large."});}
+    try{
+      raw=await faceEvolReadRawBody(req);
+    }catch{
+      return res.status(413).json({error:"Request body is too large."});
+    }
 
-    if(req.headers?.["stripe-signature"]){
-      return handleStripeWebhook(req,res,raw);
+    if(req.headers?.["x-fs-signature"]){
+      return handleFastSpringWebhook(req,res,raw);
     }
 
     try{
-      return await handleStripeCheckout(req,res,raw);
+      return await handleFastSpringCheckout(req,res,raw);
     }catch(error){
       const code=String(error instanceof Error?error.message:error);
-      if(code==="STRIPE_TEST_ACCESS_NOT_CONFIGURED") return res.status(503).json({error:"Stripe Sandbox is protected. Add STRIPE_TEST_EMAIL or STRIPE_TEST_USER_ID in Vercel before testing.",code});
-      if(code==="STRIPE_TEST_ACCESS_DENIED") return res.status(403).json({error:"Stripe checkout is currently in private Sandbox testing.",code});
-      if(code==="STRIPE_NOT_CONFIGURED"||code==="STRIPE_WEBHOOK_NOT_CONFIGURED"||code==="STRIPE_LIVE_KEY_REQUIRED"||code==="STRIPE_TEST_KEY_REQUIRED"||code==="STRIPE_MODE_INVALID"||code.startsWith("STRIPE_PRICE_")){
-        return res.status(503).json({error:"Payments are not fully configured yet. Please try again later.",code});
+
+      if(code==="FASTSPRING_TEST_ACCESS_NOT_CONFIGURED"){
+        return res.status(503).json({
+          error:"FastSpring test checkout is protected. Add FASTSPRING_TEST_EMAIL or FASTSPRING_TEST_USER_ID in Vercel before testing.",
+          code
+        });
       }
-      console.error("FaceEvol Stripe checkout error:",error);
-      return res.status(Number(error?.status)||500).json({error:error instanceof Error?error.message:"Could not start Stripe Checkout.",code:"STRIPE_CHECKOUT_FAILED"});
+
+      if(code==="FASTSPRING_TEST_ACCESS_DENIED"){
+        return res.status(403).json({
+          error:"FastSpring checkout is currently in private test mode.",
+          code
+        });
+      }
+
+      console.error("FaceEvol FastSpring checkout error:",error);
+
+      return res.status(Number(error?.status)||500).json({
+        error:error instanceof Error?error.message:"Could not start FastSpring Checkout.",
+        code:"FASTSPRING_CHECKOUT_FAILED"
+      });
     }
   }
 
   res.setHeader("Allow","GET, POST");
   return res.status(405).json({error:"Method not allowed"});
 }
-
