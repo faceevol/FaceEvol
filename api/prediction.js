@@ -555,7 +555,7 @@ async function handleFastSpringCheckout(req,res,raw){
   }
 
   const session=await faceEvolFastSpringRequest("/sessions",{
-    contact:auth.user.email?{email:String(auth.user.email)}:undefined,
+    contact:auth.user.email?{email:String(auth.user.email),country:"NL"}:{country:"NL"},
     tags:{
       purpose:"faceevol_credits",
       faceevol_user_id:String(auth.user.id),
