@@ -1,39 +1,1394 @@
 <!DOCTYPE html>
-
-<!-- FaceEvol · premium paid-launch release · 2026-09-01 -->
+<!-- FaceEvol · final V3 paid launch · 7 tools · 2026-09-01 -->
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>FaceEvol — AI Face &amp; Portrait Studio</title>
-<meta content="FaceEvol is an AI Face &amp; Portrait Studio for polished portraits, age transforms, photo and video face swaps, photo-to-video creation, and media enhancement." name="description"/>
-<meta content="#070b17" name="theme-color"/>
-<meta content="dark" name="color-scheme"/>
-<meta content="index,follow" name="robots"/>
-<link href="https://www.faceevol.com/" rel="canonical"/>
-<!-- FaceEvol browser / device icons -->
-<link href="/favicon.ico?v=6" rel="icon" sizes="any"/>
-<link href="/favicon-16x16.png?v=6" rel="icon" sizes="16x16" type="image/png"/>
-<link href="/favicon-32x32.png?v=6" rel="icon" sizes="32x32" type="image/png"/>
-<link href="/favicon-48x48.png?v=6" rel="icon" sizes="48x48" type="image/png"/>
-<link href="/apple-touch-icon.png?v=6" rel="apple-touch-icon" sizes="180x180"/>
-<link href="/site.webmanifest?v=6" rel="manifest"/>
-<meta content="FaceEvol" name="apple-mobile-web-app-title"/>
-<meta content="website" property="og:type"/>
-<meta content="FaceEvol" property="og:site_name"/>
-<meta content="FaceEvol — AI Face &amp; Portrait Studio" property="og:title"/>
-<meta content="Create polished portraits, transform age, swap faces, animate photos, and enhance photos or videos in one focused AI studio." property="og:description"/>
-<meta content="https://www.faceevol.com/" property="og:url"/>
-<meta content="https://www.faceevol.com/a.png" property="og:image"/>
-<meta content="summary_large_image" name="twitter:card"/>
-<meta content="FaceEvol — AI Face &amp; Portrait Studio" name="twitter:title"/>
-<meta content="FaceEvol is an AI Face &amp; Portrait Studio with seven focused portrait, face-swap, motion and enhancement tools." name="twitter:description"/>
-<meta content="https://www.faceevol.com/a.png" name="twitter:image"/>
-<!-- Browser-side video trimming. Loaded only by the page; your API routes stay unchanged. -->
-<script src="https://unpkg.com/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
-<style>Creating with your own media requires purchased credits. FaceEvol launches with zero free AI-generation credits.</style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4"></script>
-<script type="application/ld+json">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FaceEvol — AI Face &amp; Portrait Studio</title>
+  <meta name="description" content="FaceEvol is an AI Face &amp; Portrait Studio for polished portraits, age transforms, photo and video face swaps, photo-to-video creation, and media enhancement." />
+  <meta name="theme-color" content="#070b17" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="robots" content="index,follow" />
+  <link rel="canonical" href="https://www.faceevol.com/" />
+
+
+
+  <!-- FaceEvol browser / device icons -->
+  <link rel="icon" href="/favicon.ico?v=6" sizes="any" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=6" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=6" />
+  <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png?v=6" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=6" />
+  <link rel="manifest" href="/site.webmanifest?v=6" />
+  <meta name="apple-mobile-web-app-title" content="FaceEvol" />
+<meta property="og:type" content="website" />
+  <meta property="og:site_name" content="FaceEvol" />
+  <meta property="og:title" content="FaceEvol — AI Face &amp; Portrait Studio" />
+  <meta property="og:description" content="Create polished portraits, transform age, swap faces, animate photos, and enhance photos or videos in one focused AI studio." />
+  <meta property="og:url" content="https://www.faceevol.com/" />
+  <meta property="og:image" content="https://www.faceevol.com/a.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="FaceEvol — AI Face &amp; Portrait Studio" />
+  <meta name="twitter:description" content="FaceEvol is an AI Face &amp; Portrait Studio with seven focused portrait, face-swap, motion and enhancement tools." />
+  <meta name="twitter:image" content="https://www.faceevol.com/a.png" />
+
+  <!-- Browser-side video trimming. Loaded only by the page; your API routes stay unchanged. -->
+  <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
+
+  <style>
+    :root{
+      --bg:#060914;--card:rgba(255,255,255,.05);--line:rgba(255,255,255,.08);
+      --text:#fff;--soft:#a8b3c9;--muted:#7f8ca5;--purple:#a78bfa;--blue:#38bdf8;--cyan:#22d3ee;
+      --green:#4adeb0;--gradient:linear-gradient(90deg,#c4b5fd 0%,#a78bfa 22%,#7dd3fc 64%,#22d3ee 100%);
+      --shadow:0 30px 80px rgba(0,0,0,.38);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{
+      font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+      color:var(--text);min-height:100vh;overflow-x:hidden;
+      background:
+        radial-gradient(circle at 12% 0%,rgba(124,58,237,.2),transparent 34%),
+        radial-gradient(circle at 88% 6%,rgba(14,165,233,.17),transparent 30%),
+        #060914;
+    }
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%}
+    button,input{font:inherit}
+    button{color:inherit}
+    .container{width:min(1180px,92%);margin:0 auto}
+    .gradient-text{background:var(--gradient);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+    header{
+      position:sticky;top:0;z-index:999;background:rgba(4,7,17,.82);
+      backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+      border-bottom:1px solid rgba(255,255,255,.07);
+    }
+    .nav{min-height:74px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+    .logo{display:flex;align-items:center}
+    .logo img{height:56px;width:auto;display:block}
+    .nav-links{display:flex;align-items:center;gap:26px;color:#b9c3d6;font-size:14px;font-weight:500}
+    .nav-links a:not(.nav-button):hover{color:white}
+    .nav-button{
+      min-height:44px;padding:0 20px;display:inline-flex;align-items:center;justify-content:center;border-radius:12px;
+      background:linear-gradient(90deg,#6d28d9,#0369a1);color:white!important;font-weight:750;
+      box-shadow:0 10px 30px rgba(70,70,220,.22);
+    }
+
+    .hero{padding:64px 0 38px;text-align:center}
+    .badge{
+      display:inline-flex;align-items:center;gap:9px;margin-bottom:22px;padding:9px 15px;border-radius:999px;
+      background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.09);color:#d5dcec;font-size:13px;font-weight:650;
+    }
+    .badge-dot{width:8px;height:8px;border-radius:50%;background:#4adeb0;box-shadow:0 0 12px rgba(74,222,176,.8)}
+    .hero h1{max-width:900px;margin:0 auto;font-size:clamp(38px,5.6vw,64px);line-height:1.06;letter-spacing:-2.2px;font-weight:850}
+    .hero-description{max-width:670px;margin:20px auto 0;color:var(--soft);font-size:clamp(16px,1.7vw,18px);line-height:1.6}
+    .hero-actions{margin-top:31px;display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}
+    .button{
+      min-height:52px;padding:0 25px;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+      border-radius:14px;font-size:15px;font-weight:750;transition:transform .2s ease,background .2s ease,border-color .2s ease;
+    }
+    .button-primary{background:linear-gradient(90deg,#6d28d9,#0369a1);color:white;box-shadow:0 15px 38px rgba(60,90,220,.25)}
+    .button-secondary{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.1);color:#edf3ff}
+    .button:hover{transform:translateY(-2px)}
+    .hero-trust{margin-top:22px;display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:9px;color:#a9b7cb;font-size:12px;font-weight:650}
+    .hero-trust span{padding:8px 11px;border-radius:999px;border:1px solid rgba(255,255,255,.075);background:rgba(255,255,255,.025);box-shadow:inset 0 1px 0 rgba(255,255,255,.025)}
+
+    .studio-wrap{margin-top:50px;position:relative;scroll-margin-top:92px}
+    .studio{
+      max-width:1020px;margin:0 auto;padding:8px;border-radius:28px;border:1px solid rgba(255,255,255,.09);
+      background:rgba(255,255,255,.025);box-shadow:var(--shadow);
+    }
+    .studio-inner{
+      min-height:425px;overflow:hidden;border-radius:21px;background:linear-gradient(145deg,#0b1223,#070c19);
+      display:grid;grid-template-columns:.9fr 1.1fr;
+    }
+    .studio-sidebar{padding:28px;border-right:1px solid rgba(255,255,255,.06);max-height:690px;overflow-y:auto;scrollbar-width:thin}
+    .studio-label{margin-bottom:17px;color:#75839b;font-size:11px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase}
+    .tool-option{margin-bottom:9px;padding:14px;display:flex;align-items:center;gap:12px;border-radius:13px;color:#98a5bb;cursor:pointer;border:1px solid transparent}
+    .tool-option.active{
+      color:white;border-color:rgba(124,58,237,.35);
+      background:linear-gradient(90deg,rgba(124,58,237,.14),rgba(14,165,233,.06));
+    }
+    .tool-option.disabled{cursor:default;opacity:.58}
+    .future-tool{border:1px dashed rgba(167,139,250,.13);background:rgba(167,139,250,.025)}
+    .future-tool .tool-icon{background:linear-gradient(145deg,rgba(167,139,250,.13),rgba(56,189,248,.07));color:#c4b5fd}
+    .future-tool .tool-name{color:#c7cfdd}
+    .future-tool .tool-sub{color:#7f8aa0}
+    .studio-label-future{margin-top:18px;color:#a78bfa}
+    .tool-icon{width:38px;height:38px;display:grid;place-items:center;border-radius:10px;background:rgba(255,255,255,.045)}
+    .tool-name{font-weight:700;font-size:14px}
+    .tool-sub{display:block;margin-top:2px;color:#738198;font-size:10px;font-weight:700}
+    .studio-main{padding:34px;display:flex;flex-direction:column;justify-content:center;text-align:center}
+    .upload-title{margin-bottom:8px;font-size:clamp(25px,3vw,33px);letter-spacing:-.7px}
+    .upload-description{max-width:500px;margin:0 auto 22px;color:#96a3ba;line-height:1.6;font-size:14px}
+    .upload-box{
+      min-height:215px;padding:28px;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:18px;
+      border:1px dashed rgba(148,163,184,.25);background:rgba(255,255,255,.018);cursor:pointer;
+      transition:border-color .2s ease,background .2s ease;
+    }
+    .upload-box:hover{border-color:rgba(56,189,248,.45);background:rgba(56,189,248,.025)}
+    .upload-icon{
+      width:62px;height:62px;margin-bottom:16px;display:grid;place-items:center;border-radius:18px;font-size:28px;
+      background:linear-gradient(145deg,rgba(124,58,237,.2),rgba(14,165,233,.14));
+    }
+    .selected-photo-preview{
+      width:128px;height:128px;object-fit:contain;display:block;margin-bottom:14px;border-radius:16px;
+      border:1px solid rgba(255,255,255,.13);background:#050914;box-shadow:0 12px 30px rgba(0,0,0,.28);
+    }
+    .upload-box strong{margin-bottom:6px;font-size:15px}
+    .upload-box small{color:#77859d;font-size:12px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .upload-status{margin-top:10px;color:#7dd3fc;font-size:12px;font-weight:700;line-height:1.5}
+
+    .age-controls{
+      margin-top:22px;padding:22px;border-radius:16px;border:1px solid rgba(255,255,255,.08);
+      background:rgba(255,255,255,.025);display:none;
+    }
+    .age-controls.show{display:block}
+    .panel-top{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;text-align:left}
+    .panel-kicker{display:block;margin-bottom:5px;color:#7dd3fc;font-size:10px;font-weight:850;letter-spacing:1.15px;text-transform:uppercase}
+    .panel-title{font-size:20px;letter-spacing:-.35px}
+    .panel-copy{margin-top:7px;color:#8fa0b8;font-size:12px;line-height:1.55}
+    .beta-pill,.soon-pill,.live-pill{
+      flex:0 0 auto;padding:6px 9px;border-radius:999px;font-size:9px;font-weight:900;letter-spacing:.7px;text-transform:uppercase;
+    }
+    .beta-pill{color:#dff7ff;background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.18)}
+    .soon-pill{color:#d9d1ff;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.18)}
+    .live-pill{color:#c9ffec;background:rgba(74,222,176,.07);border:1px solid rgba(74,222,176,.17)}
+
+
+    .age-presets{margin-top:16px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}
+    .age-preset-card{padding:0;overflow:hidden;border-radius:13px;border:1px solid rgba(255,255,255,.075);background:#090f1e;cursor:pointer;text-align:left;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+    .age-preset-card:hover{transform:translateY(-2px);border-color:rgba(125,211,252,.3)}
+    .age-preset-card.active{border-color:rgba(125,211,252,.62);box-shadow:0 0 0 2px rgba(56,189,248,.09),0 12px 24px rgba(0,0,0,.2)}
+    /* Demo portrait framing: keep the entire source portrait visible instead of visually cropping it. */
+    .age-preset-media{
+      position:relative;aspect-ratio:1/1;overflow:hidden;isolation:isolate;
+      background:linear-gradient(145deg,#121a2d,#0a1020);
+    }
+    .age-preset-backdrop{
+      position:absolute;inset:-12%;width:124%;height:124%;object-fit:cover;object-position:center center;
+      filter:blur(14px) brightness(.46) saturate(.8);opacity:.72;transform:scale(1.06);z-index:0;pointer-events:none;
+    }
+    .age-preset-image{
+      position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center center;display:block;z-index:2;
+      border-radius:10px;background:#090f1e;border:1px solid rgba(255,255,255,.10);box-shadow:0 10px 22px rgba(0,0,0,.28);
+      transform-origin:center center;
+    }
+    /* Fine-tune the age preset portrait framing.
+       Age 15 and Age 50 are shifted slightly right so the face sits in the
+       visual center of its card. Age 30 is zoomed a little closer so its
+       framing matches the other four portraits more closely. */
+    .age-preset-card[data-age="15"] .age-preset-image{
+      transform:translateX(-3.5%) scale(1.075);
+      object-position:50% 50%;
+    }
+    .age-preset-card[data-age="50"] .age-preset-image{
+      transform:translateX(-3.0%) scale(1.075);
+      object-position:50% 50%;
+    }
+    .age-preset-card[data-age="30"] .age-preset-image{
+      transform:scale(1.10);
+      object-position:50% 50%;
+    }
+    .age-preset-fallback{z-index:1}
+    .age-preset-fallback{position:absolute;inset:0;display:grid;place-items:center;overflow:hidden;background:
+      radial-gradient(circle at 50% 34%,rgba(255,255,255,.14),transparent 20%),
+      radial-gradient(circle at 50% 70%,rgba(56,189,248,.10),transparent 38%),
+      linear-gradient(145deg,#161d31,#0a0f1d)}
+    .age-preset-fallback::before{content:"";width:52%;aspect-ratio:1;border-radius:48% 48% 44% 44%;background:linear-gradient(145deg,#f0c5a6,#c98f74);box-shadow:0 -10px 0 3px rgba(28,22,32,.76)}
+    .age-preset-fallback.child::before{width:46%}
+    .age-preset-fallback.teen::before{width:49%}
+    .age-preset-fallback.mature::after,.age-preset-fallback.senior::after{content:"";position:absolute;width:34%;height:2px;top:45%;left:33%;border-radius:999px;background:rgba(92,58,55,.18);box-shadow:0 12px 0 rgba(92,58,55,.14)}
+    .age-preset-fallback.senior::before{filter:saturate(.7) brightness(1.03);box-shadow:0 -10px 0 3px rgba(210,215,225,.55)}
+    .age-preset-body{padding:9px 9px 10px}
+    .age-preset-number{display:block;color:#f5f8ff;font-size:13px;font-weight:850;text-align:center}
+    .age-preset-name{display:block;margin-top:2px;color:#7f8da4;font-size:9px;font-weight:750}
+    .example-note{margin-top:11px;color:#6f7e95;font-size:10px;line-height:1.5;text-align:left}
+
+    .custom-age-panel{margin-top:17px;padding:15px;border-radius:13px;background:rgba(255,255,255,.022);border:1px solid rgba(255,255,255,.06)}
+    .age-label{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:14px;color:#dce5f3;font-weight:700;font-size:13px;text-align:left}
+    .age-value{color:#7dd3fc;font-size:18px;font-weight:850}
+    .age-slider{width:100%;accent-color:#7c3aed;cursor:pointer}
+
+    .quality-selector{margin-top:15px;text-align:left}
+    .quality-selector-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:9px}
+    .quality-selector-head strong{font-size:12px;color:#dbe7f6}
+    .quality-selector-head span{color:#6f7e95;font-size:10px}
+    .quality-options-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+    .quality-option{
+      min-height:48px;padding:8px;border-radius:11px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.025);
+      color:#8d9ab0;text-align:center;cursor:pointer;
+    }
+    .quality-option strong{display:block;font-size:13px}
+    .quality-option small{display:block;margin-top:2px;font-size:8px;color:#68778e;font-weight:800;text-transform:uppercase;letter-spacing:.55px}
+    .quality-option.active{border-color:rgba(125,211,252,.35);background:linear-gradient(90deg,rgba(124,58,237,.12),rgba(14,165,233,.09));color:#eefbff}
+    .quality-option:disabled{cursor:not-allowed;opacity:.52}
+
+    .age-summary{margin-top:15px;padding:12px 13px;border-radius:11px;background:linear-gradient(90deg,rgba(124,58,237,.08),rgba(14,165,233,.06));border:1px solid rgba(125,211,252,.12);color:#c9d7e9;font-size:12px;line-height:1.5;text-align:left}
+    .age-summary strong{color:#7dd3fc}
+
+    .transform-button{
+      width:100%;min-height:52px;margin-top:18px;border:0;border-radius:14px;cursor:pointer;color:white;font-weight:800;font-size:15px;
+      background:linear-gradient(90deg,#7c3aed,#0ea5e9);box-shadow:0 14px 35px rgba(70,90,220,.24);
+    }
+    .transform-button:disabled{opacity:.55;cursor:wait}
+    .download-button{
+      width:100%;min-height:50px;margin-top:13px;border-radius:14px;border:1px solid rgba(125,211,252,.25);
+      cursor:pointer;color:#eef8ff;font-weight:800;font-size:14px;background:linear-gradient(90deg,rgba(124,58,237,.20),rgba(14,165,233,.17));
+      display:none;align-items:center;justify-content:center;gap:8px;
+    }
+    .download-button:hover{border-color:rgba(125,211,252,.5)}
+    .download-button:disabled{opacity:.55;cursor:wait}
+    .face-guidance{
+      margin-top:12px;padding:11px 13px;border-radius:11px;background:rgba(56,189,248,.045);
+      border:1px solid rgba(56,189,248,.09);color:#9db0c8;font-size:12px;line-height:1.55;text-align:left;
+    }
+    .age-result{margin-top:22px;display:none}
+    .age-result.show{display:block}
+    .age-result img{
+      width:100%;max-height:520px;object-fit:contain;border-radius:18px;border:1px solid rgba(255,255,255,.08);background:#050914;
+    }
+    .handoff-button{
+      width:100%;min-height:54px;margin-top:13px;border:0;border-radius:14px;cursor:pointer;color:white;font-weight:850;font-size:14px;
+      background:linear-gradient(90deg,#6d28d9,#0284c7);box-shadow:0 14px 34px rgba(49,85,200,.23);
+    }
+    .handoff-button:hover{filter:brightness(1.05)}
+    .handoff-button:disabled{opacity:.58;cursor:wait}
+    .handoff-note{margin-top:8px;color:#7f8da4;font-size:10px;line-height:1.45;text-align:center}
+    .processing-message{margin-top:14px;color:#7dd3fc;font-size:13px;font-weight:700;line-height:1.5}
+    .error-message{margin-top:14px;color:#fda4af;font-size:13px;line-height:1.5}
+
+
+    /* PHOTO FACE SWAP */
+    .photo-swap-grid{margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px;text-align:left}
+    .photo-swap-card{
+      padding:14px;border-radius:14px;border:1px solid rgba(255,255,255,.07);
+      background:rgba(255,255,255,.02);
+    }
+    .photo-swap-label{
+      display:block;margin-bottom:9px;color:#dce8f8;font-size:11px;font-weight:850;
+      letter-spacing:.7px;text-transform:uppercase;
+    }
+    .photo-source-state,.photo-target-box{
+      min-height:122px;padding:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      border-radius:12px;border:1px dashed rgba(148,163,184,.26);background:rgba(255,255,255,.015);
+      cursor:pointer;text-align:center;color:#a9b8cc;font-size:12px;line-height:1.55;
+      transition:border-color .2s ease,background .2s ease;
+    }
+    .photo-source-state:hover,.photo-source-state:focus,
+    .photo-target-box:hover,.photo-target-box:focus{
+      outline:none;border-color:rgba(56,189,248,.45);background:rgba(56,189,248,.025);
+    }
+    .photo-source-state strong,.photo-target-box strong{display:block;color:#e8f3ff;font-size:13px}
+    .photo-source-state small,.photo-target-box small{margin-top:5px;color:#77859d;font-size:10px;line-height:1.45}
+    .photo-source-state.ready{border-style:solid;border-color:rgba(74,222,176,.22);background:rgba(74,222,176,.035)}
+    .photo-source-preview,.photo-target-preview{
+      width:94px;height:94px;object-fit:contain;margin-bottom:9px;border-radius:11px;
+      background:#050914;border:1px solid rgba(255,255,255,.11);
+      box-shadow:0 8px 20px rgba(0,0,0,.22);
+    }
+    .photo-swap-tip{
+      margin-top:12px;padding:11px 13px;border-radius:11px;background:rgba(56,189,248,.04);
+      border:1px solid rgba(56,189,248,.09);color:#9db0c8;font-size:11px;line-height:1.6;text-align:left;
+    }
+    .photo-swap-result{display:none;margin-top:18px}
+    .photo-swap-result.show{display:block}
+    .photo-swap-result img{
+      width:100%;max-height:560px;object-fit:contain;display:block;border-radius:16px;
+      background:#050914;border:1px solid rgba(255,255,255,.08);
+    }
+    .photo-result-actions{display:grid;grid-template-columns:1fr;gap:10px;margin-top:12px}
+    .photo-result-actions .download-button{display:flex;margin-top:0}
+    .transform-button.gated:disabled{opacity:.48;cursor:not-allowed}
+
+
+
+    /* PHOTO ENHANCE */
+    .photo-enhance-tip{
+      margin-top:12px;padding:11px 13px;border-radius:11px;background:rgba(34,211,238,.04);
+      border:1px solid rgba(34,211,238,.10);color:#9db0c8;font-size:11px;line-height:1.6;text-align:left;
+    }
+    .photo-enhance-upload{
+      min-height:190px;margin-top:16px;padding:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      border-radius:15px;border:1px dashed rgba(148,163,184,.28);background:rgba(255,255,255,.018);
+      color:#a9b8cc;cursor:pointer;text-align:center;transition:border-color .2s ease,background .2s ease;
+    }
+    .photo-enhance-upload:hover,.photo-enhance-upload:focus{
+      outline:none;border-color:rgba(34,211,238,.48);background:rgba(34,211,238,.025);
+    }
+    .photo-enhance-upload strong{color:#e8f3ff;font-size:14px}
+    .photo-enhance-upload small{margin-top:5px;color:#77859d;font-size:10px;line-height:1.45}
+    .photo-enhance-preview{
+      width:180px;max-height:190px;object-fit:contain;margin-bottom:11px;border-radius:13px;
+      background:#050914;border:1px solid rgba(255,255,255,.1);box-shadow:0 9px 24px rgba(0,0,0,.22);
+    }
+    .photo-enhance-settings{display:grid;grid-template-columns:1fr;margin-top:14px;text-align:left}
+    .photo-enhance-setting{
+      padding:12px;border-radius:11px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);
+    }
+    .photo-enhance-setting label{display:block;margin-bottom:7px;color:#7f8da4;font-size:9px;font-weight:850;letter-spacing:.6px;text-transform:uppercase}
+    .photo-enhance-setting select{
+      width:100%;border:0;outline:none;background:transparent;color:#e6f5ff;font-weight:800;font-size:12px;
+    }
+    .photo-enhance-setting select option{background:#0b1223;color:#e6f5ff}
+    .photo-enhance-result{display:none;margin-top:18px}
+    .photo-enhance-result.show{display:block}
+    .photo-compare{
+      position:relative;overflow:hidden;border-radius:16px;background:#050914;border:1px solid rgba(255,255,255,.08);
+      user-select:none;-webkit-user-select:none;
+    }
+    .photo-compare-before{
+      width:100%;max-height:580px;object-fit:contain;display:block;background:#050914;
+    }
+    .photo-compare-after{
+      position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#050914;
+      clip-path:inset(0 50% 0 0);pointer-events:none;
+    }
+    .photo-compare-divider{
+      position:absolute;top:0;bottom:0;left:50%;width:2px;background:rgba(255,255,255,.92);
+      box-shadow:0 0 0 1px rgba(0,0,0,.18);pointer-events:none;transform:translateX(-1px);
+    }
+    .photo-compare-handle{
+      position:absolute;left:50%;top:50%;width:42px;height:42px;border-radius:50%;transform:translate(-50%,-50%);
+      display:flex;align-items:center;justify-content:center;background:rgba(5,9,20,.82);border:1px solid rgba(255,255,255,.85);
+      color:white;font-size:15px;font-weight:900;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.35);
+    }
+    .photo-compare-range{
+      position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:ew-resize;z-index:4;
+    }
+    .photo-compare-label{
+      position:absolute;top:12px;z-index:3;padding:6px 9px;border-radius:999px;background:rgba(5,9,20,.72);
+      border:1px solid rgba(255,255,255,.12);color:#eef8ff;font-size:9px;font-weight:850;letter-spacing:.6px;text-transform:uppercase;
+      pointer-events:none;
+    }
+    .photo-compare-label.before{left:12px}
+    .photo-compare-label.after{right:12px}
+    .photo-enhance-result .download-button{display:flex}
+
+
+
+    /* VIDEO ENHANCE */
+    .enhance-tip{
+      margin-top:12px;padding:11px 13px;border-radius:11px;background:rgba(124,58,237,.045);
+      border:1px solid rgba(124,58,237,.12);color:#a8b7ca;font-size:11px;line-height:1.6;text-align:left;
+    }
+    .enhance-upload{
+      min-height:185px;margin-top:16px;padding:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      border-radius:15px;border:1px dashed rgba(148,163,184,.28);background:rgba(255,255,255,.018);
+      color:#a9b8cc;cursor:pointer;text-align:center;transition:border-color .2s ease,background .2s ease;
+    }
+    .enhance-upload:hover,.enhance-upload:focus{
+      outline:none;border-color:rgba(124,58,237,.48);background:rgba(124,58,237,.028);
+    }
+    .enhance-upload strong{color:#e8f3ff;font-size:14px}
+    .enhance-upload small{margin-top:5px;color:#77859d;font-size:10px;line-height:1.45}
+    .enhance-preview{
+      width:100%;max-width:520px;max-height:330px;display:block;margin:0 auto 11px;object-fit:contain;
+      border-radius:14px;background:#02040a;border:1px solid rgba(255,255,255,.08);
+    }
+    .enhance-settings{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px;text-align:left}
+    .enhance-setting{
+      padding:11px 12px;border-radius:11px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);
+    }
+    .enhance-setting label{display:block;margin-bottom:6px;color:#7f8da4;font-size:9px;font-weight:850;letter-spacing:.6px;text-transform:uppercase}
+    .enhance-setting select{
+      width:100%;border:0;outline:none;background:transparent;color:#e6f5ff;font-weight:800;font-size:12px;
+    }
+    .enhance-setting select option{background:#0b1223;color:#e6f5ff}
+    .enhance-result{display:none;margin-top:18px}
+    .enhance-result.show{display:block}
+    .enhance-result video{
+      width:100%;max-height:580px;object-fit:contain;display:block;border-radius:16px;
+      background:#02040a;border:1px solid rgba(255,255,255,.08);
+    }
+    .enhance-result .download-button{display:flex}
+    @media(max-width:760px){
+      .enhance-settings{grid-template-columns:1fr}
+    }
+
+    /* PHOTO TO VIDEO */
+    .photo-video-upload{
+      min-height:190px;margin-top:16px;padding:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      border-radius:15px;border:1px dashed rgba(148,163,184,.28);background:rgba(255,255,255,.018);
+      color:#a9b8cc;cursor:pointer;text-align:center;transition:border-color .2s ease,background .2s ease;
+    }
+    .photo-video-upload:hover,.photo-video-upload:focus{
+      outline:none;border-color:rgba(56,189,248,.48);background:rgba(56,189,248,.025);
+    }
+    .photo-video-upload strong{color:#e8f3ff;font-size:14px}
+    .photo-video-upload small{margin-top:5px;color:#77859d;font-size:10px;line-height:1.45}
+    .photo-video-preview{
+      width:150px;max-height:170px;object-fit:contain;margin-bottom:10px;border-radius:12px;
+      background:#050914;border:1px solid rgba(255,255,255,.1);box-shadow:0 9px 24px rgba(0,0,0,.22);
+    }
+    .photo-video-prompt-wrap{margin-top:15px;text-align:left}
+    .photo-video-prompt-wrap label{
+      display:block;margin-bottom:7px;color:#dce8f8;font-size:11px;font-weight:850;letter-spacing:.7px;text-transform:uppercase;
+    }
+    .photo-video-prompt{
+      width:100%;min-height:108px;padding:13px 14px;resize:vertical;border-radius:13px;
+      border:1px solid rgba(255,255,255,.09);outline:none;background:rgba(3,7,18,.68);
+      color:#edf7ff;font:inherit;font-size:13px;line-height:1.6;
+    }
+    .photo-video-prompt:focus{border-color:rgba(56,189,248,.45);box-shadow:0 0 0 3px rgba(56,189,248,.05)}
+    .photo-video-prompt::placeholder{color:#65738a}
+    .photo-video-settings{display:grid;grid-template-columns:1fr;gap:10px;margin-top:13px;text-align:left}
+    .photo-video-setting{
+      padding:11px 12px;border-radius:11px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);
+    }
+    .photo-video-setting label{display:block;margin-bottom:6px;color:#7f8da4;font-size:9px;font-weight:850;letter-spacing:.6px;text-transform:uppercase}
+    .photo-video-setting select{
+      width:100%;border:0;outline:none;background:transparent;color:#e6f5ff;font-weight:800;font-size:12px;
+    }
+    .photo-video-setting select option{background:#0b1223;color:#e6f5ff}
+    .photo-video-result{display:none;margin-top:18px}
+    .photo-video-result.show{display:block}
+    .photo-video-result video{
+      width:100%;max-height:580px;object-fit:contain;display:block;border-radius:16px;
+      background:#02040a;border:1px solid rgba(255,255,255,.08);
+    }
+    .photo-video-result .download-button{display:flex}
+    @media(max-width:680px){
+      .photo-video-settings{grid-template-columns:1fr}
+    }
+
+    /* VIDEO PREVIEW + TRIM */
+    .video-editor{
+      display:none;margin-top:18px;padding:14px;border-radius:16px;text-align:left;
+      border:1px solid rgba(125,211,252,.12);background:rgba(5,9,20,.65);
+    }
+    .video-editor.show{display:block}
+    .swap-preview{
+      width:100%;max-height:260px;object-fit:contain;display:block;border-radius:13px;background:#02040a;
+      border:1px solid rgba(255,255,255,.09);
+    }
+    .video-meta{
+      margin-top:10px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;
+      color:#8fa0b8;font-size:11px;
+    }
+    .trim-header{
+      margin-top:16px;display:flex;justify-content:space-between;gap:12px;align-items:center;
+      color:#dce8f8;font-size:13px;font-weight:800;
+    }
+    .trim-duration{color:#7dd3fc}
+    .trim-ruler-labels{margin-top:12px;display:flex;justify-content:space-between;color:#72819a;font-size:10px}
+    .trim-timeline{position:relative;height:36px;margin-top:2px}
+    .trim-base{position:absolute;left:0;right:0;top:15px;height:6px;border-radius:999px;background:rgba(255,255,255,.09)}
+    .trim-selected{
+      position:absolute;top:15px;height:6px;border-radius:999px;
+      background:linear-gradient(90deg,#8b5cf6,#22d3ee);box-shadow:0 0 14px rgba(56,189,248,.16);
+    }
+    .trim-range{position:absolute;left:0;top:0;width:100%;height:36px;margin:0;appearance:none;-webkit-appearance:none;background:transparent;pointer-events:none}
+    .trim-range::-webkit-slider-runnable-track{height:6px;background:transparent}
+    .trim-range::-webkit-slider-thumb{
+      -webkit-appearance:none;appearance:none;width:22px;height:22px;margin-top:-8px;border-radius:50%;
+      border:3px solid #0b1223;background:#e6f8ff;box-shadow:0 0 0 2px #38bdf8;pointer-events:auto;cursor:grab;
+    }
+    .trim-range::-moz-range-track{height:6px;background:transparent}
+    .trim-range::-moz-range-thumb{
+      width:18px;height:18px;border-radius:50%;border:3px solid #0b1223;background:#e6f8ff;
+      box-shadow:0 0 0 2px #38bdf8;pointer-events:auto;cursor:grab;
+    }
+    .trim-readout{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+    .trim-time-box{padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07)}
+    .trim-time-box span{display:block;color:#74839a;font-size:10px;text-transform:uppercase;letter-spacing:.7px;font-weight:800}
+    .trim-time-box strong{display:block;margin-top:4px;color:#e8f5ff;font-size:14px}
+    .preview-selection-button{
+      width:100%;min-height:42px;margin-top:12px;border-radius:11px;border:1px solid rgba(125,211,252,.2);
+      background:rgba(56,189,248,.05);color:#dff6ff;font-weight:750;cursor:pointer;
+    }
+    .preview-selection-button:hover{border-color:rgba(125,211,252,.4)}
+
+    .proof{padding:26px 0 12px;text-align:center}
+    .proof-label{margin-bottom:16px;color:#77849d;font-size:12px;font-weight:800;letter-spacing:1.3px;text-transform:uppercase}
+    .proof-items{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:28px;color:#9aa7bd;font-size:13px;font-weight:650}
+    section{padding:72px 0}
+    .section-heading{max-width:760px;margin:0 auto 40px;text-align:center}
+    .section-eyebrow{display:inline-block;margin-bottom:10px;color:#67c7f2;font-size:12px;font-weight:850;letter-spacing:1.5px;text-transform:uppercase}
+    .section-heading h2{margin-bottom:14px;font-size:clamp(34px,5vw,52px);line-height:1.09;letter-spacing:-1.7px}
+    .section-heading p{color:#96a3ba;font-size:16px;line-height:1.7}
+
+    .feature-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:18px}
+    .feature-card{
+      padding:27px;min-height:235px;border-radius:20px;background:rgba(255,255,255,.025);
+      border:1px solid rgba(255,255,255,.065);transition:transform .22s ease,border-color .22s ease;
+    }
+    .feature-card:hover{transform:translateY(-4px);border-color:rgba(125,211,252,.2)}
+    .feature-card.large{grid-column:span 6}
+    .feature-card.core{grid-column:span 3}
+    .feature-card.small{grid-column:span 3}
+    .feature-icon{width:50px;height:50px;margin-bottom:20px;display:grid;place-items:center;border-radius:14px;font-size:23px;background:linear-gradient(145deg,rgba(124,58,237,.21),rgba(14,165,233,.12))}
+    .feature-card h3{margin-bottom:10px;font-size:20px}
+    .feature-card p{color:#96a3ba;font-size:14px;line-height:1.65}
+    .feature-tag{margin-top:18px;display:inline-flex;align-items:center;gap:6px;color:#8391a8;font-size:11px;font-weight:750}
+
+    .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .step-card{padding:27px;border-radius:20px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.065)}
+    .step-number{width:42px;height:42px;margin-bottom:20px;display:grid;place-items:center;border-radius:12px;background:linear-gradient(135deg,#5b21b6,#0369a1);font-weight:850}
+    .step-card h3{margin-bottom:9px;font-size:20px}
+    .step-card p{color:#96a3ba;line-height:1.65;font-size:14px}
+
+    .quality-box{
+      padding:48px;display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:center;border-radius:26px;
+      background:linear-gradient(145deg,rgba(124,58,237,.07),rgba(14,165,233,.035));border:1px solid rgba(255,255,255,.07);
+    }
+    .quality-content h2{margin-bottom:16px;font-size:clamp(34px,4vw,48px);line-height:1.08;letter-spacing:-1.5px}
+    .quality-content>p{color:#96a3ba;line-height:1.7;font-size:15px}
+    .quality-list{margin-top:24px;display:grid;gap:12px}
+    .quality-item{display:flex;gap:10px;color:#b7c2d4;font-size:14px}
+    .check{color:#4ade9c;font-weight:900}
+    .quality-visual{
+      min-height:300px;position:relative;display:grid;place-items:center;overflow:hidden;border-radius:21px;
+      background:radial-gradient(circle at 70% 30%,rgba(56,189,248,.16),transparent 38%),radial-gradient(circle at 30% 70%,rgba(124,58,237,.21),transparent 38%),#0a1020;
+      border:1px solid rgba(255,255,255,.065);
+    }
+    .quality-circle{width:165px;height:165px;display:grid;place-items:center;border-radius:50%;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);font-size:43px}
+    .quality-chip{position:absolute;padding:8px 12px;border-radius:9px;background:rgba(5,9,20,.85);border:1px solid rgba(255,255,255,.07);color:#e2e8f1;font-size:11px;font-weight:700}
+    .chip-1{left:10%;top:17%}.chip-2{right:10%;top:26%}.chip-3{left:15%;bottom:17%}.chip-4{right:10%;bottom:13%}
+
+    .privacy-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .privacy-card{padding:25px;border-radius:18px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.06)}
+    .privacy-card strong{display:block;margin:12px 0 7px;font-size:17px}
+    .privacy-card p{color:#92a0b8;line-height:1.65;font-size:13px}
+
+    .pricing-grid{max-width:930px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .price-card{padding:29px;position:relative;border-radius:21px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.065)}
+    .price-card.featured{border-color:rgba(124,58,237,.36);background:linear-gradient(145deg,rgba(124,58,237,.1),rgba(14,165,233,.035))}
+    .popular-label{position:absolute;top:12px;right:12px;padding:5px 8px;border-radius:7px;background:linear-gradient(90deg,#5b21b6,#0369a1);font-size:9px;font-weight:850;letter-spacing:.8px;text-transform:uppercase}
+    .price-name{color:#dde5f1;font-size:15px;font-weight:800}
+    .price{margin:16px 0 9px;font-size:35px;font-weight:850}
+    .coming-soon{margin:16px 0 12px;color:#8ed9ff;font-size:24px;font-weight:850}
+    .price-description{min-height:48px;color:#909db4;font-size:13px;line-height:1.6}
+    .price-features{margin:23px 0;display:grid;gap:11px;list-style:none}
+    .price-features li{color:#b3bed0;font-size:13px}
+
+    .faq-list{max-width:800px;margin:0 auto;display:grid;gap:11px}
+    details{padding:19px 21px;border-radius:15px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06)}
+    summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:20px;color:#eef3fa;font-weight:700}
+    summary::-webkit-details-marker{display:none}
+    summary::after{content:"+";color:#49bce8;font-size:20px}
+    details[open] summary::after{content:"−"}
+    details p{margin-top:13px;color:#92a0b8;font-size:14px;line-height:1.65}
+
+    .cta{padding-top:40px;padding-bottom:70px}
+    .cta-box{padding:65px 24px;text-align:center;border-radius:26px;background:linear-gradient(135deg,rgba(124,58,237,.14),rgba(14,165,233,.07));border:1px solid rgba(255,255,255,.08)}
+    .cta-box h2{margin-bottom:15px;font-size:clamp(36px,5vw,54px);line-height:1.08;letter-spacing:-1.8px}
+    .cta-box p{max-width:590px;margin:0 auto 27px;color:#a3aec1;line-height:1.65;font-size:15px}
+
+
+    /* Legal & support */
+    .legal-section{padding-top:42px}
+    .legal-shell{max-width:920px;margin:0 auto;display:grid;gap:13px}
+    .legal-card{
+      scroll-margin-top:92px;
+      padding:0;
+      overflow:hidden;
+      border-radius:17px;
+      background:rgba(255,255,255,.022);
+      border:1px solid rgba(255,255,255,.065);
+    }
+    .legal-card>summary{
+      padding:21px 23px;
+      align-items:center;
+      color:#eef3fa;
+    }
+    .legal-card>summary .legal-summary-title{display:flex;flex-direction:column;gap:5px}
+    .legal-card>summary .legal-summary-title strong{font-size:16px}
+    .legal-card>summary .legal-summary-title span{color:#7f8ba1;font-size:11px;font-weight:600}
+    .legal-card[open]>summary{border-bottom:1px solid rgba(255,255,255,.06)}
+    .legal-content{padding:24px 23px 26px;color:#95a2b8;font-size:13px;line-height:1.72}
+    .legal-content h3{margin:0 0 10px;color:#edf3fb;font-size:18px}
+    .legal-content h4{margin:22px 0 8px;color:#dfe7f2;font-size:14px}
+    .legal-content p{margin:0 0 11px}
+    .legal-content ul{margin:8px 0 13px 19px;display:grid;gap:7px}
+    .legal-content a{color:#73d2f5;text-decoration:underline;text-underline-offset:3px}
+    .legal-note{
+      margin:0 0 18px;padding:12px 14px;border-radius:11px;
+      background:rgba(14,165,233,.055);border:1px solid rgba(56,189,248,.12);
+      color:#adbbcf;font-size:12px;line-height:1.6;
+    }
+    .legal-contact-box{
+      margin-top:16px;padding:17px;border-radius:13px;
+      background:linear-gradient(135deg,rgba(124,58,237,.08),rgba(14,165,233,.045));
+      border:1px solid rgba(255,255,255,.07);
+    }
+    .legal-contact-box strong{display:block;margin-bottom:7px;color:#e9eff8}
+    .legal-contact-box a{font-weight:800}
+
+    footer{padding:42px 0 28px;border-top:1px solid rgba(255,255,255,.065)}
+    .footer-main{display:flex;justify-content:space-between;align-items:center;gap:25px;flex-wrap:wrap;padding-bottom:25px}
+    .footer-logo img{height:47px;width:auto}
+    .footer-links{display:flex;flex-wrap:wrap;gap:22px;color:#8693a8;font-size:13px}
+    .footer-bottom{padding-top:22px;border-top:1px solid rgba(255,255,255,.05);display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;color:#68758b;font-size:12px}
+
+    @media(max-width:1000px){
+      .feature-card.large,.feature-card.small{grid-column:span 6}
+      .feature-card.core{grid-column:span 6}
+      .quality-box{grid-template-columns:1fr}
+      .pricing-grid{grid-template-columns:1fr;max-width:560px}
+    }
+    @media(max-width:850px){
+      .nav-links a:not(.nav-button){display:none}
+      .studio-inner{grid-template-columns:1fr}
+      .studio-sidebar{border-right:none;border-bottom:1px solid rgba(255,255,255,.06);display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:16px;max-height:none;overflow:visible}
+      .studio-label{display:none}
+      .tool-option{margin:0;flex-direction:column;text-align:center;padding:11px 6px}
+      .tool-name{font-size:11px}.tool-sub{font-size:8px}
+      .steps,.privacy-grid{grid-template-columns:1fr}
+    }
+    @media(max-width:650px){
+      .container{width:92%}.nav{min-height:66px}.logo img{height:47px}
+      .nav-button{min-height:40px;padding:0 14px;font-size:12px}
+      .hero{padding:58px 0 32px}.badge{margin-bottom:18px;padding:8px 13px;font-size:12px}
+      .hero h1{font-size:clamp(36px,10vw,48px);letter-spacing:-1.7px}
+      .hero-description{margin-top:20px;font-size:15px}.hero-actions{margin-top:26px;flex-direction:column}.button{width:100%}
+      .hero-trust{margin-top:18px;gap:8px 13px;font-size:11px}.studio-wrap{margin-top:38px}.studio-main{padding:25px 17px}
+      .studio-sidebar{grid-template-columns:repeat(2,1fr)}
+      .upload-box{min-height:190px;padding:22px}.selected-photo-preview{width:112px;height:112px}
+      .panel-top{align-items:flex-start}.panel-title{font-size:18px}.age-controls{padding:16px}
+      .age-presets{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+      .age-preset-body{padding:8px}.quality-options-row{gap:6px}.quality-option{min-height:45px;padding:6px}
+      .proof{padding-top:18px}.proof-items{gap:12px 20px;font-size:11px}
+      section{padding:56px 0}.section-heading{margin-bottom:30px}.section-heading h2{font-size:clamp(32px,9vw,44px);letter-spacing:-1.2px}.section-heading p{font-size:14px}
+      .feature-card.large,.feature-card.core,.feature-card.small{grid-column:span 12}.feature-card{min-height:0;padding:23px}
+      .feature-grid,.steps,.privacy-grid,.pricing-grid{gap:14px}.step-card{padding:23px}
+      .quality-box{padding:28px 20px;gap:30px}.quality-content h2{font-size:34px}.quality-visual{min-height:255px}.quality-circle{width:145px;height:145px}
+      .privacy-card{padding:22px}.price-card{padding:25px}.cta{padding-top:25px;padding-bottom:55px}.cta-box{padding:48px 20px}
+      .footer-main,.footer-bottom{justify-content:center;text-align:center}.swap-preview{max-height:220px}
+      .photo-swap-grid{grid-template-columns:1fr}
+    }
+
+    /* Professional polish: clearer hierarchy, calmer cards, stronger focus states. */
+    html{scroll-behavior:smooth}
+    .hero{position:relative;overflow:hidden;padding-top:96px}
+    .hero::before{content:"";position:absolute;left:50%;top:-190px;width:820px;height:420px;transform:translateX(-50%);pointer-events:none;background:radial-gradient(circle,rgba(78,70,229,.16),rgba(14,165,233,.05) 42%,transparent 70%);filter:blur(12px)}
+    .hero>.container{position:relative;z-index:1}
+    .hero h1{max-width:940px;font-size:clamp(42px,6vw,70px);letter-spacing:-2.6px}
+    .hero-description{max-width:700px}
+    .hero-actions .button{min-width:168px}
+    .hero-trust span{padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.055)}
+    .studio{border-color:rgba(125,211,252,.12);box-shadow:0 30px 90px rgba(0,0,0,.44),0 0 0 1px rgba(255,255,255,.015) inset}
+    .tool-option{transition:background .18s ease,border-color .18s ease,color .18s ease,transform .18s ease}
+    .tool-option:hover{background:rgba(255,255,255,.035);color:#dce8f8;transform:translateY(-1px)}
+    .feature-grid{gap:20px}
+    .feature-card.core{grid-column:span 4}
+    .feature-card{position:relative;overflow:hidden;background:linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,255,255,.018));border-color:rgba(255,255,255,.075);box-shadow:0 18px 45px rgba(0,0,0,.12)}
+    .feature-card::after{content:"";position:absolute;inset:auto -45px -70px auto;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle,rgba(56,189,248,.08),transparent 68%);pointer-events:none}
+    .feature-card h3{font-size:19px}
+    .feature-tag{padding:6px 9px;border-radius:999px;background:rgba(125,211,252,.045);border:1px solid rgba(125,211,252,.1);color:#9bb7c9;letter-spacing:.45px}
+    .step-card,.privacy-card,.price-card{box-shadow:0 16px 42px rgba(0,0,0,.10)}
+    .future-button{opacity:.58;pointer-events:none;user-select:none}
+    a:focus-visible,button:focus-visible,select:focus-visible,textarea:focus-visible,input:focus-visible,.tool-option:focus-visible{outline:2px solid #7dd3fc;outline-offset:3px}
+    .button:active{transform:translateY(0)}
+    @media(max-width:1000px){.feature-card.core{grid-column:span 6}}
+    @media(max-width:650px){.hero{padding-top:64px}.hero h1{font-size:clamp(38px,11vw,50px)}.hero-actions .button{min-width:0}.feature-card.core{grid-column:span 12}}
+
+
+    /* 9+ polish pass — premium hierarchy, actionable feature cards, stronger mobile UX. */
+    :root{
+      --surface-1:rgba(255,255,255,.028);
+      --surface-2:rgba(255,255,255,.045);
+      --premium-line:rgba(255,255,255,.09);
+      --premium-glow:0 26px 70px rgba(0,0,0,.28);
+    }
+    ::selection{background:rgba(125,211,252,.25);color:#fff}
+    body{background-attachment:fixed}
+    .skip-link{
+      position:fixed;left:16px;top:12px;z-index:2000;transform:translateY(-160%);
+      padding:10px 14px;border-radius:10px;background:#f8fbff;color:#07101c;font-weight:850;
+      transition:transform .18s ease;
+    }
+    .skip-link:focus{transform:translateY(0)}
+    header{box-shadow:0 10px 40px rgba(0,0,0,.12)}
+    .nav-links a{position:relative;transition:color .18s ease}
+    .nav-links a:not(.nav-button)::after{
+      content:"";position:absolute;left:0;right:100%;bottom:-9px;height:2px;border-radius:999px;
+      background:linear-gradient(90deg,#a78bfa,#38bdf8);transition:right .18s ease;
+    }
+    .nav-links a:not(.nav-button):hover::after{right:0}
+    .nav-button,.button-primary,.transform-button{position:relative;overflow:hidden}
+    .nav-button::after,.button-primary::after,.transform-button::after{
+      content:"";position:absolute;inset:-80% auto -80% -45%;width:30%;transform:rotate(18deg);
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);transition:left .5s ease;
+    }
+    .nav-button:hover::after,.button-primary:hover::after,.transform-button:hover::after{left:120%}
+    .hero{padding-bottom:62px}
+    .badge{box-shadow:0 8px 30px rgba(0,0,0,.16)}
+    .hero h1{text-wrap:balance;text-shadow:0 10px 45px rgba(0,0,0,.18)}
+    .hero-description{text-wrap:balance}
+    .hero-trust{margin-top:19px}
+    .hero-trust span{display:inline-flex;align-items:center;gap:6px}
+    .studio-wrap{margin-top:46px}
+    .studio{padding:7px;background:linear-gradient(145deg,rgba(125,211,252,.05),rgba(167,139,250,.025));}
+    .studio-head{
+      min-height:62px;padding:12px 17px 12px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;
+      border-radius:20px 20px 12px 12px;background:rgba(4,8,18,.58);border:1px solid rgba(255,255,255,.055);
+      border-bottom-color:rgba(125,211,252,.08);text-align:left;
+    }
+    .studio-head-copy{display:flex;align-items:center;gap:12px;min-width:0}
+    .studio-brand-icon{width:36px;height:36px;flex:0 0 auto;display:grid;place-items:center;border-radius:11px;background:linear-gradient(145deg,rgba(124,58,237,.22),rgba(14,165,233,.16));border:1px solid rgba(125,211,252,.10)}
+    .studio-head strong{display:block;font-size:13px;letter-spacing:.1px}
+    .studio-head small{display:block;margin-top:2px;color:#7e8ca3;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .studio-current-tool{flex:0 0 auto;padding:7px 10px;border-radius:999px;background:rgba(56,189,248,.055);border:1px solid rgba(56,189,248,.12);color:#bcecff;font-size:10px;font-weight:850}
+    .studio-inner{margin-top:7px}
+    .tool-option{position:relative;user-select:none}
+    .tool-option::before{content:"";position:absolute;left:0;top:22%;bottom:22%;width:2px;border-radius:999px;background:transparent}
+    .tool-option.active::before{background:linear-gradient(#a78bfa,#38bdf8);box-shadow:0 0 12px rgba(56,189,248,.45)}
+    .tool-option.active{box-shadow:0 8px 22px rgba(0,0,0,.10)}
+    .upload-box{position:relative;overflow:hidden}
+    .upload-box::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,transparent 35%,rgba(125,211,252,.03),transparent 65%);transform:translateX(-100%);transition:transform .5s ease}
+    .upload-box:hover::after{transform:translateX(100%)}
+    section{position:relative}
+    #features,#how-it-works,#quality,#pricing,#faq{scroll-margin-top:88px}
+    .section-heading h2{text-wrap:balance}
+    .section-heading p{text-wrap:balance}
+    .feature-card{display:flex;flex-direction:column;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease;background:linear-gradient(150deg,rgba(255,255,255,.044),rgba(255,255,255,.018))}
+    .feature-card:hover{transform:translateY(-5px);border-color:rgba(125,211,252,.18);box-shadow:0 26px 55px rgba(0,0,0,.20)}
+    .feature-card p{flex:1}
+    .feature-action{
+      align-self:flex-start;margin-top:19px;padding:0;border:0;background:transparent;color:#8edcff;font-size:12px;font-weight:850;cursor:pointer;
+      display:inline-flex;align-items:center;gap:7px;transition:gap .18s ease,color .18s ease;
+    }
+    .feature-action:hover{gap:10px;color:#dff8ff}
+    .feature-action span{font-size:14px}
+    .steps{counter-reset:step}
+    .step-card{position:relative;overflow:hidden;border-color:rgba(255,255,255,.075);background:linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,255,255,.018))}
+    .step-card::after{content:"";position:absolute;width:110px;height:110px;right:-35px;bottom:-50px;border-radius:50%;background:radial-gradient(circle,rgba(167,139,250,.08),transparent 68%)}
+    .quality-box{box-shadow:var(--premium-glow);border-color:rgba(125,211,252,.11)}
+    .quality-visual{box-shadow:inset 0 0 0 1px rgba(255,255,255,.012)}
+    .privacy-card{transition:transform .2s ease,border-color .2s ease;background:linear-gradient(145deg,rgba(255,255,255,.034),rgba(255,255,255,.016))}
+    .privacy-card:hover{transform:translateY(-3px);border-color:rgba(125,211,252,.14)}
+    .compact-pricing{grid-template-columns:repeat(3,1fr);max-width:1080px}
+    .compact-pricing .price-card{min-height:100%;display:flex;flex-direction:column}
+    .compact-pricing .price-features{flex:1}
+    .price-card{transition:transform .2s ease,border-color .2s ease}
+    .price-card:hover{transform:translateY(-3px);border-color:rgba(125,211,252,.14)}
+    details{transition:border-color .18s ease,background .18s ease}
+    details:hover{border-color:rgba(125,211,252,.12)}
+    details[open]{background:rgba(255,255,255,.028);border-color:rgba(125,211,252,.13)}
+    .cta-box{position:relative;overflow:hidden;box-shadow:var(--premium-glow)}
+    .cta-box::before{content:"";position:absolute;left:50%;top:-190px;width:600px;height:330px;transform:translateX(-50%);background:radial-gradient(circle,rgba(125,211,252,.13),transparent 67%);pointer-events:none}
+    .cta-box>*{position:relative;z-index:1}
+    .legal-section{padding-top:24px}
+    .legal-card{background:rgba(255,255,255,.018)}
+    .footer-links a{transition:color .18s ease}.footer-links a:hover{color:#eef7ff}
+    .mobile-studio-cta{display:none}
+    @media(max-width:1000px){.compact-pricing{grid-template-columns:1fr;max-width:590px}}
+    @media(max-width:650px){
+      body{padding-bottom:76px;background-attachment:scroll}
+      .hero{padding-bottom:46px}
+      .studio-head{padding:10px 12px}.studio-brand-icon{width:34px;height:34px}.studio-head small{max-width:170px}.studio-current-tool{display:none}
+      .studio-inner{margin-top:6px}
+      .tool-option::before{left:8%;right:8%;top:auto;bottom:0;width:auto;height:2px}
+      .feature-card:hover,.price-card:hover,.privacy-card:hover{transform:none}
+      .compact-pricing{max-width:none}
+      .mobile-studio-cta{
+        position:fixed;z-index:1200;left:14px;right:14px;bottom:calc(10px + env(safe-area-inset-bottom));min-height:52px;
+        display:flex;align-items:center;justify-content:center;border-radius:15px;background:linear-gradient(90deg,#6d28d9,#0369a1);
+        border:1px solid rgba(255,255,255,.14);box-shadow:0 18px 45px rgba(0,0,0,.42);color:#fff;font-size:13px;font-weight:850;
+      }
+    }
+    @media(prefers-reduced-motion:reduce){
+      html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+    }
+
+
+    /* =========================================================
+       FaceEvol Accounts + Credits UI
+       Supabase-backed account layer. No extra Vercel JS file.
+       ========================================================= */
+    .account-nav-button{
+      min-height:38px;padding:0 14px;border-radius:12px;border:1px solid rgba(125,211,252,.15);
+      background:rgba(125,211,252,.055);color:#dff7ff;font:inherit;font-size:12px;font-weight:850;cursor:pointer;
+      display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:.18s ease;white-space:nowrap
+    }
+    .account-nav-button:hover{border-color:rgba(125,211,252,.32);background:rgba(125,211,252,.09);transform:translateY(-1px)}
+    .account-nav-button.signed-in{background:linear-gradient(135deg,rgba(124,58,237,.15),rgba(14,165,233,.12));border-color:rgba(125,211,252,.22)}
+    .account-dot{width:7px;height:7px;border-radius:50%;background:#38bdf8;box-shadow:0 0 14px rgba(56,189,248,.55)}
+    .account-nav-button.signed-in .account-dot{background:#34d399;box-shadow:0 0 14px rgba(52,211,153,.55)}
+    .credit-balance-chip{
+      display:none;align-items:center;gap:7px;padding:7px 10px;border-radius:999px;background:rgba(52,211,153,.06);
+      border:1px solid rgba(52,211,153,.14);color:#bff8df;font-size:10px;font-weight:850;letter-spacing:.2px
+    }
+    .credit-balance-chip.show{display:inline-flex}
+    .credit-balance-chip strong{font-size:11px;color:#eafff5}
+
+    .auth-modal{position:fixed;inset:0;z-index:5000;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(1,4,12,.74);backdrop-filter:blur(14px)}
+    .auth-modal.show{display:flex}
+    .auth-card{
+      width:min(100%,500px);max-height:min(90vh,760px);overflow:auto;position:relative;padding:28px;border-radius:24px;border:1px solid rgba(125,211,252,.14);
+      background:linear-gradient(160deg,rgba(13,20,38,.985),rgba(5,9,20,.99));box-shadow:0 38px 100px rgba(0,0,0,.58),0 0 0 1px rgba(255,255,255,.018) inset
+    }
+    .auth-close{position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:11px;border:1px solid rgba(255,255,255,.075);background:rgba(255,255,255,.03);color:#9ba9bf;cursor:pointer;font-size:18px}
+    .auth-close:hover{color:#fff;border-color:rgba(125,211,252,.18)}
+    .auth-kicker{color:#7dd3fc;font-size:10px;font-weight:900;letter-spacing:1.4px;text-transform:uppercase}
+    .auth-card h3{margin:9px 40px 7px 0;font-size:25px;letter-spacing:-.65px}
+    .auth-copy{margin:0 0 20px;color:#91a0b7;font-size:13px;line-height:1.65}
+    .auth-google{
+      width:100%;min-height:48px;border-radius:14px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.045);
+      color:#f0f6ff;font:inherit;font-size:13px;font-weight:850;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px
+    }
+    .auth-google:hover{background:rgba(255,255,255,.07);border-color:rgba(125,211,252,.18)}
+    .auth-divider{display:flex;align-items:center;gap:11px;margin:18px 0;color:#5f6d82;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.8px}
+    .auth-divider::before,.auth-divider::after{content:"";height:1px;flex:1;background:rgba(255,255,255,.065)}
+    .auth-email-row{display:flex;gap:9px}
+    .auth-email-row input{min-width:0;flex:1;height:46px;padding:0 13px;border-radius:13px;border:1px solid rgba(255,255,255,.09);outline:none;background:rgba(2,6,17,.62);color:#f0f6ff;font:inherit;font-size:13px}
+    .auth-email-row input:focus{border-color:rgba(56,189,248,.38);box-shadow:0 0 0 3px rgba(56,189,248,.05)}
+    .auth-email-row button{height:46px;padding:0 14px;border:0;border-radius:13px;background:linear-gradient(90deg,#6d28d9,#0369a1);color:#fff;font:inherit;font-size:12px;font-weight:850;cursor:pointer;white-space:nowrap}
+    .auth-status{min-height:20px;margin-top:12px;color:#93a6bd;font-size:11px;line-height:1.55}
+    .auth-status.error{color:#fda4af}.auth-status.success{color:#86efac}
+    .auth-terms{margin-top:16px;color:#66758b;font-size:9px;line-height:1.55;text-align:center}
+
+    .account-panel{display:none}
+    .account-panel.show{display:block}
+    .account-profile{display:flex;align-items:center;gap:12px;padding:15px;border-radius:16px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.065)}
+    .account-avatar{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(145deg,rgba(124,58,237,.22),rgba(14,165,233,.18));border:1px solid rgba(125,211,252,.12);color:#effaff;font-size:15px;font-weight:900}
+    .account-profile-copy{min-width:0;flex:1}.account-profile-copy strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}.account-profile-copy span{display:block;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#74839a;font-size:10px}
+    .account-credit-card{margin-top:13px;padding:16px;border-radius:17px;background:linear-gradient(145deg,rgba(52,211,153,.065),rgba(14,165,233,.035));border:1px solid rgba(52,211,153,.12)}
+    .account-credit-card small{display:block;color:#78a38f;font-size:9px;font-weight:900;letter-spacing:1px;text-transform:uppercase}
+    .account-credit-value{display:flex;align-items:end;gap:7px;margin-top:5px}.account-credit-value strong{font-size:30px;line-height:1;color:#eafff5}.account-credit-value span{color:#8ecab0;font-size:11px;font-weight:800}
+    .account-credit-note{margin-top:8px;color:#789087;font-size:10px;line-height:1.55}
+    .account-actions{display:flex;gap:9px;margin-top:14px}.account-actions button{flex:1;min-height:42px;border-radius:12px;font:inherit;font-size:11px;font-weight:850;cursor:pointer}
+    .account-signout{border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.035);color:#ccd7e7}
+    .account-buy{border:1px solid rgba(125,211,252,.15);background:rgba(56,189,248,.07);color:#ccefff}
+    .account-buy[disabled]{opacity:.5;cursor:not-allowed}
+
+    /* Stripe credit store + account activity */
+    .account-credit-store{display:none;margin-top:14px;padding:14px;border-radius:16px;background:rgba(56,189,248,.035);border:1px solid rgba(125,211,252,.12)}
+    .account-credit-store.show{display:block}
+    .credit-store-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:11px}
+    .credit-store-head strong{font-size:12px;color:#e7f7ff}.credit-store-head span{font-size:9px;color:#6f829a;font-weight:750}
+    .credit-pack-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+    .credit-pack-button{min-height:76px;padding:10px 6px;border-radius:12px;border:1px solid rgba(255,255,255,.08);background:rgba(4,9,20,.58);color:#eaf7ff;cursor:pointer;font:inherit;text-align:center;transition:.18s ease}
+    .credit-pack-button:hover{transform:translateY(-1px);border-color:rgba(125,211,252,.3);background:rgba(56,189,248,.055)}
+    .credit-pack-button strong{display:block;font-size:15px}.credit-pack-button span{display:block;margin-top:4px;color:#7dd3fc;font-size:11px;font-weight:900}
+    .credit-pack-button small{display:block;margin-top:3px;color:#687a91;font-size:8px;font-weight:750}
+    .credit-pack-button.featured{border-color:rgba(167,139,250,.28);background:linear-gradient(145deg,rgba(124,58,237,.12),rgba(14,165,233,.06))}
+    .credit-pack-button:disabled{opacity:.55;cursor:wait;transform:none}
+    .checkout-status{min-height:16px;margin-top:9px;color:#8da0b8;font-size:9px;line-height:1.5}
+    .checkout-status.error{color:#fda4af}
+
+    .account-history{margin-top:14px;padding-top:13px;border-top:1px solid rgba(255,255,255,.065)}
+    .account-history-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+    .account-history-head strong{font-size:11px;color:#dce8f8}.account-history-head span{font-size:8px;color:#62738a;text-transform:uppercase;letter-spacing:.7px;font-weight:850}
+    .account-history-list{display:grid;gap:6px;max-height:150px;overflow:auto;padding-right:2px}
+    .account-history-empty{padding:10px 0;color:#65768d;font-size:9px;text-align:center}
+    .account-history-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 9px;border-radius:10px;background:rgba(255,255,255,.022);border:1px solid rgba(255,255,255,.045)}
+    .account-history-copy{min-width:0}.account-history-copy strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#bac8d9;font-size:9px}.account-history-copy span{display:block;margin-top:2px;color:#607188;font-size:8px}
+    .account-history-amount{flex:0 0 auto;font-size:10px;font-weight:900;color:#f0f6ff}.account-history-amount.positive{color:#86efac}.account-history-amount.negative{color:#fda4af}
+
+    .auth-setup-notice{display:none;margin-top:12px;padding:11px 12px;border-radius:12px;background:rgba(251,191,36,.055);border:1px solid rgba(251,191,36,.12);color:#d8bf78;font-size:10px;line-height:1.55}
+    .auth-setup-notice.show{display:block}
+    .auth-gate-toast{position:fixed;z-index:5100;left:50%;bottom:28px;transform:translate(-50%,20px);opacity:0;pointer-events:none;padding:11px 15px;border-radius:12px;background:#101827;border:1px solid rgba(125,211,252,.16);box-shadow:0 18px 55px rgba(0,0,0,.42);color:#dcecff;font-size:11px;font-weight:800;transition:.2s ease}
+    .auth-gate-toast.show{opacity:1;transform:translate(-50%,0)}
+
+    @media(max-width:850px){
+      .nav-links .account-nav-button{display:inline-flex}
+      .account-nav-button{padding:0 11px}
+    }
+    @media(max-width:650px){
+      .auth-card{padding:24px 18px;border-radius:21px}.auth-email-row{flex-direction:column}.auth-email-row button{width:100%}.credit-pack-grid{grid-template-columns:1fr}
+      .credit-balance-chip{display:none!important}
+      .nav-links .account-nav-button{min-height:35px;font-size:11px}
+    }
+
+  
+    /* =========================================================
+       FACEVOL PRE-GENERATED DEMO GALLERY
+       These interfaces never call an AI API.
+       Add media paths later in FACEVOL_DEMO_MEDIA in the script.
+       ========================================================= */
+    #demos{scroll-margin-top:88px}
+    .demo-section{position:relative}
+    .demo-section::before{
+      content:"";position:absolute;left:50%;top:0;width:min(900px,88vw);height:1px;transform:translateX(-50%);
+      background:linear-gradient(90deg,transparent,rgba(125,211,252,.18),rgba(167,139,250,.16),transparent)
+    }
+    .demo-intro-note{
+      width:max-content;max-width:100%;margin:0 auto 24px;padding:9px 13px;border-radius:999px;
+      border:1px solid rgba(52,211,153,.15);background:rgba(52,211,153,.045);
+      color:#9fd9bd;font-size:10px;font-weight:850;letter-spacing:.25px
+    }
+    .demo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .demo-card{
+      position:relative;overflow:hidden;display:flex;flex-direction:column;min-height:360px;padding:15px;border-radius:22px;
+      border:1px solid rgba(255,255,255,.07);background:linear-gradient(155deg,rgba(255,255,255,.032),rgba(255,255,255,.016));
+      box-shadow:0 22px 70px rgba(0,0,0,.12);transition:transform .22s ease,border-color .22s ease,background .22s ease
+    }
+    .demo-card:hover{transform:translateY(-3px);border-color:rgba(125,211,252,.18);background:linear-gradient(155deg,rgba(56,189,248,.04),rgba(124,58,237,.025))}
+    .demo-preview{
+      position:relative;min-height:186px;display:grid;place-items:center;overflow:hidden;border-radius:16px;
+      border:1px solid rgba(255,255,255,.065);
+      background:
+        radial-gradient(circle at 27% 20%,rgba(124,58,237,.13),transparent 34%),
+        radial-gradient(circle at 78% 72%,rgba(14,165,233,.09),transparent 38%),
+        rgba(2,6,17,.72)
+    }
+    .demo-preview::after{
+      content:"";position:absolute;inset:0;pointer-events:none;
+      background:linear-gradient(120deg,transparent 20%,rgba(255,255,255,.025) 50%,transparent 80%);
+      transform:translateX(-100%)
+    }
+    .demo-card:hover .demo-preview::after{animation:demoShimmer 1.1s ease}
+    @keyframes demoShimmer{to{transform:translateX(100%)}}
+    .demo-preview-placeholder{text-align:center;padding:22px;position:relative;z-index:1}
+    .demo-preview-icon{
+      width:48px;height:48px;margin:0 auto 12px;display:grid;place-items:center;border-radius:14px;
+      border:1px solid rgba(125,211,252,.13);background:rgba(56,189,248,.055);font-size:21px
+    }
+    .demo-preview-placeholder strong{display:block;color:#dcecff;font-size:12px}
+    .demo-preview-placeholder span{display:block;margin-top:5px;color:#60738d;font-size:9px;line-height:1.5}
+    .demo-card-copy{padding:17px 5px 4px;display:flex;flex:1;flex-direction:column}
+    .demo-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+    .demo-card h3{font-size:17px;line-height:1.2}
+    .demo-type{
+      flex:0 0 auto;padding:5px 7px;border-radius:999px;background:rgba(255,255,255,.035);
+      border:1px solid rgba(255,255,255,.06);color:#7890aa;font-size:7px;font-weight:900;letter-spacing:.8px;text-transform:uppercase
+    }
+    .demo-card p{margin-top:9px;color:#8290a6;font-size:11px;line-height:1.6}
+    .demo-card-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:auto;padding-top:15px}
+    .demo-card-actions button{
+      min-height:40px;border-radius:11px;font:inherit;font-size:9px;font-weight:900;cursor:pointer
+    }
+    .demo-view-button{border:1px solid rgba(125,211,252,.16);background:rgba(56,189,248,.07);color:#cfefff}
+    .demo-create-button{border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.035);color:#bac8db}
+    .demo-view-button:hover,.demo-create-button:hover{border-color:rgba(125,211,252,.3)}
+    .demo-cost-note{margin-top:8px;color:#5f728b;font-size:8px;text-align:center}
+    .demo-cost-note strong{color:#85d6b2}
+
+    .demo-modal{
+      position:fixed;z-index:6100;inset:0;display:none;align-items:center;justify-content:center;padding:22px;
+      background:rgba(0,0,0,.72);backdrop-filter:blur(14px)
+    }
+    .demo-modal.show{display:flex}
+    .demo-modal-card{
+      width:min(100%,900px);max-height:90vh;overflow:auto;position:relative;padding:22px;border-radius:24px;
+      border:1px solid rgba(255,255,255,.09);
+      background:linear-gradient(160deg,#0b1220,#060b14 68%);
+      box-shadow:0 30px 100px rgba(0,0,0,.55)
+    }
+    .demo-modal-close{
+      position:absolute;right:14px;top:14px;width:36px;height:36px;border-radius:11px;border:1px solid rgba(255,255,255,.08);
+      background:rgba(255,255,255,.035);color:#b8c8dc;font-size:18px;cursor:pointer
+    }
+    .demo-modal-head{padding:4px 48px 17px 2px}
+    .demo-modal-kicker{color:#67c7f2;font-size:8px;font-weight:900;letter-spacing:1.1px;text-transform:uppercase}
+    .demo-modal-head h3{margin-top:7px;font-size:25px}
+    .demo-modal-head p{margin-top:8px;color:#7889a2;font-size:11px;line-height:1.6}
+    .demo-stage{
+      min-height:410px;padding:14px;border-radius:19px;border:1px solid rgba(255,255,255,.065);
+      background:rgba(1,5,13,.6)
+    }
+    .demo-stage-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;height:100%}
+    .demo-stage-slot{
+      min-height:340px;position:relative;display:grid;place-items:center;overflow:hidden;border-radius:15px;
+      border:1px solid rgba(255,255,255,.065);background:rgba(255,255,255,.02)
+    }
+    .demo-stage-slot img,.demo-stage-slot video{display:block;width:100%;height:100%;min-height:340px;object-fit:cover;background:#02050b}
+    .demo-stage-label{
+      position:absolute;left:10px;top:10px;z-index:2;padding:5px 8px;border-radius:999px;
+      background:rgba(2,6,17,.76);border:1px solid rgba(255,255,255,.09);color:#d4e1f1;font-size:8px;font-weight:900
+    }
+    .demo-empty-slot{text-align:center;padding:22px;color:#667a93}
+    .demo-empty-slot div{font-size:26px}.demo-empty-slot strong{display:block;margin-top:9px;color:#a9bdd2;font-size:11px}
+    .demo-empty-slot span{display:block;margin-top:5px;font-size:9px;line-height:1.5}
+    .demo-age-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:9px}
+    .demo-age-item{min-width:0}
+    .demo-age-item .demo-stage-slot{min-height:250px}
+    .demo-age-item .demo-stage-slot img{min-height:250px}
+    .demo-age-caption{padding:8px 2px 0;text-align:center;color:#8fa2b8;font-size:9px;font-weight:850}
+    .demo-video-single{max-width:580px;margin:0 auto}
+    .demo-video-single .demo-stage-slot{min-height:380px}
+    .demo-modal-foot{
+      display:flex;align-items:center;justify-content:space-between;gap:14px;padding-top:15px
+    }
+    .demo-modal-foot-copy{color:#677a91;font-size:9px;line-height:1.55}
+    .demo-modal-foot-copy strong{color:#8fd8b6}
+    .demo-modal-create{min-height:42px;padding:0 16px;border:0;border-radius:12px;background:linear-gradient(90deg,#6d28d9,#0369a1);color:#fff;font:inherit;font-size:10px;font-weight:900;cursor:pointer}
+
+    @media(max-width:1000px){.demo-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:700px){
+      .demo-grid{grid-template-columns:1fr}
+      .demo-card{min-height:335px}
+      .demo-card-actions{grid-template-columns:1fr 1fr}
+      .demo-modal{padding:10px}.demo-modal-card{padding:17px;border-radius:19px}
+      .demo-stage{min-height:0;padding:9px}.demo-stage-grid{grid-template-columns:1fr}
+      .demo-stage-slot{min-height:300px}.demo-stage-slot img,.demo-stage-slot video{min-height:300px}
+      .demo-age-grid{display:flex;overflow:auto;scroll-snap-type:x mandatory;padding-bottom:4px}
+      .demo-age-item{flex:0 0 72%;scroll-snap-align:center}
+      .demo-age-item .demo-stage-slot,.demo-age-item .demo-stage-slot img{min-height:340px}
+      .demo-modal-foot{align-items:stretch;flex-direction:column}.demo-modal-create{width:100%}
+    }
+
+  
+    /* =========================================================
+       FACEVOL 9.5 POLISH PASS
+       ========================================================= */
+    .studio-section{padding:18px 0 72px;scroll-margin-top:88px}
+    .studio-section-intro{max-width:720px;margin:0 auto 26px;text-align:center}
+    .studio-section-intro h2{margin-top:8px;font-size:clamp(29px,4vw,43px);letter-spacing:-1.2px}
+    .studio-section-intro p{margin:11px auto 0;max-width:620px;color:#8494aa;font-size:13px;line-height:1.65}
+    .studio-section .studio-wrap{margin-top:0}
+
+    .studio-privacy-note{
+      width:min(100%,560px);margin:-6px auto 18px;padding:10px 12px;display:flex;align-items:flex-start;gap:9px;
+      text-align:left;border-radius:12px;border:1px solid rgba(125,211,252,.09);background:rgba(56,189,248,.025);
+      color:#8091a8
+    }
+    .studio-privacy-note>span{font-size:14px;line-height:1.35}
+    .studio-privacy-note strong{display:block;color:#aebdd0;font-size:9px;letter-spacing:.15px}
+    .studio-privacy-note small{display:block;margin-top:2px;color:#71839a;font-size:8px;line-height:1.45}
+
+    .featured-proof{
+      margin-top:26px;padding:22px;display:grid;grid-template-columns:.72fr 1.28fr;gap:22px;align-items:center;
+      border-radius:24px;border:1px solid rgba(255,255,255,.075);
+      background:
+        radial-gradient(circle at 85% 20%,rgba(14,165,233,.07),transparent 34%),
+        radial-gradient(circle at 5% 85%,rgba(124,58,237,.08),transparent 38%),
+        rgba(255,255,255,.018);
+      box-shadow:0 22px 70px rgba(0,0,0,.12)
+    }
+    .featured-proof-copy{padding:10px 6px}
+    .featured-proof-kicker{
+      color:#67c7f2;font-size:8px;font-weight:900;letter-spacing:1.15px;text-transform:uppercase
+    }
+    .featured-proof-copy h3{margin-top:8px;font-size:clamp(23px,3vw,32px);letter-spacing:-.75px;line-height:1.1}
+    .featured-proof-copy p{margin-top:10px;color:#7f91a9;font-size:11px;line-height:1.65}
+    .featured-proof-points{display:flex;flex-wrap:wrap;gap:7px;margin-top:15px}
+    .featured-proof-points span{
+      padding:6px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.065);
+      background:rgba(255,255,255,.025);color:#879bb2;font-size:8px;font-weight:800
+    }
+    .featured-proof-visual{
+      position:relative;min-height:300px;display:grid;grid-template-columns:1fr 1fr;gap:8px
+    }
+    .featured-proof-slot{
+      position:relative;min-height:300px;overflow:hidden;display:grid;place-items:center;border-radius:17px;
+      border:1px solid rgba(255,255,255,.07);background:rgba(2,6,17,.68)
+    }
+    .featured-proof-slot img{display:block;width:100%;height:100%;min-height:300px;object-fit:cover}
+    .featured-proof-label{
+      position:absolute;z-index:2;left:10px;top:10px;padding:5px 8px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.09);background:rgba(2,6,17,.78);
+      color:#d5e1ef;font-size:8px;font-weight:900
+    }
+    .featured-proof-empty{text-align:center;padding:20px;color:#64778f}
+    .featured-proof-empty>div{font-size:26px}
+    .featured-proof-empty strong{display:block;margin-top:8px;color:#a7b9cc;font-size:10px}
+    .featured-proof-empty small{display:block;margin-top:5px;color:#60748c;font-size:8px}
+    .featured-proof-divider{
+      position:absolute;z-index:3;left:50%;top:50%;transform:translate(-50%,-50%);
+      width:37px;height:37px;display:grid;place-items:center;border-radius:50%;
+      border:1px solid rgba(255,255,255,.12);background:#0b1322;color:#dcecff;
+      box-shadow:0 10px 30px rgba(0,0,0,.28);font-size:13px
+    }
+
+    /* Make the example gallery feel more visual and premium. */
+    .demo-card{min-height:372px}
+    .demo-preview{min-height:205px}
+    .demo-view-button,.demo-create-button{transition:transform .18s ease,background .18s ease,border-color .18s ease}
+    .demo-view-button:hover,.demo-create-button:hover{transform:translateY(-1px)}
+
+    /* Tablet / mobile polish */
+    @media(max-width:980px){
+      .hero{padding-top:54px}
+      .featured-proof{grid-template-columns:1fr}
+      .featured-proof-copy{max-width:620px}
+      .studio-section{padding-top:10px}
+    }
+    @media(max-width:700px){
+      .hero{padding:42px 0 28px}
+      .hero-description{font-size:15px}
+      .hero-trust{gap:7px}
+      .hero-trust span{padding:7px 9px;font-size:10px}
+      .featured-proof{padding:13px;border-radius:19px}
+      .featured-proof-visual{min-height:0;grid-template-columns:1fr}
+      .featured-proof-slot,.featured-proof-slot img{min-height:310px}
+      .featured-proof-divider{left:50%;top:50%}
+      .studio-section{padding-bottom:55px}
+      .studio-privacy-note{margin-top:-3px}
+    }
+
+  
+    .fe-svg-sprite{position:absolute;width:0;height:0;overflow:hidden;pointer-events:none}
+    .fe-icon{
+      width:1.15em;height:1.15em;display:inline-block;vertical-align:-.16em;
+      fill:none;stroke:url(#feIconGradient);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round
+    }
+    .feature-icon .fe-icon,.tool-icon .fe-icon,.demo-preview-icon .fe-icon{
+      width:25px;height:25px
+    }
+    .privacy-card .fe-icon{width:24px;height:24px}
+    .hero-trust .fe-icon{width:14px;height:14px;margin-right:5px}
+    .studio-privacy-note .fe-icon{width:16px;height:16px;flex:0 0 auto;margin-top:1px}
+    .quality-circle .fe-icon{width:42px;height:42px}
+
+  
+    .demo-view-button:disabled,.demo-view-button.demo-unavailable{
+      cursor:default;opacity:.58;background:rgba(255,255,255,.025);color:#8191a8;
+      border-color:rgba(255,255,255,.06);transform:none!important
+    }
+
+
+    /* FaceEvol premium 7-tool restructure · 2026-08-31 */
+    .evolution-section{padding:36px 0 78px}
+    .evolution-shell{position:relative;overflow:hidden;display:grid;grid-template-columns:.92fr 1.08fr;gap:46px;align-items:center;padding:46px;border:1px solid rgba(255,255,255,.09);border-radius:30px;background:linear-gradient(145deg,rgba(124,58,237,.10),rgba(14,165,233,.045) 58%,rgba(255,255,255,.018));box-shadow:0 32px 90px rgba(0,0,0,.28)}
+    .evolution-shell::before{content:"";position:absolute;width:430px;height:430px;border-radius:50%;right:-150px;top:-190px;background:radial-gradient(circle,rgba(56,189,248,.18),transparent 68%);pointer-events:none}
+    .evolution-copy{position:relative;z-index:2}
+    .roadmap-pill{width:max-content;max-width:100%;margin-bottom:22px;padding:8px 12px;border-radius:999px;border:1px solid rgba(167,139,250,.18);background:rgba(167,139,250,.06);color:#cfc5ff;font-size:10px;font-weight:850;letter-spacing:.55px;text-transform:uppercase}
+    .roadmap-pill span{color:#7dd3fc;margin-right:5px}
+    .evolution-copy h2{max-width:570px;margin-top:4px;font-size:clamp(34px,4.6vw,54px);line-height:1.06;letter-spacing:-1.8px;text-wrap:balance}
+    .evolution-copy>p{max-width:600px;margin-top:18px;color:#9aa9bf;font-size:15px;line-height:1.75}
+    .evolution-points{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+    .evolution-points span{padding:7px 10px;border-radius:999px;border:1px solid rgba(125,211,252,.10);background:rgba(125,211,252,.035);color:#a9bed0;font-size:10px;font-weight:750}
+    .evolution-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:25px}
+    .evolution-actions .button{min-height:47px;padding:0 18px;font-size:13px}
+    .evolution-visual{position:relative;z-index:2;padding:13px;border-radius:24px;border:1px solid rgba(255,255,255,.07);background:rgba(3,7,18,.55);box-shadow:0 22px 55px rgba(0,0,0,.22)}
+    .evolution-stage{position:relative;min-height:345px;display:grid;place-items:center;overflow:hidden;border-radius:18px;background:radial-gradient(circle at 50% 34%,rgba(125,211,252,.12),transparent 28%),radial-gradient(circle at 50% 62%,rgba(124,58,237,.18),transparent 43%),linear-gradient(145deg,#111827,#070b16)}
+    .evolution-orbit{position:absolute;border:1px solid rgba(125,211,252,.08);border-radius:50%}
+    .evolution-orbit-one{width:310px;height:310px}.evolution-orbit-two{width:235px;height:235px;border-color:rgba(167,139,250,.12)}
+    .evolution-portrait-placeholder{position:relative;z-index:2;width:190px;height:238px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:24px 16px;border-radius:94px 94px 24px 24px;border:1px solid rgba(255,255,255,.13);background:linear-gradient(180deg,rgba(255,255,255,.11),rgba(255,255,255,.025));box-shadow:0 28px 70px rgba(0,0,0,.34)}
+    .evolution-face-mark{position:absolute;top:50px;width:88px;height:108px;display:grid;place-items:center;border-radius:48% 48% 44% 44%;background:linear-gradient(145deg,rgba(196,181,253,.38),rgba(125,211,252,.24));color:#eef7ff;font-size:23px;font-weight:900;letter-spacing:-1px;box-shadow:0 -12px 0 rgba(10,15,28,.75)}
+    .evolution-portrait-placeholder strong{font-size:12px}.evolution-portrait-placeholder span{margin-top:4px;color:#8290a8;font-size:9px}
+    .evolution-play{position:absolute;z-index:4;right:18px;bottom:17px;width:42px;height:42px;display:grid;place-items:center;border-radius:50%;background:rgba(7,12,25,.82);border:1px solid rgba(125,211,252,.20);color:#dff7ff;font-size:12px;box-shadow:0 10px 25px rgba(0,0,0,.3)}
+    .age-journey{display:flex;align-items:flex-start;justify-content:space-between;gap:4px;padding:14px 8px 5px}
+    .age-journey span{min-width:34px;text-align:center}.age-journey b{display:block;color:#dcefff;font-size:11px}.age-journey small{display:block;margin-top:2px;color:#65758d;font-size:7px;text-transform:uppercase;letter-spacing:.45px}
+    .age-journey i{flex:1;height:1px;margin-top:7px;background:linear-gradient(90deg,rgba(167,139,250,.35),rgba(56,189,248,.35))}
+    .evolution-caption{padding:8px 8px 4px;text-align:center;color:#718096;font-size:9px}
+
+    .tool-universe-section{position:relative;padding-top:82px}
+    .tool-universe-heading{margin-bottom:50px}
+    .tool-category{padding:27px 0 34px;border-top:1px solid rgba(255,255,255,.065)}
+    .tool-category:first-of-type{border-top:0}
+    .tool-category-head{display:grid;grid-template-columns:.78fr 1.22fr;gap:30px;align-items:end;margin-bottom:22px}
+    .tool-category-head>div{display:flex;align-items:center;gap:13px}.tool-category-index{color:#52637b;font-size:10px;font-weight:900;letter-spacing:1px}.tool-category-head h3{font-size:clamp(27px,3vw,36px);letter-spacing:-1px}.tool-category-head p{max-width:590px;color:#8190a8;font-size:13px;line-height:1.65}
+    .premium-tool-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:15px}
+    .premium-tool-card{position:relative;overflow:hidden;min-height:270px;padding:24px;border-radius:20px;border:1px solid rgba(255,255,255,.075);background:linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,255,255,.015));box-shadow:0 16px 40px rgba(0,0,0,.10);transition:transform .2s ease,border-color .2s ease,background .2s ease}
+    .premium-tool-card:hover{transform:translateY(-3px);border-color:rgba(125,211,252,.18);background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.018))}
+    .premium-tool-card::after{content:"";position:absolute;right:-58px;bottom:-78px;width:170px;height:170px;border-radius:50%;background:radial-gradient(circle,rgba(56,189,248,.07),transparent 68%);pointer-events:none}
+    .create-grid .premium-tool-card{grid-column:span 4}.transform-grid .premium-tool-card{grid-column:span 4}.enhance-grid .premium-tool-card{grid-column:span 6}
+    .premium-tool-card.flagship{grid-column:span 6;background:linear-gradient(145deg,rgba(124,58,237,.105),rgba(14,165,233,.035))}
+    .transform-grid .evolution-card{grid-column:span 8}
+    .tool-status{position:absolute;right:16px;top:16px;padding:5px 8px;border-radius:999px;font-size:8px;font-weight:900;letter-spacing:.7px;text-transform:uppercase}
+    .tool-status.live{color:#caffec;background:rgba(74,222,176,.07);border:1px solid rgba(74,222,176,.18)}
+    .tool-status.soon{color:#ddd4ff;background:rgba(167,139,250,.075);border:1px solid rgba(167,139,250,.16)}
+    .tool-status.signature{color:#dff8ff;background:linear-gradient(90deg,rgba(124,58,237,.13),rgba(14,165,233,.11));border:1px solid rgba(125,211,252,.16)}
+    .premium-tool-icon{width:49px;height:49px;margin-bottom:27px;display:grid;place-items:center;border-radius:14px;border:1px solid rgba(125,211,252,.10);background:linear-gradient(145deg,rgba(124,58,237,.18),rgba(14,165,233,.10));color:#d9f5ff;font-size:17px;font-weight:900}.premium-tool-icon .fe-icon{width:22px;height:22px}
+    .premium-tool-kicker{margin-bottom:7px;color:#70819a;font-size:9px;font-weight:850;letter-spacing:.9px;text-transform:uppercase}.premium-tool-card h4{margin-bottom:9px;font-size:20px;letter-spacing:-.35px}.premium-tool-card p{max-width:540px;color:#8f9db2;font-size:12px;line-height:1.67}
+    .tool-mode-row{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}.tool-mode-row span{padding:6px 8px;border-radius:8px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);color:#aebacd;font-size:9px;font-weight:750}
+    .premium-tool-action,.future-action{position:absolute;left:24px;right:24px;bottom:20px;min-height:39px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;border-radius:10px;border:1px solid rgba(125,211,252,.12);background:rgba(56,189,248,.045);color:#ccefff;font-size:10px;font-weight:850;cursor:pointer;text-decoration:none}.premium-tool-action:hover{border-color:rgba(125,211,252,.30);background:rgba(56,189,248,.07)}.premium-tool-action.ghost{background:rgba(167,139,250,.045);border-color:rgba(167,139,250,.13)}
+    .future-action{cursor:default;color:#687a93;background:rgba(255,255,255,.018);border-color:rgba(255,255,255,.05);justify-content:flex-start}
+    .roadmap-summary{max-width:720px;margin:34px auto 0;padding:17px 22px;display:flex;align-items:center;justify-content:center;gap:26px;border-radius:17px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.02);text-align:center}.roadmap-summary div:not(.roadmap-divider){min-width:110px}.roadmap-summary strong{display:block;color:#eaf6ff;font-size:25px}.roadmap-summary span{display:block;margin-top:3px;color:#74839a;font-size:9px;text-transform:uppercase;letter-spacing:.7px;font-weight:800}.roadmap-divider{width:1px;height:34px;background:rgba(255,255,255,.075)}
+
+    @media(max-width:1000px){.evolution-shell{grid-template-columns:1fr;gap:32px}.create-grid .premium-tool-card,.transform-grid .premium-tool-card{grid-column:span 6}.premium-tool-card.flagship,.transform-grid .evolution-card{grid-column:span 12}.enhance-grid .premium-tool-card{grid-column:span 6}}
+    @media(max-width:650px){.evolution-section{padding:18px 0 56px}.evolution-shell{padding:24px 18px;border-radius:23px}.evolution-copy h2{font-size:36px}.evolution-stage{min-height:290px}.evolution-portrait-placeholder{width:165px;height:210px}.evolution-face-mark{top:42px;width:76px;height:94px}.age-journey span:nth-of-type(2),.age-journey span:nth-of-type(4),.age-journey span:nth-of-type(6),.age-journey i:nth-of-type(2n){display:none}.tool-category-head{grid-template-columns:1fr;gap:8px}.premium-tool-grid{grid-template-columns:1fr}.create-grid .premium-tool-card,.transform-grid .premium-tool-card,.enhance-grid .premium-tool-card,.premium-tool-card.flagship,.transform-grid .evolution-card{grid-column:1}.premium-tool-card{min-height:260px}.roadmap-summary{gap:13px;padding:15px 10px}.roadmap-summary div:not(.roadmap-divider){min-width:0;flex:1}.roadmap-summary strong{font-size:21px}}
+
+  
+
+    /* 2026-08-30 — top-tier clarity pass: fewer competing sections, calmer hierarchy. */
+    .hero{padding-top:88px;padding-bottom:38px}
+    .hero h1{max-width:980px;font-size:clamp(46px,6.3vw,76px);line-height:1.01;letter-spacing:-3.2px}
+    .hero-description{max-width:760px;font-size:clamp(16px,1.55vw,19px);line-height:1.68;color:#aab7ca}
+    .hero-description strong{color:#e7f0fb;font-weight:780}
+    .hero-purpose{max-width:720px;margin:23px auto 0;display:flex;align-items:center;justify-content:center;gap:17px;flex-wrap:wrap;color:#8292a9;font-size:11px;font-weight:650}
+    .hero-purpose span{display:flex;align-items:center;gap:5px}.hero-purpose b{color:#dce9f7;font-weight:800}.hero-purpose i{width:3px;height:3px;border-radius:50%;background:#52647b}
+    .hero-trust{margin-top:17px}.hero-trust span{background:transparent;border-color:rgba(255,255,255,.045)}
+
+    .evolution-section{padding-top:28px;padding-bottom:66px}
+    .evolution-shell{padding:38px;border-radius:30px;background:linear-gradient(145deg,rgba(124,58,237,.055),rgba(14,165,233,.028));border-color:rgba(125,211,252,.10);box-shadow:0 28px 90px rgba(0,0,0,.23)}
+    .roadmap-pill{background:rgba(125,211,252,.045);border-color:rgba(125,211,252,.13);color:#b9dced}
+    .evolution-caption{color:#8294aa}
+
+    /* Placeholder demo gallery is intentionally hidden until finished media exists. */
+    #demos{display:none}
+    .quality-selector{display:none}
+
+    /* Open Studio now lands directly on the tool interface — no promotional intro block. */
+    .studio-section{padding-top:24px;padding-bottom:64px}
+    .studio-section-intro{max-width:760px;margin:0 auto 34px;text-align:center}
+    .studio-section-intro h2{font-size:clamp(34px,4.7vw,50px);letter-spacing:-1.7px;line-height:1.08}
+    .studio-section-intro p{max-width:660px;margin:13px auto 0;color:#91a0b6;line-height:1.7;font-size:15px}
+    .studio{max-width:1080px}
+    .studio-inner{grid-template-columns:300px 1fr}
+    .studio-sidebar{padding:22px 18px;max-height:none;overflow:visible;scrollbar-width:none}
+    .studio-label{margin:8px 8px 10px;color:#667991;font-size:9px;letter-spacing:1.55px}
+    .studio-label-spaced{margin-top:20px;padding-top:14px;border-top:1px solid rgba(255,255,255,.055)}
+    .tool-option{min-height:58px;margin-bottom:5px;padding:10px 11px;border-radius:12px}
+    .tool-option .tool-icon{width:34px;height:34px;border-radius:9px;font-size:15px}
+    .tool-option .tool-name{font-size:12px}.tool-option .tool-sub{font-size:8px;color:#708198}
+    .studio-placeholder-tool{opacity:1!important;filter:none!important;color:#98a5bb!important;cursor:default!important}
+    .studio-placeholder-tool:hover{background:rgba(255,255,255,.025)!important;color:#cbd7e6!important;transform:none!important}
+    .tool-coming-soon{display:inline-flex;margin-top:5px;padding:3px 6px;border:1px solid rgba(167,139,250,.16);border-radius:999px;background:rgba(167,139,250,.075);color:#ddd4ff;font-size:7px;font-weight:900;letter-spacing:.55px;line-height:1;text-transform:uppercase}
+    .hero-explainer{max-width:720px;margin:10px auto 0;color:#8292aa;font-size:12px;line-height:1.65}
+    .hero-explainer strong{color:#c9d9ea;font-weight:800}
+    .future-tool,.tool-option.disabled{opacity:1;filter:none}
+    .studio-main{padding:38px 40px}
+
+    .clean-tool-map{padding:66px 0}
+    .clean-tool-map-heading{margin-bottom:30px}
+    .clean-category-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;max-width:1080px;margin:0 auto}
+    .clean-category-card{padding:28px;border-radius:20px;background:linear-gradient(145deg,rgba(255,255,255,.033),rgba(255,255,255,.016));border:1px solid rgba(255,255,255,.065);box-shadow:0 18px 50px rgba(0,0,0,.11)}
+    .clean-category-number{width:32px;height:32px;display:grid;place-items:center;margin-bottom:24px;border-radius:9px;background:rgba(125,211,252,.055);border:1px solid rgba(125,211,252,.11);color:#8fdcf7;font-size:9px;font-weight:900}
+    .clean-category-card h3{font-size:24px;letter-spacing:-.6px}.clean-category-card>p{margin-top:8px;color:#8494aa;font-size:13px;line-height:1.6}
+    .clean-tool-list{display:flex;flex-wrap:wrap;gap:7px;margin-top:22px}.clean-tool-list span{padding:7px 9px;border-radius:9px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.055);color:#a8b7ca;font-size:9px;font-weight:750}
+
+    #how-it-works{padding-top:58px}
+    .section-heading{max-width:720px}.section-heading p{max-width:650px;margin-left:auto;margin-right:auto}
+    section{padding-top:64px;padding-bottom:64px}
+
+    @media(max-width:850px){
+      .studio-inner{grid-template-columns:1fr}.studio-sidebar{max-height:none;grid-template-columns:repeat(2,1fr);gap:7px;padding:14px}.studio-label{grid-column:1/-1;margin:12px 4px 4px}.studio-label-spaced{margin-top:10px}.clean-category-grid{grid-template-columns:1fr}.clean-category-card{padding:24px}.hero-purpose i{display:none}
+    }
+    @media(max-width:650px){
+      .hero{padding-top:58px;padding-bottom:28px}.hero h1{font-size:clamp(40px,12vw,54px);letter-spacing:-2.1px}.hero-description{font-size:15px}.hero-purpose{display:grid;grid-template-columns:1fr;gap:6px;text-align:center}.hero-purpose span{justify-content:center}.hero-trust{display:none}.evolution-shell{padding:23px 17px}.studio-section{padding-top:18px}.studio-main{padding:25px 17px}.clean-tool-map{padding:54px 0}
+    }
+
+
+    /* FaceEvol final visual polish · 2026-08-30 */
+    .hero .container{max-width:940px}
+    .hero-description{max-width:790px}
+    .hero-explainer{max-width:720px;margin-left:auto;margin-right:auto}
+    .hero-actions .button{min-width:166px}
+    .hero-purpose{margin-top:24px}
+
+    .studio-status-line{display:flex;align-items:center;justify-content:center;gap:9px;flex-wrap:wrap;margin-top:16px}
+    .studio-status-pill{display:inline-flex;align-items:center;gap:7px;padding:7px 11px;border-radius:999px;font-size:9px;font-weight:850;letter-spacing:.5px;text-transform:uppercase;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.025);color:#8da0b8}
+    .studio-status-pill.live{color:#bff7e0;border-color:rgba(74,222,176,.16);background:rgba(74,222,176,.045)}
+    .studio-status-pill.live i{width:6px;height:6px;border-radius:50%;background:#4adeb0;box-shadow:0 0 12px rgba(74,222,176,.55)}
+    .studio-status-pill.soon{color:#d4c9ff;border-color:rgba(167,139,250,.16);background:rgba(167,139,250,.045)}
+
+    .studio-wrap{box-shadow:0 30px 90px rgba(0,0,0,.34),0 0 0 1px rgba(125,211,252,.025)}
+    .tool-option{transition:transform .2s ease,border-color .2s ease,background .2s ease,box-shadow .2s ease}
+    .tool-option:not(.studio-placeholder-tool):hover{transform:translateY(-1px)}
+    .tool-option.active{box-shadow:0 10px 30px rgba(56,189,248,.08)}
+    .tool-coming-soon{white-space:nowrap}
+
+    .clean-category-card{transition:transform .22s ease,border-color .22s ease,background .22s ease}
+    .clean-category-card:hover{transform:translateY(-3px);border-color:rgba(125,211,252,.14);background:rgba(255,255,255,.032)}
+    .clean-tool-list .overview-coming{color:#9290b6;border-color:rgba(167,139,250,.10);background:rgba(167,139,250,.025)}
+    .clean-tool-list .overview-coming::after{content:"Soon";margin-left:6px;color:#a78bfa;font-size:7px;font-weight:900;letter-spacing:.45px;text-transform:uppercase}
+
+    .step-card,.privacy-card,.price-card{transition:transform .22s ease,border-color .22s ease}
+    .step-card:hover,.privacy-card:hover{transform:translateY(-3px);border-color:rgba(125,211,252,.13)}
+    .price-card:hover{transform:translateY(-4px)}
+
+    .cta-box .button-primary{min-width:174px}
+    .cta-box .button-secondary{min-width:150px}
+
+    @media(max-width:650px){
+      .hero-actions .button,.cta-box .button-primary,.cta-box .button-secondary{min-width:0;width:100%}
+      .studio-status-line{margin-top:13px}
+      .clean-category-card:hover,.step-card:hover,.privacy-card:hover,.price-card:hover,.tool-option:not(.studio-placeholder-tool):hover{transform:none}
+    }
+
+  
+
+    /* =========================================================
+       FACEVOL FINAL 10-TOOL PREMIUM INTERFACES · 2026-08-30
+       Four new workflows reuse existing API routes through a `mode` field,
+       so no additional Vercel Function file is required.
+       ========================================================= */
+    .tool-new-pill{display:inline-flex;margin-top:5px;padding:3px 6px;border-radius:999px;border:1px solid rgba(74,222,176,.18);background:rgba(74,222,176,.07);color:#baf6dc;font-size:7px;font-weight:900;letter-spacing:.6px;line-height:1;text-transform:uppercase}
+    .new-tool-option{border-color:rgba(74,222,176,.07);background:linear-gradient(90deg,rgba(74,222,176,.025),transparent)}
+    .new-tool-option .tool-icon{border:1px solid rgba(125,211,252,.08);background:linear-gradient(145deg,rgba(124,58,237,.13),rgba(14,165,233,.09));color:#d9f6ff}
+    .overview-new{border-color:rgba(74,222,176,.12)!important;background:rgba(74,222,176,.035)!important;color:#b9ddcf!important}
+    .overview-new::after{content:"New";margin-left:6px;color:#6ee7b7;font-size:7px;font-weight:900;letter-spacing:.45px;text-transform:uppercase}
+    .demo-card-new{border-color:rgba(74,222,176,.075)}
+    .demo-card-new .demo-type{color:#a7f3d0;border-color:rgba(74,222,176,.13);background:rgba(74,222,176,.045)}
+
+    .model-tool-controls{width:100%;text-align:left}
+    .model-ready-note{margin-top:12px;padding:11px 13px;border-radius:12px;border:1px solid rgba(125,211,252,.10);background:linear-gradient(90deg,rgba(124,58,237,.055),rgba(14,165,233,.035));color:#91a6bd;font-size:10px;line-height:1.55}
+    .model-ready-note strong{color:#d9f3ff}
+    .new-tool-upload-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:16px}
+    .new-tool-upload{min-height:142px;padding:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px dashed rgba(148,163,184,.25);border-radius:14px;background:rgba(255,255,255,.018);cursor:pointer;text-align:center;transition:.18s ease}
+    .new-tool-upload:hover,.new-tool-upload:focus{outline:none;border-color:rgba(56,189,248,.42);background:rgba(56,189,248,.025)}
+    .new-tool-upload strong{font-size:12px;color:#e7f3ff}.new-tool-upload small{margin-top:5px;color:#72829a;font-size:9px;line-height:1.45}
+    .new-tool-upload-preview{width:112px;height:112px;object-fit:contain;margin-bottom:9px;border-radius:12px;border:1px solid rgba(255,255,255,.10);background:#050914}
+    .new-tool-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:13px}
+    .new-tool-field{padding:11px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.065);background:rgba(255,255,255,.018)}
+    .new-tool-field.full{grid-column:1/-1}.new-tool-field label{display:block;margin-bottom:7px;color:#7f8da4;font-size:9px;font-weight:850;letter-spacing:.65px;text-transform:uppercase}
+    .new-tool-field select,.new-tool-field input,.new-tool-field textarea{width:100%;border:0;outline:none;background:transparent;color:#e7f3ff;font:inherit;font-size:12px;line-height:1.55}
+    .new-tool-field select option{background:#0a1120;color:#e7f3ff}.new-tool-field textarea{min-height:86px;resize:vertical}
+    .new-tool-help{margin-top:10px;color:#71839a;font-size:9px;line-height:1.55}
+    .multi-source-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+    .multi-source-chip{min-height:84px;display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:11px;border:1px solid rgba(255,255,255,.065);background:#060b16;color:#6d7f97;font-size:9px;text-align:center}
+    .multi-source-chip img{width:100%;height:84px;object-fit:cover;display:block}
+    .multi-source-chip.mapping-chip{min-height:158px;display:grid;grid-template-rows:84px auto;align-items:stretch;overflow:visible;padding:0;background:rgba(6,11,22,.96)}
+    .multi-source-chip.mapping-chip img{border-radius:10px 10px 0 0}
+    .multi-source-map{padding:9px;display:grid;gap:6px;text-align:left}
+    .multi-source-map strong{font-size:9px;color:#dcecff}.multi-source-map small{font-size:8px;color:#74869e}
+    .multi-source-map select{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,.08);background:#0b1222;color:#e7f3ff;font-size:9px;outline:none}
+    .evolution-stage video{width:100%;height:100%;min-height:345px;object-fit:cover;display:block;background:#050914}
+
+    .new-tool-result{display:none;margin-top:17px}.new-tool-result.show{display:block}
+    .new-tool-result img,.new-tool-result video{width:100%;max-height:560px;object-fit:contain;display:block;border-radius:16px;border:1px solid rgba(255,255,255,.08);background:#02040a}
+    .new-tool-result .download-button{display:flex}
+    .new-feature-status{margin-top:12px;color:#7dd3fc;font-size:11px;font-weight:700;line-height:1.5;text-align:center}
+    .new-feature-error{margin-top:10px;color:#fda4af;font-size:11px;line-height:1.5;text-align:center}
+    .model-badge{flex:0 0 auto;padding:6px 9px;border-radius:999px;border:1px solid rgba(74,222,176,.16);background:rgba(74,222,176,.05);color:#c3f9e2;font-size:8px;font-weight:900;letter-spacing:.6px;text-transform:uppercase}
+    .backend-contract{margin-top:10px;padding:10px 12px;border-radius:10px;border:1px solid rgba(251,191,36,.10);background:rgba(251,191,36,.035);color:#b7a879;font-size:9px;line-height:1.5}
+    .backend-contract strong{color:#e8dca8}
+    @media(max-width:850px){.demo-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:650px){.demo-grid{grid-template-columns:1fr}.new-tool-upload-grid,.new-tool-fields{grid-template-columns:1fr}.new-tool-field.full{grid-column:auto}.multi-source-grid{grid-template-columns:repeat(2,1fr)}}
+
+  
+    .multi-target-map{position:relative;margin:15px 0;border-radius:16px;overflow:hidden;background:#050914;border:1px solid rgba(255,255,255,.09)}
+    .multi-target-map img{display:block;width:100%;max-height:520px;object-fit:contain}
+    .multi-face-overlay{position:absolute;inset:0;pointer-events:none}
+    .multi-face-badge{position:absolute;transform:translate(-50%,-50%);pointer-events:auto;min-width:38px;height:38px;padding:0 10px;border-radius:999px;border:2px solid rgba(255,255,255,.92);background:rgba(5,9,20,.86);color:#fff;font-weight:900;font-size:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(0,0,0,.4);cursor:pointer}
+    .multi-face-badge.active{box-shadow:0 0 0 4px rgba(56,189,248,.28),0 8px 24px rgba(0,0,0,.45)}
+    .multi-video-trim{margin-top:14px;padding:14px;border-radius:14px;background:rgba(255,255,255,.018);border:1px solid rgba(255,255,255,.07)}
+
+    /* FaceEvol premium 7-tool release · 2026-08-31 */
+    .retired-section,
+    .retired-demo,
+    #faceEvolutionOption,
+    #multiPhotoSwapOption,
+    #multiVideoSwapOption{display:none!important}
+
+    .hero{padding-top:92px;padding-bottom:58px}
+    .hero .container{max-width:900px}
+    .hero h1{
+      max-width:880px;
+      margin:0 auto;
+      font-size:clamp(48px,8vw,82px);
+      line-height:.98;
+      letter-spacing:-3.8px
+    }
+    .hero-description{
+      max-width:720px;
+      margin:24px auto 0;
+      font-size:clamp(16px,2vw,19px);
+      line-height:1.7;
+      color:#a9b7cb
+    }
+    .hero-actions{margin-top:30px}
+    .hero-minimal-trust{
+      margin:20px auto 0;
+      color:#7f90a8;
+      font-size:11px;
+      font-weight:700;
+      letter-spacing:.02em
+    }
+    .hero-minimal-trust span{color:#b5c5d9}
+    .demo-card:has([data-demo-key="portraitCreator"]){order:-1}
+    .studio-section-intro{max-width:850px}
+    .studio-section-intro p{max-width:680px;margin-left:auto;margin-right:auto}
+    .studio-status-line{justify-content:center}
+    .clean-category-card{min-height:250px}
+    @media(max-width:650px){
+      .hero{padding-top:58px;padding-bottom:42px}
+      .hero h1{font-size:clamp(42px,13vw,58px);letter-spacing:-2.4px}
+      .hero-description{font-size:15px;line-height:1.65}
+      .hero-minimal-trust{font-size:10px;line-height:1.65;padding:0 14px}
+    }
+
+</style>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4"></script>
+
+  <script type="application/ld+json">
   {
     "@context":"https://schema.org",
     "@type":"WebApplication",
@@ -45,7 +1400,8 @@
     "offers":{"@type":"AggregateOffer","lowPrice":"4.99","highPrice":"24.99","priceCurrency":"EUR","offerCount":"3"}
   }
   </script>
-<style id="faceevol-7-tool-final-polish">
+
+  <style id="faceevol-7-tool-final-polish">
     /* FaceEvol final 7-tool public polish · 2026-08-31 */
     .hero .container{max-width:1180px}
     .hero h1.hero-title-nowrap{
@@ -60,7 +1416,9 @@
     .hero-description{max-width:690px;margin-top:21px}
     .hero-actions{margin-top:27px}
     .hero-minimal-trust{margin-top:17px}
-        .studio-section-intro .section-eyebrow{letter-spacing:.12em}
+    .demo-grid{align-items:stretch}
+    .demo-card{height:100%}
+    .studio-section-intro .section-eyebrow{letter-spacing:.12em}
     @media(max-width:650px){
       .hero{padding-top:54px;padding-bottom:38px}
       .hero .container{padding-left:14px;padding-right:14px}
@@ -76,564 +1434,681 @@
       .hero h1.hero-title-nowrap{font-size:clamp(19px,6.25vw,22px)}
     }
   </style>
+
 </head>
+
 <body>
-<svg aria-hidden="true" class="fe-svg-sprite" focusable="false">
-<defs>
-<lineargradient id="feIconGradient" x1="0" x2="1" y1="0" y2="1">
-<stop offset="0%" stop-color="#a78bfa"></stop>
-<stop offset="55%" stop-color="#60a5fa"></stop>
-<stop offset="100%" stop-color="#22d3ee"></stop>
-</lineargradient>
-</defs>
-<symbol id="fe-icon-age" viewbox="0 0 24 24">
-<circle cx="12" cy="12" r="8.2"></circle>
-<path d="M12 7.5v5l3.2 2"></path>
-<path d="M5.8 4.9 4.6 8l3.2-.7"></path>
-</symbol>
-<symbol id="fe-icon-photo" viewbox="0 0 24 24">
-<rect height="16" rx="2.5" width="17" x="3.5" y="4"></rect>
-<circle cx="9" cy="9" r="1.7"></circle>
-<path d="m5.5 17 4.2-4 3.2 2.9 2.3-2.1 3.3 3.2"></path>
-</symbol>
-<symbol id="fe-icon-photo-video" viewbox="0 0 24 24">
-<rect height="16" rx="2.5" width="17" x="3.5" y="4"></rect>
-<path d="m10 8.4 5.6 3.6-5.6 3.6z"></path>
-</symbol>
-<symbol id="fe-icon-video-swap" viewbox="0 0 24 24">
-<rect height="14" rx="2.5" width="13.5" x="3.5" y="5"></rect>
-<path d="m17 9 3.5-2v10L17 15"></path>
-<path d="M7.3 10.2c.9-1.5 2.9-1.9 4.3-.8"></path>
-<path d="m11.8 7.7.1 2.4-2.4.1"></path>
-<path d="M12.7 13.8c-.9 1.5-2.9 1.9-4.3.8"></path>
-<path d="m8.2 16.3-.1-2.4 2.4-.1"></path>
-</symbol>
-<symbol id="fe-icon-enhance" viewbox="0 0 24 24">
-<path d="M12 3.8 13.7 8l4.3 1.7-4.3 1.7L12 15.6l-1.7-4.2L6 9.7 10.3 8z"></path>
-<path d="m18.2 14.3.8 2.1 2.1.8-2.1.9-.8 2-.9-2-2-.9 2-.8z"></path>
-<path d="m6.1 15.6.7 1.6 1.6.7-1.6.7-.7 1.6-.7-1.6-1.6-.7 1.6-.7z"></path>
-</symbol>
-<symbol id="fe-icon-video-enhance" viewbox="0 0 24 24">
-<rect height="14" rx="2.4" width="13" x="3.5" y="5"></rect>
-<path d="m16.5 9 4-2.2v10.4l-4-2.2"></path>
-<path d="m9.5 8.2.9 2.1 2.1.9-2.1.8-.9 2.2-.8-2.2-2.2-.8 2.2-.9z"></path>
-</symbol>
-<symbol id="fe-icon-lock" viewbox="0 0 24 24">
-<rect height="10" rx="2.5" width="14" x="5" y="10"></rect>
-<path d="M8.2 10V7.7a3.8 3.8 0 0 1 7.6 0V10"></path>
-<path d="M12 14v2.3"></path>
-</symbol>
-<symbol id="fe-icon-grid" viewbox="0 0 24 24">
-<rect height="6" rx="1.3" width="6" x="4" y="4"></rect>
-<rect height="6" rx="1.3" width="6" x="14" y="4"></rect>
-<rect height="6" rx="1.3" width="6" x="4" y="14"></rect>
-<rect height="6" rx="1.3" width="6" x="14" y="14"></rect>
-</symbol>
-<symbol id="fe-icon-download" viewbox="0 0 24 24">
-<path d="M12 4v10"></path>
-<path d="m8 10 4 4 4-4"></path>
-<path d="M5 18.5h14"></path>
-</symbol>
-<symbol id="fe-icon-shield" viewbox="0 0 24 24">
-<path d="M12 3.5 19 6v5.1c0 4.4-2.7 7.5-7 9.4-4.3-1.9-7-5-7-9.4V6z"></path>
-<path d="m8.8 11.8 2 2 4.5-4.5"></path>
-</symbol>
-<symbol id="fe-icon-heart" viewbox="0 0 24 24">
-<path d="M20 8.5c0 4.3-8 9.8-8 9.8S4 12.8 4 8.5C4 6 5.8 4.4 8 4.4c1.6 0 3 .8 4 2.1 1-1.3 2.4-2.1 4-2.1 2.2 0 4 1.6 4 4.1z"></path>
-</symbol>
+
+<svg class="fe-svg-sprite" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="feIconGradient" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#a78bfa"/>
+      <stop offset="55%" stop-color="#60a5fa"/>
+      <stop offset="100%" stop-color="#22d3ee"/>
+    </linearGradient>
+  </defs>
+
+  <symbol id="fe-icon-age" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="8.2"/>
+    <path d="M12 7.5v5l3.2 2"/>
+    <path d="M5.8 4.9 4.6 8l3.2-.7"/>
+  </symbol>
+
+  <symbol id="fe-icon-photo" viewBox="0 0 24 24">
+    <rect x="3.5" y="4" width="17" height="16" rx="2.5"/>
+    <circle cx="9" cy="9" r="1.7"/>
+    <path d="m5.5 17 4.2-4 3.2 2.9 2.3-2.1 3.3 3.2"/>
+  </symbol>
+
+  <symbol id="fe-icon-photo-video" viewBox="0 0 24 24">
+    <rect x="3.5" y="4" width="17" height="16" rx="2.5"/>
+    <path d="m10 8.4 5.6 3.6-5.6 3.6z"/>
+  </symbol>
+
+  <symbol id="fe-icon-video-swap" viewBox="0 0 24 24">
+    <rect x="3.5" y="5" width="13.5" height="14" rx="2.5"/>
+    <path d="m17 9 3.5-2v10L17 15"/>
+    <path d="M7.3 10.2c.9-1.5 2.9-1.9 4.3-.8"/>
+    <path d="m11.8 7.7.1 2.4-2.4.1"/>
+    <path d="M12.7 13.8c-.9 1.5-2.9 1.9-4.3.8"/>
+    <path d="m8.2 16.3-.1-2.4 2.4-.1"/>
+  </symbol>
+
+  <symbol id="fe-icon-enhance" viewBox="0 0 24 24">
+    <path d="M12 3.8 13.7 8l4.3 1.7-4.3 1.7L12 15.6l-1.7-4.2L6 9.7 10.3 8z"/>
+    <path d="m18.2 14.3.8 2.1 2.1.8-2.1.9-.8 2-.9-2-2-.9 2-.8z"/>
+    <path d="m6.1 15.6.7 1.6 1.6.7-1.6.7-.7 1.6-.7-1.6-1.6-.7 1.6-.7z"/>
+  </symbol>
+
+  <symbol id="fe-icon-video-enhance" viewBox="0 0 24 24">
+    <rect x="3.5" y="5" width="13" height="14" rx="2.4"/>
+    <path d="m16.5 9 4-2.2v10.4l-4-2.2"/>
+    <path d="m9.5 8.2.9 2.1 2.1.9-2.1.8-.9 2.2-.8-2.2-2.2-.8 2.2-.9z"/>
+  </symbol>
+
+  <symbol id="fe-icon-lock" viewBox="0 0 24 24">
+    <rect x="5" y="10" width="14" height="10" rx="2.5"/>
+    <path d="M8.2 10V7.7a3.8 3.8 0 0 1 7.6 0V10"/>
+    <path d="M12 14v2.3"/>
+  </symbol>
+
+  <symbol id="fe-icon-grid" viewBox="0 0 24 24">
+    <rect x="4" y="4" width="6" height="6" rx="1.3"/>
+    <rect x="14" y="4" width="6" height="6" rx="1.3"/>
+    <rect x="4" y="14" width="6" height="6" rx="1.3"/>
+    <rect x="14" y="14" width="6" height="6" rx="1.3"/>
+  </symbol>
+
+  <symbol id="fe-icon-download" viewBox="0 0 24 24">
+    <path d="M12 4v10"/>
+    <path d="m8 10 4 4 4-4"/>
+    <path d="M5 18.5h14"/>
+  </symbol>
+
+  <symbol id="fe-icon-shield" viewBox="0 0 24 24">
+    <path d="M12 3.5 19 6v5.1c0 4.4-2.7 7.5-7 9.4-4.3-1.9-7-5-7-9.4V6z"/>
+    <path d="m8.8 11.8 2 2 4.5-4.5"/>
+  </symbol>
+
+  <symbol id="fe-icon-heart" viewBox="0 0 24 24">
+    <path d="M20 8.5c0 4.3-8 9.8-8 9.8S4 12.8 4 8.5C4 6 5.8 4.4 8 4.4c1.6 0 3 .8 4 2.1 1-1.3 2.4-2.1 4-2.1 2.2 0 4 1.6 4 4.1z"/>
+  </symbol>
 </svg>
+
 <a class="skip-link" href="#studio">Skip to Studio</a>
 <header>
-<div class="container nav">
-<a class="logo" href="#"><img alt="FaceEvol" src="a.png"/></a>
-<nav aria-label="Primary navigation" class="nav-links">
-<a href="#studio">Tools</a>
-<a href="#how-it-works">How It Works</a>
-<a href="#quality">Quality</a>
-<a href="#pricing">Pricing</a>
-<a href="#faq">FAQ</a>
-<a class="nav-button" href="#studio">Open Studio</a>
-<span aria-label="Credit balance" class="credit-balance-chip" id="headerCreditBalance"><span>✦</span><strong id="headerCreditCount"></strong> credits</span>
-<button aria-label="Sign in to FaceEvol" class="account-nav-button" id="accountButton" type="button"><span class="account-dot"></span><span id="accountButtonText">Sign in</span></button>
-</nav>
-</div>
+  <div class="container nav">
+    <a href="#" class="logo"><img src="a.png" alt="FaceEvol"></a>
+    <nav class="nav-links" aria-label="Primary navigation">
+      <a href="#studio">Tools</a>
+      <a href="#how-it-works">How It Works</a>
+      <a href="#quality">Quality</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+      <a href="#studio" class="nav-button">Open Studio</a>
+      <span class="credit-balance-chip" id="headerCreditBalance" aria-label="Credit balance"><span>✦</span><strong id="headerCreditCount"></strong> credits</span>
+      <button type="button" class="account-nav-button" id="accountButton" aria-label="Sign in to FaceEvol"><span class="account-dot"></span><span id="accountButtonText">Sign in</span></button>
+    </nav>
+  </div>
 </header>
-<div aria-labelledby="authTitle" aria-modal="true" class="auth-modal" id="authModal" role="dialog">
-<div class="auth-card">
-<button aria-label="Close account window" class="auth-close" id="authCloseButton" type="button">×</button>
-<div id="signedOutPanel">
-<div class="auth-kicker">FaceEvol Account</div>
-<h3 id="authTitle">Sign in to FaceEvol</h3>
-<p class="auth-copy" id="authCopy">Sign in to buy credits and create with your own photo or video.</p>
-<button class="auth-google" id="googleSignInButton" type="button">
-<span aria-hidden="true">G</span>
+
+<div class="auth-modal" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+  <div class="auth-card">
+    <button type="button" class="auth-close" id="authCloseButton" aria-label="Close account window">×</button>
+
+    <div id="signedOutPanel">
+      <div class="auth-kicker">FaceEvol Account</div>
+      <h3 id="authTitle">Sign in to FaceEvol</h3>
+      <p class="auth-copy" id="authCopy">Sign in to buy credits and create with your own photo or video.</p>
+
+      <button type="button" class="auth-google" id="googleSignInButton">
+        <span aria-hidden="true">G</span>
         Continue with Google
       </button>
-<div class="auth-divider">or use email</div>
-<div class="auth-email-row">
-<input aria-label="Email address" autocomplete="email" id="authEmailInput" inputmode="email" placeholder="you@example.com" type="email"/>
-<button id="emailSignInButton" type="button">Email me a link</button>
+
+      <div class="auth-divider">or use email</div>
+
+      <div class="auth-email-row">
+        <input type="email" id="authEmailInput" autocomplete="email" inputmode="email" placeholder="you@example.com" aria-label="Email address">
+        <button type="button" id="emailSignInButton">Email me a link</button>
+      </div>
+
+      <div class="auth-status" id="authStatus" aria-live="polite"></div>
+      <div class="auth-setup-notice" id="authSetupNotice">Sign-in is temporarily unavailable. Please try again shortly.</div>
+      <p class="auth-terms">By continuing, you agree to the FaceEvol Terms and acknowledge the Privacy Policy.</p>
+    </div>
+
+    <div class="account-panel" id="signedInPanel">
+      <div class="auth-kicker">Your FaceEvol Account</div>
+      <h3>Account &amp; Credits</h3>
+      <p class="auth-copy">Your credit balance is stored securely with your account.</p>
+
+      <div class="account-profile">
+        <div class="account-avatar" id="accountAvatar">F</div>
+        <div class="account-profile-copy">
+          <strong id="accountDisplayName">FaceEvol Creator</strong>
+          <span id="accountEmail">—</span>
+        </div>
+      </div>
+
+      <div class="account-credit-card">
+        <small>Available balance</small>
+        <div class="account-credit-value"><strong id="accountCreditCount">0</strong><span>credits</span></div>
+        <div class="account-credit-note">FaceEvol uses prepaid credits. The credit cost is shown before every creation. Verified failed or canceled AI jobs are restored automatically.</div>
+      </div>
+
+      <div class="account-actions">
+        <button type="button" class="account-buy" id="buyCreditsButton">Buy credits</button>
+        <button type="button" class="account-signout" id="signOutButton">Sign out</button>
+      </div>
+
+      <div class="account-credit-store" id="accountCreditStore">
+        <div class="credit-store-head">
+          <strong>Buy FaceEvol credits</strong>
+          <span>Secure Stripe Checkout</span>
+        </div>
+
+        <div class="credit-pack-grid">
+          <button type="button" class="credit-pack-button" data-credit-pack="20">
+            <strong>20 credits</strong>
+            <span>€4.99</span>
+            <small>Starter</small>
+          </button>
+
+          <button type="button" class="credit-pack-button featured" data-credit-pack="60">
+            <strong>60 credits</strong>
+            <span>€11.99</span>
+            <small>Best value</small>
+          </button>
+
+          <button type="button" class="credit-pack-button" data-credit-pack="150">
+            <strong>150 credits</strong>
+            <span>€24.99</span>
+            <small>Studio</small>
+          </button>
+        </div>
+
+        <div class="checkout-status" id="checkoutStatus" aria-live="polite"></div>
+      </div>
+
+      <div class="account-history">
+        <div class="account-history-head">
+          <strong>Recent credit activity</strong>
+          <span>Latest 8</span>
+        </div>
+        <div class="account-history-list" id="accountHistoryList">
+          <div class="account-history-empty">Your recent activity will appear here.</div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-<div aria-live="polite" class="auth-status" id="authStatus"></div>
-<div class="auth-setup-notice" id="authSetupNotice">Sign-in is temporarily unavailable. Please try again shortly.</div>
-<p class="auth-terms">By continuing, you agree to the FaceEvol Terms and acknowledge the Privacy Policy.</p>
-</div>
-<div class="account-panel" id="signedInPanel">
-<div class="auth-kicker">Your FaceEvol Account</div>
-<h3>Account &amp; Credits</h3>
-<p class="auth-copy">Your credit balance is stored securely with your account.</p>
-<div class="account-profile">
-<div class="account-avatar" id="accountAvatar">F</div>
-<div class="account-profile-copy">
-<strong id="accountDisplayName">FaceEvol Creator</strong>
-<span id="accountEmail">—</span>
-</div>
-</div>
-<div class="account-credit-card">
-<small>Available balance</small>
-<div class="account-credit-value"><strong id="accountCreditCount">0</strong><span>credits</span></div>
-<div class="account-credit-note">FaceEvol uses prepaid credits. Credits are charged only when you create with your own media. Verified failed or canceled AI jobs are restored automatically.</div>
-</div>
-<div class="account-actions">
-<button class="account-buy" id="buyCreditsButton" type="button">Buy credits</button>
-<button class="account-signout" id="signOutButton" type="button">Sign out</button>
-</div>
-<div class="account-credit-store" id="accountCreditStore">
-<div class="credit-store-head">
-<strong>Buy FaceEvol credits</strong>
-<span>Secure Stripe Checkout</span>
-</div>
-<div class="credit-pack-grid">
-<button class="credit-pack-button" data-credit-pack="20" type="button">
-<strong>20 credits</strong>
-<span>€4.99</span>
-<small>Starter</small>
-</button>
-<button class="credit-pack-button featured" data-credit-pack="60" type="button">
-<strong>60 credits</strong>
-<span>€11.99</span>
-<small>Best value</small>
-</button>
-<button class="credit-pack-button" data-credit-pack="150" type="button">
-<strong>150 credits</strong>
-<span>€24.99</span>
-<small>Studio</small>
-</button>
-</div>
-<div aria-live="polite" class="checkout-status" id="checkoutStatus"></div>
-</div>
-<div class="account-history">
-<div class="account-history-head">
-<strong>Recent credit activity</strong>
-<span>Latest 8</span>
-</div>
-<div class="account-history-list" id="accountHistoryList">
-<div class="account-history-empty">Your recent activity will appear here.</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div aria-live="polite" class="auth-gate-toast" id="authGateToast">Sign in and add credits to create with your own media.</div>
+<div class="auth-gate-toast" id="authGateToast" aria-live="polite">Sign in and add credits to create with your own media.</div>
+
+
+
 <main>
-<section class="hero">
-<div class="container">
-<h1 class="hero-title-nowrap">AI Face &amp; <span class="gradient-text">Portrait Studio</span></h1>
-<p class="hero-description">Create polished portraits, transform age, swap faces, animate photos, and enhance media — in one focused studio.</p>
-<div class="hero-actions">
-<a class="button button-primary" href="#studio" id="heroAgeButton">Start Creating →</a>
-</div>
-<div class="hero-minimal-trust">Private uploads · Secure checkout · Download-ready results</div>
-</div>
-</section>
-<section aria-label="FaceEvol Studio" class="studio-section">
-<div class="container">
+  <section class="hero">
+    <div class="container">
+      <h1 class="hero-title-nowrap">AI Face &amp; <span class="gradient-text">Portrait Studio</span></h1>
+      <p class="hero-description">Create polished portraits, transform age, swap faces, animate photos, and enhance media — in one focused studio.</p>
+      <div class="hero-actions">
+        <a href="#studio" class="button button-primary" id="heroAgeButton">Start Creating →</a>
+      </div>
+      <div class="hero-minimal-trust"><span>Private uploads</span> · Secure checkout · Download-ready results</div>
+    </div>
+  </section>
+
+
+  <section class="studio-section" aria-label="FaceEvol Studio">
+    <div class="container">
 <div class="studio-wrap" id="studio">
-<div class="studio">
-<div aria-label="FaceEvol Studio" class="studio-head">
-<div class="studio-head-copy">
-<div class="studio-brand-icon">✦</div>
-<div><strong>FaceEvol Studio</strong><small>Create · Transform · Enhance</small></div>
-</div>
-<span class="studio-current-tool" id="studioCurrentTool">Age Transform</span>
-</div>
-<div class="studio-inner">
-<div class="studio-sidebar">
-<div class="studio-label">Create</div>
-<div aria-label="Open Portrait Creator" aria-pressed="false" class="tool-option new-tool-option" id="portraitCreatorOption" role="button" tabindex="0">
-<div class="tool-icon">◈</div>
-<div><div class="tool-name">Portrait Creator</div><span class="tool-sub">1 credit · portrait restyle</span><span class="tool-new-pill">New</span></div>
-</div>
-<div hidden="" id="faceEvolutionOption"></div>
-<div aria-label="Open Photo to Video" aria-pressed="false" class="tool-option" id="photoToVideoOption" role="button" tabindex="0">
-<div class="tool-icon"><svg aria-hidden="true" class="fe-icon"><use href="#fe-icon-photo-video"></use></svg></div>
-<div><div class="tool-name">Photo to Video</div><span class="tool-sub">5 credits · image → motion</span></div>
-</div>
-<div class="studio-label studio-label-spaced">Transform</div>
-<div aria-label="Open Age Transform" aria-pressed="true" class="tool-option active" id="ageOption" role="button" tabindex="0">
-<div class="tool-icon"><svg aria-hidden="true" class="fe-icon"><use href="#fe-icon-age"></use></svg></div>
-<div><div class="tool-name">Age Transform</div><span class="tool-sub">1 credit · age 0–100</span></div>
-</div>
-<div aria-label="Open Photo Face Swap" aria-pressed="false" class="tool-option" id="photoFaceSwapOption" role="button" tabindex="0">
-<div class="tool-icon"><svg aria-hidden="true" class="fe-icon"><use href="#fe-icon-photo"></use></svg></div>
-<div><div class="tool-name">Photo Face Swap</div><span class="tool-sub">2 credits · photo</span></div>
-</div>
-<div aria-label="Open Video Face Swap" aria-pressed="false" class="tool-option" id="faceSwapOption" role="button" tabindex="0">
-<div class="tool-icon"><svg aria-hidden="true" class="fe-icon"><use href="#fe-icon-video-swap"></use></svg></div>
-<div><div class="tool-name">Video Face Swap</div><span class="tool-sub">6 credits · video</span></div>
-</div>
-<div hidden="" id="multiPhotoSwapOption"></div>
-<div hidden="" id="multiVideoSwapOption"></div>
-<div class="studio-label studio-label-spaced">Enhance</div>
-<div aria-label="Open Photo Enhance" aria-pressed="false" class="tool-option" id="photoEnhanceOption" role="button" tabindex="0">
-<div class="tool-icon"><svg aria-hidden="true" class="fe-icon"><use href="#fe-icon-enhance"></use></svg></div>
-<div><div class="tool-name">Photo Enhance</div><span class="tool-sub">2 credits · 2× / 4×</span></div>
-</div>
-<div aria-label="Open Video Enhance" aria-pressed="false" class="tool-option" id="videoEnhanceOption" role="button" tabindex="0">
-<div class="tool-icon"><svg aria-hidden="true" class="fe-icon"><use href="#fe-icon-video-enhance"></use></svg></div>
-<div><div class="tool-name">Video Enhance</div><span class="tool-sub">10 credits · 1080p / 4K</span></div>
-</div>
-</div>
-<div class="studio-main">
-<h2 class="upload-title">Upload a photo for Age Transform</h2>
-<p class="upload-description">Choose a clear face photo, select the age you want, and create your transformation. The 1-credit cost is shown before generation.</p>
-<div class="studio-privacy-note">
-<svg aria-hidden="true" class="fe-icon"><use href="#fe-icon-lock"></use></svg>
-<div><strong>Privacy-focused processing</strong><small>Use media you have permission to upload. FaceEvol is designed around a private, controlled creation workflow.</small></div>
-</div>
-<div aria-label="Choose a face photo" class="upload-box" id="uploadBox" onclick="document.getElementById('photoUpload').click()" role="button" tabindex="0">
-<div class="upload-icon">↑</div>
-<strong>Drop your face photo here</strong>
-<small>or tap to choose a JPG, PNG or WebP</small>
-</div>
-<input accept="image/*" hidden="" id="photoUpload" type="file"/>
-<div aria-live="polite" class="upload-status" id="uploadStatus"></div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</section>
-<section class="clean-tool-map" id="features">
-<div class="container">
-<div class="section-heading clean-tool-map-heading">
-<span class="section-eyebrow">One Studio · Three Directions</span>
-<h2>Find the right tool <span class="gradient-text">in seconds.</span></h2>
-<p>FaceEvol groups each experience around three clear goals: create something new, transform a face, or enhance existing media.</p>
-</div>
-<div class="clean-category-grid">
-<article class="clean-category-card">
-<div class="clean-category-number">01</div>
-<h3>Create</h3>
-<p>Create a polished portrait or bring a still image to life.</p>
-<div class="clean-tool-list"><span class="overview-new" data-open-tool="portrait" role="button" tabindex="0">Portrait Creator</span><span>Photo to Video</span></div>
-</article>
-<article class="clean-category-card">
-<div class="clean-category-number">02</div>
-<h3>Transform</h3>
-<p>Explore age, identity and face transformations.</p>
-<div class="clean-tool-list"><span>Age Transform</span><span>Photo Face Swap</span><span>Video Face Swap</span></div>
-</article>
-<article class="clean-category-card">
-<div class="clean-category-number">03</div>
-<h3>Enhance</h3>
-<p>Improve detail, clarity and resolution.</p>
-<div class="clean-tool-list"><span>Photo Enhance</span><span>Video Enhance</span></div>
-</article>
-</div>
-</div>
-</section>
-<section id="how-it-works">
-<div class="container">
-<div class="section-heading">
-<span class="section-eyebrow">Simple From Start to Finish</span>
-<h2>Choose. Create. <span class="gradient-text">Download.</span></h2>
-<p>FaceEvol keeps the experience direct: choose a tool, add your media, review the credit cost and create your result.</p>
-</div>
-<div class="steps">
-<div class="step-card"><div class="step-number">1</div><h3>Choose your tool</h3><p>Start with the face or portrait experience that matches what you want to make.</p></div>
-<div class="step-card"><div class="step-number">2</div><h3>Add your media</h3><p>Upload your photo or video, choose the available options and review the credit cost before processing.</p></div>
-<div class="step-card"><div class="step-number">3</div><h3>Create &amp; download</h3><p>Generate the result, preview it on the page and download it directly when it is ready.</p></div>
-</div>
-</div>
-</section>
-<section id="quality">
-<div class="container">
-<div class="quality-box">
-<div class="quality-content">
-<span class="section-eyebrow">Quality &amp; Detail</span>
-<h2>Enhance detail. <span class="gradient-text">Increase resolution.</span></h2>
-<p>Photo Enhance improves clarity and detail with 2× or 4× output. Video Enhance lets you select a short clip and export it at a higher resolution while keeping the workflow simple.</p>
-<div class="quality-list">
-<div class="quality-item"><span class="check">✓</span>Natural-looking facial restoration for photos</div>
-<div class="quality-item"><span class="check">✓</span>2× and 4× photo enhancement options</div>
-<div class="quality-item"><span class="check">✓</span>Up-to-5-second video enhancement workflow</div>
-<div class="quality-item"><span class="check">✓</span>On-page preview, comparison and direct downloads</div>
-</div>
-</div>
-<div class="quality-visual">
-<div class="quality-chip chip-1">2× Photo</div><div class="quality-chip chip-2">4× Photo</div>
-<div class="quality-chip chip-3">1080p Video</div><div class="quality-chip chip-4">4K Export</div>
-<div class="quality-circle"><svg aria-hidden="true" class="fe-icon"><use href="#fe-icon-enhance"></use></svg></div>
-</div>
-</div>
-</div>
-</section>
-<section>
-<div class="container">
-<div class="section-heading">
-<span class="section-eyebrow">Trust &amp; Privacy</span>
-<h2>Creative tools should feel <span class="gradient-text">simple, responsible and private.</span></h2>
-<p>FaceEvol is designed to minimize unnecessary friction while keeping privacy-conscious processing and responsible creation visible in the product.</p>
-</div>
-<div class="privacy-grid">
-<div class="privacy-card"><div><svg aria-hidden="true" class="fe-icon"><use href="#fe-icon-lock"></use></svg></div><strong>Privacy Focused</strong><p>Temporary uploads are handled through privacy-conscious storage and controlled access as part of the FaceEvol workflow.</p></div>
-<div class="privacy-card"><div><svg aria-hidden="true" class="fe-icon"><use href="#fe-icon-shield"></use></svg></div><strong>Responsible Creation</strong><p>Designed for legitimate, creative and consensual use.</p></div>
-<div class="privacy-card"><div><svg aria-hidden="true" class="fe-icon"><use href="#fe-icon-heart"></use></svg></div><strong>Made for People</strong><p>Technology should feel simple, friendly and empowering rather than complicated.</p></div>
-</div>
-</div>
-</section>
-<section id="pricing">
-<div class="container">
-<div class="section-heading">
-<span class="section-eyebrow">Simple Credit Packs</span>
-<h2>Simple credits. <span class="gradient-text">No subscription required.</span></h2>
-<p>Choose a prepaid credit pack before creating. Credits stay with your account and can be used across all seven FaceEvol tools.</p>
-</div>
-<div class="pricing-grid compact-pricing">
-<div class="price-card">
-<div class="price-name">Starter</div>
-<div class="price">€4.99</div>
-<p class="price-description">A straightforward prepaid pack for occasional portrait, photo and video creations.</p>
-<ul class="price-features">
-<li>✓ 20 FaceEvol credits</li>
-<li>✓ No subscription</li>
-<li>✓ Credits stay with your account</li>
-<li>✓ Use across FaceEvol tools</li>
-</ul>
-<button class="button button-secondary" data-credit-pack="20" type="button">Buy 20 Credits</button>
-</div>
-<div class="price-card featured">
-<div class="popular-label">Best Value</div>
-<div class="price-name">Creator</div>
-<div class="price">€11.99</div>
-<p class="price-description">More prepaid credits for regular creation across FaceEvol photo and video tools.</p>
-<ul class="price-features">
-<li>✓ 60 FaceEvol credits</li>
-<li>✓ No subscription</li>
-<li>✓ Server-side credit balance</li>
-<li>✓ Failed verified jobs restore credits</li>
-</ul>
-<button class="button button-primary" data-credit-pack="60" type="button">Buy 60 Credits</button>
-</div>
-<div class="price-card">
-<div class="price-name">Studio</div>
-<div class="price">€24.99</div>
-<p class="price-description">The largest prepaid pack for frequent use across the complete FaceEvol studio.</p>
-<ul class="price-features">
-<li>✓ 150 FaceEvol credits</li>
-<li>✓ No subscription</li>
-<li>✓ Use across FaceEvol tools</li>
-<li>✓ Account activity history</li>
-</ul>
-<button class="button button-secondary" data-credit-pack="150" type="button">Buy 150 Credits</button>
-</div>
-</div>
-<div class="pricing-cost-guide" style="margin:16px auto 0;max-width:900px;padding:13px 15px;border:1px solid rgba(255,255,255,.065);border-radius:14px;background:rgba(255,255,255,.022);text-align:center;color:#778aa2;font-size:9px;line-height:1.7">Current studio costs: <strong style="color:#b8cbe0">Portrait Creator 1</strong> · <strong style="color:#b8cbe0">Age Transform 1</strong> · <strong style="color:#b8cbe0">Photo Face Swap 2</strong> · <strong style="color:#b8cbe0">Video Face Swap 6</strong> · <strong style="color:#b8cbe0">Photo to Video 5</strong> · <strong style="color:#b8cbe0">Photo Enhance 2</strong> · <strong style="color:#b8cbe0">Video Enhance 10</strong> credits</div>
-</div>
-</section>
-<section id="faq">
-<div class="container">
-<div class="section-heading"><span class="section-eyebrow">FAQ</span><h2>Questions? <span class="gradient-text">We've got answers.</span></h2></div>
-<div class="faq-list">
-<details><summary>What can I create with FaceEvol?</summary><p>FaceEvol includes seven focused tools: Portrait Creator, Age Transform, Photo Face Swap, Video Face Swap, Photo to Video, Photo Enhance and Video Enhance.</p></details>
-<details><summary>What photos work best for face swap?</summary><p>Use a clear, front-facing source face with good lighting and the full face visible. Avoid blur, sunglasses, masks, heavy shadows and extreme side angles. A target photo with a clearly visible face and a similar angle usually gives a more natural result.</p></details>
-<details><summary>Which ages can I choose?</summary><p>The five visual presets are ages 5, 15, 30, 50 and 75. You can also use the custom slider to choose any target age from 0 to 100.</p></details>
-<details><summary>Can I download my Age Transform result?</summary><p>Yes. When an Age Transform finishes, tap “Download Image” below the result to save it to your device.</p></details>
-<details><summary>Can I download my photo face swap?</summary><p>Yes. When the photo face swap is complete, tap “Download Image” below the result to save it directly to your device.</p></details>
-<details><summary>How does Photo to Video work?</summary><p>Upload a JPG, PNG or WebP photo, type a short description of the motion you want, then tap “Generate Short Video.” FaceEvol creates a short clip that you can preview and download.</p></details>
-<details><summary>How does Photo Enhance work?</summary><p>Upload a JPG, PNG or WebP photo, choose 2x or 4x enhancement, then tap “Enhance Photo.” FaceEvol creates a clearer higher-resolution result that you can compare with the original and download.</p></details>
-<details><summary>What video can I upload?</summary><p>Use an MP4 source file smaller than 300 MB. Video Face Swap supports a selected section up to 20 seconds. Video Enhance supports a selected section up to 5 seconds.</p></details>
-<details><summary>How does Video Enhance work?</summary><p>Upload an MP4 up to 60 seconds, use the trim handles to select any section up to 5 seconds, then choose 1080p or 4K and 30 or 60 FPS. FaceEvol enhances only the selected clip.</p></details>
-<details><summary>Is FaceEvol free?</summary><p>FaceEvol does not include free generation credits at launch. Creating with your own photo or video requires purchased prepaid credits.</p></details>
-<details><summary>Will I need an account?</summary><p>You can browse FaceEvol without an account. An account is required to buy credits and generate results with your own media.</p></details>
-<details><summary>How do FaceEvol credits work?</summary><p>Your account stores a secure server-side credit balance. Each tool shows its credit cost before generation. Credits are reserved when a generation starts, and verified failed or canceled jobs are restored automatically.</p></details>
-<details><summary>How does FaceEvol handle my uploads?</summary><p>Your uploads are processed to create the result you request. FaceEvol is designed to minimize unnecessary storage, while third-party hosting and AI providers may process content as needed to provide the service. See the Privacy Policy below for more detail.</p></details>
-<details><summary>Where can I find the legal information?</summary><p>Privacy, Terms, Refunds and Contact information are available in the Legal &amp; Support section at the bottom of this page.</p></details>
-</div>
-</div>
-</section>
-<section class="cta" id="start">
-<div class="container">
-<div class="cta-box">
-<div class="badge">✨ FaceEvol · AI Face &amp; Portrait Studio</div>
-<h2>Create, transform &amp; enhance<br/><span class="gradient-text">your face with AI.</span></h2>
-<p>Choose a tool, buy credits, add your photo or video, and create a result you can preview and download.</p>
-<div class="hero-actions" style="justify-content:center">
-<a class="button button-primary" href="#studio" id="ctaStartButton">Open Studio →</a>
-</div>
-</div>
-</div>
-</section>
-<section class="legal-section" id="legal">
-<div class="container">
-<div class="section-heading">
-<span class="section-eyebrow">Legal &amp; Support</span>
-<h2>Clear information. <span class="gradient-text">Simple terms.</span></h2>
-<p>Review how FaceEvol handles content, responsible use, service terms, refunds and support.</p>
-</div>
-<div class="legal-shell">
-<details class="legal-card" id="privacy-policy">
-<summary>
-<span class="legal-summary-title">
-<strong>Privacy Policy</strong>
-<span>Last updated: 28 August 2026</span>
-</span>
-</summary>
-<div class="legal-content">
-<h3>FaceEvol Privacy Policy</h3>
-<p>This Privacy Policy explains how FaceEvol handles information when you use its portrait creation, age transform, photo and video face swap, Photo to Video, Photo Enhance and Video Enhance features.</p>
-<h4>1. Information you provide</h4>
-<p>When you use FaceEvol, you may provide photos, videos and other content needed to create the result you request. You may also provide information when contacting support.</p>
-<h4>2. Technical and usage information</h4>
-<p>FaceEvol and its infrastructure providers may process basic technical information needed to operate, secure and troubleshoot the service, such as request information, device or browser information, IP address, timestamps, error logs and feature usage.</p>
-<h4>3. How uploaded content is used</h4>
-<p>Your uploaded photos and videos are used to provide the transformation or face swap you request, maintain service security, prevent abuse and diagnose technical problems. FaceEvol does not claim ownership of your original photos or videos.</p>
-<h4>4. AI and infrastructure providers</h4>
-<p>To generate results, FaceEvol relies on third-party hosting, storage and AI-processing providers. This currently includes infrastructure used to host the website, securely transfer temporary files and run AI models. Those providers may process your content only as necessary to deliver their services and are subject to their own privacy and security terms.</p>
-<h4>5. Storage and retention</h4>
-<p>FaceEvol is designed to minimize unnecessary storage of user uploads. Temporary files may be retained for the time reasonably necessary to upload, process, deliver and troubleshoot a result. Some temporary files may be automatically deleted after processing. Service providers may maintain limited logs or temporary copies according to their own retention policies and legal obligations.</p>
-<h4>6. What you should not upload</h4>
-<p>Do not upload content that you do not have the right or permission to use. Avoid uploading highly confidential documents, passwords, financial records, medical records or other information that is not needed for the creative task.</p>
-<h4>7. Legal bases for processing</h4>
-<p>Where applicable, FaceEvol processes information because it is necessary to provide the service you request, because there is a legitimate interest in operating and securing the service, because you have provided consent where required, or because processing is necessary to comply with law.</p>
-<h4>8. Your privacy rights</h4>
-<p>Depending on where you live, you may have rights to request access to, correction of or deletion of personal information, or to object to or restrict certain processing. You may also have rights relating to data portability and complaints to a local data-protection authority. These rights are subject to applicable law and reasonable identity verification.</p>
-<h4>9. International processing</h4>
-<p>Some service providers may process information in countries other than your own. Where required, appropriate contractual or legal safeguards should be used for international transfers.</p>
-<h4>10. Children</h4>
-<p>FaceEvol is not intended to be independently used by children under 16. A parent or legal guardian should supervise use where required by local law.</p>
-<h4>11. Security</h4>
-<p>FaceEvol uses reasonable technical and organizational measures intended to protect content during the service workflow. No internet or cloud service can guarantee absolute security.</p>
-<h4>12. Changes to this policy</h4>
-<p>This policy may be updated as FaceEvol adds accounts, payments, additional AI providers or new features. The date above will be updated when material changes are made.</p>
-<div class="legal-contact-box">
-<strong>Privacy questions or requests</strong>
-<p>Email <a href="mailto:support@faceevol.com">support@faceevol.com</a>.</p>
-</div>
-</div>
-</details>
-<details class="legal-card" id="terms">
-<summary>
-<span class="legal-summary-title">
-<strong>Terms of Service</strong>
-<span>Last updated: 28 August 2026</span>
-</span>
-</summary>
-<div class="legal-content">
-<h3>FaceEvol Terms of Service</h3>
-<p>These Terms govern your use of FaceEvol. By using the service, you agree to use it lawfully and responsibly.</p>
-<h4>1. The service</h4>
-<p>FaceEvol provides AI-powered portrait creation, age transform, photo and video face swap, Photo to Video, Photo Enhance and Video Enhance tools. Features, processing limits, supported formats, models and availability may change as the service develops.</p>
-<h4>2. Beta status</h4>
-<p>FaceEvol is currently offered as a beta service. Beta features may contain errors, change without notice, become temporarily unavailable or produce unexpected results.</p>
-<h4>3. Your content and permissions</h4>
-<p>You retain the rights you hold in content you upload. You grant FaceEvol and the service providers involved in processing a limited permission to host, transmit, process and transform that content only as reasonably necessary to provide, secure and troubleshoot the requested service.</p>
-<p>You are responsible for ensuring you have all permissions and rights needed to upload and edit the content you submit.</p>
-<h4>4. Responsible use</h4>
-<p>You may not use FaceEvol to violate law, deceive or defraud others, harass or threaten people, impersonate someone for harmful purposes, violate privacy or intellectual-property rights, or create or distribute abusive or non-consensual content.</p>
-<p>You must not use another person's face, photo or video in a way that violates their rights or reasonable expectation of privacy. When appropriate, obtain permission before editing or sharing content involving another person.</p>
-<h4>5. AI-generated results</h4>
-<p>AI outputs are generated probabilistically. FaceEvol does not guarantee that a result will be perfectly accurate, realistic, identical to a person, suitable for a specific purpose or free from artifacts. Age-transformation results are creative estimates and are not a prediction or verification of a person's real future or past appearance.</p>
-<h4>6. Prohibited technical activity</h4>
-<p>Do not attempt to interfere with the service, bypass usage or security limits, probe private infrastructure, distribute malware, automate abusive traffic or use FaceEvol in a way that materially disrupts other users.</p>
-<h4>7. FaceEvol intellectual property</h4>
-<p>The FaceEvol name, branding, website design, software and original service materials remain the property of their respective owner or licensors. These Terms do not transfer ownership of FaceEvol technology to you.</p>
-<h4>8. Availability and changes</h4>
-<p>FaceEvol may modify, suspend or discontinue features when reasonably necessary for maintenance, security, legal compliance, model changes or product development.</p>
-<h4>9. Paid features</h4>
-<p>FaceEvol uses prepaid credits for AI creations. Applicable credit-pack prices, per-tool credit costs and important purchase terms are displayed before checkout or generation. Mandatory consumer rights always continue to apply.</p>
-<h4>10. Disclaimer</h4>
-<p>To the extent permitted by law, FaceEvol is provided on an “as available” basis without a guarantee of uninterrupted operation or a particular creative result. Nothing in these Terms excludes rights or remedies that cannot legally be excluded.</p>
-<h4>11. Liability</h4>
-<p>To the extent permitted by applicable law, FaceEvol is not responsible for indirect or consequential losses arising from misuse of the service, unauthorized use of uploaded content, third-party services or reliance on an AI-generated result. This limitation does not apply where liability cannot legally be limited.</p>
-<h4>12. Suspension or restriction</h4>
-<p>Access may be restricted or suspended where reasonably necessary to address abuse, security threats, unlawful use or material violations of these Terms.</p>
-<h4>13. Changes to these Terms</h4>
-<p>These Terms may be updated as FaceEvol develops. Material changes will be reflected by updating the date above.</p>
-<div class="legal-contact-box">
-<strong>Terms questions</strong>
-<p>Email <a href="mailto:support@faceevol.com">support@faceevol.com</a>.</p>
-</div>
-</div>
-</details>
-<details class="legal-card" id="refunds">
-<summary>
-<span class="legal-summary-title">
-<strong>Refund Policy</strong>
-<span>Credits, failed processing and billing support</span>
-</span>
-</summary>
-<div class="legal-content">
-<h3>FaceEvol Refund Policy</h3>
-<div class="legal-note">FaceEvol uses prepaid credits for generation. The applicable credit-pack price and per-tool credit cost are shown before purchase or generation.</div>
-<h4>1. Credit purchases</h4>
-<p>Credit-pack prices, included credit quantities, per-tool credit costs and important purchase conditions are shown before a user confirms payment or starts a paid generation.</p>
-<h4>2. Failed processing</h4>
-<p>If a paid generation fails because of a verified FaceEvol processing error and no usable result is delivered, FaceEvol may restore the affected credit, retry the generation or provide another appropriate remedy.</p>
-<h4>3. Completed AI generations</h4>
-<p>AI generation uses computing resources immediately. Once a paid generation has successfully completed, a refund may not always be available merely because the user prefers a different creative result. This does not affect mandatory consumer rights or remedies for a defective service.</p>
-<h4>4. Duplicate or incorrect charges</h4>
-<p>Verified duplicate or erroneous charges should be reported to support so they can be investigated and corrected.</p>
-<h4>5. Consumer rights</h4>
-<p>Nothing in this policy limits statutory cancellation, refund or consumer-protection rights that apply in the user's country. Where digital services begin immediately after purchase, any legally required consent or acknowledgement will be presented during checkout.</p>
-<h4>6. Requesting help</h4>
-<p>Refund or billing-support requests should include the payment reference, approximate purchase date and a short description of the issue. Never send a full card number or banking password by email.</p>
-<div class="legal-contact-box">
-<strong>Billing support</strong>
-<p>Email <a href="mailto:support@faceevol.com">support@faceevol.com</a>.</p>
-</div>
-</div>
-</details>
-<details class="legal-card" id="contact">
-<summary>
-<span class="legal-summary-title">
-<strong>Contact &amp; Support</strong>
-<span>Questions, privacy requests and technical help</span>
-</span>
-</summary>
-<div class="legal-content">
-<h3>Contact FaceEvol</h3>
-<p>For technical support, privacy requests, copyright concerns, responsible-use reports or future billing questions, contact FaceEvol by email.</p>
-<div class="legal-contact-box">
-<strong>Email Support</strong>
-<p><a href="mailto:support@faceevol.com">support@faceevol.com</a></p>
-<p>Please include a short description of the problem and, when useful, the device/browser you were using. Do not email passwords, payment-card numbers or highly sensitive personal information.</p>
-<a class="button button-secondary" href="mailto:support@faceevol.com?subject=FaceEvol%20Support">✉️ Contact Support</a>
-</div>
-<h4>Reporting misuse</h4>
-<p>If you believe FaceEvol has been used to create content that violates your rights, describe the issue and provide enough information to identify the relevant content or incident. FaceEvol may request additional information where reasonably necessary to evaluate a report.</p>
-<h4>Privacy requests</h4>
-<p>For privacy-related access, correction or deletion requests, use the subject line “Privacy Request” and provide enough information for the request to be understood and, where necessary, verified.</p>
-<h4>Response times</h4>
-<p>FaceEvol will aim to review support messages within a reasonable period. Response times may be longer during beta testing or periods of high demand.</p>
-</div>
-</details>
-</div>
-</div>
-</section>
+        <div class="studio">
+          <div class="studio-head" aria-label="FaceEvol Studio">
+            <div class="studio-head-copy">
+              <div class="studio-brand-icon">✦</div>
+              <div><strong>FaceEvol Studio</strong><small>Create · Transform · Enhance</small></div>
+            </div>
+            <span class="studio-current-tool" id="studioCurrentTool">Age Transform</span>
+          </div>
+          <div class="studio-inner">
+            <div class="studio-sidebar">
+              <div class="studio-label">Create</div>
+              <div class="tool-option new-tool-option" id="portraitCreatorOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open Portrait Creator">
+                <div class="tool-icon">◈</div>
+                <div><div class="tool-name">Portrait Creator</div><span class="tool-sub">Restyle your portrait</span><span class="tool-new-pill">New</span></div>
+              </div>
+              <div id="faceEvolutionOption" hidden></div>
+              <div class="tool-option" id="photoToVideoOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open Photo to Video">
+                <div class="tool-icon"><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-photo-video"></use></svg></div>
+                <div><div class="tool-name">Photo to Video</div><span class="tool-sub">Image → motion</span></div>
+              </div>
+
+              <div class="studio-label studio-label-spaced">Transform</div>
+              <div class="tool-option active" id="ageOption" role="button" tabindex="0" aria-pressed="true" aria-label="Open Age Transform">
+                <div class="tool-icon"><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-age"></use></svg></div>
+                <div><div class="tool-name">Age Transform</div><span class="tool-sub">Age 0–100</span></div>
+              </div>
+              <div class="tool-option" id="photoFaceSwapOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open Photo Face Swap">
+                <div class="tool-icon"><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-photo"></use></svg></div>
+                <div><div class="tool-name">Photo Face Swap</div><span class="tool-sub">One face · photo</span></div>
+              </div>
+              <div class="tool-option" id="faceSwapOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open Video Face Swap">
+                <div class="tool-icon"><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-video-swap"></use></svg></div>
+                <div><div class="tool-name">Video Face Swap</div><span class="tool-sub">One face · video</span></div>
+              </div>
+              <div id="multiPhotoSwapOption" hidden></div>
+              <div id="multiVideoSwapOption" hidden></div>
+
+              <div class="studio-label studio-label-spaced">Enhance</div>
+              <div class="tool-option" id="photoEnhanceOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open Photo Enhance">
+                <div class="tool-icon"><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-enhance"></use></svg></div>
+                <div><div class="tool-name">Photo Enhance</div><span class="tool-sub">2× · 4×</span></div>
+              </div>
+              <div class="tool-option" id="videoEnhanceOption" role="button" tabindex="0" aria-pressed="false" aria-label="Open Video Enhance">
+                <div class="tool-icon"><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-video-enhance"></use></svg></div>
+                <div><div class="tool-name">Video Enhance</div><span class="tool-sub">1080p · 4K</span></div>
+              </div>
+            </div>
+
+            <div class="studio-main">
+              <h2 class="upload-title">Upload a photo for Age Transform</h2>
+              <p class="upload-description">Choose a clear face photo, select the age you want, and create your transformation. You can also view prepared examples before uploading.</p>
+              <div class="studio-privacy-note">
+                <svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-lock"></use></svg>
+                <div><strong>Privacy-focused processing</strong><small>Use media you have permission to upload. FaceEvol is designed around a private, controlled creation workflow.</small></div>
+              </div>
+
+              <div class="upload-box" id="uploadBox" role="button" tabindex="0" aria-label="Choose a face photo" onclick="document.getElementById('photoUpload').click()">
+                <div class="upload-icon">↑</div>
+                <strong>Drop your face photo here</strong>
+                <small>or tap to choose a JPG, PNG or WebP</small>
+              </div>
+              <input type="file" id="photoUpload" accept="image/*" hidden>
+              <div class="upload-status" id="uploadStatus" aria-live="polite"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+  <section id="features" class="clean-tool-map">
+    <div class="container">
+      <div class="section-heading clean-tool-map-heading">
+        <span class="section-eyebrow">One Studio · Three Directions</span>
+        <h2>Find the right tool <span class="gradient-text">in seconds.</span></h2>
+        <p>FaceEvol groups each experience around three clear goals: create something new, transform a face, or enhance existing media.</p>
+      </div>
+      <div class="clean-category-grid">
+        <article class="clean-category-card">
+          <div class="clean-category-number">01</div>
+          <h3>Create</h3>
+          <p>Create a polished portrait or bring a still image to life.</p>
+          <div class="clean-tool-list"><span class="overview-new" data-open-tool="portrait" role="button" tabindex="0">Portrait Creator</span><span>Photo to Video</span></div>
+        </article>
+        <article class="clean-category-card">
+          <div class="clean-category-number">02</div>
+          <h3>Transform</h3>
+          <p>Explore age, identity and face transformations.</p>
+          <div class="clean-tool-list"><span>Age Transform</span><span>Photo Face Swap</span><span>Video Face Swap</span></div>
+        </article>
+        <article class="clean-category-card">
+          <div class="clean-category-number">03</div>
+          <h3>Enhance</h3>
+          <p>Improve detail, clarity and resolution.</p>
+          <div class="clean-tool-list"><span>Photo Enhance</span><span>Video Enhance</span></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="how-it-works">
+    <div class="container">
+      <div class="section-heading">
+        <span class="section-eyebrow">Simple From Start to Finish</span>
+        <h2>Choose. Create. <span class="gradient-text">Download.</span></h2>
+        <p>FaceEvol keeps the experience direct: choose a tool, add your media, review the credit cost and create your result.</p>
+      </div>
+      <div class="steps">
+        <div class="step-card"><div class="step-number">1</div><h3>Choose your tool</h3><p>Start with the face or portrait experience that matches what you want to make.</p></div>
+        <div class="step-card"><div class="step-number">2</div><h3>Add your media</h3><p>Upload your photo or video, choose the available options and review the credit cost before processing.</p></div>
+        <div class="step-card"><div class="step-number">3</div><h3>Create &amp; download</h3><p>Generate the result, preview it on the page and download it directly when it is ready.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="quality">
+    <div class="container">
+      <div class="quality-box">
+        <div class="quality-content">
+          <span class="section-eyebrow">Quality &amp; Detail</span>
+          <h2>Enhance detail. <span class="gradient-text">Increase resolution.</span></h2>
+          <p>Photo Enhance improves clarity and detail with 2× or 4× output. Video Enhance lets you select a short clip and export it at a higher resolution while keeping the workflow simple.</p>
+          <div class="quality-list">
+            <div class="quality-item"><span class="check">✓</span>Natural-looking facial restoration for photos</div>
+            <div class="quality-item"><span class="check">✓</span>2× and 4× photo enhancement options</div>
+            <div class="quality-item"><span class="check">✓</span>Up-to-5-second video enhancement workflow</div>
+            <div class="quality-item"><span class="check">✓</span>On-page preview, comparison and direct downloads</div>
+          </div>
+        </div>
+        <div class="quality-visual">
+          <div class="quality-chip chip-1">2× Photo</div><div class="quality-chip chip-2">4× Photo</div>
+          <div class="quality-chip chip-3">1080p Video</div><div class="quality-chip chip-4">4K Export</div>
+          <div class="quality-circle"><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-enhance"></use></svg></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="section-heading">
+        <span class="section-eyebrow">Trust & Privacy</span>
+        <h2>Creative tools should feel <span class="gradient-text">simple, responsible and private.</span></h2>
+        <p>FaceEvol is designed to minimize unnecessary friction while keeping privacy-conscious processing and responsible creation visible in the product.</p>
+      </div>
+      <div class="privacy-grid">
+        <div class="privacy-card"><div><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-lock"></use></svg></div><strong>Privacy Focused</strong><p>Temporary uploads are handled through privacy-conscious storage and controlled access as part of the FaceEvol workflow.</p></div>
+        <div class="privacy-card"><div><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-shield"></use></svg></div><strong>Responsible Creation</strong><p>Designed for legitimate, creative and consensual use.</p></div>
+        <div class="privacy-card"><div><svg class="fe-icon" aria-hidden="true"><use href="#fe-icon-heart"></use></svg></div><strong>Made for People</strong><p>Technology should feel simple, friendly and empowering rather than complicated.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="pricing">
+    <div class="container">
+      <div class="section-heading">
+        <span class="section-eyebrow">Simple Credit Packs</span>
+        <h2>Simple credits. <span class="gradient-text">No subscription required.</span></h2>
+        <p>Preview FaceEvol examples before you create. When you want to use your own media, choose a prepaid credit pack and use those credits across the studio.</p>
+      </div>
+
+      <div class="pricing-grid compact-pricing">
+        <div class="price-card">
+          <div class="price-name">Starter</div>
+          <div class="price">€4.99</div>
+          <p class="price-description">A small prepaid pack for creating with your own photos and videos.</p>
+          <ul class="price-features">
+            <li>✓ 20 FaceEvol credits</li>
+            <li>✓ No subscription</li>
+            <li>✓ Credits stay with your account</li>
+            <li>✓ Use across FaceEvol tools</li>
+          </ul>
+          <button type="button" class="button button-secondary" data-credit-pack="20">Buy 20 Credits</button>
+        </div>
+
+        <div class="price-card featured">
+          <div class="popular-label">Best Value</div>
+          <div class="price-name">Creator</div>
+          <div class="price">€11.99</div>
+          <p class="price-description">More room for photo and video creations without committing to a recurring plan.</p>
+          <ul class="price-features">
+            <li>✓ 60 FaceEvol credits</li>
+            <li>✓ No subscription</li>
+            <li>✓ Server-side credit balance</li>
+            <li>✓ Failed verified jobs restore credits</li>
+          </ul>
+          <button type="button" class="button button-primary" data-credit-pack="60">Buy 60 Credits</button>
+        </div>
+
+        <div class="price-card">
+          <div class="price-name">Studio</div>
+          <div class="price">€24.99</div>
+          <p class="price-description">A larger prepaid balance for people who plan to create across several FaceEvol tools.</p>
+          <ul class="price-features">
+            <li>✓ 150 FaceEvol credits</li>
+            <li>✓ No subscription</li>
+            <li>✓ Use across FaceEvol tools</li>
+            <li>✓ Account activity history</li>
+          </ul>
+          <button type="button" class="button button-secondary" data-credit-pack="150">Buy 150 Credits</button>
+        </div>
+      </div>
+
+      <div style="margin:18px auto 0;max-width:780px;text-align:center;color:#67788f;font-size:10px;line-height:1.6">
+        Every creation uses the credit cost shown for the selected tool. No subscription required.
+      </div>
+      <div class="pricing-cost-guide" style="margin:16px auto 0;max-width:900px;padding:13px 15px;border:1px solid rgba(255,255,255,.065);border-radius:14px;background:rgba(255,255,255,.022);text-align:center;color:#778aa2;font-size:9px;line-height:1.7">
+        Current studio costs:
+        <strong style="color:#b8cbe0">Portrait Creator 1</strong> ·
+        <strong style="color:#b8cbe0">Age Transform 1</strong> ·
+        <strong style="color:#b8cbe0">Photo Face Swap 2</strong> ·
+        <strong style="color:#b8cbe0">Video Face Swap 6</strong> ·
+        <strong style="color:#b8cbe0">Photo to Video 5</strong> ·
+        <strong style="color:#b8cbe0">Photo Enhance 2</strong> ·
+        <strong style="color:#b8cbe0">Video Enhance 10</strong> credits
+      </div>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="container">
+      <div class="section-heading"><span class="section-eyebrow">FAQ</span><h2>Questions? <span class="gradient-text">We've got answers.</span></h2></div>
+      <div class="faq-list">
+        <details><summary>What can I create with FaceEvol?</summary><p>FaceEvol includes seven focused tools: Portrait Creator, Age Transform, Photo Face Swap, Video Face Swap, Photo to Video, Photo Enhance and Video Enhance.</p></details>
+        <details><summary>What photos work best for face swap?</summary><p>Use a clear, front-facing source face with good lighting and the full face visible. Avoid blur, sunglasses, masks, heavy shadows and extreme side angles. A target photo with a clearly visible face and a similar angle usually gives a more natural result.</p></details>
+        <details><summary>Which ages can I choose?</summary><p>The five visual presets are ages 5, 15, 30, 50 and 75. You can also use the custom slider to choose any target age from 0 to 100.</p></details>
+        <details><summary>Can I download my Age Transform result?</summary><p>Yes. When an Age Transform finishes, tap “Download Image” below the result to save it to your device.</p></details>
+        <details><summary>Can I download my photo face swap?</summary><p>Yes. When the photo face swap is complete, tap “Download Image” below the result to save it directly to your device.</p></details>
+        <details><summary>How does Photo to Video work?</summary><p>Upload a JPG, PNG or WebP photo, type a short description of the motion you want, then tap “Generate Short Video.” FaceEvol creates a short clip that you can preview and download.</p></details>
+        <details><summary>How does Photo Enhance work?</summary><p>Upload a JPG, PNG or WebP photo, choose 2x or 4x enhancement, then tap “Enhance Photo.” FaceEvol creates a clearer higher-resolution result that you can compare with the original and download.</p></details>
+        <details><summary>What video can I upload?</summary><p>Use an MP4 source file smaller than 300 MB. Video Face Swap supports a selected section up to 20 seconds. Video Enhance supports a selected section up to 5 seconds.</p></details>
+        <details><summary>How does Video Enhance work?</summary><p>Upload an MP4 up to 60 seconds, use the trim handles to select any section up to 5 seconds, then choose 1080p or 4K and 30 or 60 FPS. FaceEvol enhances only the selected clip.</p></details>
+        <details><summary>Is FaceEvol free?</summary><p>FaceEvol uses prepaid credits for generations. New accounts start with zero free generation credits, and the credit cost is shown before you create.</p></details>
+        <details><summary>Will I need an account?</summary><p>Yes. An account is required to buy credits and create with your own photo or video.</p></details>
+        <details><summary>How do FaceEvol credits work?</summary><p>Your account stores a secure server-side credit balance. Demo viewing costs 0 credits. Real AI creations deduct the tool cost when a generation starts, and the cost is shown in the interface. Verified failed or canceled jobs are restored automatically.</p></details>
+        <details><summary>How does FaceEvol handle my uploads?</summary><p>Your uploads are processed to create the result you request. FaceEvol is designed to minimize unnecessary storage, while third-party hosting and AI providers may process content as needed to provide the service. See the Privacy Policy below for more detail.</p></details>
+        <details><summary>Where can I find the legal information?</summary><p>Privacy, Terms, Refunds and Contact information are available in the Legal &amp; Support section at the bottom of this page.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta" id="start">
+    <div class="container">
+      <div class="cta-box">
+        <div class="badge">✨ FaceEvol · AI Face &amp; Portrait Studio</div>
+        <h2>Create, transform &amp; enhance<br><span class="gradient-text">your face with AI.</span></h2>
+        <p>Choose a live tool, add your photo or video, and create a result you can preview and download directly.</p>
+        <div class="hero-actions" style="justify-content:center">
+          <a href="#studio" class="button button-primary" id="ctaStartButton">Open Studio →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="legal-section" id="legal">
+    <div class="container">
+      <div class="section-heading">
+        <span class="section-eyebrow">Legal &amp; Support</span>
+        <h2>Clear information. <span class="gradient-text">Simple terms.</span></h2>
+        <p>Review how FaceEvol handles content, responsible use, service terms, refunds and support.</p>
+      </div>
+
+      <div class="legal-shell">
+
+        <details class="legal-card" id="privacy-policy">
+          <summary>
+            <span class="legal-summary-title">
+              <strong>Privacy Policy</strong>
+              <span>Last updated: 28 August 2026</span>
+            </span>
+          </summary>
+          <div class="legal-content">
+            <h3>FaceEvol Privacy Policy</h3>
+            <p>This Privacy Policy explains how FaceEvol handles information when you use its portrait creation, age transform, photo and video face swap, Photo to Video, Photo Enhance and Video Enhance features.</p>
+
+            <h4>1. Information you provide</h4>
+            <p>When you use FaceEvol, you may provide photos, videos and other content needed to create the result you request. You may also provide information when contacting support.</p>
+
+            <h4>2. Technical and usage information</h4>
+            <p>FaceEvol and its infrastructure providers may process basic technical information needed to operate, secure and troubleshoot the service, such as request information, device or browser information, IP address, timestamps, error logs and feature usage.</p>
+
+            <h4>3. How uploaded content is used</h4>
+            <p>Your uploaded photos and videos are used to provide the transformation or face swap you request, maintain service security, prevent abuse and diagnose technical problems. FaceEvol does not claim ownership of your original photos or videos.</p>
+
+            <h4>4. AI and infrastructure providers</h4>
+            <p>To generate results, FaceEvol relies on third-party hosting, storage and AI-processing providers. This currently includes infrastructure used to host the website, securely transfer temporary files and run AI models. Those providers may process your content only as necessary to deliver their services and are subject to their own privacy and security terms.</p>
+
+            <h4>5. Storage and retention</h4>
+            <p>FaceEvol is designed to minimize unnecessary storage of user uploads. Temporary files may be retained for the time reasonably necessary to upload, process, deliver and troubleshoot a result. Some temporary files may be automatically deleted after processing. Service providers may maintain limited logs or temporary copies according to their own retention policies and legal obligations.</p>
+
+            <h4>6. What you should not upload</h4>
+            <p>Do not upload content that you do not have the right or permission to use. Avoid uploading highly confidential documents, passwords, financial records, medical records or other information that is not needed for the creative task.</p>
+
+            <h4>7. Legal bases for processing</h4>
+            <p>Where applicable, FaceEvol processes information because it is necessary to provide the service you request, because there is a legitimate interest in operating and securing the service, because you have provided consent where required, or because processing is necessary to comply with law.</p>
+
+            <h4>8. Your privacy rights</h4>
+            <p>Depending on where you live, you may have rights to request access to, correction of or deletion of personal information, or to object to or restrict certain processing. You may also have rights relating to data portability and complaints to a local data-protection authority. These rights are subject to applicable law and reasonable identity verification.</p>
+
+            <h4>9. International processing</h4>
+            <p>Some service providers may process information in countries other than your own. Where required, appropriate contractual or legal safeguards should be used for international transfers.</p>
+
+            <h4>10. Children</h4>
+            <p>FaceEvol is not intended to be independently used by children under 16. A parent or legal guardian should supervise use where required by local law.</p>
+
+            <h4>11. Security</h4>
+            <p>FaceEvol uses reasonable technical and organizational measures intended to protect content during the service workflow. No internet or cloud service can guarantee absolute security.</p>
+
+            <h4>12. Changes to this policy</h4>
+            <p>This policy may be updated as FaceEvol adds accounts, payments, additional AI providers or new features. The date above will be updated when material changes are made.</p>
+
+            <div class="legal-contact-box">
+              <strong>Privacy questions or requests</strong>
+              <p>Email <a href="mailto:support@faceevol.com">support@faceevol.com</a>.</p>
+            </div>
+          </div>
+        </details>
+
+        <details class="legal-card" id="terms">
+          <summary>
+            <span class="legal-summary-title">
+              <strong>Terms of Service</strong>
+              <span>Last updated: 28 August 2026</span>
+            </span>
+          </summary>
+          <div class="legal-content">
+            <h3>FaceEvol Terms of Service</h3>
+            <p>These Terms govern your use of FaceEvol. By using the service, you agree to use it lawfully and responsibly.</p>
+
+            <h4>1. The service</h4>
+            <p>FaceEvol provides AI-powered portrait creation, age transform, photo and video face swap, Photo to Video, Photo Enhance and Video Enhance tools. Features, processing limits, supported formats, models and availability may change as the service develops.</p>
+
+            <h4>2. Beta status</h4>
+            <p>FaceEvol is currently offered as a beta service. Beta features may contain errors, change without notice, become temporarily unavailable or produce unexpected results.</p>
+
+            <h4>3. Your content and permissions</h4>
+            <p>You retain the rights you hold in content you upload. You grant FaceEvol and the service providers involved in processing a limited permission to host, transmit, process and transform that content only as reasonably necessary to provide, secure and troubleshoot the requested service.</p>
+            <p>You are responsible for ensuring you have all permissions and rights needed to upload and edit the content you submit.</p>
+
+            <h4>4. Responsible use</h4>
+            <p>You may not use FaceEvol to violate law, deceive or defraud others, harass or threaten people, impersonate someone for harmful purposes, violate privacy or intellectual-property rights, or create or distribute abusive or non-consensual content.</p>
+            <p>You must not use another person's face, photo or video in a way that violates their rights or reasonable expectation of privacy. When appropriate, obtain permission before editing or sharing content involving another person.</p>
+
+            <h4>5. AI-generated results</h4>
+            <p>AI outputs are generated probabilistically. FaceEvol does not guarantee that a result will be perfectly accurate, realistic, identical to a person, suitable for a specific purpose or free from artifacts. Age-transformation results are creative estimates and are not a prediction or verification of a person's real future or past appearance.</p>
+
+            <h4>6. Prohibited technical activity</h4>
+            <p>Do not attempt to interfere with the service, bypass usage or security limits, probe private infrastructure, distribute malware, automate abusive traffic or use FaceEvol in a way that materially disrupts other users.</p>
+
+            <h4>7. FaceEvol intellectual property</h4>
+            <p>The FaceEvol name, branding, website design, software and original service materials remain the property of their respective owner or licensors. These Terms do not transfer ownership of FaceEvol technology to you.</p>
+
+            <h4>8. Availability and changes</h4>
+            <p>FaceEvol may modify, suspend or discontinue features when reasonably necessary for maintenance, security, legal compliance, model changes or product development.</p>
+
+            <h4>9. Paid features</h4>
+            <p>FaceEvol uses prepaid credits for AI creations. Applicable credit-pack prices, per-tool credit costs and important purchase terms are displayed before checkout or generation. Mandatory consumer rights always continue to apply.</p>
+
+            <h4>10. Disclaimer</h4>
+            <p>To the extent permitted by law, FaceEvol is provided on an “as available” basis without a guarantee of uninterrupted operation or a particular creative result. Nothing in these Terms excludes rights or remedies that cannot legally be excluded.</p>
+
+            <h4>11. Liability</h4>
+            <p>To the extent permitted by applicable law, FaceEvol is not responsible for indirect or consequential losses arising from misuse of the service, unauthorized use of uploaded content, third-party services or reliance on an AI-generated result. This limitation does not apply where liability cannot legally be limited.</p>
+
+            <h4>12. Suspension or restriction</h4>
+            <p>Access may be restricted or suspended where reasonably necessary to address abuse, security threats, unlawful use or material violations of these Terms.</p>
+
+            <h4>13. Changes to these Terms</h4>
+            <p>These Terms may be updated as FaceEvol develops. Material changes will be reflected by updating the date above.</p>
+
+            <div class="legal-contact-box">
+              <strong>Terms questions</strong>
+              <p>Email <a href="mailto:support@faceevol.com">support@faceevol.com</a>.</p>
+            </div>
+          </div>
+        </details>
+
+        <details class="legal-card" id="refunds">
+          <summary>
+            <span class="legal-summary-title">
+              <strong>Refund Policy</strong>
+              <span>Credits, failed processing and billing support</span>
+            </span>
+          </summary>
+          <div class="legal-content">
+            <h3>FaceEvol Refund Policy</h3>
+            <div class="legal-note">AI processing with your own media uses prepaid credits. The applicable credit cost is shown before generation.</div>
+
+            <h4>1. Credit purchases</h4>
+            <p>Credit-pack prices, included credit quantities, per-tool credit costs and important purchase conditions are shown before a user confirms payment or starts a paid generation.</p>
+
+            <h4>2. Failed processing</h4>
+            <p>If a paid generation fails because of a verified FaceEvol processing error and no usable result is delivered, FaceEvol may restore the affected credit, retry the generation or provide another appropriate remedy.</p>
+
+            <h4>3. Completed AI generations</h4>
+            <p>AI generation uses computing resources immediately. Once a paid generation has successfully completed, a refund may not always be available merely because the user prefers a different creative result. This does not affect mandatory consumer rights or remedies for a defective service.</p>
+
+            <h4>4. Duplicate or incorrect charges</h4>
+            <p>Verified duplicate or erroneous charges should be reported to support so they can be investigated and corrected.</p>
+
+            <h4>5. Consumer rights</h4>
+            <p>Nothing in this policy limits statutory cancellation, refund or consumer-protection rights that apply in the user's country. Where digital services begin immediately after purchase, any legally required consent or acknowledgement will be presented during checkout.</p>
+
+            <h4>6. Requesting help</h4>
+            <p>Refund or billing-support requests should include the payment reference, approximate purchase date and a short description of the issue. Never send a full card number or banking password by email.</p>
+
+            <div class="legal-contact-box">
+              <strong>Billing support</strong>
+              <p>Email <a href="mailto:support@faceevol.com">support@faceevol.com</a>.</p>
+            </div>
+          </div>
+        </details>
+
+        <details class="legal-card" id="contact">
+          <summary>
+            <span class="legal-summary-title">
+              <strong>Contact &amp; Support</strong>
+              <span>Questions, privacy requests and technical help</span>
+            </span>
+          </summary>
+          <div class="legal-content">
+            <h3>Contact FaceEvol</h3>
+            <p>For technical support, privacy requests, copyright concerns, responsible-use reports or future billing questions, contact FaceEvol by email.</p>
+
+            <div class="legal-contact-box">
+              <strong>Email Support</strong>
+              <p><a href="mailto:support@faceevol.com">support@faceevol.com</a></p>
+              <p>Please include a short description of the problem and, when useful, the device/browser you were using. Do not email passwords, payment-card numbers or highly sensitive personal information.</p>
+              <a class="button button-secondary" href="mailto:support@faceevol.com?subject=FaceEvol%20Support">✉️ Contact Support</a>
+            </div>
+
+            <h4>Reporting misuse</h4>
+            <p>If you believe FaceEvol has been used to create content that violates your rights, describe the issue and provide enough information to identify the relevant content or incident. FaceEvol may request additional information where reasonably necessary to evaluate a report.</p>
+
+            <h4>Privacy requests</h4>
+            <p>For privacy-related access, correction or deletion requests, use the subject line “Privacy Request” and provide enough information for the request to be understood and, where necessary, verified.</p>
+
+            <h4>Response times</h4>
+            <p>FaceEvol will aim to review support messages within a reasonable period. Response times may be longer during beta testing or periods of high demand.</p>
+          </div>
+        </details>
+
+      </div>
+    </div>
+  </section>
+
 </main>
+
 <footer>
-<div class="container">
-<div class="footer-main">
-<a class="footer-logo" href="#"><img alt="FaceEvol" src="a.png"/></a>
-<div class="footer-links"><a href="#studio">Tools</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a><a href="#privacy-policy">Privacy</a><a href="#terms">Terms</a><a href="#refunds">Refunds</a><a href="#contact">Contact</a></div>
-</div>
-<div class="footer-bottom"><div>© 2026 FaceEvol. All rights reserved.</div><div>One studio for AI face transformation, animation and enhancement.</div></div>
-</div>
+  <div class="container">
+    <div class="footer-main">
+      <a href="#" class="footer-logo"><img src="a.png" alt="FaceEvol"></a>
+      <div class="footer-links"><a href="#studio">Tools</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a><a href="#privacy-policy">Privacy</a><a href="#terms">Terms</a><a href="#refunds">Refunds</a><a href="#contact">Contact</a></div>
+    </div>
+    <div class="footer-bottom"><div>© 2026 FaceEvol. All rights reserved.</div><div>One studio for AI face transformation, animation and enhancement.</div></div>
+  </div>
 </footer>
-<a class="mobile-studio-cta" href="#studio" id="mobileStudioCta">✨ Open FaceEvol Studio</a>
+
+<a href="#studio" class="mobile-studio-cta" id="mobileStudioCta">✨ Open FaceEvol Studio</a>
+
 <script>
+
+  /* FaceEvol paid launch: demo system removed. */
 
   const photoUpload = document.getElementById("photoUpload");
   const uploadBox = document.getElementById("uploadBox");
@@ -707,7 +2182,7 @@
     {age:75,label:"Senior",className:"senior"}
   ];
 
-  /* Age preset guide portraits embedded here so this remains one uploadable index.html file. */
+  /* Real FaceEvol demo portraits embedded here so this remains one uploadable index.html file. */
   const AGE_PRESET_IMAGES = {"5":"/assets/age-presets/age-05.jpg","15":"/assets/age-presets/age-15.jpg","30":"/assets/age-presets/age-30.jpg","50":"/assets/age-presets/age-50.jpg","75":"/assets/age-presets/age-75.jpg"};
 
   let trimStart = 0;
@@ -1111,7 +2586,7 @@
 
 
     <div class="age-presets" id="agePresets"></div>
-    <div class="example-note">Age preset portraits are visual guides only. Your uploaded face keeps its own identity.</div>
+    <div class="example-note">Demo portraits are examples only. Your uploaded face keeps its own identity.</div>
 
     <div class="custom-age-panel">
       <div class="age-label"><span>Or choose any target age</span><span class="age-value" id="ageValue">30 years</span></div>
@@ -4049,7 +5524,7 @@
 
 
   /* =========================================================
-     FACEVOL PORTRAIT WORKFLOW
+     FACEVOL NEW 10-TOOL WORKFLOWS
      ---------------------------------------------------------
      These four interfaces deliberately reuse existing routes:
        /api/predict        -> age | portrait | face_evolution
@@ -4119,6 +5594,7 @@
     <div class="new-feature-status" id="faceEvolutionStatus"></div><div class="new-feature-error" id="faceEvolutionError"></div>
     <div class="new-tool-result" id="faceEvolutionResult"><video id="faceEvolutionResultVideo" controls playsinline preload="metadata"></video><button type="button" class="download-button" id="downloadFaceEvolutionButton">⬇️ Download Life Journey</button></div>
   `;
+  faceEvolutionControls.hidden=true;
   studioMain.appendChild(faceEvolutionControls);
 
   const multiPhotoControls=document.createElement("div");
@@ -4142,6 +5618,7 @@
     <div class="new-feature-status" id="multiPhotoStatus"></div><div class="new-feature-error" id="multiPhotoError"></div>
     <div class="new-tool-result" id="multiPhotoResult"><img id="multiPhotoResultImage" alt="FaceEvol multiple photo face swap result"><button type="button" class="download-button" id="downloadMultiPhotoButton">⬇️ Download Image</button></div>
   `;
+  multiPhotoControls.hidden=true;
   studioMain.appendChild(multiPhotoControls);
 
   const multiVideoControls=document.createElement("div");
@@ -4171,6 +5648,7 @@
     <div class="new-feature-status" id="multiVideoStatus"></div><div class="new-feature-error" id="multiVideoError"></div>
     <div class="new-tool-result" id="multiVideoResult"><video id="multiVideoResultVideo" controls playsinline preload="metadata"></video><button type="button" class="download-button" id="downloadMultiVideoButton">⬇️ Download Video</button></div>
   `;
+  multiVideoControls.hidden=true;
   studioMain.appendChild(multiVideoControls);
 
   let selectedPortraitFile=null;
@@ -5727,7 +7205,7 @@
   /*
    * Optional generation sign-in gate.
    * FaceEvol launches with zero free generation credits.
-   * Real creations require sign-in and enough purchased credits before these buttons can start generation.
+   * Real creations require sign-in; demo viewing is handled separately and never reaches these buttons.
    * The UI gate improves UX; the API routes now perform their own Supabase authentication and credit enforcement as well.
    */
   const generationButtonIds=new Set([
@@ -5805,8 +7283,9 @@
   activatePortraitCreatorMode();
 </script>
 <!-- trigger vercel deploy -->
+
 <!--
-FaceEvol 7-tool launch contract (2026-08-31)
+FaceEvol final paid-launch contract (2026-09-01)
 NO NEW SERVERLESS FILES REQUIRED:
   /api/predict.js: default/age = Age Transform; mode=portrait = Portrait Creator.
   /api/photo-faceswap.js: default/single = Photo Face Swap; retired multi mode is rejected.
