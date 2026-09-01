@@ -22,12 +22,29 @@ const FACEVOL_SUPABASE_SECRET_KEY =
 
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || "";
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || "";
+const FACEVOL_STRIPE_MODE = String(process.env.FACEVOL_STRIPE_MODE || "live").trim().toLowerCase();
 
+/*
+ * Production pricing is intentionally fail-closed.
+ * There are NO sandbox Price ID fallbacks in this launch file.
+ * Create the three LIVE Stripe prices and add their price_... IDs in Vercel.
+ */
 const FACEVOL_STRIPE_PACKS = Object.freeze({
-  "20": { credits:20, amount:499, currency:"eur", priceId:process.env.STRIPE_PRICE_20 || "price_1U9mH80rPkHkBzyys6sICOfU" },
-  "60": { credits:60, amount:1199, currency:"eur", priceId:process.env.STRIPE_PRICE_60 || "price_1U9mHo0rPkHkBzyylbGQ3n2U" },
-  "150": { credits:150, amount:2499, currency:"eur", priceId:process.env.STRIPE_PRICE_150 || "price_1U9mIJ0rPkHkBzyytYo2U6BM" }
+  "20": { credits:20, amount:499, currency:"eur", priceId:String(process.env.STRIPE_PRICE_20 || "").trim() },
+  "60": { credits:60, amount:1199, currency:"eur", priceId:String(process.env.STRIPE_PRICE_60 || "").trim() },
+  "150": { credits:150, amount:2499, currency:"eur", priceId:String(process.env.STRIPE_PRICE_150 || "").trim() }
 });
+
+function faceEvolAssertStripeConfiguration(){
+  if(!STRIPE_SECRET_KEY){ const e=new Error("STRIPE_NOT_CONFIGURED"); e.status=503; throw e; }
+  if(!STRIPE_WEBHOOK_SECRET){ const e=new Error("STRIPE_WEBHOOK_NOT_CONFIGURED"); e.status=503; throw e; }
+  if(FACEVOL_STRIPE_MODE!=="live" && FACEVOL_STRIPE_MODE!=="test"){ const e=new Error("STRIPE_MODE_INVALID"); e.status=503; throw e; }
+  if(FACEVOL_STRIPE_MODE==="live" && !STRIPE_SECRET_KEY.startsWith("sk_live_")){ const e=new Error("STRIPE_LIVE_KEY_REQUIRED"); e.status=503; throw e; }
+  if(FACEVOL_STRIPE_MODE==="test" && !STRIPE_SECRET_KEY.startsWith("sk_test_")){ const e=new Error("STRIPE_TEST_KEY_REQUIRED"); e.status=503; throw e; }
+  for(const [key,pack] of Object.entries(FACEVOL_STRIPE_PACKS)){
+    if(!/^price_[A-Za-z0-9]+$/.test(pack.priceId)){ const e=new Error(`STRIPE_PRICE_${key}_REQUIRED`); e.status=503; throw e; }
+  }
+}
 
 
 function faceEvolBearerToken(req) {
@@ -423,7 +440,7 @@ function faceEvolVerifyStripeWebhook(raw,header){
 }
 
 async function handleStripeCheckout(req,res,raw){
-  if(!STRIPE_SECRET_KEY) return res.status(500).json({error:"Stripe is not configured.",code:"STRIPE_NOT_CONFIGURED"});
+  faceEvolAssertStripeConfiguration();
   const auth=await faceEvolRequireUser(req,res); if(!auth) return;
   faceEvolEnforceStripeTester(auth.user);
   const body=faceEvolSafeJson(raw)||{};
@@ -469,7 +486,10 @@ async function faceEvolApplyStripeCredits(session){
 }
 
 async function handleStripeWebhook(req,res,raw){
-  try{faceEvolVerifyStripeWebhook(raw,req.headers?.["stripe-signature"]);}catch(error){
+  try{
+    faceEvolAssertStripeConfiguration();
+    faceEvolVerifyStripeWebhook(raw,req.headers?.["stripe-signature"]);
+  }catch(error){
     console.error("FaceEvol Stripe webhook verification failed:",error instanceof Error?error.message:String(error));
     return res.status(400).json({error:"Invalid webhook signature."});
   }
@@ -757,6 +777,9 @@ export default async function handler(req,res){
       const code=String(error instanceof Error?error.message:error);
       if(code==="STRIPE_TEST_ACCESS_NOT_CONFIGURED") return res.status(503).json({error:"Stripe Sandbox is protected. Add STRIPE_TEST_EMAIL or STRIPE_TEST_USER_ID in Vercel before testing.",code});
       if(code==="STRIPE_TEST_ACCESS_DENIED") return res.status(403).json({error:"Stripe checkout is currently in private Sandbox testing.",code});
+      if(code==="STRIPE_NOT_CONFIGURED"||code==="STRIPE_WEBHOOK_NOT_CONFIGURED"||code==="STRIPE_LIVE_KEY_REQUIRED"||code==="STRIPE_TEST_KEY_REQUIRED"||code==="STRIPE_MODE_INVALID"||code.startsWith("STRIPE_PRICE_")){
+        return res.status(503).json({error:"Payments are not fully configured yet. Please try again later.",code});
+      }
       console.error("FaceEvol Stripe checkout error:",error);
       return res.status(Number(error?.status)||500).json({error:error instanceof Error?error.message:"Could not start Stripe Checkout.",code:"STRIPE_CHECKOUT_FAILED"});
     }
