@@ -6792,6 +6792,7 @@
     const labels={
       welcome:"Legacy welcome credits",
       stripe_purchase:"Credits purchased",
+      fastspring_purchase:"Credits purchased",
       age:"Age Transform",
       photo_faceswap:"Photo Face Swap",
       photo_to_video:"Photo to Video",
@@ -6889,7 +6890,7 @@
 
     const previousText=button?.textContent||"";
     if(button) button.disabled=true;
-    setCheckoutStatus("Opening secure Stripe Checkout...");
+    setCheckoutStatus("Opening secure FastSpring Checkout...");
 
     try{
       const response=await fetch("/api/prediction",{
@@ -6910,7 +6911,7 @@
       try{
         data=text?JSON.parse(text):{};
       }catch{
-        data={error:text||"Stripe Checkout returned an invalid response."};
+        data={error:text||"FastSpring Checkout returned an invalid response."};
       }
 
       if(response.status===401||data?.code==="AUTH_REQUIRED"){
@@ -6919,13 +6920,13 @@
       }
 
       if(!response.ok||!data?.url){
-        throw new Error(data?.error||"Could not open Stripe Checkout.");
+        throw new Error(data?.error||"Could not open FastSpring Checkout.");
       }
 
       window.location.assign(data.url);
 
     }catch(error){
-      console.error("FaceEvol Stripe Checkout error:",error);
+      console.error("FaceEvol FastSpring Checkout error:",error);
       setCheckoutStatus(
         error instanceof Error?error.message:String(error),
         "error"
@@ -6945,14 +6946,14 @@
     if(!payment) return;
 
     if(payment==="cancelled"){
-      showAuthToast("Stripe Checkout was canceled. No credits were added.");
+      showAuthToast("Checkout was canceled. No credits were added.");
     }
 
     if(payment==="success"){
       showAuthToast("Payment received. Updating your FaceEvol credits...");
 
       /*
-       * Stripe webhooks are authoritative.
+       * FastSpring webhooks are authoritative.
        * Wait until this exact Checkout Session appears in
        * the RLS-protected purchase ledger, then refresh.
        */
